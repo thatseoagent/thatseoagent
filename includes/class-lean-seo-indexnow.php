@@ -285,6 +285,7 @@ class Lean_SEO_IndexNow {
 
 		return new \WP_Error(
 			'indexnow_api_error',
+			/* translators: %d: HTTP status code returned by the IndexNow API. */
 			sprintf( __( 'IndexNow API returned %d', 'lean-seo' ), $code )
 		);
 	}

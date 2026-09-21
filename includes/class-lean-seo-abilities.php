@@ -408,7 +408,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'title_short',
                 'severity' => 'warning',
-                'message'  => 'Title is too short (under 30 characters)',
+                'message'  => __( 'Title is too short (under 30 characters)', 'lean-seo' ),
                 'value'    => (string) $title_length . ' chars',
             );
             $score -= 10;
@@ -416,7 +416,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'title_long',
                 'severity' => 'warning',
-                'message'  => 'Title may be truncated in search results (over 60 characters)',
+                'message'  => __( 'Title may be truncated in search results (over 60 characters)', 'lean-seo' ),
                 'value'    => (string) $title_length . ' chars',
             );
             $score -= 5;
@@ -427,7 +427,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'description_short',
                 'severity' => 'warning',
-                'message'  => 'Meta description is too short (under 100 characters)',
+                'message'  => __( 'Meta description is too short (under 100 characters)', 'lean-seo' ),
                 'value'    => (string) $desc_length . ' chars',
             );
             $score -= 10;
@@ -435,7 +435,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'description_long',
                 'severity' => 'info',
-                'message'  => 'Meta description may be truncated (over 160 characters)',
+                'message'  => __( 'Meta description may be truncated (over 160 characters)', 'lean-seo' ),
                 'value'    => (string) $desc_length . ' chars',
             );
             $score -= 3;
@@ -446,7 +446,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'thin_content',
                 'severity' => 'error',
-                'message'  => 'Content is very thin (under 300 words)',
+                'message'  => __( 'Content is very thin (under 300 words)', 'lean-seo' ),
                 'value'    => (string) $word_count . ' words',
             );
             $score -= 20;
@@ -454,7 +454,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'short_content',
                 'severity' => 'warning',
-                'message'  => 'Content is relatively short (under 800 words)',
+                'message'  => __( 'Content is relatively short (under 800 words)', 'lean-seo' ),
                 'value'    => (string) $word_count . ' words',
             );
             $score -= 10;
@@ -465,7 +465,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'no_h2',
                 'severity' => 'warning',
-                'message'  => 'No H2 headings found - consider adding structure',
+                'message'  => __( 'No H2 headings found - consider adding structure', 'lean-seo' ),
                 'value'    => '0 H2 tags',
             );
             $score -= 10;
@@ -476,7 +476,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'no_internal_links',
                 'severity' => 'warning',
-                'message'  => 'No internal links - consider linking to related content',
+                'message'  => __( 'No internal links - consider linking to related content', 'lean-seo' ),
                 'value'    => '0 internal links',
             );
             $score -= 10;
@@ -487,7 +487,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'no_images',
                 'severity' => 'warning',
-                'message'  => 'No images in content',
+                'message'  => __( 'No images in content', 'lean-seo' ),
                 'value'    => '0 images',
             );
             $score -= 10;
@@ -498,7 +498,7 @@ class Lean_SEO_Abilities {
             $issues[] = array(
                 'type'     => 'missing_alt_text',
                 'severity' => 'warning',
-                'message'  => 'Some images are missing alt text',
+                'message'  => __( 'Some images are missing alt text', 'lean-seo' ),
                 'value'    => (string) $images_without_alt . ' images without alt',
             );
             $score -= 5 * $images_without_alt;

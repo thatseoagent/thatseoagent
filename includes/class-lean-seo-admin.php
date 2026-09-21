@@ -154,7 +154,7 @@ class Lean_SEO_Admin {
         
         add_meta_box(
             'lean_seo_meta',
-            '🔍 SEO Settings',
+            __( '🔍 SEO Settings', 'lean-seo' ),
             array(__CLASS__, 'render_meta_box'),
             $post_types,
             'normal',
@@ -211,7 +211,7 @@ class Lean_SEO_Admin {
         ?>
         <div class="lean-seo-field">
             <label for="lean_seo_title">
-                SEO Title
+                <?php esc_html_e( 'SEO Title', 'lean-seo' ); ?>
                 <span class="lean-seo-counter" id="title-counter">0/60</span>
             </label>
             <input 
@@ -222,12 +222,12 @@ class Lean_SEO_Admin {
                 maxlength="70"
                 placeholder="<?php echo esc_attr($post->post_title); ?>"
             >
-            <p class="description">Leave blank to use the post title. Recommended: 50-60 characters.</p>
+            <p class="description"><?php esc_html_e( 'Leave blank to use the post title. Recommended: 50-60 characters.', 'lean-seo' ); ?></p>
         </div>
 
         <div class="lean-seo-field">
             <label for="lean_seo_description">
-                Meta Description
+                <?php esc_html_e( 'Meta Description', 'lean-seo' ); ?>
                 <span class="lean-seo-counter" id="desc-counter">0/160</span>
             </label>
             <textarea 
@@ -235,9 +235,9 @@ class Lean_SEO_Admin {
                 name="lean_seo_description" 
                 rows="3" 
                 maxlength="160"
-                placeholder="Leave blank to auto-generate from content..."
+                placeholder="<?php esc_attr_e( 'Leave blank to auto-generate from content...', 'lean-seo' ); ?>"
             ><?php echo esc_textarea($seo_desc); ?></textarea>
-            <p class="description">Recommended: 150-160 characters. This appears in search results.</p>
+            <p class="description"><?php esc_html_e( 'Recommended: 150-160 characters. This appears in search results.', 'lean-seo' ); ?></p>
         </div>
 
         <div class="lean-seo-preview">

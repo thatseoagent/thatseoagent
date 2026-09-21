@@ -4,7 +4,7 @@ Lightweight SEO for WordPress — no bloat, no upsells, just what you need.
 
 ## Description
 
-Essential SEO in ~1,500 lines of PHP: meta tags, Open Graph, Twitter Cards, XML sitemaps, Schema/JSON-LD markup, canonical URLs, and per-post SEO fields with live preview.
+Essential SEO without the weight: meta tags, Open Graph, Twitter Cards, XML sitemaps, Schema/JSON-LD, canonical URLs, per-post SEO fields with live preview, and IndexNow submission.
 
 ## Requirements
 
@@ -18,77 +18,156 @@ cp -r lean-seo /path/to/wp-content/plugins/
 wp plugin activate lean-seo
 ```
 
-Zero configuration required — activate and it works.
+Zero configuration required — activate and it works. Settings live under **Settings → Lean SEO**.
 
 ## Features
 
-- **Meta Tags** — Title, description, Open Graph, Twitter Cards
-- **XML Sitemaps** — Auto-generated, paginated for large sites (1000 posts per page)
-- **Schema/JSON-LD** — WebSite, Organization, Article, BreadcrumbList
-- **Canonical URLs** — Proper canonicalization
-- **Per-Post SEO** — Custom title/description meta box with live preview
+- **Meta tags** — title, description, Open Graph, Twitter Cards, article metadata
+- **XML sitemaps** — auto-generated and paginated at 1000 URLs per file
+- **Schema/JSON-LD** — WebSite, Organization *or* Person, Article, WebPage, BreadcrumbList, FAQPage
+- **Canonical URLs** — replaces core's `rel_canonical`
+- **Per-post SEO** — title/description meta box with live search preview, exposed to the REST API
+- **Site identity** — declare whether the site represents a Person or an Organization
+- **Homepage SEO** — custom title/description with `%%sitename%%`, `%%tagline%%`, `%%sep%%`
+- **IndexNow** — notify Bing/Yandex on publish (opt-in: no key, no requests)
+- **WP-CLI** — bulk-generate missing meta descriptions
 
 ## Sitemaps
 
 | URL | Content |
 |-----|---------|
 | `/sitemap.xml` | Index |
-| `/sitemap-posts.xml` | Posts (auto-paginates) |
-| `/sitemap-pages.xml` | Pages |
+| `/sitemap-posts.xml` | Posts (paginates to `-2`, `-3`, …) |
+| `/sitemap-pages.xml` | Pages (paginates) |
 | `/sitemap-categories.xml` | Categories |
 | `/sitemap-tags.xml` | Tags |
+| `/sitemap-{cpt}.xml` | Each public custom post type (paginates) |
 
-## Hooks/Filters
+`sitemap_index.xml` redirects to the index for Yoast compatibility, and the plugin rewrites the `Sitemap:` directive in `robots.txt`.
+
+## Privacy
+
+The plugin sends no data anywhere **unless you configure an IndexNow API key**. With a key set, publishing or updating a post queues a background request to `https://api.indexnow.org/indexnow` containing your site host, the key, and the URL of the post. Clearing the key stops all outbound requests. The plugin also serves the `{key}.txt` verification file IndexNow requires.
+
+## Architecture
+
+| Module | Responsibility |
+|--------|----------------|
+| `Lean_SEO` | Hook registration |
+| `Lean_SEO_Meta` | `<head>` meta tags and canonical |
+| `Lean_SEO_Schema` | JSON-LD graph |
+| `Lean_SEO_FAQ` | Reads content into sections; FAQ extraction |
+| `Lean_SEO_Description` | The single answer to "what description does this post get?" |
+| `Lean_SEO_Post_Seo` | Per-post SEO field storage, sanitization and slashing |
+| `Lean_SEO_Sitemap` | Sitemap rendering (returns XML strings) |
+| `Lean_SEO_Identity` | Site identity settings + schema applier |
+| `Lean_SEO_Homepage` | Homepage title/description settings + applier |
+| `Lean_SEO_IndexNow` | IndexNow key, verification file and submission |
+| `Lean_SEO_Admin` | Settings page and meta box |
+| `Lean_SEO_Abilities` | Abilities API registration |
+| `Lean_SEO_CLI` | WP-CLI commands |
+
+## Filters
+
+**Title and description**
+
+| Filter | Purpose |
+|--------|---------|
+| `lean_seo_document_title` | Override the `<title>` entirely (receives context) |
+| `lean_seo_title` | The resolved SEO title |
+| `lean_seo_title_separator` | Title separator (default `\|`) |
+| `lean_seo_description` | The resolved description (receives context) |
+| `lean_seo_custom_description` | Legacy short-circuit, runs first |
+| `lean_seo_description_filler_patterns` | Intro-filler regexes skipped when generating |
+
+Context is one of `home`, `single`, `archive`, `taxonomy`, `search`, `author`, `date`, `404`, `other`.
+
+**Social**
+
+`lean_seo_og_title` · `lean_seo_og_site_name` · `lean_seo_og_locale` · `lean_seo_twitter_handle` · `lean_seo_default_image`
+
+**Schema**
+
+| Filter | Purpose |
+|--------|---------|
+| `lean_seo_primary_entity` | `'person'` or `'organization'` — decides the publisher |
+| `lean_seo_website_schema` | WebSite node |
+| `lean_seo_organization_schema` | Organization node |
+| `lean_seo_person_schema` | Person node |
+| `lean_seo_webpage_schema` | WebPage node |
+| `lean_seo_breadcrumb_schema` | BreadcrumbList node |
+| `lean_seo_schema_graph` | The complete `@graph` before output |
+| `lean_seo_faq_schema_enabled` | Disable FAQ schema per post |
+| `lean_seo_faq_pairs` | The extracted Q&A pairs |
+| `lean_seo_faq_numbered_enabled` | Opt in to numbered-heading FAQs (off) |
+| `lean_seo_faq_thematic_enabled` | Opt in to thematic FAQs (off) |
+
+Both FAQ opt-ins are off by default: they synthesise questions that do not appear on the page, which conflicts with Google's requirement that marked-up content be visible.
+
+**Sitemaps and admin**
+
+`lean_seo_sitemap_entries` (the index listing) · `lean_seo_meta_box_post_types` · action `lean_seo_sitemap_index`
+
+## Examples
 
 ```php
-// Custom description for special pages
-add_filter( 'lean_seo_custom_description', function( $desc ) {
-    if ( is_page( 'special' ) ) return 'Custom description';
-    return $desc;
-} );
+// Custom description for a specific page
+add_filter( 'lean_seo_description', function ( $desc, $context ) {
+    return is_page( 'special' ) ? 'Custom description' : $desc;
+}, 10, 2 );
 
-// Default OG image fallback
-add_filter( 'lean_seo_default_image', function( $url ) {
-    return 'https://example.com/default.jpg';
-} );
-
-// Add post types to the SEO meta box
-add_filter( 'lean_seo_meta_box_post_types', function( $types ) {
+// SEO fields on a custom post type
+add_filter( 'lean_seo_meta_box_post_types', function ( $types ) {
     $types[] = 'product';
     return $types;
 } );
 
-// Add custom sitemaps to the index
-add_action( 'lean_seo_sitemap_index', function() {
-    echo '<sitemap><loc>' . home_url( '/custom.xml' ) . '</loc></sitemap>';
+// Site-specific intro filler to skip when generating descriptions
+add_filter( 'lean_seo_description_filler_patterns', function ( $patterns ) {
+    $patterns[] = '/welcome to our blog/i';
+    return $patterns;
+} );
+
+// Extra sitemaps in the index
+add_filter( 'lean_seo_sitemap_entries', function ( $entries ) {
+    $entries[] = array( 'loc' => home_url( '/custom.xml' ), 'lastmod' => null );
+    return $entries;
 } );
 ```
 
 ## Abilities API
 
-Lean SEO registers abilities via the WordPress Abilities API (`wp_abilities_api_init`) for programmatic SEO management:
+Registered on `wp_abilities_api_init`:
 
-| Ability | Description | Permission |
+| Ability | Description | Capability |
 |---------|-------------|------------|
-| `lean-seo/get-sitemap-urls` | Returns all sitemap URLs | `manage_options` |
-| `lean-seo/get-post-seo` | Get SEO data for a specific post | `edit_post` |
-| `lean-seo/update-post-seo` | Update title/description for a post | `edit_post` |
-| `lean-seo/audit-post-seo` | Analyze a post for SEO issues with scoring | `edit_post` |
-| `lean-seo/scan-seo-issues` | Scan multiple posts for issues, sorted by score | `manage_options` |
+| `lean-seo/get-sitemap-urls` | Every sitemap URL the site publishes | `manage_options` |
+| `lean-seo/get-post-seo` | SEO data for a post | `edit_post` |
+| `lean-seo/update-post-seo` | Update title/description | `edit_post` |
+| `lean-seo/audit-post-seo` | Audit one post, 0–100 score | `edit_post` |
+| `lean-seo/scan-seo-issues` | Scan many posts, worst first | `manage_options` |
 
-The audit checks title length, description length, word count, heading structure, internal/external links, image count, and alt text coverage — returning a 0–100 score with actionable issue details.
+The audit checks title and description length, word count, heading structure, internal/external links, image count and alt coverage.
 
-## Known Issues
+## WP-CLI
 
-**Version constant mismatch:** The plugin header declares version `1.0.1` but `LEAN_SEO_VERSION` is defined as `1.0.0`. This is cosmetic and does not affect functionality.
+```bash
+wp lean-seo generate-descriptions [--post-type=post] [--batch-size=50] [--limit=0] [--dry-run]
+```
 
-## FAQ
+Writes a meta description for published posts that lack one, using the same rule the front end applies.
 
-**Why not Yoast?**
-Lean SEO does the same essential work in ~1,500 lines vs. megabytes. No configuration wizard, no upsells, no admin bloat.
+## Translations
 
-**Does it work with custom post types?**
-Yes. Use the `lean_seo_meta_box_post_types` filter to add SEO fields to any post type.
+Ships with Spanish (`es_ES`). To add a language, copy `languages/lean-seo.pot` and compile:
+
+```bash
+wp i18n make-mo languages/lean-seo-<locale>.po
+```
+
+## Uninstalling
+
+Deleting the plugin removes its options, its post meta and any queued IndexNow events, on every site of a multisite network. Deactivating leaves your data intact.
 
 ---
 

@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.9.1] - 2026-09-21
+
+### Added
+- Spanish (`es_ES`) translation, plus `languages/lean-seo.pot` for other
+  locales.
+- `load_plugin_textdomain()`. Plugins hosted on WordPress.org have their
+  translations delivered by translate.wordpress.org; this one is distributed
+  outside the directory and has to load its own.
+
+### Fixed
+- The meta box rendered six user-facing strings in hardcoded English,
+  bypassing the text domain: the box title, both field labels, both
+  descriptions and the textarea placeholder.
+- The ten SEO audit messages returned by `lean-seo/audit-post-seo` and
+  `lean-seo/scan-seo-issues` were untranslatable.
+- `Domain Path: /languages` was declared in the plugin header but the
+  directory did not exist.
+- Added the missing `translators:` comment for the IndexNow status-code
+  string.
+
+### Changed
+- README rewritten for 1.9.0: documents all 25 hooks, the module layout, the
+  WP-CLI command, the IndexNow privacy behaviour and uninstall semantics.
+  Dropped a stale "Known Issues" entry about a 1.0.x version-constant
+  mismatch that no longer exists, and the "~1,500 lines" claim.
+
 ## [1.9.0] - 2026-09-21
 
 Three deepenings from the architecture review. No new features; the same

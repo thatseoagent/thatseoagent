@@ -3,7 +3,7 @@
  * Plugin Name: Lean SEO
  * Plugin URI: https://github.com/Sarai-Chinwag/lean-seo
  * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, and per-post SEO fields. A Yoast replacement that doesn't slow your site down.
- * Version: 1.9.0
+ * Version: 1.9.1
  * Author: Sarai Chinwag
  * Author URI: https://saraichinwag.com
  * License: GPL-2.0+
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('LEAN_SEO_VERSION', '1.9.0');
+define('LEAN_SEO_VERSION', '1.9.1');
 define('LEAN_SEO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LEAN_SEO_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -44,6 +44,18 @@ function lean_seo_init() {
     return Lean_SEO::get_instance();
 }
 add_action('plugins_loaded', 'lean_seo_init');
+
+/**
+ * Load translations from /languages.
+ *
+ * Plugins hosted on WordPress.org get their translations delivered by
+ * translate.wordpress.org and need no call at all. This one is distributed
+ * outside the directory, so it has to load its own .mo files.
+ */
+function lean_seo_load_textdomain() {
+    load_plugin_textdomain( 'lean-seo', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
+add_action( 'init', 'lean_seo_load_textdomain' );
 
 // Abilities API - check if hook already fired
 if ( did_action( 'wp_abilities_api_init' ) ) {
