@@ -38,20 +38,33 @@ class Lean_SEO_Schema {
             $schema[] = $person_schema;
         }
 
-        // Article schema for posts
-        if (is_singular('post')) {
+        // Page-level nodes for any singular view. Before 1.10.0 only 'post'
+        // and 'page' were handled, so every custom post type reached search
+        // engines with no WebPage and no BreadcrumbList at all.
+        if (is_singular()) {
             $schema[] = self::get_webpage_schema();
-            $schema[] = self::get_article_schema();
-            $schema[] = self::get_breadcrumb_schema();
-            $faq_schema = self::get_faq_schema();
-            if ($faq_schema) {
-                $schema[] = $faq_schema;
-            }
-        }
 
-        // Page schema
-        if (is_singular('page')) {
-            $schema[] = self::get_webpage_schema();
+            /**
+             * Post types that get an Article node.
+             *
+             * A product or a landing page is not an Article, so this stays
+             * narrow by default. Add a news-style custom post type here to
+             * have it marked up as one.
+             *
+             * @since 1.10.0
+             * @param array $post_types Default array('post').
+             */
+            $article_types = apply_filters('lean_seo_article_post_types', array('post'));
+
+            if (is_singular((array) $article_types)) {
+                $schema[] = self::get_article_schema();
+
+                $faq_schema = self::get_faq_schema();
+                if ($faq_schema) {
+                    $schema[] = $faq_schema;
+                }
+            }
+
             $schema[] = self::get_breadcrumb_schema();
         }
 
@@ -121,6 +134,18 @@ class Lean_SEO_Schema {
     }
 
     /**
+     * The site language as a BCP 47 tag, e.g. "es-ES".
+     *
+     * get_locale() returns "es_ES"; schema.org wants the hyphenated form.
+     *
+     * @since 1.10.0
+     * @return string
+     */
+    private static function get_language() {
+        return get_bloginfo('language');
+    }
+
+    /**
      * Website schema
      */
     private static function get_website_schema() {
@@ -129,16 +154,19 @@ class Lean_SEO_Schema {
             '@id' => home_url('/#website'),
             'url' => home_url('/'),
             'name' => get_bloginfo('name'),
-            'description' => get_bloginfo('description'),
-            'potentialAction' => array(
-                '@type' => 'SearchAction',
-                'target' => array(
-                    '@type' => 'EntryPoint',
-                    'urlTemplate' => home_url('/?s={search_term_string}')
-                ),
-                'query-input' => 'required name=search_term_string'
-            )
+            'inLanguage' => self::get_language(),
         );
+
+        // Only when the site actually has a tagline: an empty string is noise
+        // in the graph.
+        $tagline = get_bloginfo('description');
+        if ($tagline) {
+            $schema['description'] = $tagline;
+        }
+
+        // No potentialAction/SearchAction: Google retired the sitelinks
+        // search box, so the node was dead weight on every page. Add it back
+        // through lean_seo_website_schema if another consumer needs it.
 
         /**
          * Filter the WebSite schema node.
@@ -249,14 +277,26 @@ class Lean_SEO_Schema {
             'dateModified' => get_the_modified_date('c'),
             'mainEntityOfPage' => array('@id' => get_permalink() . '#webpage'),
             'wordCount' => self::count_words($post->post_content),
+            'inLanguage' => self::get_language(),
             'publisher' => array('@id' => self::get_publisher_id()),
             'author' => self::get_author_schema(),
         );
 
         // Add image
         if (has_post_thumbnail()) {
+            /**
+             * Image size used for the Article image.
+             *
+             * Google wants at least 1200px wide; the 'large' size caps at
+             * 1024 by default, so 'full' is the safer default.
+             *
+             * @since 1.10.0
+             * @param string $size Registered image size. Default 'full'.
+             */
+            $size = apply_filters('lean_seo_schema_image_size', 'full');
+
             $thumb_id = get_post_thumbnail_id(get_the_ID());
-            $thumb_url = get_the_post_thumbnail_url(get_the_ID(), 'large');
+            $thumb_url = get_the_post_thumbnail_url(get_the_ID(), $size);
             $thumb_meta = wp_get_attachment_metadata($thumb_id);
             $image_schema = array(
                 '@type' => 'ImageObject',
@@ -303,6 +343,7 @@ class Lean_SEO_Schema {
             'url' => get_permalink(),
             'name' => get_the_title(),
             'isPartOf' => array('@id' => home_url('/#website')),
+            'inLanguage' => self::get_language(),
             'datePublished' => get_the_date('c'),
             'dateModified' => get_the_modified_date('c'),
         );
@@ -360,6 +401,12 @@ class Lean_SEO_Schema {
                 'position' => $position,
                 'name' => get_the_title()
             );
+        }
+
+        // A single "Home" crumb is not a trail — Google ignores it and it
+        // adds a node that says nothing.
+        if (count($items) < 2) {
+            return null;
         }
 
         $schema = array(
@@ -425,13 +472,22 @@ class Lean_SEO_Schema {
             );
         }
 
-        $publisher = self::get_publisher_defaults();
+        // A configured fallback author wins.
+        $saved = get_option( 'lean_seo_schema', array() );
+        if ( ! empty( $saved['author_name'] ) ) {
+            $publisher = self::get_publisher_defaults();
 
-        return array(
-            '@type' => $publisher['author_type'],
-            'name'  => $publisher['author_name'],
-            'url'   => $publisher['author_url'],
-        );
+            return array(
+                '@type' => $publisher['author_type'],
+                'name'  => $publisher['author_name'],
+                'url'   => $publisher['author_url'],
+            );
+        }
+
+        // Nothing configured: point at the entity that already publishes the
+        // site. The old default built a Person node named after the blog,
+        // which claimed a person wrote the post when none was assigned.
+        return array( '@id' => self::get_publisher_id() );
     }
 
     /**

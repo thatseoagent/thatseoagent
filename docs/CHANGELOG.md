@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.10.0] - 2026-09-21
+
+Structured data audit against Google's requirements, run on live pages.
+
+### Added
+- `inLanguage` on the WebSite, WebPage and Article nodes, taken from the
+  site language.
+- `lean_seo_article_post_types` filter — post types that get an Article node
+  (default `array('post')`).
+- `lean_seo_schema_image_size` filter — image size for the Article image
+  (default `full`).
+
+### Fixed
+- **Custom post types received no page-level schema at all.** `output()`
+  handled only `post` and `page`, so every public CPT reached search engines
+  with just WebSite and Organization: no WebPage, no BreadcrumbList. Any
+  singular view now gets both.
+- **The Article author claimed a person wrote posts that have no author.**
+  With nothing configured, the fallback built a Person node named after the
+  blog. It now references the entity that already publishes the site
+  (`@id` of the Organization or Person node). An explicitly configured
+  fallback author still wins.
+- The Article image used the `large` size, which caps at 1024px by default
+  while Google asks for at least 1200px wide. Now `full`.
+- `WebSite.description` was emitted as an empty string on sites with no
+  tagline.
+- The homepage emitted a BreadcrumbList containing a single "Home" crumb,
+  which is not a trail. Breadcrumbs with fewer than two items are omitted.
+
+### Removed
+- The `potentialAction` / `SearchAction` block on the WebSite node. Google
+  retired the sitelinks search box, so it was dead weight on every page. Add
+  it back through `lean_seo_website_schema` if another consumer needs it.
+
 ## [1.9.1] - 2026-09-21
 
 ### Added
