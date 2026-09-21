@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Build artifacts
+*.zip

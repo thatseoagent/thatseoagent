@@ -1,0 +1,87 @@
+<?php
+/**
+ * Plugin Name: Lean SEO
+ * Plugin URI: https://github.com/Sarai-Chinwag/lean-seo
+ * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, and per-post SEO fields. A Yoast replacement that doesn't slow your site down.
+ * Version: 1.9.0
+ * Author: Sarai Chinwag
+ * Author URI: https://saraichinwag.com
+ * License: GPL-2.0+
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: lean-seo
+ * Domain Path: /languages
+ * Requires at least: 6.0
+ * Requires PHP: 7.4
+ *
+ * @package Lean_SEO
+ */
+
+// Prevent direct access
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+// Plugin constants
+define('LEAN_SEO_VERSION', '1.9.0');
+define('LEAN_SEO_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('LEAN_SEO_PLUGIN_URL', plugin_dir_url(__FILE__));
+
+// Loaded at file scope: the abilities and WP-CLI modules are required below,
+// before Lean_SEO boots on plugins_loaded, and all three need it.
+require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-post-seo.php';
+require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-description.php';
+
+// Load the main class
+require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo.php';
+require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-abilities.php';
+require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-indexnow.php';
+
+// Initialize IndexNow.
+Lean_SEO_IndexNow::init();
+
+// Initialize
+function lean_seo_init() {
+    return Lean_SEO::get_instance();
+}
+add_action('plugins_loaded', 'lean_seo_init');
+
+// Abilities API - check if hook already fired
+if ( did_action( 'wp_abilities_api_init' ) ) {
+    Lean_SEO_Abilities::register();
+} else {
+    add_action('wp_abilities_api_init', array('Lean_SEO_Abilities', 'register'));
+}
+
+// Activation hook
+register_activation_hook(__FILE__, 'lean_seo_activate');
+/**
+ * Flag the rewrite rules for a refresh.
+ *
+ * We cannot flush here: during activation `plugins_loaded` has already
+ * fired, so Lean_SEO never boots and the sitemap rewrite rules are not
+ * registered yet. Flushing now would persist a rule set *without* the
+ * sitemap routes and every /sitemap*.xml URL would 404. Instead we drop
+ * the stored rewrite version so Lean_SEO::maybe_flush_rewrite_rules()
+ * flushes on the next `init`, once the rules exist.
+ */
+function lean_seo_activate() {
+    delete_option('lean_seo_rewrite_version');
+}
+
+// Deactivation hook
+register_deactivation_hook(__FILE__, 'lean_seo_deactivate');
+function lean_seo_deactivate() {
+    delete_option('lean_seo_rewrite_version');
+
+    // Drop any IndexNow submissions still queued; their callback disappears
+    // with the plugin and WP-Cron would keep retrying a missing hook.
+    wp_unschedule_hook('lean_seo_indexnow_submit');
+
+    flush_rewrite_rules();
+}
+
+// WP-CLI commands.
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+    require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-cli.php';
+    WP_CLI::add_command( 'lean-seo', 'Lean_SEO_CLI' );
+}

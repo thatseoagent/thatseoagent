@@ -1,0 +1,15 @@
+/**
+ * Lean SEO — post edit screen meta box.
+ */
+
+.lean-seo-field { margin-bottom: 15px; }
+.lean-seo-field label { display: block; font-weight: 600; margin-bottom: 5px; }
+.lean-seo-field input[type="text"],
+.lean-seo-field textarea { width: 100%; }
+.lean-seo-field .description { color: #666; font-size: 12px; margin-top: 4px; }
+.lean-seo-counter { float: right; color: #666; font-size: 12px; }
+.lean-seo-counter.warning { color: #d63638; }
+.lean-seo-preview { background: #f0f0f1; padding: 15px; border-radius: 4px; margin-top: 15px; }
+.lean-seo-preview-title { color: #1a0dab; font-size: 18px; margin-bottom: 5px; }
+.lean-seo-preview-url { color: #006621; font-size: 14px; margin-bottom: 5px; }
+.lean-seo-preview-desc { color: #545454; font-size: 14px; line-height: 1.4; }
