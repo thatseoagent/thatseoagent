@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.11.0] - 2026-09-21
+
+### Changed
+- **`Requires at least` raised from 6.0 to 7.1.** The plugin registers
+  Abilities API abilities, and `wp_register_ability()` landed in WordPress
+  6.9 — the header previously claimed support for versions where that call
+  does not exist. The registration stays behind its `function_exists()`
+  guard: the header controls what WordPress will install, not what happens at
+  runtime.
+
+  This clears the five `wp_function_not_compatible_with_requires_wp` errors
+  from `wp plugin check`. Note that 6.9 is the technical floor; 7.1 is the
+  version this plugin is developed and tested against.
+
 ## [1.10.3] - 2026-09-21
 
 Profiling pass. Three of the queries the plugin added to every front-end

@@ -8,7 +8,7 @@ Essential SEO without the weight: meta tags, Open Graph, Twitter Cards, XML site
 
 ## Requirements
 
-- WordPress 6.0+
+- WordPress 7.1+
 - PHP 7.4+
 
 ## Installation
