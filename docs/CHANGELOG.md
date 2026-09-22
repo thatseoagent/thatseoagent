@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.12.1] - 2026-09-21
+
+### Fixed
+- **The meta box rendered unstyled on custom post types.** 1.12.0 extended the
+  meta box to every post type with an editing screen, but updated only two of
+  the three places that resolve that list:
+  `Lean_SEO_Admin::enqueue_meta_box_assets()` kept the old hardcoded
+  `array( 'post', 'page' )` default, so `admin-meta-box.css` and
+  `admin-meta-box.js` never loaded on a custom post type. The markup was
+  there; the styling, the character counters and the live search preview were
+  not. All three call sites now go through
+  `Lean_SEO_Admin::get_meta_box_post_types()`.
+
 ## [1.12.0] - 2026-09-21
 
 ### Changed

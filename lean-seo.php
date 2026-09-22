@@ -3,7 +3,7 @@
  * Plugin Name: Lean SEO
  * Plugin URI: https://github.com/Sarai-Chinwag/lean-seo
  * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, and per-post SEO fields. A Yoast replacement that doesn't slow your site down.
- * Version: 1.12.0
+ * Version: 1.12.1
  * Author: Sarai Chinwag
  * Author URI: https://saraichinwag.com
  * License: GPL-2.0+
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('LEAN_SEO_VERSION', '1.12.0');
+define('LEAN_SEO_VERSION', '1.12.1');
 define('LEAN_SEO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LEAN_SEO_PLUGIN_URL', plugin_dir_url(__FILE__));
 

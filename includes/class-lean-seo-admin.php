@@ -213,8 +213,7 @@ class Lean_SEO_Admin {
             return;
         }
 
-        $post_types = apply_filters( 'lean_seo_meta_box_post_types', array( 'post', 'page' ) );
-        if ( ! in_array( $screen->post_type, (array) $post_types, true ) ) {
+        if ( ! in_array( $screen->post_type, self::get_meta_box_post_types(), true ) ) {
             return;
         }
 
