@@ -276,7 +276,7 @@ class Lean_SEO_Schema {
             'datePublished' => get_the_date('c'),
             'dateModified' => get_the_modified_date('c'),
             'mainEntityOfPage' => array('@id' => get_permalink() . '#webpage'),
-            'wordCount' => self::count_words($post->post_content),
+            'wordCount' => Lean_SEO_Content::word_count($post),
             'inLanguage' => self::get_language(),
             'publisher' => array('@id' => self::get_publisher_id()),
             'author' => self::get_author_schema(),
@@ -316,21 +316,6 @@ class Lean_SEO_Schema {
         }
 
         return $schema;
-    }
-
-    /**
-     * Count words in content in a multibyte-safe way.
-     *
-     * str_word_count() is ASCII-only and miscounts accented languages.
-     *
-     * @since 1.7.1
-     * @param string $content Raw post content.
-     * @return int
-     */
-    private static function count_words( $content ) {
-        $text = wp_strip_all_tags( strip_shortcodes( $content ) );
-
-        return (int) preg_match_all( '/[\p{L}\p{N}]+/u', $text );
     }
 
     /**

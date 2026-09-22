@@ -122,10 +122,7 @@ class Lean_SEO_FAQ {
             return array();
         }
 
-        // Render blocks/shortcodes to get final HTML.
-        $html = do_shortcode( do_blocks( $post->post_content ) );
-
-        $sections = self::sections( $html );
+        $sections = self::sections( Lean_SEO_Content::html( $post ) );
         if ( empty( $sections ) ) {
             return array();
         }

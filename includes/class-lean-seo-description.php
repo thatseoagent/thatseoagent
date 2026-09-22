@@ -103,10 +103,10 @@ class Lean_SEO_Description {
      */
     private static function build( $post ) {
         if ( ! empty( $post->post_excerpt ) ) {
-            return self::truncate( self::to_text( $post->post_excerpt ) );
+            return self::truncate( Lean_SEO_Content::to_text( $post->post_excerpt ) );
         }
 
-        $text = self::to_text( $post->post_content );
+        $text = Lean_SEO_Content::text( $post );
         if ( mb_strlen( $text ) < 20 ) {
             return '';
         }
@@ -149,38 +149,6 @@ class Lean_SEO_Description {
         }
 
         return $description;
-    }
-
-    /**
-     * Convert post content to plain text.
-     *
-     * @since 1.9.0
-     * @param string $content Raw content.
-     * @return string
-     */
-    public static function to_text( $content ) {
-        $content = (string) $content;
-
-        // Render blocks first. Dynamic and self-closing blocks keep their text
-        // inside the delimiter's JSON attributes:
-        //
-        //     <!-- wp:acme/section {"content":"The actual words."} /-->
-        //
-        // Stripping the comment without rendering threw that text away, so any
-        // page built from such blocks produced no description at all.
-        if ( has_blocks( $content ) ) {
-            $content = do_blocks( $content );
-        }
-
-        // Any delimiters left over from static blocks are comments, so
-        // stripping tags later would leave their contents behind.
-        $text = preg_replace( '/<!--\s*\/?wp:\S.*?-->/s', '', $content );
-        $text = strip_shortcodes( $text );
-        $text = wp_strip_all_tags( $text );
-        $text = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
-        $text = preg_replace( '/\s+/', ' ', $text );
-
-        return trim( $text );
     }
 
     /**

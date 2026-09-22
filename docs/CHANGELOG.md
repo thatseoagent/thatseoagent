@@ -1,5 +1,40 @@
 # Changelog
 
+## [1.13.0] - 2026-09-21
+
+Since Gutenberg, `post_content` is not the content — it is a serialization of
+it. Three modules read it three different ways; now one module owns it.
+
+### Added
+- `Lean_SEO_Content` — the single answer to "what is this post's content?".
+  `html()` renders blocks and shortcodes, `text()` reduces that to plain text,
+  `word_count()` counts Unicode words. Rendering is memoised per post, so the
+  block render callbacks run once per request no matter how many callers ask.
+
+### Fixed
+- **The SEO audit was wrong on every block-built post.** It ran its regexes
+  over the raw serialization, where a dynamic block's headings, images and
+  links do not exist yet. On this site's About page:
+
+  ```
+                  before        after
+  words              0            137
+  h2 headings        0              2
+  images             0              1
+  verdict      "thin content"   (accurate)
+  ```
+
+  It reported "no H2 headings", "no images" and "thin content" for a page
+  with 2,359 characters of text, two headings and an image.
+- `Article.wordCount` counted the serialization rather than the rendered text.
+  Unchanged for classic content; correct now for block-built posts.
+
+### Changed
+- `Lean_SEO_Description`, `Lean_SEO_FAQ`, `Lean_SEO_Schema` and
+  `Lean_SEO_Abilities` all read content through `Lean_SEO_Content`. Two
+  character-for-character copies of `count_words()` and a second
+  block-stripping implementation are gone with them.
+
 ## [1.12.3] - 2026-09-21
 
 ### Fixed

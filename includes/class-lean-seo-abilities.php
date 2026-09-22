@@ -373,22 +373,6 @@ class Lean_SEO_Abilities {
     }
 
     /**
-     * Count words in content in a multibyte-safe way.
-     *
-     * str_word_count() only understands ASCII, so accented languages get
-     * wildly wrong counts (and words split at every accent). This counts
-     * runs of Unicode letters/digits instead.
-     *
-     * @param string $content Raw post content.
-     * @return int
-     */
-    private static function count_words( $content ) {
-        $text = wp_strip_all_tags( strip_shortcodes( $content ) );
-
-        return (int) preg_match_all( '/[\p{L}\p{N}]+/u', $text );
-    }
-
-    /**
      * Audit a single post for SEO issues.
      *
      * @param array $input Ability input.
@@ -405,7 +389,9 @@ class Lean_SEO_Abilities {
             return new WP_Error( 'lean_seo_invalid_post_id', __( 'No post exists with that ID.', 'lean-seo' ) );
         }
 
-        $content = $post->post_content;
+        // Rendered, not the raw serialization: the headings, images and links
+        // of a block-built post only exist once the blocks have run.
+        $content = Lean_SEO_Content::html( $post );
         $issues = array();
         $score = 100;
 
@@ -419,7 +405,7 @@ class Lean_SEO_Abilities {
         // Stats
         $title_length = mb_strlen( $title );
         $desc_length  = mb_strlen( $description );
-        $word_count   = self::count_words( $content );
+        $word_count   = Lean_SEO_Content::word_count( $post );
         
         // Count headings
         preg_match_all( '/<h1[^>]*>/i', $content, $h1_matches );
