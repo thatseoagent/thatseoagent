@@ -105,6 +105,7 @@ class Lean_SEO_CLI {
 				'offset'         => $offset,
 				'orderby'        => 'ID',
 				'order'          => 'ASC',
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Selecting posts by the absence of a meta key is the whole point of this command; it runs once from WP-CLI, in batches, not on a page load.
 				'meta_query'     => Lean_SEO_Post_Seo::missing_meta_query( 'description' ),
 				'fields'                 => 'all',
 				'no_found_rows'          => true,

@@ -81,8 +81,8 @@ class Lean_SEO_Meta {
 
         // Article specific
         if (is_singular('post')) {
-            echo '<meta property="article:published_time" content="' . get_the_date('c') . '">' . "\n";
-            echo '<meta property="article:modified_time" content="' . get_the_modified_date('c') . '">' . "\n";
+            echo '<meta property="article:published_time" content="' . esc_attr(get_the_date('c')) . '">' . "\n";
+            echo '<meta property="article:modified_time" content="' . esc_attr(get_the_modified_date('c')) . '">' . "\n";
 
             // article:section — primary category for rich pin categorization
             $primary_category = self::get_primary_category();

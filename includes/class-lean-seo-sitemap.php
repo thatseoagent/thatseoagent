@@ -345,19 +345,25 @@ class Lean_SEO_Sitemap {
     private static function render_taxonomy($taxonomy) {
         $terms = get_terms(array('taxonomy' => $taxonomy, 'hide_empty' => true));
 
-        $urls = array();
-        if (!is_wp_error($terms)) {
-            foreach ($terms as $term) {
-                $link = get_term_link($term);
-                if (is_wp_error($link)) {
-                    continue;
-                }
+        if (is_wp_error($terms) || empty($terms)) {
+            return self::urlset(array());
+        }
 
-                $urls[] = array(
-                    'loc'     => $link,
-                    'lastmod' => self::get_term_post_lastmod($term->term_id, $taxonomy),
-                );
+        // One query for every term's lastmod. Asking per term made this an
+        // N+1: a site with 200 categories ran 200 queries per request.
+        $lastmods = self::get_term_lastmods($taxonomy);
+
+        $urls = array();
+        foreach ($terms as $term) {
+            $link = get_term_link($term);
+            if (is_wp_error($link)) {
+                continue;
             }
+
+            $urls[] = array(
+                'loc'     => $link,
+                'lastmod' => isset($lastmods[$term->term_id]) ? $lastmods[$term->term_id] : null,
+            );
         }
 
         return self::urlset($urls);
@@ -408,61 +414,72 @@ class Lean_SEO_Sitemap {
     }
 
     /**
-     * Get the most recently modified post date for a given term
+     * The latest modified date of a published post in each term of a taxonomy.
+     *
+     * One grouped query for the whole taxonomy, memoised per request. The
+     * previous shape asked per term, which made rendering a taxonomy sitemap
+     * an N+1.
+     *
+     * @since 1.10.2
+     * @param string $taxonomy Taxonomy name.
+     * @return array<int, string> term_id => ISO 8601 date.
      */
-    private static function get_term_post_lastmod($term_id, $taxonomy) {
-        $posts = get_posts(array(
-            'post_type' => 'post',
-            'post_status' => 'publish',
-            'posts_per_page' => 1,
-            'orderby' => 'modified',
-            'order' => 'DESC',
-            'no_found_rows' => true,
-            'update_post_meta_cache' => false,
-            'tax_query' => array(
-                array(
-                    'taxonomy' => $taxonomy,
-                    'terms' => $term_id,
-                ),
-            ),
-        ));
+    private static function get_term_lastmods($taxonomy) {
+        static $cache = array();
 
-        if ($posts) {
-            return get_the_modified_date('c', $posts[0]);
+        if (isset($cache[$taxonomy])) {
+            return $cache[$taxonomy];
         }
 
-        return null;
+        global $wpdb;
+
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        // Direct query on purpose: this replaces one WP_Query per term with a
+        // single grouped read. Results are memoised in $cache for the request,
+        // and a sitemap is fetched rarely enough that a persistent cache would
+        // mostly serve stale lastmod values.
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT tt.term_id AS term_id, MAX(p.post_modified_gmt) AS lastmod
+                 FROM {$wpdb->term_relationships} tr
+                 INNER JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+                 INNER JOIN {$wpdb->posts} p ON p.ID = tr.object_id
+                 WHERE tt.taxonomy = %s
+                   AND p.post_status = 'publish'
+                 GROUP BY tt.term_id",
+                $taxonomy
+            )
+        );
+        // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+        $map = array();
+        foreach ((array) $rows as $row) {
+            if (!empty($row->lastmod)) {
+                $map[(int) $row->term_id] = get_date_from_gmt($row->lastmod, 'c');
+            }
+        }
+
+        $cache[$taxonomy] = $map;
+
+        return $map;
     }
 
     /**
-     * Get the overall latest modified post date across a taxonomy
+     * The most recent modification across a whole taxonomy.
+     *
+     * Reads the map built by get_term_lastmods(), so the index costs no extra
+     * query beyond the one that renders the taxonomy.
+     *
+     * @param string $taxonomy Taxonomy name.
+     * @return string|null
      */
     private static function get_term_latest_modified($taxonomy) {
-        $terms = get_terms(array('taxonomy' => $taxonomy, 'hide_empty' => true, 'fields' => 'ids'));
-        if (empty($terms) || is_wp_error($terms)) {
+        $lastmods = self::get_term_lastmods($taxonomy);
+
+        if (empty($lastmods)) {
             return null;
         }
 
-        $posts = get_posts(array(
-            'post_type' => 'post',
-            'post_status' => 'publish',
-            'posts_per_page' => 1,
-            'orderby' => 'modified',
-            'order' => 'DESC',
-            'no_found_rows' => true,
-            'update_post_meta_cache' => false,
-            'tax_query' => array(
-                array(
-                    'taxonomy' => $taxonomy,
-                    'terms' => $terms,
-                ),
-            ),
-        ));
-
-        if ($posts) {
-            return get_the_modified_date('c', $posts[0]);
-        }
-
-        return null;
+        return max($lastmods);
     }
 }

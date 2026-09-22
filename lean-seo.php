@@ -3,7 +3,7 @@
  * Plugin Name: Lean SEO
  * Plugin URI: https://github.com/Sarai-Chinwag/lean-seo
  * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, and per-post SEO fields. A Yoast replacement that doesn't slow your site down.
- * Version: 1.10.1
+ * Version: 1.10.2
  * Author: Sarai Chinwag
  * Author URI: https://saraichinwag.com
  * License: GPL-2.0+
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('LEAN_SEO_VERSION', '1.10.1');
+define('LEAN_SEO_VERSION', '1.10.2');
 define('LEAN_SEO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LEAN_SEO_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -57,11 +57,17 @@ function lean_seo_load_textdomain() {
 }
 add_action( 'init', 'lean_seo_load_textdomain' );
 
-// Abilities API - check if hook already fired
-if ( did_action( 'wp_abilities_api_init' ) ) {
-    Lean_SEO_Abilities::register();
-} else {
-    add_action('wp_abilities_api_init', array('Lean_SEO_Abilities', 'register'));
+// Abilities API — WordPress 6.9+ only. The plugin's declared minimum stays at
+// 6.0: everything else works there, and on an older WordPress the abilities
+// simply do not register. Without this guard the code is safe only by
+// accident, because the hook below never fires on those versions.
+if ( function_exists( 'wp_register_ability' ) ) {
+    // The hook may already have fired by the time this file loads.
+    if ( did_action( 'wp_abilities_api_init' ) ) {
+        Lean_SEO_Abilities::register();
+    } else {
+        add_action( 'wp_abilities_api_init', array( 'Lean_SEO_Abilities', 'register' ) );
+    }
 }
 
 // Activation hook

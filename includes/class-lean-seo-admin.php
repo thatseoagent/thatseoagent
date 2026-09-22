@@ -274,6 +274,7 @@ class Lean_SEO_Admin {
         $submitted = array();
         foreach (array('title', 'description') as $field) {
             if (isset($_POST['lean_seo_' . $field])) {
+                // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Passed on raw by design: Lean_SEO_Post_Seo::save_from_request() unslashes and sanitizes, and it must receive the still-slashed value to do so correctly. Sanitizing here would double-process it.
                 $submitted[$field] = $_POST['lean_seo_' . $field];
             }
         }

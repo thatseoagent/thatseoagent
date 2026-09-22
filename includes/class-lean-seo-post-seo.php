@@ -207,7 +207,13 @@ class Lean_SEO_Post_Seo {
             return 0;
         }
 
-        return (int) $wpdb->get_var(
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        // Counting rows that lack a meta key has no WP_Query equivalent that
+        // does not load the posts. Deliberately uncached: the only caller is
+        // the WP-CLI command, which runs once and needs a live count to size
+        // its progress bar — a cached number would be wrong the moment the
+        // command starts writing.
+        $count = (int) $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$wpdb->posts} p
                  LEFT JOIN {$wpdb->postmeta} pm
@@ -219,6 +225,9 @@ class Lean_SEO_Post_Seo {
                 $post_type
             )
         );
+        // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+        return $count;
     }
 
     /**

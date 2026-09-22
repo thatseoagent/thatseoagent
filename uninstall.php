@@ -50,7 +50,21 @@ function lean_seo_uninstall_site() {
     wp_unschedule_hook( 'lean_seo_indexnow_submit' );
 }
 
-if ( is_multisite() ) {
+/**
+ * Run the uninstall across every site, or just this one.
+ *
+ * Wrapped in a function so the loop variables stay out of the global scope —
+ * uninstall.php executes at file scope, where a bare $site_id would become a
+ * global.
+ *
+ * @return void
+ */
+function lean_seo_uninstall_all_sites() {
+    if ( ! is_multisite() ) {
+        lean_seo_uninstall_site();
+        return;
+    }
+
     $site_ids = get_sites(
         array(
             'fields'                 => 'ids',
@@ -64,6 +78,6 @@ if ( is_multisite() ) {
         lean_seo_uninstall_site();
         restore_current_blog();
     }
-} else {
-    lean_seo_uninstall_site();
 }
+
+lean_seo_uninstall_all_sites();

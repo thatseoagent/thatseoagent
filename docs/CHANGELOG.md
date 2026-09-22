@@ -1,5 +1,53 @@
 # Changelog
 
+## [1.10.2] - 2026-09-21
+
+Findings from `wp plugin check`. Warnings went from 11 to 2; the two that
+remain are deliberate.
+
+### Fixed
+- `article:published_time` and `article:modified_time` were printed without
+  escaping.
+- **The taxonomy sitemaps ran one query per term** to find each term's last
+  modification. One grouped query now covers the whole taxonomy, memoised per
+  request, and the sitemap index reuses the same map. Rendering
+  `sitemap-categories.xml` dropped from 8 queries to 3 on a site with two
+  categories, and the count no longer grows with the number of terms. Output
+  is unchanged, down to the `lastmod` format.
+- The Abilities API registration is now behind `function_exists(
+  'wp_register_ability' )`. The declared minimum stays at WordPress 6.0:
+  everything except the abilities works there, and previously the code was
+  safe only because `wp_abilities_api_init` never fires on older versions —
+  nothing stated the dependency.
+- `$_SERVER['REQUEST_URI']` is sanitized before use in the IndexNow key-file
+  route.
+- `uninstall.php` no longer leaks `$site_ids` / `$site_id` into the global
+  scope; the multisite loop moved into a function.
+
+### Notes on the remaining plugin-check output
+
+Four findings are left standing on purpose:
+
+- **`load_plugin_textdomain()` discouraged** — the tool's advice assumes the
+  plugin is hosted on WordPress.org, where translations arrive automatically.
+  This one is not, so removing the call would break the bundled Spanish
+  translation.
+- **`wp_register_ability()` requires WP 6.9** — the call is guarded by
+  `function_exists()`; static analysis cannot see that. Raising `Requires at
+  least` to 6.9 would lock out WordPress 6.0–6.8, where every other feature
+  works.
+- **`.gitignore` is a hidden file** — a packaging rule for the WordPress.org
+  zip. It belongs in the repository.
+- **`readme.txt` headers (`Tested up to`, `License`, `Stable tag`)** — the
+  plugin is distributed outside the directory, so `README.md` is the
+  canonical documentation.
+
+Two more are documented inline with `phpcs:ignore` and a reason: the meta box
+passes raw `$_POST` to `Lean_SEO_Post_Seo::save_from_request()`, which must
+receive still-slashed values to unslash them correctly; and
+`Lean_SEO_Post_Seo::count_missing()` is a deliberately uncached direct query
+whose only caller is the WP-CLI command.
+
 ## [1.10.1] - 2026-09-21
 
 Abilities API verification pass, run against the live WordPress 7.1.1 install.

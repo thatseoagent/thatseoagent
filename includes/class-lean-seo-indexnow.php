@@ -67,7 +67,9 @@ class Lean_SEO_IndexNow {
 			return;
 		}
 
-		$requested = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$requested = isset( $_SERVER['REQUEST_URI'] )
+			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+			: '';
 		$requested = (string) wp_parse_url( $requested, PHP_URL_PATH );
 		$expected  = (string) wp_parse_url( self::get_key_location( $key ), PHP_URL_PATH );
 
