@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.10.1] - 2026-09-21
+
+Abilities API verification pass, run against the live WordPress 7.1.1 install.
+
+### Added
+- Semantic annotations on all five abilities, under `meta.annotations`. The
+  four reads declare `readonly: true, destructive: false, idempotent: true`;
+  `update-post-seo` declares `readonly: false, destructive: false,
+  idempotent: true`.
+
+  This is not cosmetic. The Abilities REST run controller routes by
+  annotation: with `readonly` unset, all five abilities were routed as POST,
+  including the four that only read, and an agent introspecting them could
+  not tell `get-post-seo` apart from `update-post-seo`. They now route as
+  GET, GET, GET, GET and POST.
+
+  The reads were adversarially confirmed write-free before the annotation was
+  added — executed with `postmeta`, `options` and cron row counts taken
+  before and after, all unchanged — so `readonly: true` is a verified claim,
+  not an assumption.
+- `additionalProperties: false` on all five input schemas. A misspelled key
+  (`post-id` for `post_id`) was previously accepted and fell through to a
+  callback that saw no ID; it is now rejected at validation with
+  `ability_invalid_input`.
+- `default => (object) array()` on `get-sitemap-urls`, the documented
+  hardening for zero-argument abilities on the indirect-invocation path.
+
+### Changed
+- `lean_seo_post_not_found` folded into `lean_seo_invalid_post_id`. The
+  Abilities error-code vocabulary has no "not found" category: an ID that
+  resolves to no post is a semantically wrong field value, which agents
+  handle the same way — correct the value and retry. The distinct message
+  ("No post exists with that ID.") keeps the information a human needs.
+
 ## [1.10.0] - 2026-09-21
 
 Structured data audit against Google's requirements, run on live pages.

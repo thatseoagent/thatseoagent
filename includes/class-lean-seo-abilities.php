@@ -24,9 +24,20 @@ class Lean_SEO_Abilities {
                 'category'            => 'site',
                 'execute_callback'    => array( __CLASS__, 'get_sitemap_urls' ),
                 'permission_callback' => array( __CLASS__, 'can_view_sitemaps' ),
+                'meta'                => array(
+                    'annotations' => array(
+                        'readonly'    => true,
+                        'destructive' => false,
+                        'idempotent'  => true,
+                    ),
+                ),
                 'input_schema'        => array(
-                    'type'       => 'object',
-                    'properties' => array(),
+                    'type'                 => 'object',
+                    'properties'           => array(),
+                    'additionalProperties' => false,
+                    // Hardening for the indirect-invocation path, which is
+                    // stricter than direct invocation about a zero-arg call.
+                    'default'              => (object) array(),
                 ),
                 'output_schema'       => array(
                     'type'  => 'array',
@@ -45,8 +56,16 @@ class Lean_SEO_Abilities {
                 'category'            => 'site',
                 'execute_callback'    => array( __CLASS__, 'get_post_seo' ),
                 'permission_callback' => array( __CLASS__, 'can_edit_post' ),
+                'meta'                => array(
+                    'annotations' => array(
+                        'readonly'    => true,
+                        'destructive' => false,
+                        'idempotent'  => true,
+                    ),
+                ),
                 'input_schema'        => array(
                     'type'       => 'object',
+                    'additionalProperties' => false,
                     'properties' => array(
                         'post_id' => array(
                             'type'        => 'integer',
@@ -82,8 +101,16 @@ class Lean_SEO_Abilities {
                 'category'            => 'site',
                 'execute_callback'    => array( __CLASS__, 'audit_post_seo' ),
                 'permission_callback' => array( __CLASS__, 'can_edit_post' ),
+                'meta'                => array(
+                    'annotations' => array(
+                        'readonly'    => true,
+                        'destructive' => false,
+                        'idempotent'  => true,
+                    ),
+                ),
                 'input_schema'        => array(
                     'type'       => 'object',
+                    'additionalProperties' => false,
                     'properties' => array(
                         'post_id' => array(
                             'type'        => 'integer',
@@ -138,8 +165,16 @@ class Lean_SEO_Abilities {
                 'category'            => 'site',
                 'execute_callback'    => array( __CLASS__, 'scan_seo_issues' ),
                 'permission_callback' => array( __CLASS__, 'can_view_sitemaps' ),
+                'meta'                => array(
+                    'annotations' => array(
+                        'readonly'    => true,
+                        'destructive' => false,
+                        'idempotent'  => true,
+                    ),
+                ),
                 'input_schema'        => array(
                     'type'       => 'object',
+                    'additionalProperties' => false,
                     'properties' => array(
                         'limit' => array(
                             'type'        => 'integer',
@@ -178,8 +213,21 @@ class Lean_SEO_Abilities {
                 'category'            => 'site',
                 'execute_callback'    => array( __CLASS__, 'update_post_seo' ),
                 'permission_callback' => array( __CLASS__, 'can_edit_post' ),
+                'meta'                => array(
+                    'annotations' => array(
+                        // Writes post meta, so not readonly. Not destructive:
+                        // fields are updated, and an empty string clears one
+                        // field rather than destroying a record. Idempotent:
+                        // repeat calls with the same input write the same
+                        // values with no accumulating effect.
+                        'readonly'    => false,
+                        'destructive' => false,
+                        'idempotent'  => true,
+                    ),
+                ),
                 'input_schema'        => array(
                     'type'       => 'object',
+                    'additionalProperties' => false,
                     'properties' => array(
                         'post_id' => array(
                             'type'        => 'integer',
@@ -274,7 +322,7 @@ class Lean_SEO_Abilities {
 
         $post = get_post( $post_id );
         if ( ! $post ) {
-            return new WP_Error( 'lean_seo_post_not_found', __( 'Post not found.', 'lean-seo' ) );
+            return new WP_Error( 'lean_seo_invalid_post_id', __( 'No post exists with that ID.', 'lean-seo' ) );
         }
 
         $custom            = Lean_SEO_Post_Seo::all( $post );
@@ -309,7 +357,7 @@ class Lean_SEO_Abilities {
 
         $post = get_post( $post_id );
         if ( ! $post ) {
-            return new WP_Error( 'lean_seo_post_not_found', __( 'Post not found.', 'lean-seo' ) );
+            return new WP_Error( 'lean_seo_invalid_post_id', __( 'No post exists with that ID.', 'lean-seo' ) );
         }
 
         $values = array();
@@ -354,7 +402,7 @@ class Lean_SEO_Abilities {
 
         $post = get_post( $post_id );
         if ( ! $post ) {
-            return new WP_Error( 'lean_seo_post_not_found', __( 'Post not found.', 'lean-seo' ) );
+            return new WP_Error( 'lean_seo_invalid_post_id', __( 'No post exists with that ID.', 'lean-seo' ) );
         }
 
         $content = $post->post_content;
