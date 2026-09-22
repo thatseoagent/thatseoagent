@@ -147,10 +147,45 @@ class Lean_SEO_Admin {
     }
 
     /**
+     * Post types that get the SEO meta box and the registered meta fields.
+     *
+     * Defaults to every post type with an editing screen. The rest of the
+     * plugin already treats custom post types as first-class — they appear in
+     * the sitemap, they get WebPage and BreadcrumbList schema, and a stored
+     * `_lean_seo_description` is honoured on the front end for any post type
+     * — so limiting the editing UI to posts and pages (the default before
+     * 1.12.0) left no way to enter the values the plugin was already reading.
+     *
+     * Attachments are excluded: the media modal has no meta box.
+     *
+     * @since 1.12.0
+     * @return array<int, string>
+     */
+    public static function get_meta_box_post_types() {
+        $post_types = get_post_types(
+            array(
+                'public'  => true,
+                'show_ui' => true,
+            ),
+            'names'
+        );
+
+        unset( $post_types['attachment'] );
+
+        /**
+         * Filter the post types that get the SEO meta box.
+         *
+         * @since 1.0.0
+         * @param array<int, string> $post_types Post type names.
+         */
+        return (array) apply_filters( 'lean_seo_meta_box_post_types', array_values( $post_types ) );
+    }
+
+    /**
      * Add meta box
      */
     public static function add_meta_box() {
-        $post_types = apply_filters('lean_seo_meta_box_post_types', array('post', 'page'));
+        $post_types = self::get_meta_box_post_types();
         
         add_meta_box(
             'lean_seo_meta',

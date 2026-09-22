@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.12.0] - 2026-09-21
+
+### Changed
+- **The SEO meta box now appears on every post type with an editing screen**,
+  not just posts and pages. The rest of the plugin already treated custom post
+  types as first-class — they appear in the sitemap, they get WebPage and
+  BreadcrumbList schema, and a stored `_lean_seo_description` was honoured on
+  the front end for any post type — so the old default left no way to enter
+  values the plugin was already reading. Attachments are excluded.
+
+  The `lean_seo_meta_box_post_types` filter still governs the list, so a post
+  type can be removed:
+
+      add_filter( 'lean_seo_meta_box_post_types', function ( $types ) {
+          return array_diff( $types, array( 'producto' ) );
+      } );
+
+- The registered REST meta fields follow the same list, so custom post types
+  get `_lean_seo_title` and `_lean_seo_description` in the REST API too.
+
+### Fixed
+- **A custom SEO title no longer gets the site name appended to it.** The
+  field replaced only the *title part* of the document title, so WordPress
+  still added the site name afterwards: a title of "Product | Acme" was
+  emitted as `Product | Acme | Acme`, in `<title>` and in `og:title`. It now
+  replaces the document title outright.
+
+  This is the same class of bug as the meta-box description preview fixed in
+  1.9.0 — the preview showed the title verbatim while the front end emitted
+  something else. Preview, `<title>` and `og:title` now agree.
+
+  Precedence is unchanged: the Homepage SEO settings still win on the front
+  page, and a post with no custom title still gets WordPress's own title with
+  the site name appended.
+
+### Removed
+- `Lean_SEO::filter_title_parts()` and its `document_title_parts` hook. With
+  the title short-circuited at `pre_get_document_title`, the callback was
+  unreachable whenever it had work to do and a no-op otherwise.
+
 ## [1.11.0] - 2026-09-21
 
 ### Changed

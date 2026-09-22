@@ -54,7 +54,6 @@ class Lean_SEO {
     private function init_hooks() {
         // Meta tags
         add_filter('pre_get_document_title', array($this, 'filter_document_title'), 10);
-        add_filter('document_title_parts', array($this, 'filter_title_parts'), 10);
         add_filter('document_title_separator', array($this, 'title_separator'));
         add_action('wp_head', array($this, 'output_meta_tags'), 1);
         add_action('wp_head', array($this, 'output_canonical'), 1);
@@ -179,19 +178,22 @@ class Lean_SEO {
          */
         $override = apply_filters('lean_seo_document_title', '', Lean_SEO_Meta::get_context());
 
-        return $override !== '' ? $override : $title;
-    }
+        if ('' !== $override) {
+            return $override;
+        }
 
-    /**
-     * Filter document title parts
-     */
-    public function filter_title_parts($title) {
+        // A custom SEO title replaces the document title outright, rather
+        // than only its title part. The field is the full title a site owner
+        // wants in search results — it is what the meta box preview shows
+        // verbatim — and before 1.12.0 WordPress still appended the site name
+        // after it, so "Product | Acme" went out as "Product | Acme | Acme".
         if (is_singular()) {
             $custom_title = Lean_SEO_Post_Seo::get(get_post(), 'title');
             if ($custom_title) {
-                $title['title'] = $custom_title;
+                return $custom_title;
             }
         }
+
         return $title;
     }
 
@@ -239,9 +241,7 @@ class Lean_SEO {
      * @since 1.9.0 Field definitions moved to Lean_SEO_Post_Seo.
      */
     public function register_meta_fields() {
-        $post_types = apply_filters('lean_seo_meta_box_post_types', array('post', 'page'));
-
-        Lean_SEO_Post_Seo::register_meta((array) $post_types);
+        Lean_SEO_Post_Seo::register_meta(Lean_SEO_Admin::get_meta_box_post_types());
     }
 
     /**
