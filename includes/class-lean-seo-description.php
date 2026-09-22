@@ -80,6 +80,28 @@ class Lean_SEO_Description {
             return '';
         }
 
+        // Memoised per post: rendering blocks is the expensive part, and the
+        // meta tags and the JSON-LD graph each ask for the description
+        // separately during one request.
+        static $cache = array();
+
+        if ( isset( $cache[ $post->ID ] ) ) {
+            return $cache[ $post->ID ];
+        }
+
+        $cache[ $post->ID ] = self::build( $post );
+
+        return $cache[ $post->ID ];
+    }
+
+    /**
+     * Build the description for a post, without memoisation.
+     *
+     * @since 1.12.3
+     * @param WP_Post $post Post object.
+     * @return string
+     */
+    private static function build( $post ) {
         if ( ! empty( $post->post_excerpt ) ) {
             return self::truncate( self::to_text( $post->post_excerpt ) );
         }
@@ -137,9 +159,22 @@ class Lean_SEO_Description {
      * @return string
      */
     public static function to_text( $content ) {
-        // Block delimiters first: they are comments, so stripping tags later
-        // would leave their contents behind.
-        $text = preg_replace( '/<!--\s*\/?wp:\S.*?-->/s', '', (string) $content );
+        $content = (string) $content;
+
+        // Render blocks first. Dynamic and self-closing blocks keep their text
+        // inside the delimiter's JSON attributes:
+        //
+        //     <!-- wp:acme/section {"content":"The actual words."} /-->
+        //
+        // Stripping the comment without rendering threw that text away, so any
+        // page built from such blocks produced no description at all.
+        if ( has_blocks( $content ) ) {
+            $content = do_blocks( $content );
+        }
+
+        // Any delimiters left over from static blocks are comments, so
+        // stripping tags later would leave their contents behind.
+        $text = preg_replace( '/<!--\s*\/?wp:\S.*?-->/s', '', $content );
         $text = strip_shortcodes( $text );
         $text = wp_strip_all_tags( $text );
         $text = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );

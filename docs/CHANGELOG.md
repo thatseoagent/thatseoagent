@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.12.3] - 2026-09-21
+
+### Fixed
+- **Pages built from dynamic blocks produced no description at all.**
+  `Lean_SEO_Description::to_text()` stripped block delimiters before anything
+  rendered them, but a self-closing dynamic block keeps its text inside the
+  delimiter's own attributes:
+
+      <!-- wp:acme/section {"content":"The actual words."} /-->
+
+  Everything the block would have rendered went out with the comment, leaving
+  zero characters, an empty description, and — where the site has no tagline
+  to fall back on — no `<meta name="description">` on the page at all. On the
+  site this was found on, all seven content pages were affected.
+
+  `to_text()` now runs `do_blocks()` when the content has blocks, matching
+  what `Lean_SEO_FAQ` already did. The two modules previously disagreed about
+  what "the post's content" means.
+
+- The generated description is memoised per post. Rendering blocks is the
+  expensive part and the meta tags and the JSON-LD graph each ask for the
+  description separately during a single request: 0.67 ms for a
+  block-built page, now paid once instead of twice.
+
 ## [1.12.2] - 2026-09-21
 
 ### Fixed
