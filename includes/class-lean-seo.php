@@ -265,7 +265,11 @@ class Lean_SEO {
         }
 
         flush_rewrite_rules();
-        update_option('lean_seo_rewrite_version', LEAN_SEO_VERSION, false);
+
+        // Autoloaded on purpose: this runs on every init, and a
+        // non-autoloaded option costs one query per request forever to read a
+        // short version string that changes once per release.
+        update_option('lean_seo_rewrite_version', LEAN_SEO_VERSION, true);
     }
 
     /**

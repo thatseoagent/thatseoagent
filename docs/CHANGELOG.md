@@ -1,5 +1,42 @@
 # Changelog
 
+## [1.10.3] - 2026-09-21
+
+Profiling pass. Three of the queries the plugin added to every front-end
+request were avoidable; they are gone.
+
+### Fixed
+- `lean_seo_rewrite_version` is now autoloaded. It is read on every `init` by
+  `maybe_flush_rewrite_rules()`, and storing it with `autoload = false`
+  (1.7.1) cost one query on every request — front end and admin — to read a
+  short version string that changes once per release.
+- The IndexNow key-file route tests the request path before reading any
+  option. It ran on every front-end request and read the key option (plus the
+  legacy theme option when the key was empty, which is the common case)
+  *before* checking whether the URL could even be a key file: two queries per
+  request on every site, including those that never configured IndexNow. The
+  path shape — `<8-128 chars from [a-zA-Z0-9-]>.txt` — is now tested first.
+
+### Measured
+
+Queries attributable to the plugin on a single-post render, object cache
+cold, `alloptions` excluded:
+
+```
+before   12   (10 measured + 2 IndexNow, which WP-CLI short-circuits)
+after     9
+```
+
+The nine that remain are the post and its meta, the featured image and its
+meta, the post's terms, `site_logo`, and the two plugin options that do not
+exist yet. Those last two — `lean_seo_identity` and `lean_seo_schema` — cost
+one query each only while unconfigured: WordPress stores new options with
+`autoload = auto`, so both join `alloptions` and become free as soon as the
+settings are saved.
+
+Wall-clock cost of the plugin's `wp_head` callbacks, averaged over 20 runs:
+`Meta::output` 0.96 ms, `Schema::output` 0.49 ms, `output_canonical` 0.02 ms.
+
 ## [1.10.2] - 2026-09-21
 
 Findings from `wp plugin check`. Warnings went from 11 to 2; the two that

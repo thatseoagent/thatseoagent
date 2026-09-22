@@ -62,18 +62,32 @@ class Lean_SEO_IndexNow {
 			return;
 		}
 
+		$requested = isset( $_SERVER['REQUEST_URI'] )
+			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
+			: '';
+		$requested = untrailingslashit( (string) wp_parse_url( $requested, PHP_URL_PATH ) );
+
+		if ( '' === $requested ) {
+			return;
+		}
+
+		// Shape test before any option read. This callback runs on every
+		// front-end request, and reading the key first cost two queries on
+		// each one — on sites that never configured IndexNow as much as on
+		// those that did. An IndexNow key file is always "<key>.txt" with a
+		// key of 8-128 characters from [a-zA-Z0-9-].
+		if ( ! preg_match( '#/[a-zA-Z0-9-]{8,128}\.txt$#', $requested ) ) {
+			return;
+		}
+
 		$key = self::get_api_key();
 		if ( '' === $key ) {
 			return;
 		}
 
-		$requested = isset( $_SERVER['REQUEST_URI'] )
-			? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) )
-			: '';
-		$requested = (string) wp_parse_url( $requested, PHP_URL_PATH );
-		$expected  = (string) wp_parse_url( self::get_key_location( $key ), PHP_URL_PATH );
+		$expected = untrailingslashit( (string) wp_parse_url( self::get_key_location( $key ), PHP_URL_PATH ) );
 
-		if ( '' === $requested || untrailingslashit( $requested ) !== untrailingslashit( $expected ) ) {
+		if ( $requested !== $expected ) {
 			return;
 		}
 
