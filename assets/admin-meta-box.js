@@ -11,7 +11,11 @@ jQuery( function ( $ ) {
 
 	function updatePreview() {
 		var title = $( '#lean_seo_title' ).val() || $( '#lean_seo_title' ).attr( 'placeholder' );
-		var desc = $( '#lean_seo_description' ).val() || $( '#lean_seo_description' ).attr( 'placeholder' );
+		// Fall back to the description the front end would emit, not to the
+		// field's instruction text — the preview is meant to show what lands
+		// in search results.
+		var $desc = $( '#lean_seo_description' );
+		var desc = $desc.val() || $desc.attr( 'data-lean-seo-generated' ) || $desc.attr( 'placeholder' );
 		$( '#preview-title' ).text( title );
 		$( '#preview-desc' ).text( desc );
 	}

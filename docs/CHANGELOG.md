@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.12.2] - 2026-09-21
+
+### Fixed
+- **The search preview showed the field's instruction text instead of the
+  description.** The server rendered the real generated description into the
+  preview, but the script ran `updatePreview()` on load and replaced it with
+  the textarea's placeholder — "Leave blank to auto-generate from content..."
+  — whenever the field was empty, which is the common case. The generated
+  value now travels to the script in a `data-lean-seo-generated` attribute and
+  is used as the fallback, so the preview shows what search results will
+  actually show. Affected posts and pages as well as custom post types.
+
 ## [1.12.1] - 2026-09-21
 
 ### Fixed

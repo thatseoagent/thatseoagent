@@ -270,6 +270,7 @@ class Lean_SEO_Admin {
                 rows="3" 
                 maxlength="160"
                 placeholder="<?php esc_attr_e( 'Leave blank to auto-generate from content...', 'lean-seo' ); ?>"
+                data-lean-seo-generated="<?php echo esc_attr( Lean_SEO_Description::for_post( $post ) ); ?>"
             ><?php echo esc_textarea($seo_desc); ?></textarea>
             <p class="description"><?php esc_html_e( 'Recommended: 150-160 characters. This appears in search results.', 'lean-seo' ); ?></p>
         </div>
