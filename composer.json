@@ -1,0 +1,43 @@
+{
+    "name": "sarai-chinwag/lean-seo",
+    "description": "Lightweight SEO without the bloat.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=7.4",
+        "league/html-to-markdown": "^5.1.2"
+    },
+    "require-dev": {
+        "brianhenryie/strauss": "^0.30.0"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.33"
+        }
+    },
+    "extra": {
+        "strauss": {
+            "target_directory": "vendor-prefixed",
+            "namespace_prefix": "Lean_SEO\\Dependencies\\",
+            "classmap_prefix": "Lean_SEO_Dependencies_",
+            "constant_prefix": "LEAN_SEO_DEPENDENCIES_",
+            "delete_vendor_packages": true,
+            "exclude_from_copy": {
+                "file_patterns": [
+                    "#^league/html-to-markdown/(?!src/|LICENSE$)#"
+                ]
+            }
+        }
+    },
+    "scripts": {
+        "prefix-namespaces": [
+            "@php vendor/bin/strauss"
+        ],
+        "post-install-cmd": [
+            "@prefix-namespaces"
+        ],
+        "post-update-cmd": [
+            "@prefix-namespaces"
+        ]
+    }
+}

@@ -4,7 +4,7 @@ Lightweight SEO for WordPress — no bloat, no upsells, just what you need.
 
 ## Description
 
-Essential SEO without the weight: meta tags, Open Graph, Twitter Cards, XML sitemaps, Schema/JSON-LD, canonical URLs, per-post SEO fields with live preview, and IndexNow submission.
+Essential SEO without the weight: meta tags, Open Graph, Twitter Cards, XML sitemaps, Schema/JSON-LD, canonical URLs, per-post SEO fields with live preview, IndexNow submission, and a Markdown version of every post for AI agents.
 
 ## Requirements
 
@@ -30,6 +30,7 @@ Zero configuration required — activate and it works. Settings live under **Set
 - **Site identity** — declare whether the site represents a Person or an Organization
 - **Homepage SEO** — custom title/description with `%%sitename%%`, `%%tagline%%`, `%%sep%%`
 - **IndexNow** — notify Bing/Yandex on publish (opt-in: no key, no requests)
+- **Markdown for AI agents** — any post or page at its URL plus `.md`, with YAML frontmatter
 - **WP-CLI** — bulk-generate missing meta descriptions
 
 ## Sitemaps
@@ -45,6 +46,25 @@ Zero configuration required — activate and it works. Settings live under **Set
 
 `sitemap_index.xml` redirects to the index for Yoast compatibility, and the plugin rewrites the `Sitemap:` directive in `robots.txt`.
 
+## Markdown for AI agents
+
+Append `.md` to the URL of any published post or page:
+
+```bash
+curl https://example.com/my-post.md
+curl https://example.com/about/team.md        # hierarchical pages
+curl https://example.com/2026/02/my-post.md   # any permalink structure
+```
+
+An agent fetching the HTML pays for the navigation, sidebar, footer and scripts; the Markdown is only the content, typically 80–99% fewer tokens. The frontmatter carries the title, dates, author, permalink, excerpt, the same description the meta tags use, categories, tags and featured image.
+
+- `X-Robots-Tag: noindex` and a canonical `Link` header keep search engines on the HTML page.
+- `Last-Modified` is sent and `If-Modified-Since` answered with `304`.
+- Private, draft and password-protected posts follow the same rules as the HTML page.
+- Cached in a transient per post (object-cache aware), invalidated when the post, its terms or its meta change. Needs pretty permalinks.
+
+See [docs/markdown](docs/markdown/) for the details.
+
 ## Privacy
 
 The plugin sends no data anywhere **unless you configure an IndexNow API key**. With a key set, publishing or updating a post queues a background request to `https://api.indexnow.org/indexnow` containing your site host, the key, and the URL of the post. Clearing the key stops all outbound requests. The plugin also serves the `{key}.txt` verification file IndexNow requires.
@@ -57,12 +77,16 @@ The plugin sends no data anywhere **unless you configure an IndexNow API key**. 
 | `Lean_SEO_Meta` | `<head>` meta tags and canonical |
 | `Lean_SEO_Schema` | JSON-LD graph |
 | `Lean_SEO_FAQ` | Reads content into sections; FAQ extraction |
+| `Lean_SEO_Content` | The single answer to "what is this post's content?" |
 | `Lean_SEO_Description` | The single answer to "what description does this post get?" |
 | `Lean_SEO_Post_Seo` | Per-post SEO field storage, sanitization and slashing |
 | `Lean_SEO_Sitemap` | Sitemap rendering (returns XML strings) |
 | `Lean_SEO_Identity` | Site identity settings + schema applier |
 | `Lean_SEO_Homepage` | Homepage title/description settings + applier |
 | `Lean_SEO_IndexNow` | IndexNow key, verification file and submission |
+| `Lean_SEO_Markdown` | A post as Markdown with YAML frontmatter |
+| `Lean_SEO_Markdown_Endpoint` | The `.md` URLs |
+| `Lean_SEO_Markdown_Cache` | Per-post Markdown cache and its invalidation |
 | `Lean_SEO_Admin` | Settings page and meta box |
 | `Lean_SEO_Abilities` | Abilities API registration |
 | `Lean_SEO_CLI` | WP-CLI commands |
@@ -107,6 +131,19 @@ Both FAQ opt-ins are off by default: they synthesise questions that do not appea
 **Sitemaps and admin**
 
 `lean_seo_sitemap_entries` (the index listing) · `lean_seo_meta_box_post_types` · action `lean_seo_sitemap_index`
+
+**Markdown**
+
+| Filter | Purpose |
+|--------|---------|
+| `lean_seo_markdown_post_types` | Post types served as Markdown (default `post`, `page`) |
+| `lean_seo_markdown_frontmatter` | The frontmatter fields |
+| `lean_seo_markdown_html` | The HTML converted to Markdown (page builders) |
+| `lean_seo_markdown_include_custom_fields` | Opt in to custom fields in the frontmatter (off) |
+| `lean_seo_markdown_custom_fields` | The custom fields included |
+| `lean_seo_markdown_cache_duration` | Cache lifetime in seconds (default one hour) |
+
+Custom fields are off by default: post meta not registered with `show_in_rest` is not public, and plugins routinely keep private data in it.
 
 ## Examples
 
@@ -156,6 +193,15 @@ wp lean-seo generate-descriptions [--post-type=post] [--batch-size=50] [--limit=
 ```
 
 Writes a meta description for published posts that lack one, using the same rule the front end applies.
+
+## Development
+
+The HTML-to-Markdown library, `league/html-to-markdown`, ships in `vendor-prefixed/` with its namespace rewritten to `Lean_SEO\Dependencies\` by [Strauss](https://github.com/BrianHenryIE/strauss), so another plugin loading its own copy cannot conflict. `vendor-prefixed/` is committed; installing the plugin needs no Composer. To update the library:
+
+```bash
+composer update league/html-to-markdown   # Strauss runs on post-update-cmd
+git add vendor-prefixed/ composer.lock
+```
 
 ## Translations
 

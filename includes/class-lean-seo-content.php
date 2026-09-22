@@ -52,8 +52,13 @@ class Lean_SEO_Content {
 
         $content = (string) $post->post_content;
 
+        // Same order as core's `the_content`: blocks, or paragraphs for
+        // classic content, then shortcodes. Without wpautop a classic post's
+        // paragraphs are bare newlines, which the Markdown export collapses.
         if ( has_blocks( $content ) ) {
             $content = do_blocks( $content );
+        } else {
+            $content = shortcode_unautop( wpautop( $content ) );
         }
 
         $cache[ $post->ID ] = do_shortcode( $content );

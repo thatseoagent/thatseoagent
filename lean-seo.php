@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Lean SEO
  * Plugin URI: https://github.com/Sarai-Chinwag/lean-seo
- * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, and per-post SEO fields. A Yoast replacement that doesn't slow your site down.
- * Version: 1.13.0
+ * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, per-post SEO fields, and Markdown for AI agents. A Yoast replacement that doesn't slow your site down.
+ * Version: 1.14.0
  * Author: Sarai Chinwag
  * Author URI: https://saraichinwag.com
  * License: GPL-2.0+
@@ -22,9 +22,12 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('LEAN_SEO_VERSION', '1.13.0');
+define('LEAN_SEO_VERSION', '1.14.0');
 define('LEAN_SEO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LEAN_SEO_PLUGIN_URL', plugin_dir_url(__FILE__));
+
+// Third-party libraries, namespaced under Lean_SEO\Dependencies by Strauss.
+require_once LEAN_SEO_PLUGIN_DIR . 'vendor-prefixed/autoload.php';
 
 // Loaded at file scope: the abilities and WP-CLI modules are required below,
 // before Lean_SEO boots on plugins_loaded, and all three need it.
@@ -96,7 +99,16 @@ function lean_seo_deactivate() {
     // with the plugin and WP-Cron would keep retrying a missing hook.
     wp_unschedule_hook('lean_seo_indexnow_submit');
 
-    flush_rewrite_rules();
+    // Not flush_rewrite_rules(): `init` already ran in this request, so the
+    // sitemap and .md rules are registered and a flush would persist them —
+    // /sitemap.xml and /post.md would keep routing to a plugin that is gone.
+    // Deleting the option makes WordPress rebuild the rules on the next
+    // request, without them.
+    delete_option('rewrite_rules');
+
+    if (class_exists('Lean_SEO_Markdown_Cache')) {
+        Lean_SEO_Markdown_Cache::purge_all();
+    }
 }
 
 // WP-CLI commands.

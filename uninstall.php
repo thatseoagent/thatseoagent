@@ -26,6 +26,7 @@ const LEAN_SEO_UNINSTALL_OPTIONS = array(
     'lean_seo_homepage',
     'lean_seo_indexnow_key',
     'lean_seo_rewrite_version',
+    'lean_seo_markdown_cache_version',
 );
 
 // The meta keys are owned by Lean_SEO_Post_Seo. Loading the file (it needs

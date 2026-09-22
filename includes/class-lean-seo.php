@@ -46,6 +46,9 @@ class Lean_SEO {
         require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-admin.php';
         require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-identity.php';
         require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-homepage.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-markdown.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-markdown-cache.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-markdown-endpoint.php';
     }
 
     /**
@@ -73,6 +76,10 @@ class Lean_SEO {
 
         // Disable canonical redirects for sitemap URLs to prevent redirect chains
         add_filter('redirect_canonical', array($this, 'disable_sitemap_redirect'), 10, 2);
+
+        // Markdown for AI agents at post URL + .md
+        Lean_SEO_Markdown_Endpoint::register();
+        Lean_SEO_Markdown_Cache::register();
 
         // Admin
         if (is_admin()) {

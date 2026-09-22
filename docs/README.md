@@ -13,6 +13,7 @@ The plugin is designed to be developer-friendly with clean, hookable code and no
 - **XML Sitemaps**: Auto-generated, paginated sitemaps for posts, pages, categories, and tags
 - **Canonical URLs**: Proper canonicalization to prevent duplicate content issues
 - **Per-Post SEO**: Custom title and description fields with live preview in the admin
+- **Markdown for AI Agents**: Every post and page at its URL plus `.md`, with YAML frontmatter
 - **Developer Hooks**: Extensive filters and actions for customization
 
 ## Installation
@@ -42,6 +43,7 @@ This documentation is organized by feature area:
 - [Schema Markup](schema-markup/) - JSON-LD structured data implementation
 - [XML Sitemaps](xml-sitemaps/) - Sitemap generation and customization
 - [Admin Interface](admin-interface/) - Per-post SEO fields and admin functionality
+- [Markdown](markdown/) - Markdown versions of posts for AI agents
 
 ## Quick Start
 

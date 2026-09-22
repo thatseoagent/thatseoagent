@@ -1,5 +1,48 @@
 # Changelog
 
+## [1.14.0] - 2026-09-22
+
+Every post and page is now also available as Markdown, for AI agents, at its
+URL plus `.md`. Merged from the Content Negotiation for AI plugin.
+
+### Added
+- **Markdown for AI agents.** `/my-post.md` serves the post as Markdown with a
+  YAML frontmatter: title, dates, author, permalink, excerpt, description,
+  categories, tags and featured image. An agent reading it skips the
+  navigation, sidebar, footer and scripts — typically 80–99% fewer tokens.
+  - `Lean_SEO_Markdown_Endpoint` resolves the path with `url_to_postid()`, so
+    it works with any permalink structure, and answers on `parse_request`,
+    before the main query runs.
+  - `Lean_SEO_Markdown` builds the Markdown from `Lean_SEO_Content::html()`
+    and takes the description from `Lean_SEO_Description::for_post()`: the
+    Markdown says what the page and its meta tags say.
+  - `Lean_SEO_Markdown_Cache` keeps one transient per post, invalidated when
+    the post, its terms or its meta change, and purged entirely when a term or
+    an author is renamed.
+  - Responses send `X-Robots-Tag: noindex` and a canonical `Link` header, so
+    search engines keep indexing the HTML, plus `Last-Modified`; a matching
+    `If-Modified-Since` gets `304`.
+  - Filters: `lean_seo_markdown_post_types`, `lean_seo_markdown_frontmatter`,
+    `lean_seo_markdown_html`, `lean_seo_markdown_include_custom_fields`,
+    `lean_seo_markdown_custom_fields`, `lean_seo_markdown_cache_duration`.
+- `league/html-to-markdown`, bundled in `vendor-prefixed/` under the
+  `Lean_SEO\Dependencies\` namespace by Strauss, so a plugin loading its own
+  copy cannot conflict. Installing the plugin still needs no Composer.
+
+### Fixed
+- **Deactivating left the sitemap routes behind.** The deactivation hook
+  called `flush_rewrite_rules()`, but `init` had already registered the
+  plugin's rules in that same request, so the flush saved them again and
+  `/sitemap.xml` kept routing to a plugin that was no longer running. It now
+  deletes the stored rules, and WordPress rebuilds them without the plugin on
+  the next request.
+- `Lean_SEO_Content::html()` did not run `wpautop()` on classic content, so a
+  classic post's paragraphs were bare newlines. Descriptions and word counts
+  are unchanged — plain text collapses whitespace anyway — but the HTML the
+  audit and the FAQ extractor read now has its `<p>` tags, as on the page.
+- The translation template was missing strings added since 1.9.0; the Spanish
+  translation now covers "No post exists with that ID." too.
+
 ## [1.13.0] - 2026-09-21
 
 Since Gutenberg, `post_content` is not the content — it is a serialization of
