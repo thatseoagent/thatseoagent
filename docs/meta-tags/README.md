@@ -18,7 +18,7 @@ Robots directives and pagination links come from the modules in `includes/indexi
 The meta tags are generated in `includes/head/class-thatseoagent-meta.php`:
 
 - `output()` - Main method that echoes all meta tags
-- `get_description()` - Generates meta description from custom fields, excerpt, or content
+- `get_description()` - The description of the current request: a post's from `ThatSeoAgent_Description::for_post()`, a listing's from its own chain
 - `get_image()` - Gets primary image (post thumbnail or site logo)
 - `get_url()` - The og:url: the canonical, else the requested URL
 - `get_canonical()` - The canonical URL of the page, pagination included
@@ -28,16 +28,18 @@ The meta tags are generated in `includes/head/class-thatseoagent-meta.php`:
 
 ### Custom Descriptions
 
-You can provide custom descriptions for specific pages using the `thatseoagent_custom_description` filter:
+A post's description is the homepage's own on the homepage (ThatSeoAgent → Settings), then its SEO description, then one generated from its content. `ThatSeoAgent_Description::for_post()` gives it, and the head, the markup, the Markdown version, llms.txt and the editor's preview all use it. The `thatseoagent_description` filter has the last word, for a post wherever its description is used, so branch on the post it receives rather than on conditional tags:
 
 ```php
-add_filter('thatseoagent_custom_description', function($description) {
-    if (is_page('contact')) {
+add_filter('thatseoagent_description', function($description, $context, $post) {
+    if ($post && 'contact' === $post->post_name) {
         return 'Get in touch with us for custom web development services';
     }
     return $description;
-});
+}, 10, 3);
 ```
+
+The title follows the same order — the homepage's own, the SEO title, then the post's name and the site's as WordPress builds it — through `ThatSeoAgent_Title::for_post()` and the `thatseoagent_title` filter, and the `<title>`, og:title and the editor's preview say the same.
 
 ### Which image a page is shared with
 

@@ -40,6 +40,10 @@ _Avoid_: meta, SEO settings, overrides
 A page search engines are told not to index (`noindex`): search results, the 404 page, private posts, and posts whose SEO fields say so. It prints no canonical and is listed in no sitemap and not in the AI index; it stays public to anyone with the link.
 _Avoid_: hidden, blocked, deindexed
 
+**Search title**:
+The title a post shows in search results and in its browser tab: the one its SEO fields give (on the homepage, the homepage's own title first), or else its name followed by the site's. Distinct from the post's name, which is what the markup, the breadcrumb trail and the AI index call it.
+_Avoid_: SEO title, meta title, document title
+
 **Primary category**:
 The one category that names a post where only one fits: search results, the breadcrumb, the product markup. Chosen in the SEO fields, or else the deepest one the post has.
 _Avoid_: main category, primary term

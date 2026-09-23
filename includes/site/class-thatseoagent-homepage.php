@@ -1,10 +1,9 @@
 <?php
 /**
- * Homepage SEO Settings + Applier
+ * Homepage SEO Settings
  *
- * UI for setting a custom homepage title and meta description, plus the
- * applier that feeds those values into the thatseoagent_document_title and
- * thatseoagent_description filters (added in 1.5.0).
+ * UI for setting a custom homepage title and meta description, which
+ * ThatSeoAgent_Title and ThatSeoAgent_Description put first on the homepage.
  *
  * Supports a minimal template-variable system so Yoast converts feel at
  * home: %%sitename%%, %%tagline%%, %%sep%%.
@@ -63,6 +62,29 @@ class ThatSeoAgent_Homepage {
         );
 
         return wp_parse_args( $saved, $defaults );
+    }
+
+    /**
+     * Whether a post is the page the homepage shows.
+     *
+     * @since 2.7.0
+     * @param WP_Post $post Post.
+     * @return bool False when the homepage lists the latest posts.
+     */
+    public static function is_front_page( WP_Post $post ) {
+        return 'page' === get_option( 'show_on_front' ) && (int) get_option( 'page_on_front' ) === $post->ID;
+    }
+
+    /**
+     * Whether a post is the blog's posts page: a page whose own content is
+     * never shown, only the list of posts.
+     *
+     * @since 2.7.0
+     * @param WP_Post $post Post.
+     * @return bool
+     */
+    public static function is_posts_page( WP_Post $post ) {
+        return 'page' === get_option( 'show_on_front' ) && (int) get_option( 'page_for_posts' ) === $post->ID;
     }
 
     /**

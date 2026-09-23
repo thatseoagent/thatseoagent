@@ -13,10 +13,12 @@ jQuery( function ( $ ) {
 	}
 
 	function updatePreview() {
-		var title = $( '#thatseoagent_title' ).val() || $( '#thatseoagent_title' ).attr( 'placeholder' );
-		// Fall back to the description the front end would emit, not to the
-		// field's instruction text — the preview is meant to show what lands
-		// in search results.
+		// An empty field falls back to what the front end would emit with
+		// it empty — the post's name and the site's, the generated
+		// description — not to the field's placeholder: the preview is meant
+		// to show what lands in search results.
+		var $title = $( '#thatseoagent_title' );
+		var title = $title.val() || $title.attr( 'data-thatseoagent-generated' ) || $title.attr( 'placeholder' );
 		var $desc = $( '#thatseoagent_description' );
 		var desc = $desc.val() || $desc.attr( 'data-thatseoagent-generated' ) || $desc.attr( 'placeholder' );
 		$( '#preview-title' ).text( title );

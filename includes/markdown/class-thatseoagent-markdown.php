@@ -116,7 +116,6 @@ class ThatSeoAgent_Markdown {
     private static function fields( WP_Post $post ) {
         $fields = array(
             'title'     => ThatSeoAgent_Content::to_text( $post->post_title ),
-            'seo_title' => ThatSeoAgent_Post_Seo::get( $post, 'title' ),
             'date'      => get_the_date( 'c', $post ),
             'modified'  => get_the_modified_date( 'c', $post ),
             'author'    => get_the_author_meta( 'display_name', $post->post_author ),

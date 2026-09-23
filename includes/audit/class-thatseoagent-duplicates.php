@@ -7,8 +7,8 @@
  * pages say the same thing in search results, people cannot tell them
  * apart, and Google may rewrite them.
  *
- * Titles and written descriptions are compared across the whole site in one
- * query. Generated descriptions come from each post's rendered content, too
+ * Titles — the search title each page publishes — and written descriptions
+ * are compared across the whole site in one query. Generated descriptions come from each post's rendered content, too
  * costly to build for every post on every request, so the content check
  * compares them among the posts it has just read (see
  * ThatSeoAgent_Audit_Run).
@@ -60,28 +60,6 @@ class ThatSeoAgent_Duplicates {
         $text = html_entity_decode( wp_strip_all_tags( (string) $text ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 
         return trim( (string) preg_replace( '/[^\p{L}\p{N}]+/u', ' ', mb_strtolower( $text ) ) );
-    }
-
-    /**
-     * The title a post shows in search results.
-     *
-     * Its SEO title, which replaces the document title outright, or the
-     * post title with the site name, as WordPress builds it.
-     *
-     * @since 2.3.0
-     * @param string $post_title Post title.
-     * @param string $seo_title  SEO title, or ''.
-     * @return string
-     */
-    public static function effective_title( $post_title, $seo_title ) {
-        if ( '' !== trim( (string) $seo_title ) ) {
-            return (string) $seo_title;
-        }
-
-        /** This filter is documented in includes/head/class-thatseoagent-title.php */
-        $separator = (string) apply_filters( 'thatseoagent_title_separator', '|' );
-
-        return $post_title . ' ' . $separator . ' ' . get_bloginfo( 'name' );
     }
 
     /**
@@ -149,9 +127,8 @@ class ThatSeoAgent_Duplicates {
         // for the request; stored nowhere, so it can never be stale.
         $rows = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT p.ID, p.post_title, t.meta_value AS seo_title, d.meta_value AS seo_description
+                "SELECT p.ID, p.post_title, p.post_name, p.post_type, p.post_status, p.post_password, p.post_parent, d.meta_value AS seo_description
                  FROM {$wpdb->posts} p
-                 LEFT JOIN {$wpdb->postmeta} t ON t.post_id = p.ID AND t.meta_key = %s
                  LEFT JOIN {$wpdb->postmeta} d ON d.post_id = p.ID AND d.meta_key = %s
                  LEFT JOIN {$wpdb->postmeta} n ON n.post_id = p.ID AND n.meta_key = %s
                  WHERE p.post_status = 'publish'
@@ -159,7 +136,7 @@ class ThatSeoAgent_Duplicates {
                    AND p.post_type IN ($types)
                    AND ( n.meta_value IS NULL OR n.meta_value <> '1' )",
                 array_merge(
-                    array( ThatSeoAgent_Post_Seo::TITLE_KEY, ThatSeoAgent_Post_Seo::DESCRIPTION_KEY, ThatSeoAgent_Post_Seo::NOINDEX_KEY ),
+                    array( ThatSeoAgent_Post_Seo::DESCRIPTION_KEY, ThatSeoAgent_Post_Seo::NOINDEX_KEY ),
                     $post_types
                 )
             )
@@ -169,9 +146,25 @@ class ThatSeoAgent_Duplicates {
         $titles       = array();
         $descriptions = array();
 
+        // Each title is the search title the post publishes, filters and
+        // all. The rows carry what building it reads of the post; its SEO
+        // title comes from the meta cache, filled for every row in one query.
+        update_meta_cache( 'post', wp_list_pluck( (array) $rows, 'ID' ) );
+
         foreach ( (array) $rows as $row ) {
             $id    = (int) $row->ID;
-            $title = self::key( self::effective_title( (string) $row->post_title, (string) $row->seo_title ) );
+            $post  = new WP_Post( (object) array(
+                'ID'            => $id,
+                'post_title'    => (string) $row->post_title,
+                'post_name'     => (string) $row->post_name,
+                'post_type'     => (string) $row->post_type,
+                'post_status'   => (string) $row->post_status,
+                'post_password' => (string) $row->post_password,
+                'post_parent'   => (int) $row->post_parent,
+                // Already raw: get_post() would otherwise read it again.
+                'filter'        => 'raw',
+            ) );
+            $title = self::key( ThatSeoAgent_Title::for_post( $post ) );
 
             if ( '' !== $title ) {
                 $titles[ $title ][] = $id;

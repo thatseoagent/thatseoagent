@@ -96,8 +96,11 @@ class ThatSeoAgent_Audit {
         $not_measured = array();
 
         $custom       = ThatSeoAgent_Post_Seo::all( $post );
-        $title        = '' !== $custom['title'] ? $custom['title'] : get_the_title( $post );
-        $description  = '' !== $custom['description'] ? $custom['description'] : ThatSeoAgent_Description::generate( $post );
+        // What the page publishes, as That SEO Agent's MCP reads it: the
+        // <title> with the site name, the description after the homepage's
+        // and the filters.
+        $title        = ThatSeoAgent_Title::for_post( $post );
+        $description  = ThatSeoAgent_Description::for_post( $post );
 
         $title_length = mb_strlen( $title );
         $desc_length  = mb_strlen( $description );
@@ -130,7 +133,7 @@ class ThatSeoAgent_Audit {
                 'title'        => $post->post_title,
                 'url'          => get_permalink( $post->ID ),
                 'seo'          => array(
-                    'title'               => ThatSeoAgent_Duplicates::effective_title( $post->post_title, $custom['title'] ),
+                    'title'               => $title,
                     'description'         => $description,
                     'description_written' => '' !== $custom['description'],
                 ),
@@ -320,7 +323,7 @@ class ThatSeoAgent_Audit {
             'title'        => $post->post_title,
             'url'          => get_permalink( $post->ID ),
             'seo'          => array(
-                'title'               => ThatSeoAgent_Duplicates::effective_title( $post->post_title, $custom['title'] ),
+                'title'               => $title,
                 'description'         => $description,
                 'description_written' => '' !== $custom['description'],
             ),

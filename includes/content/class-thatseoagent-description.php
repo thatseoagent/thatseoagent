@@ -9,6 +9,9 @@
  * words without stripping shortcodes — so the preview showed a description
  * the front end never emitted.
  *
+ * Since 2.7.0 that answer includes the homepage's own description and the
+ * thatseoagent_description filter, which until then reached the head alone.
+ *
  * The interface takes a post. It does not read the loop, which is what makes
  * it callable from wp_head, from WP-CLI, from an ability and from the meta
  * box alike — and testable without building a WP_Query.
@@ -39,24 +42,62 @@ class ThatSeoAgent_Description {
     /**
      * The description this post actually gets.
      *
-     * Custom meta wins; otherwise one is generated from the content.
+     * On the homepage, the homepage's own description first. Then the
+     * post's SEO description; otherwise one generated from the content —
+     * except on the blog's posts page, whose content is never shown, and
+     * which says what the site says. The homepage falls back to the tagline
+     * too. The `thatseoagent_description` filter has the last word, so the
+     * head, the markup, the Markdown version, llms.txt and the editor's
+     * preview all publish the same one.
      *
      * @since 1.9.0
-     * @param WP_Post|int $post Post object or ID.
+     * @since 2.7.0 The homepage's description, the posts page's, and the
+     *              thatseoagent_description filter.
+     * @param WP_Post|int $post    Post object or ID.
+     * @param string|null $written The SEO description to assume, '' for
+     *                             none; null reads the post's own. The
+     *                             editor's preview passes '' to show what an
+     *                             empty field publishes.
      * @return string Empty string when the post has no usable content.
      */
-    public static function for_post( $post ) {
+    public static function for_post( $post, $written = null ) {
         $post = get_post( $post );
         if ( ! $post ) {
             return '';
         }
 
-        $custom = ThatSeoAgent_Post_Seo::get( $post, 'description' );
-        if ( $custom ) {
-            return $custom;
+        $front       = ThatSeoAgent_Homepage::is_front_page( $post );
+        $posts_page  = ThatSeoAgent_Homepage::is_posts_page( $post );
+        $written     = null === $written ? ThatSeoAgent_Post_Seo::get( $post, 'description' ) : (string) $written;
+        $description = $front ? ThatSeoAgent_Homepage::expand_variables( ThatSeoAgent_Homepage::get_settings()['description'] ) : '';
+
+        if ( '' === $description ) {
+            $description = $written;
         }
 
-        return self::generate( $post );
+        if ( '' === $description && ! $posts_page ) {
+            $description = self::generate( $post );
+        }
+
+        if ( '' === $description && ( $front || $posts_page ) ) {
+            $description = (string) get_bloginfo( 'description' );
+        }
+
+        /**
+         * Filter the resolved meta description.
+         *
+         * Runs after the default resolution and receives a context string
+         * so callers can branch on page type without duplicating
+         * conditional logic.
+         *
+         * @since 1.5.0
+         * @since 2.7.0 Runs for a post wherever its description is used, not
+         *              only in the head, and receives the post.
+         * @param string       $description Resolved default description.
+         * @param string       $context     Current page context (see ThatSeoAgent_Meta::get_context()).
+         * @param WP_Post|null $post        The post, null on a listing.
+         */
+        return (string) apply_filters( 'thatseoagent_description', $description, $front || $posts_page ? 'home' : 'single', $post );
     }
 
     /**

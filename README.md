@@ -146,7 +146,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Primary_Term` | The category that names a post where only one fits |
 | | `ThatSeoAgent_Sample_Content` | WordPress's sample post and page, while still published |
 | `head/` | `ThatSeoAgent_Meta` | `<head>` meta tags and canonical |
-| | `ThatSeoAgent_Title` | The document `<title>`: overrides and separator |
+| | `ThatSeoAgent_Title` | The single answer to "what title does this post show in search results?": the `<title>`, og:title, the editor's preview |
 | | `ThatSeoAgent_Schema` | JSON-LD graph |
 | | `ThatSeoAgent_Breadcrumbs` | The breadcrumb trail: the BreadcrumbList, and the breadcrumbs a theme prints |
 | `indexing/` | `ThatSeoAgent_Indexing` | The single answer to "may search engines index this?": robots meta, and what the sitemaps and llms.txt may list |
@@ -154,7 +154,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Attachment_Redirect` | Attachment pages lead to their file |
 | | `ThatSeoAgent_Crawl_Cleanup` | What nobody needs to crawl: shortlinks, RSD, the generator, extra feeds, spam searches |
 | `site/` | `ThatSeoAgent_Identity`, `ThatSeoAgent_Identity_Applier` | Who the site is: settings, and the filters that feed them to meta tags and schema |
-| | `ThatSeoAgent_Homepage`, `ThatSeoAgent_Homepage_Applier` | Homepage title and description: settings, and their filters |
+| | `ThatSeoAgent_Homepage` | Homepage title and description settings |
 | | `ThatSeoAgent_Default_Author` | The author credited on posts without one |
 | | `ThatSeoAgent_Author_Profile` | An author's job title and profiles elsewhere, in the user profile |
 | | `ThatSeoAgent_Trust_Pages` | The about, contact and privacy pages the bulletin looks for |
@@ -203,14 +203,13 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 
 | Filter | Purpose |
 |--------|---------|
-| `thatseoagent_document_title` | Override the `<title>` entirely (receives context) |
-| `thatseoagent_title` | The resolved SEO title |
+| `thatseoagent_document_title` | Override the title entirely (receives context and post) |
+| `thatseoagent_title` | The resolved title, in the `<title>` and the meta tags alike (receives context and post) |
 | `thatseoagent_title_separator` | Title separator (default `\|`) |
-| `thatseoagent_description` | The resolved description (receives context) |
-| `thatseoagent_custom_description` | Legacy short-circuit, runs first |
+| `thatseoagent_description` | The resolved description (receives context and post) |
 | `thatseoagent_description_filler_patterns` | Intro-filler regexes skipped when generating |
 
-Context is one of `home`, `single`, `archive`, `taxonomy`, `search`, `author`, `date`, `404`, `other`.
+Context is one of `home`, `single`, `archive`, `taxonomy`, `search`, `author`, `date`, `404`, `other`. The post is the one whose title or description it is, `null` on a listing. For a post the filters run wherever its title or description is used — the head, the markup, the Markdown version, llms.txt, the editor, the content check — not only while its page is served, so branch on the post rather than on conditional tags like `is_page()`.
 
 **Social**
 
@@ -266,9 +265,9 @@ Custom fields are off by default: post meta not registered with `show_in_rest` i
 
 ```php
 // Custom description for a specific page
-add_filter( 'thatseoagent_description', function ( $desc, $context ) {
-    return is_page( 'special' ) ? 'Custom description' : $desc;
-}, 10, 2 );
+add_filter( 'thatseoagent_description', function ( $desc, $context, $post ) {
+    return $post && 'special' === $post->post_name ? 'Custom description' : $desc;
+}, 10, 3 );
 
 // SEO fields on a custom post type
 add_filter( 'thatseoagent_meta_box_post_types', function ( $types ) {

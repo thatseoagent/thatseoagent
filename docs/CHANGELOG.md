@@ -1,5 +1,55 @@
 # Changelog
 
+## [2.7.0] - Unreleased
+
+### Changed
+- **A post publishes one title and one description, wherever it is
+  read.** `ThatSeoAgent_Description::for_post()` is the description the
+  head, the JSON-LD, the Product markup, the Markdown version, llms.txt and
+  the editor's preview all carry, and the new `ThatSeoAgent_Title::for_post()`
+  is the search title the `<title>`, og:title, the editor's preview and the
+  content check all use. Until now the `thatseoagent_description` filter
+  and the homepage's own description reached the head alone, so llms.txt
+  and the Markdown version could say something else.
+- **`thatseoagent_title`, `thatseoagent_document_title` and
+  `thatseoagent_description` receive the post** as a third argument (`null`
+  on a listing), and for a post they run wherever its title or description
+  is used, not only while its page is served. A callback that branches on
+  conditional tags like `is_page()` should branch on the post instead.
+- **`thatseoagent_title` reaches the `<title>` too**, not only the meta
+  tags, so the `<title>` and og:title always say the same.
+- **The homepage's own title and description come first on the homepage,
+  both.** The description used to give way to one generated from the
+  homepage's text; now the order is the homepage's own, then the page's SEO
+  fields, then the generated one, then the tagline — as the title already
+  was.
+- **The content check measures the title the page publishes**, with the
+  site name, as That SEO Agent's MCP reads it from the page; some titles now
+  count as long enough to be cut. It and the `get-post-seo` ability report
+  the description after the homepage's and the filter, too.
+- **The editor's preview shows the full search title**, with the site name
+  when the SEO title is empty, and an emptied field previews what it would
+  publish instead of the value last saved.
+- **Pages that share a title** are compared by the search title each
+  publishes, filters included.
+
+### Fixed
+- **The blog's posts page** no longer takes the homepage's title and
+  description, and its own SEO fields now reach its `<title>` and meta
+  description; without a description of its own it says the tagline, as
+  before.
+
+### Removed
+- **The `thatseoagent_custom_description` filter.** Use
+  `thatseoagent_description`, which receives the post.
+- **`seo_title` in the Markdown version's frontmatter**, the SEO field as
+  written and most often empty. `title` is the post's name, `description`
+  the one the page publishes.
+- **`ThatSeoAgent_Homepage_Applier`** and
+  **`ThatSeoAgent_Duplicates::effective_title()`**: the title and the
+  description read the homepage settings themselves, and
+  `ThatSeoAgent_Title::for_post()` is the search title.
+
 ## [2.6.0] - Unreleased
 
 ### Added

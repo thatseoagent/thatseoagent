@@ -101,6 +101,7 @@ class ThatSeoAgent_Meta_Box {
                 name="thatseoagent_title" 
                 value="<?php echo esc_attr($seo_title); ?>" 
                 placeholder="<?php echo esc_attr($post->post_title); ?>"
+                data-thatseoagent-generated="<?php echo esc_attr( ThatSeoAgent_Title::for_post( $post, '' ) ); ?>"
             >
             <p class="description"><?php esc_html_e( 'Leave blank to use the post title. Search results trim titles to the width of the screen; past the counter it may be cut.', 'thatseoagent' ); ?></p>
         </div>
@@ -115,7 +116,7 @@ class ThatSeoAgent_Meta_Box {
                 name="thatseoagent_description" 
                 rows="3" 
                 placeholder="<?php esc_attr_e( 'Leave blank to auto-generate from content...', 'thatseoagent' ); ?>"
-                data-thatseoagent-generated="<?php echo esc_attr( ThatSeoAgent_Description::for_post( $post ) ); ?>"
+                data-thatseoagent-generated="<?php echo esc_attr( ThatSeoAgent_Description::for_post( $post, '' ) ); ?>"
             ><?php echo esc_textarea($seo_desc); ?></textarea>
             <p class="description"><?php esc_html_e( 'The sentence under the title in search results. Google sets no limit, but past the counter it may be cut.', 'thatseoagent' ); ?></p>
         </div>
@@ -139,7 +140,7 @@ class ThatSeoAgent_Meta_Box {
         <?php ThatSeoAgent_Primary_Term::render_fields( $post ); ?>
 
         <div class="thatseoagent-preview">
-            <div class="thatseoagent-preview-title" id="preview-title"><?php echo esc_html($seo_title ?: $post->post_title); ?></div>
+            <div class="thatseoagent-preview-title" id="preview-title"><?php echo esc_html( ThatSeoAgent_Title::for_post( $post ) ); ?></div>
             <div class="thatseoagent-preview-url"><?php echo esc_url(get_permalink($post)); ?></div>
             <div class="thatseoagent-preview-desc" id="preview-desc"><?php echo esc_html(ThatSeoAgent_Description::for_post($post)); ?></div>
         </div>

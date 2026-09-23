@@ -224,28 +224,43 @@ class ThatSeoAgent_Meta {
     }
 
     /**
-     * Get the title for the current request, filterable.
+     * The title of the current request: the <title> tag's.
      *
-     * Runs wp_get_document_title() through the thatseoagent_title filter so
-     * themes and plugins can override the default without having to hook
-     * every meta output individually. Separate filters still exist for
-     * og:title and the document <title>.
+     * A post's search title (ThatSeoAgent_Title::for_post()), or on a
+     * listing the title WordPress built, both through the thatseoagent_title
+     * filter.
      *
      * @since 1.5.0
+     * @since 2.7.0 The same as the <title>.
      * @return string
      */
     public static function get_title() {
-        $title   = wp_get_document_title();
-        $context = self::get_context();
+        $post = self::current_post();
 
-        /**
-         * Filter the resolved SEO title.
-         *
-         * @since 1.5.0
-         * @param string $title   Default is wp_get_document_title().
-         * @param string $context Current page context.
-         */
-        return apply_filters('thatseoagent_title', $title, $context);
+        return $post ? ThatSeoAgent_Title::for_post($post) : wp_get_document_title();
+    }
+
+    /**
+     * The post the current request shows: a single page, or the blog's
+     * posts page.
+     *
+     * @since 2.7.0
+     * @return WP_Post|null Null on any other listing.
+     */
+    public static function current_post() {
+        if (is_singular()) {
+            $post = get_queried_object();
+
+            return $post instanceof WP_Post ? $post : null;
+        }
+
+        if (is_home() && ! is_front_page()) {
+            $post = get_post((int) get_option('page_for_posts'));
+
+            return $post instanceof WP_Post ? $post : null;
+        }
+
+        return null;
     }
 
     /**
@@ -307,59 +322,40 @@ class ThatSeoAgent_Meta {
     }
 
     /**
-     * Get meta description
+     * The description of the current request.
      *
-     * Resolves the description through the default fallback chain, then
-     * applies the thatseoagent_description filter (context-aware) for fine
-     * control. The legacy thatseoagent_custom_description filter still runs
-     * first and short-circuits the chain for backwards compatibility.
+     * A post's is ThatSeoAgent_Description::for_post()'s; a listing's comes
+     * from the chain below, through the same thatseoagent_description
+     * filter.
+     *
+     * @since 1.0.0
+     * @since 2.7.0 A post's is the one it gets everywhere; the legacy
+     *              thatseoagent_custom_description filter is gone.
+     * @return string
      */
     public static function get_description() {
-        // Legacy short-circuit filter (kept for backwards compatibility).
-        $custom = apply_filters('thatseoagent_custom_description', false);
-        if ($custom) {
-            $context = self::get_context();
-            /** This filter is documented below. */
-            return apply_filters('thatseoagent_description', $custom, $context);
+        $post = self::current_post();
+        if ($post) {
+            return ThatSeoAgent_Description::for_post($post);
         }
 
-        $description = self::resolve_default_description();
-        $context     = self::get_context();
-
-        /**
-         * Filter the resolved meta description.
-         *
-         * Unlike thatseoagent_custom_description (which short-circuits the
-         * fallback chain), this filter runs after the default resolution
-         * and receives a context string so callers can branch on page type
-         * without duplicating conditional logic.
-         *
-         * @since 1.5.0
-         * @param string $description Resolved default description.
-         * @param string $context     Current page context (see get_context()).
-         */
-        return apply_filters('thatseoagent_description', $description, $context);
+        /** This filter is documented in includes/content/class-thatseoagent-description.php */
+        return (string) apply_filters('thatseoagent_description', self::listing_description(), self::get_context(), null);
     }
 
     /**
-     * Resolve the default description using the built-in fallback chain.
-     *
-     * Separated from get_description() so the thatseoagent_description filter
-     * always runs on the final value regardless of which branch supplied it.
+     * The description of a listing, before the filter.
      *
      * @since 1.5.0
+     * @since 2.7.0 Listings only; a homepage that lists the latest posts
+     *              says the homepage's own description first.
      * @return string
      */
-    protected static function resolve_default_description() {
-        if (is_singular()) {
-            $description = ThatSeoAgent_Description::for_post(get_post());
-            if ($description) {
-                return $description;
-            }
-        }
+    protected static function listing_description() {
+        if (is_front_page()) {
+            $home = ThatSeoAgent_Homepage::expand_variables(ThatSeoAgent_Homepage::get_settings()['description']);
 
-        if (is_home() || is_front_page()) {
-            return get_bloginfo('description');
+            return '' !== $home ? $home : get_bloginfo('description');
         }
 
         if (is_post_type_archive()) {

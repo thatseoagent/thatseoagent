@@ -431,8 +431,8 @@ class ThatSeoAgent_Abilities {
         $custom            = ThatSeoAgent_Post_Seo::all( $post );
         $custom_title       = $custom['title'];
         $custom_description = $custom['description'];
-        $title              = $custom_title ? $custom_title : get_the_title( $post );
-        $description        = $custom_description ? $custom_description : ThatSeoAgent_Description::generate( $post );
+        $title              = ThatSeoAgent_Title::for_post( $post );
+        $description        = ThatSeoAgent_Description::for_post( $post );
 
         return array(
             'post_id'     => $post_id,
