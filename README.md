@@ -143,7 +143,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Post_Seo` | Per-post SEO fields: which post types get them, storage, sanitization and slashing |
 | | `ThatSeoAgent_Structure` | How a post is built, as facts for an agent to judge |
 | | `ThatSeoAgent_Image` | The image a page is represented by, for sharing and for the schema |
-| | `ThatSeoAgent_Primary_Term` | The category that names a post where only one fits |
+| | `ThatSeoAgent_Primary_Term` | The category that names a post where only one fits: the breadcrumb trail, article:section and the Product markup's category |
 | | `ThatSeoAgent_Sample_Content` | WordPress's sample post and page, while still published |
 | `head/` | `ThatSeoAgent_Meta` | `<head>` meta tags and canonical |
 | | `ThatSeoAgent_Title` | The single answer to "what title does this post show in search results?": the `<title>`, og:title, the editor's preview |

@@ -11,9 +11,15 @@
  *     else the deepest assigned term ("Cranes > Articulated" over "Cranes"),
  *     leaving out the default category when there is another
  *
- * Each content type has one main taxonomy it is asked about: `category` for
- * posts, a catalog's mapped category taxonomy, else a public hierarchical
- * one whose name says it is a category, else the first.
+ * Each content type has one main taxonomy it is asked about: a catalog's
+ * mapped category taxonomy (ThatSeoAgent_Product says which, through the
+ * thatseoagent_main_taxonomy filter), else `category`, else a public
+ * hierarchical one whose name says it is a category, else the first.
+ *
+ * The default category ("Uncategorized") is a primary term like any other
+ * — the permalink's %category% needs one — but it says nothing about the
+ * post, so named(), path() and label() leave it out: no breadcrumb, no
+ * article:section, no product category names it.
  *
  * Stored per taxonomy in `_thatseoagent_primary_{taxonomy}`, the term ID.
  *
@@ -86,13 +92,8 @@ class ThatSeoAgent_Primary_Term {
         $taxonomies = self::taxonomies( $post_type );
         $main       = '';
 
-        $config  = ThatSeoAgent_Product::config();
-        $catalog = isset( $config[ $post_type ]['category_taxonomy'] ) ? (string) $config[ $post_type ]['category_taxonomy'] : '';
-
         if ( in_array( 'category', $taxonomies, true ) ) {
             $main = 'category';
-        } elseif ( in_array( $catalog, $taxonomies, true ) ) {
-            $main = $catalog;
         } else {
             // One that says it is a category ("categoria-producto",
             // "Product categories"), rather than a brand that happens to be
@@ -112,6 +113,8 @@ class ThatSeoAgent_Primary_Term {
 
         /**
          * Filter the taxonomy a post type's primary term is taken from.
+         *
+         * ThatSeoAgent_Product answers first, at priority 5, for catalogs.
          *
          * @since 2.4.0
          * @param string $main      Taxonomy name, or ''.
@@ -185,9 +188,30 @@ class ThatSeoAgent_Primary_Term {
     }
 
     /**
-     * The primary term and its ancestors, root first.
+     * A post's primary term, when it says something about the post: not the
+     * default category.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Meta::get_primary_category().
+     * @param WP_Post|int $post     Post or ID.
+     * @param string      $taxonomy Taxonomy. Default the post type's main one.
+     * @return WP_Term|null
+     */
+    public static function named( $post, $taxonomy = '' ) {
+        $term = self::get( $post, $taxonomy );
+
+        if ( ! $term || ( 'category' === $term->taxonomy && (int) $term->term_id === (int) get_option( 'default_category' ) ) ) {
+            return null;
+        }
+
+        return $term;
+    }
+
+    /**
+     * The primary term and its ancestors, root first: the part of the
+     * breadcrumb trail the category gives.
      *
      * @since 2.4.0
+     * @since 2.7.0 Empty for the default category.
      * @param WP_Post|int $post     Post or ID.
      * @param string      $taxonomy Taxonomy. Default the post type's main one.
      * @return array<int, WP_Term>
@@ -195,7 +219,7 @@ class ThatSeoAgent_Primary_Term {
     public static function path( $post, $taxonomy = '' ) {
         $post     = get_post( $post );
         $taxonomy = '' !== $taxonomy ? $taxonomy : ( $post ? self::main_taxonomy( $post->post_type ) : '' );
-        $term     = self::get( $post, $taxonomy );
+        $term     = self::named( $post, $taxonomy );
 
         if ( ! $term ) {
             return array();
@@ -211,6 +235,19 @@ class ThatSeoAgent_Primary_Term {
         $path[] = $term;
 
         return $path;
+    }
+
+    /**
+     * The path as text, "Grúas > Articuladas": schema.org's `category` is
+     * text, and Google reads a ">"-separated path as a hierarchy.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Product.
+     * @param WP_Post|int $post     Post or ID.
+     * @param string      $taxonomy Taxonomy. Default the post type's main one.
+     * @return string '' when the post has no category worth naming.
+     */
+    public static function label( $post, $taxonomy = '' ) {
+        return implode( ' > ', wp_list_pluck( self::path( $post, $taxonomy ), 'name' ) );
     }
 
     /**

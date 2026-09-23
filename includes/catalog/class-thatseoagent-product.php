@@ -60,6 +60,36 @@ class ThatSeoAgent_Product {
     }
 
     /**
+     * Register the hooks.
+     *
+     * @since 2.7.0
+     */
+    public static function register() {
+        add_filter( 'thatseoagent_main_taxonomy', array( __CLASS__, 'filter_main_taxonomy' ), 5, 2 );
+    }
+
+    /**
+     * A catalog's primary category comes from its mapped category
+     * taxonomy, even when the type has `category` too: the mapping is what
+     * the site owner said the category is.
+     *
+     * @since 2.7.0
+     * @param string $main      Taxonomy name, or ''.
+     * @param string $post_type Post type.
+     * @return string
+     */
+    public static function filter_main_taxonomy( $main, $post_type ) {
+        if ( ! in_array( $post_type, self::post_types(), true ) ) {
+            return $main;
+        }
+
+        $config  = self::config();
+        $catalog = isset( $config[ $post_type ]['category_taxonomy'] ) ? (string) $config[ $post_type ]['category_taxonomy'] : '';
+
+        return in_array( $catalog, ThatSeoAgent_Primary_Term::taxonomies( $post_type ), true ) ? $catalog : $main;
+    }
+
+    /**
      * The mapped fields and what feeds them.
      *
      * @since 1.16.0
@@ -469,7 +499,8 @@ class ThatSeoAgent_Product {
         }
 
         if ( '' !== $map['category_taxonomy'] ) {
-            $category = self::category_path( $post, $map['category_taxonomy'] );
+            // The primary one: the same the breadcrumb and the meta tags name.
+            $category = ThatSeoAgent_Primary_Term::label( $post, $map['category_taxonomy'] );
             if ( '' !== $category ) {
                 $node['category'] = $category;
             } else {
@@ -666,36 +697,6 @@ class ThatSeoAgent_Product {
         $terms = get_the_terms( $post, $taxonomy );
 
         return ( $terms && ! is_wp_error( $terms ) ) ? reset( $terms ) : null;
-    }
-
-    /**
-     * The category as a path, "Grúas > Articuladas".
-     *
-     * schema.org's `category` is text, and Google reads a ">"-separated path
-     * as a hierarchy.
-     *
-     * @since 1.16.0
-     * @param WP_Post $post     Post.
-     * @param string  $taxonomy Taxonomy.
-     * @return string
-     */
-    private static function category_path( WP_Post $post, $taxonomy ) {
-        // The primary one: the same the breadcrumb and the meta tags name.
-        $term = ThatSeoAgent_Primary_Term::get( $post, $taxonomy );
-        if ( ! $term ) {
-            return '';
-        }
-
-        $names = array();
-        foreach ( array_reverse( get_ancestors( $term->term_id, $taxonomy, 'taxonomy' ) ) as $ancestor_id ) {
-            $ancestor = get_term( $ancestor_id, $taxonomy );
-            if ( $ancestor && ! is_wp_error( $ancestor ) ) {
-                $names[] = $ancestor->name;
-            }
-        }
-        $names[] = $term->name;
-
-        return implode( ' > ', $names );
     }
 
     /**

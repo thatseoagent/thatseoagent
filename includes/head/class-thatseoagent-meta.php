@@ -432,14 +432,9 @@ class ThatSeoAgent_Meta {
      */
     public static function get_primary_category() {
         $post = get_queried_object();
-        $term = $post instanceof WP_Post ? ThatSeoAgent_Primary_Term::get($post) : null;
+        $term = $post instanceof WP_Post ? ThatSeoAgent_Primary_Term::named($post) : null;
 
-        // "Uncategorized" says nothing about the post.
-        if (! $term || ('category' === $term->taxonomy && (int) $term->term_id === (int) get_option('default_category'))) {
-            return null;
-        }
-
-        return $term->name;
+        return $term ? $term->name : null;
     }
 
     /**

@@ -51,6 +51,14 @@
   listed as not measured instead of fetching the homepage and up to 40
   addresses; whether another page generates the same description is listed
   as not measured too, since only a whole content type can tell.
+- **A catalog's primary category comes from its mapped category
+  taxonomy**, even when its content type has `category` too, so the
+  breadcrumb trail and the Product markup name the same one. The catalog
+  says so through `thatseoagent_main_taxonomy`, at priority 5.
+- **`ThatSeoAgent_Primary_Term` answers for the category everywhere it is
+  named**: `named()` (the primary term, unless it is the default category),
+  `path()` and `label()` ("Grúas > Articuladas"), used by the breadcrumb
+  trail, article:section and the Product markup.
 - **The score's colours come from the server**: each row of the content
   check carries its level (`ThatSeoAgent_Audit::level_for_score()`).
 
@@ -58,6 +66,9 @@
 - **`scan-seo-issues` scored differently from the screen's content check**:
   it never flagged generated descriptions two pages share, and it measured
   links against a graph up to an hour old.
+- **"Uncategorized" left the breadcrumb trail**: a post filed only under
+  the default category went out as Home › Uncategorized › Post, while
+  article:section already left it out.
 - **The blog's posts page** no longer takes the homepage's title and
   description, and its own SEO fields now reach its `<title>` and meta
   description; without a description of its own it says the tagline, as
