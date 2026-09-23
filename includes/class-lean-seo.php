@@ -31,21 +31,7 @@ class Lean_SEO {
      * Constructor
      */
     private function __construct() {
-        $this->load_dependencies();
         $this->init_hooks();
-    }
-
-    /**
-     * Load dependencies
-     */
-    private function load_dependencies() {
-        foreach ( array(
-            'compat', 'settings', 'product', 'product-report', 'product-settings', 'app', 'audit-run', 'rest',
-            'meta', 'title', 'schema', 'sitemap', 'robots', 'faq', 'default-author', 'meta-box', 'bulk-descriptions',
-            'identity', 'homepage', 'markdown', 'markdown-cache', 'markdown-endpoint', 'llms',
-        ) as $module ) {
-            require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-' . $module . '.php';
-        }
     }
 
     /**

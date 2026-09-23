@@ -13,7 +13,7 @@ The `Lean_SEO_Meta` class handles output of:
 
 ## Code Structure
 
-The meta tags are generated in `includes/class-lean-seo-meta.php`:
+The meta tags are generated in `includes/head/class-lean-seo-meta.php`:
 
 - `output()` - Main method that echoes all meta tags
 - `get_description()` - Generates meta description from custom fields, excerpt, or content

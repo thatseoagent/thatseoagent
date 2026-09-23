@@ -14,7 +14,7 @@ The `Lean_SEO_Sitemap` class creates XML sitemaps including:
 
 ## Code Structure
 
-Located in `includes/class-lean-seo-sitemap.php`:
+Located in `includes/sitemap/class-lean-seo-sitemap.php`:
 
 - `register_routes()` - Sets up rewrite rules for sitemap URLs
 - `handle_request()` - Processes sitemap requests and outputs XML

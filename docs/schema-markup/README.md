@@ -14,7 +14,7 @@ The `Lean_SEO_Schema` class outputs Schema.org JSON-LD markup including:
 
 ## Code Structure
 
-Located in `includes/class-lean-seo-schema.php`:
+Located in `includes/head/class-lean-seo-schema.php`:
 
 - `output()` - Main method that combines and outputs all schema types
 - `get_website_schema()` - Creates WebSite schema with search functionality

@@ -32,10 +32,10 @@ const LEAN_SEO_UNINSTALL_OPTIONS = array(
     'lean_seo_markdown_cache_version',
 );
 
-// The meta keys are owned by Lean_SEO_Post_Seo. Loading the file (it needs
-// nothing but ABSPATH) is how this script asks instead of keeping a copy
-// that can fall out of step when a field is added.
-require_once plugin_dir_path( __FILE__ ) . 'includes/class-lean-seo-post-seo.php';
+// The meta keys are owned by Lean_SEO_Post_Seo. Asking it (the class needs
+// nothing but ABSPATH, and the autoloader nothing but its own directory)
+// beats keeping a copy that can fall out of step when a field is added.
+require_once plugin_dir_path( __FILE__ ) . 'includes/autoload.php';
 
 /**
  * Delete all Lean SEO data for the current site.

@@ -15,7 +15,7 @@ The `Lean_SEO_Meta_Box` class provides:
 
 ## Code Structure
 
-Located in `includes/class-lean-seo-meta-box.php`:
+Located in `includes/admin/class-lean-seo-meta-box.php`:
 
 - `add()` - Registers the SEO meta box
 - `render()` - Outputs the HTML form with fields and preview

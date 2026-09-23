@@ -38,9 +38,9 @@ The post's content, as Markdown…
 
 | Class | File | Responsibility |
 |-------|------|----------------|
-| `Lean_SEO_Markdown_Endpoint` | `includes/class-lean-seo-markdown-endpoint.php` | Rewrite rule, request handling, headers |
-| `Lean_SEO_Markdown` | `includes/class-lean-seo-markdown.php` | Frontmatter and HTML → Markdown |
-| `Lean_SEO_Markdown_Cache` | `includes/class-lean-seo-markdown-cache.php` | Per-post cache and its invalidation |
+| `Lean_SEO_Markdown_Endpoint` | `includes/markdown/class-lean-seo-markdown-endpoint.php` | Rewrite rule, request handling, headers |
+| `Lean_SEO_Markdown` | `includes/markdown/class-lean-seo-markdown.php` | Frontmatter and HTML → Markdown |
+| `Lean_SEO_Markdown_Cache` | `includes/markdown/class-lean-seo-markdown-cache.php` | Per-post cache and its invalidation |
 
 The content comes from `Lean_SEO_Content::html()` and the description from `Lean_SEO_Description::for_post()`, so the Markdown says what the page and its meta tags say. The conversion uses `league/html-to-markdown`, bundled in `vendor-prefixed/` under the `Lean_SEO\Dependencies\` namespace.
 

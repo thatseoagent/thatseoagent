@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.19.0] - 2026-09-23
+
+Internal reorganization. No behaviour changes: every page head, sitemap,
+robots.txt, llms.txt, Markdown page, admin view, REST response, ability and
+WP-CLI command produces the same output as in 1.18.0.
+
+### Changed
+- **One class per file, grouped by concept** under `includes/`: `content/`,
+  `head/`, `site/`, `catalog/`, `sitemap/`, `markdown/`, `audit/`, `admin/`,
+  `rest/`, `tooling/`, `integrations/`. Files that held several classes
+  (the REST controllers, the identity and homepage appliers, the FAQ
+  section) are split.
+- **An autoloader** (`includes/autoload.php`, an explicit class map)
+  replaces every `require_once` of the plugin's own classes; nothing
+  depends on the order files are read in any more. `uninstall.php` uses it
+  too.
+- **`Lean_SEO` is the composition root**: it calls each module's
+  `register()`. Its seven forwarding methods are gone; the robots.txt
+  filter moved to `Lean_SEO_Robots`, the document-title filters to
+  `Lean_SEO_Title`, the sitemap query vars and redirect exemption to
+  `Lean_SEO_Sitemap`.
+- **`Lean_SEO_Admin` is removed**, its jobs given to their owners:
+  `Lean_SEO_Post_Seo::post_types()` (was `get_meta_box_post_types()`),
+  `Lean_SEO_App::PAGE_HOOK`, `Lean_SEO_Default_Author`,
+  `Lean_SEO_Meta_Box`, `Lean_SEO_Bulk_Descriptions`.
+- **`Lean_SEO_Product_Admin` is split**: `Lean_SEO_Product_Report` (the
+  catalog summary and per-product report) and `Lean_SEO_Product_Settings`
+  (the settings section).
+- Class names are unchanged, so code calling the documented ones
+  (`Lean_SEO_Content`, `Lean_SEO_Markdown_Cache`, …) keeps working. The
+  removed and moved methods above were never documented.
+- `CONTEXT.md` records the plugin's vocabulary.
+
 ## [1.18.0] - 2026-09-22
 
 The Lean SEO screen now does what it shows. Alpine.js adds the interactive

@@ -97,40 +97,45 @@ The plugin sends no data anywhere **unless you configure an IndexNow API key**. 
 
 ## Architecture
 
-| Module | Responsibility |
-|--------|----------------|
-| `Lean_SEO` | Composition root: which modules run, and when |
-| `Lean_SEO_Meta` | `<head>` meta tags and canonical |
-| `Lean_SEO_Title` | The document `<title>`: overrides and separator |
-| `Lean_SEO_Schema` | JSON-LD graph |
-| `Lean_SEO_FAQ` | Reads content into sections; FAQ extraction |
-| `Lean_SEO_Content` | The single answer to "what is this post's content?" |
-| `Lean_SEO_Description` | The single answer to "what description does this post get?" |
-| `Lean_SEO_Post_Seo` | Per-post SEO fields: which post types get them, storage, sanitization and slashing |
-| `Lean_SEO_Sitemap` | Sitemap routes and rendering (returns XML strings) |
-| `Lean_SEO_Robots` | The `Sitemap:` directive in robots.txt |
-| `Lean_SEO_Identity` | Site identity settings + schema applier |
-| `Lean_SEO_Homepage` | Homepage title/description settings + applier |
-| `Lean_SEO_IndexNow` | IndexNow key, verification file and submission |
-| `Lean_SEO_Markdown` | A post as Markdown with YAML frontmatter |
-| `Lean_SEO_Markdown_Endpoint` | The `.md` URLs |
-| `Lean_SEO_Markdown_Cache` | Per-post Markdown cache and its invalidation |
-| `Lean_SEO_Product` | Product catalogs: mapping, detection, Product node, validation |
-| `Lean_SEO_Product_Report` | How complete the catalog is: summary and per-product report |
-| `Lean_SEO_Product_Settings` | The catalog's settings section and field mapping |
-| `Lean_SEO_Llms` | llms.txt |
-| `Lean_SEO_Audit` | The SEO audit of a post, and site scans |
-| `Lean_SEO_Compat` | Stepping aside while another SEO plugin is active |
-| `Lean_SEO_Settings` | Registers every option, with a schema, for the form and the REST API |
-| `Lean_SEO_Importer` | Import from Yoast SEO, Rank Math, All in One SEO |
-| `Lean_SEO_App` | The Lean SEO admin screen: navigation, views, styles, scripts |
-| `Lean_SEO_REST` | REST controllers of the screen (`lean-seo/v1`) |
-| `Lean_SEO_Audit_Run` | The batched content check and its last results |
-| `Lean_SEO_Meta_Box` | The SEO fields in the post editor |
-| `Lean_SEO_Bulk_Descriptions` | The "Generate meta description" bulk action |
-| `Lean_SEO_Default_Author` | The author credited on posts without one |
-| `Lean_SEO_Abilities` | Abilities API registration |
-| `Lean_SEO_CLI` | WP-CLI commands |
+One class per file under `includes/`, grouped by concept and loaded by `includes/autoload.php` (an explicit class map: add a line there for a new class). `Lean_SEO` is the composition root: it calls each module's `register()` and nothing else. `CONTEXT.md` defines the terms used below.
+
+| Folder | Module | Responsibility |
+|--------|--------|----------------|
+| `includes/` | `Lean_SEO` | Composition root: which modules run, and when |
+| | `Lean_SEO_Settings` | Registers every option, with a schema, for the form and the REST API |
+| `content/` | `Lean_SEO_Content` | The single answer to "what is this post's content?" |
+| | `Lean_SEO_Description` | The single answer to "what description does this post get?" |
+| | `Lean_SEO_FAQ`, `Lean_SEO_FAQ_Section` | Reads content into sections; FAQ extraction |
+| | `Lean_SEO_Post_Seo` | Per-post SEO fields: which post types get them, storage, sanitization and slashing |
+| `head/` | `Lean_SEO_Meta` | `<head>` meta tags and canonical |
+| | `Lean_SEO_Title` | The document `<title>`: overrides and separator |
+| | `Lean_SEO_Schema` | JSON-LD graph |
+| `site/` | `Lean_SEO_Identity`, `Lean_SEO_Identity_Applier` | Who the site is: settings, and the filters that feed them to meta tags and schema |
+| | `Lean_SEO_Homepage`, `Lean_SEO_Homepage_Applier` | Homepage title and description: settings, and their filters |
+| | `Lean_SEO_Default_Author` | The author credited on posts without one |
+| `catalog/` | `Lean_SEO_Product` | Product catalogs: mapping, detection, Product node, validation |
+| | `Lean_SEO_Product_Report` | How complete the catalog is: summary and per-product report |
+| | `Lean_SEO_Product_Settings` | The catalog's settings section and field mapping |
+| `sitemap/` | `Lean_SEO_Sitemap` | Sitemap routes and rendering (returns XML strings) |
+| | `Lean_SEO_Robots` | The `Sitemap:` directive in robots.txt |
+| `markdown/` | `Lean_SEO_Markdown` | A post as Markdown with YAML frontmatter |
+| | `Lean_SEO_Markdown_Endpoint` | The `.md` URLs and the `rel="alternate"` link |
+| | `Lean_SEO_Markdown_Cache` | Per-post Markdown cache and its invalidation |
+| | `Lean_SEO_Llms` | llms.txt |
+| `audit/` | `Lean_SEO_Audit` | The SEO audit of a post, and site scans |
+| | `Lean_SEO_Audit_Run` | The batched content check and its last results |
+| `admin/` | `Lean_SEO_App` | The Lean SEO screen: navigation, views, the bulletin, styles, scripts |
+| | `Lean_SEO_Meta_Box` | The SEO fields in the post editor |
+| | `Lean_SEO_Bulk_Descriptions` | The "Generate meta description" bulk action |
+| | `views/` | The screen's templates |
+| `rest/` | `Lean_SEO_REST` | Registers the screen's controllers (`lean-seo/v1`) |
+| | `Lean_SEO_REST_Controller` | Shared by every controller: namespace, permission, uncached responses |
+| | `Lean_SEO_REST_Bulletin`, `_Preferences`, `_Audit`, `_Llms` | One controller per resource |
+| `tooling/` | `Lean_SEO_CLI` | WP-CLI commands |
+| | `Lean_SEO_Abilities` | Abilities API registration |
+| | `Lean_SEO_Importer` | Import from Yoast SEO, Rank Math, All in One SEO |
+| `integrations/` | `Lean_SEO_Compat` | Stepping aside while another SEO plugin is active |
+| | `Lean_SEO_IndexNow` | IndexNow key, verification file and submission |
 
 ## Filters
 
@@ -267,7 +272,7 @@ The screen's components live in `assets/admin/app.js` and register on `alpine:in
 
 REST endpoints for the screen, all administrators-only, under `lean-seo/v1`: `GET /bulletin`, `POST /preferences`, `GET /audit`, `POST /audit/runs`, `POST|DELETE /audit/runs/{token}`, `POST /llms`. Settings are saved through core's `/wp/v2/settings`.
 
-Tailwind scans `includes/admin/views/` and `includes/class-lean-seo-app.php` only, so the output holds just the classes they use. Colors are named by role (`bg-paper`, `bg-sheet`, `text-ink-2`, `border-rule`, `text-met`, `bg-level-yellow`…) and resolve to CSS variables that switch between the Day and Night editions. Public Sans is self-hosted from `assets/fonts/` (SIL Open Font License); `pnpm install` also pulls it from npm, should it need updating.
+Tailwind scans `includes/admin/` and `assets/admin/app.js` only, so the output holds just the classes they use. Colors are named by role (`bg-paper`, `bg-sheet`, `text-ink-2`, `border-rule`, `text-met`, `bg-level-yellow`…) and resolve to CSS variables that switch between the Day and Night editions. Public Sans is self-hosted from `assets/fonts/` (SIL Open Font License); `pnpm install` also pulls it from npm, should it need updating.
 
 ### Dependencies
 
