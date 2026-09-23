@@ -33,8 +33,10 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 - **Breadcrumbs** — the trail the schema states, for a theme to print with `thatseoagent_breadcrumbs()`, `[thatseoagent_breadcrumbs]` or the Breadcrumbs block; accessible markup, no styles
 - **Canonical URLs** — replaces core's `rel_canonical`; each page of a paginated listing or post is its own canonical, with `rel="prev"`/`rel="next"`
 - **Per-post SEO** — title/description meta box with live search preview, and a "Keep out of search results" box (`noindex`), exposed to the REST API
+- **Crawl cleanup** — no shortlink, RSD, WLW or generator tag, comment feeds out of search indexes; optionally only the main feed, and spam searches sent to the homepage
 - **Attachment pages** — redirected to their file, as WordPress does on sites installed since 6.4
 - **Site identity** — declare whether the site represents a Person or an Organization
+- **Site verification** — Google Search Console, Bing, Yandex, Baidu and Pinterest codes, printed on the homepage
 - **Homepage SEO** — custom title/description with `%%sitename%%`, `%%tagline%%`, `%%sep%%`
 - **IndexNow** — notify Bing/Yandex on publish (opt-in: no key, no requests)
 - **Markdown for AI agents** — any post or page at its URL plus `.md`, with YAML frontmatter, announced by a `rel="alternate"` link in the head and in a `Link` header; the page's own URL answers `Accept: text/markdown` with it too
@@ -102,11 +104,13 @@ A catalog without WooCommerce — machinery, parts, a range of models — is usu
 
 Taxonomies and meta keys are detected from the stored data and pre-selected by name. Name, description and featured image come from the post. Each entry is output as the page's `mainEntity`, instead of an Article.
 
+`/catalog.jsonl` gives agents the whole catalog as JSON Lines: each entry's Product markup, one per line, 100 per page (`?page=2`, announced with `Link: rel="next"`). Like llms.txt, it is for agents; search engines read the markup on each page.
+
 Values are validated and dropped rather than output half-formed. **ThatSeoAgent → Products** lists what each product is missing, and `wp thatseoagent validate-products` checks the whole catalog. Without a price no `offers` is output, so Google shows no product rich result — that needs offers, a review or a rating — but the markup still describes each product to search engines and AI assistants.
 
 ## llms.txt
 
-`/llms.txt` lists the posts served as Markdown and the product catalogs, each linking to its `.md` version where there is one, with its description. It is a [proposed convention](https://llmstxt.org), not a standard or a ranking factor. Regenerated when a post or the site identity changes; switch it off in the settings. A physical `llms.txt` in the site root takes precedence.
+`/llms.txt` opens with the site's about, contact and privacy pages, then lists the posts served as Markdown and the product catalogs — each catalog's 20 newest products, and a link to all of them in `/catalog.jsonl` — each entry linking to its `.md` version where there is one, with its description. It is a [proposed convention](https://llmstxt.org), not a standard or a ranking factor. Regenerated when a post or the site identity changes; switch it off in the settings. A physical `llms.txt` in the site root takes precedence.
 
 `/llms-full.txt` carries the content of those pages instead of links: each page with a Markdown version, in the same order, as its title, its URL and its Markdown, so an agent reads the site in one request. It is served and switched off with llms.txt, which links to it under `## Optional`, and stops before 2 MB (filter `thatseoagent_llms_full_max_bytes`), ending with how many pages did not fit. A physical `llms-full.txt` takes precedence.
 
@@ -140,6 +144,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Structure` | How a post is built, as facts for an agent to judge |
 | | `ThatSeoAgent_Image` | The image a page is represented by, for sharing and for the schema |
 | | `ThatSeoAgent_Primary_Term` | The category that names a post where only one fits |
+| | `ThatSeoAgent_Sample_Content` | WordPress's sample post and page, while still published |
 | `head/` | `ThatSeoAgent_Meta` | `<head>` meta tags and canonical |
 | | `ThatSeoAgent_Title` | The document `<title>`: overrides and separator |
 | | `ThatSeoAgent_Schema` | JSON-LD graph |
@@ -147,12 +152,17 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | `indexing/` | `ThatSeoAgent_Indexing` | The single answer to "may search engines index this?": robots meta, and what the sitemaps and llms.txt may list |
 | | `ThatSeoAgent_Pagination` | Paginated listings and posts: page numbers, their URLs, `rel="prev"`/`rel="next"` |
 | | `ThatSeoAgent_Attachment_Redirect` | Attachment pages lead to their file |
+| | `ThatSeoAgent_Crawl_Cleanup` | What nobody needs to crawl: shortlinks, RSD, the generator, extra feeds, spam searches |
 | `site/` | `ThatSeoAgent_Identity`, `ThatSeoAgent_Identity_Applier` | Who the site is: settings, and the filters that feed them to meta tags and schema |
 | | `ThatSeoAgent_Homepage`, `ThatSeoAgent_Homepage_Applier` | Homepage title and description: settings, and their filters |
 | | `ThatSeoAgent_Default_Author` | The author credited on posts without one |
 | | `ThatSeoAgent_Author_Profile` | An author's job title and profiles elsewhere, in the user profile |
+| | `ThatSeoAgent_Trust_Pages` | The about, contact and privacy pages the bulletin looks for |
+| | `ThatSeoAgent_New_Types` | Public content types the site owner has not looked at yet |
+| | `ThatSeoAgent_Verification` | The verification tags of search engine consoles, on the homepage |
 | `catalog/` | `ThatSeoAgent_Product` | Product catalogs: mapping, detection, Product node, validation |
 | | `ThatSeoAgent_Product_Report` | How complete the catalog is: summary and per-product report |
+| | `ThatSeoAgent_Catalog_Feed` | The catalog as JSON Lines, one Product per line, for agents |
 | | `ThatSeoAgent_Product_Settings` | The catalog's settings section and field mapping |
 | `sitemap/` | `ThatSeoAgent_Sitemap` | Sitemap routes and rendering (returns XML strings) |
 | | `ThatSeoAgent_Robots` | The `Sitemap:` directive and the blocked AI crawlers in robots.txt |

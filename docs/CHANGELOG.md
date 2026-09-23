@@ -1,5 +1,70 @@
 # Changelog
 
+## [2.5.0] - 2026-09-23
+
+### Added
+- **Crawl cleanup** (`ThatSeoAgent_Crawl_Cleanup`). Always: the shortlink
+  (in the head and the `Link` header), the RSD and WLW links and the
+  generator tag (pages and feeds) are left out, and comment feeds are sent
+  with `X-Robots-Tag: noindex, follow`. Optional, off by default, in
+  Settings → Crawl cleanup: **only the main feed** — the other feeds are no
+  longer announced and redirect (301) to the page they follow — and
+  **filter spam searches** — searches with emoji and other symbols,
+  full-width punctuation, messenger handles or over 100 characters redirect
+  to the homepage; accented letters and punctuation in any language pass.
+  Filter `thatseoagent_spam_search`.
+- **The catalog as JSON Lines** (`ThatSeoAgent_Catalog_Feed`):
+  `/catalog.jsonl`, every catalog entry's Product markup — the node its page
+  carries — one complete document per line, 100 per page
+  (`?page=2`, announced with `Link: rel="next"`), `noindex`, cached until a
+  catalog entry or the catalog settings change. Entries kept out of search
+  or behind a password are left out. Linked from llms.txt and listed in
+  "What the site publishes". Only while a catalog is set up.
+- **llms.txt opens with "About the site"**: the about, contact and privacy
+  pages the bulletin finds, before any other section and not repeated under
+  their post type. llms-full.txt keeps them.
+- **llms.txt lists a catalog's 20 newest products**, then "All N products"
+  linking to `/catalog.jsonl`, which then leaves the Optional section. Filter
+  `thatseoagent_llms_txt_catalog_limit`. On this kind of site the file goes
+  from over a hundred links to a few dozen.
+- **Two health checks in the bulletin**: permalinks without `%postname%`
+  (numbers and dates, not words) turn the Permalinks observation yellow,
+  with a warning that says changing them on an established site moves every
+  post's address; and WordPress's default tagline ("Just another WordPress
+  site", in the install's language) raises a warning while the homepage has
+  no description of its own, since it is then what search results and
+  llms.txt say the site is.
+- **A bulletin warning when a new public content type is published**
+  (`ThatSeoAgent_New_Types`): its pages are already in the sitemap, and only
+  the site owner knows whether it lists products. The types that existed the
+  first time the bulletin is read are known from the start; the warning goes
+  once someone follows it to the catalog settings or saves them.
+- **A bulletin warning while WordPress's sample post or page is still
+  published** ("Hello world!", "Sample Page"), recognized by the slug
+  WordPress gave them in English, the site's language and the languages
+  sites are most often installed in (`ThatSeoAgent_Sample_Content`). The
+  action opens the post when there is one, the list when there are two.
+- **Site verification** (`ThatSeoAgent_Verification`, Settings → Site
+  verification): the code — or the whole meta tag, as the service shows it —
+  for Google Search Console, Bing Webmaster Tools, Yandex, Baidu and
+  Pinterest, printed as its meta tag on the homepage only.
+
+### Not done, on purpose
+- Moving `utm_*` parameters out of the URL: the redirect loses the
+  campaign in Google Analytics, and the canonical already leaves them out.
+- Blocking search results in robots.txt: they carry `noindex`, which a
+  crawler kept out by robots.txt never reads — the URL can stay in results
+  from links to it. The spam search filter covers the abuse.
+- A robots.txt rules hook: ThatSeoAgent keeps what other plugins add
+  through core's `robots_txt` filter, which already is that hook.
+- Yoast's llms.txt rules of dropping posts older than 12 months and putting
+  "cornerstone" content first: evergreen content does not age out, and
+  ThatSeoAgent has no cornerstone flag to read.
+- Images in the sitemaps: Google uses them to discover images it cannot
+  find by crawling the page, such as ones loaded by script. Images printed
+  in the HTML are found anyway, and every sitemap request would have to read
+  each post's content and gallery.
+
 ## [2.4.0] - 2026-09-23
 
 ### Changed

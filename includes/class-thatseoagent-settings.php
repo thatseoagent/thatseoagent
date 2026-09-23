@@ -58,6 +58,8 @@ class ThatSeoAgent_Settings {
             'ThatSeoAgent_Llms',
             'ThatSeoAgent_IndexNow',
             'ThatSeoAgent_AI_Crawlers',
+            'ThatSeoAgent_Crawl_Cleanup',
+            'ThatSeoAgent_Verification',
         );
     }
 

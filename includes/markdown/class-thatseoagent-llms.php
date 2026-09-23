@@ -257,12 +257,41 @@ class ThatSeoAgent_Llms {
             $lines[] = '';
         }
 
-        $limit = self::limit();
+        // Who the site is and how to reach it, before anything else: the
+        // first thing an agent needs to answer about a site.
+        $about = self::about_entries();
+        if ( $about['entries'] ) {
+            $lines[] = '## ' . __( 'About the site', 'thatseoagent' );
+            $lines[] = '';
+            $lines   = array_merge( $lines, $about['entries'] );
+            $lines[] = '';
+        }
+
+        $limit          = self::limit();
+        $catalogs       = ThatSeoAgent_Product::post_types();
+        $catalog_linked = false;
 
         foreach ( self::post_types() as $post_type ) {
-            $entries = self::entries( $post_type, $limit );
+            $is_catalog = in_array( $post_type, $catalogs, true );
+            $entries    = self::entries( $post_type, $is_catalog ? self::catalog_limit() : $limit, $about['ids'] );
             if ( ! $entries ) {
                 continue;
+            }
+
+            // A catalog lists its newest products; the rest are one link
+            // away, all of them, in the catalog file.
+            if ( $is_catalog && ThatSeoAgent_Catalog_Feed::is_published() ) {
+                $total = self::count_listed( $post_type );
+                if ( $total > count( $entries ) ) {
+                    $entries[] = sprintf(
+                        '- [%s](%s): %s',
+                        /* translators: %d: number of products. */
+                        sprintf( __( 'All %d products', 'thatseoagent' ), $total ),
+                        ThatSeoAgent_Catalog_Feed::url(),
+                        __( 'every product as schema.org JSON, one per line', 'thatseoagent' )
+                    );
+                    $catalog_linked = true;
+                }
             }
 
             $object  = get_post_type_object( $post_type );
@@ -276,6 +305,9 @@ class ThatSeoAgent_Llms {
             $lines[] = '## Optional';
             $lines[] = '';
             $lines[] = sprintf( '- [%s](%s): %s', __( 'Full text', 'thatseoagent' ), ThatSeoAgent_Llms_Full::url(), __( 'every page above with a Markdown version, in one file', 'thatseoagent' ) );
+            if ( ThatSeoAgent_Catalog_Feed::is_published() && ! $catalog_linked ) {
+                $lines[] = sprintf( '- [%s](%s): %s', __( 'Product catalog', 'thatseoagent' ), ThatSeoAgent_Catalog_Feed::url(), __( 'every product as schema.org JSON, one per line', 'thatseoagent' ) );
+            }
             $lines[] = sprintf( '- [%s](%s)', __( 'Sitemap', 'thatseoagent' ), home_url( '/sitemap.xml' ) );
             $lines[] = '';
         }
@@ -293,31 +325,125 @@ class ThatSeoAgent_Llms {
      * The list entries of one post type.
      *
      * @since 1.16.0
-     * @param string $post_type Post type.
-     * @param int    $limit     Maximum entries.
+     * @param string          $post_type Post type.
+     * @param int             $limit     Maximum entries.
+     * @param array<int, int> $exclude   Post IDs to leave out.
      * @return array<int, string>
      */
-    private static function entries( $post_type, $limit ) {
+    private static function entries( $post_type, $limit, array $exclude = array() ) {
         $entries = array();
 
-        foreach ( self::posts( $post_type, $limit ) as $post ) {
-            $markdown = ThatSeoAgent_Markdown_Endpoint::url_for( $post );
-            $url      = $markdown ? $markdown : get_permalink( $post );
-            $title    = self::line( get_the_title( $post ) );
-
-            $entry       = sprintf( '- [%s](%s)', str_replace( array( '[', ']' ), array( '(', ')' ), $title ), $url );
-            $description = self::line( ThatSeoAgent_Description::for_post( $post ) );
-
-            if ( '' !== $description ) {
-                $entry .= ': ' . $description;
-            }
-
-            $entries[] = $entry;
+        foreach ( self::posts( $post_type, $limit, $exclude ) as $post ) {
+            $entries[] = self::entry( $post );
 
             ThatSeoAgent_Memo::forget_post( $post );
         }
 
         return $entries;
+    }
+
+    /**
+     * One post as a list entry: its title, linking to its Markdown version
+     * where there is one, and its description.
+     *
+     * @since 2.5.0 Split from entries().
+     * @param WP_Post $post Post.
+     * @return string
+     */
+    private static function entry( WP_Post $post ) {
+        $markdown = ThatSeoAgent_Markdown_Endpoint::url_for( $post );
+        $url      = $markdown ? $markdown : get_permalink( $post );
+        $title    = self::line( get_the_title( $post ) );
+
+        $entry       = sprintf( '- [%s](%s)', str_replace( array( '[', ']' ), array( '(', ')' ), $title ), $url );
+        $description = self::line( ThatSeoAgent_Description::for_post( $post ) );
+
+        if ( '' !== $description ) {
+            $entry .= ': ' . $description;
+        }
+
+        return $entry;
+    }
+
+    /**
+     * The site's trust pages — about, contact, privacy — as list entries,
+     * and the IDs of the ones that are posts, so they are not listed twice.
+     *
+     * A trust page found as a menu link to another site, or a mailto: for
+     * contact, is listed with its name.
+     *
+     * @since 2.5.0
+     * @return array{entries: array<int, string>, ids: array<int, int>}
+     */
+    private static function about_entries() {
+        $labels  = ThatSeoAgent_Trust_Pages::labels();
+        $entries = array();
+        $ids     = array();
+
+        foreach ( ThatSeoAgent_Trust_Pages::found() as $kind => $url ) {
+            if ( '' === $url ) {
+                continue;
+            }
+
+            $post_id = 0 === strpos( $url, 'mailto:' ) ? 0 : url_to_postid( $url );
+            $post    = $post_id ? get_post( $post_id ) : null;
+
+            if ( $post && 'publish' === $post->post_status && ! post_password_required( $post ) && ! ThatSeoAgent_Indexing::is_post_noindex( $post ) ) {
+                $entries[] = self::entry( $post );
+                $ids[]     = (int) $post->ID;
+            } elseif ( ! $post ) {
+                $entries[] = sprintf( '- [%s](%s)', $labels[ $kind ], esc_url_raw( $url, array( 'http', 'https', 'mailto' ) ) );
+            }
+        }
+
+        return array(
+            'entries' => $entries,
+            'ids'     => $ids,
+        );
+    }
+
+    /**
+     * Products listed per catalog.
+     *
+     * @since 2.5.0
+     * @return int
+     */
+    public static function catalog_limit() {
+        /**
+         * Maximum products listed per catalog in llms.txt, newest first.
+         *
+         * The whole catalog is in /catalog.jsonl, which the list links to
+         * when it holds more.
+         *
+         * @since 2.5.0
+         * @param int $limit Default 20.
+         */
+        return max( 1, (int) apply_filters( 'thatseoagent_llms_txt_catalog_limit', 20 ) );
+    }
+
+    /**
+     * How many posts of a type could be listed.
+     *
+     * @since 2.5.0
+     * @param string $post_type Post type.
+     * @return int
+     */
+    private static function count_listed( $post_type ) {
+        $query = new WP_Query(
+            array_merge(
+                array(
+                    'post_type'              => $post_type,
+                    'post_status'            => 'publish',
+                    'posts_per_page'         => 1,
+                    'fields'                 => 'ids',
+                    'update_post_meta_cache' => false,
+                    'update_post_term_cache' => false,
+                ),
+                ThatSeoAgent_Indexing::listed_query_args()
+            )
+        );
+
+        return (int) $query->found_posts;
     }
 
     /**
@@ -346,11 +472,13 @@ class ThatSeoAgent_Llms {
      * offers.
      *
      * @since 2.3.0 Split from entries().
-     * @param string $post_type Post type.
-     * @param int    $limit     Maximum posts.
+     * @since 2.5.0 $exclude.
+     * @param string          $post_type Post type.
+     * @param int             $limit     Maximum posts.
+     * @param array<int, int> $exclude   Post IDs to leave out.
      * @return array<int, WP_Post>
      */
-    public static function posts( $post_type, $limit ) {
+    public static function posts( $post_type, $limit, array $exclude = array() ) {
         $hierarchical = is_post_type_hierarchical( $post_type );
 
         return get_posts(
@@ -360,7 +488,7 @@ class ThatSeoAgent_Llms {
                     'post_status'    => 'publish',
                     // The blog index page has no content of its own; its posts are
                     // listed under their own heading.
-                    'post__not_in'   => array_filter( array( (int) get_option( 'page_for_posts' ) ) ),
+                    'post__not_in'   => array_values( array_filter( array_merge( array( (int) get_option( 'page_for_posts' ) ), array_map( 'intval', $exclude ) ) ) ),
                     'posts_per_page' => $limit,
                     'orderby'        => $hierarchical ? array( 'menu_order' => 'ASC', 'title' => 'ASC' ) : 'date',
                     'order'          => 'DESC',

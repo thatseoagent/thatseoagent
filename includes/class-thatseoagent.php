@@ -81,6 +81,9 @@ class ThatSeoAgent {
             ThatSeoAgent_Product_Settings::register();
             ThatSeoAgent_AI_Crawlers::register();
             ThatSeoAgent_Llms::register_settings();
+            ThatSeoAgent_Crawl_Cleanup::register_settings();
+            ThatSeoAgent_Verification::register_settings();
+            ThatSeoAgent_New_Types::register();
         }
 
         // Everything below writes to <head>, serves sitemaps or edits
@@ -92,6 +95,8 @@ class ThatSeoAgent {
         ThatSeoAgent_Title::register();
         ThatSeoAgent_Indexing::register();
         ThatSeoAgent_Attachment_Redirect::register();
+        ThatSeoAgent_Crawl_Cleanup::register();
+        ThatSeoAgent_Verification::register();
         ThatSeoAgent_Meta::register();
         ThatSeoAgent_Pagination::register();
         ThatSeoAgent_Schema::register();
@@ -102,6 +107,7 @@ class ThatSeoAgent {
         // and llms-full.txt, which goes with it.
         ThatSeoAgent_Llms::register();
         ThatSeoAgent_Llms_Full::register();
+        ThatSeoAgent_Catalog_Feed::register();
     }
 
     /**

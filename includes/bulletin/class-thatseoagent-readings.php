@@ -84,6 +84,12 @@ class ThatSeoAgent_Readings {
                 'note'   => $outputs ? ( ThatSeoAgent_Llms::is_enabled() ? '' : __( 'Switched off in the settings', 'thatseoagent' ) ) : $off,
             ),
             array(
+                'label'  => __( 'Catalog as JSON Lines', 'thatseoagent' ),
+                'url'    => ThatSeoAgent_Catalog_Feed::url(),
+                'active' => $outputs && ThatSeoAgent_Catalog_Feed::is_published(),
+                'note'   => $outputs ? ( ThatSeoAgent_Product::post_types() ? '' : __( 'Needs a product catalog', 'thatseoagent' ) ) : $off,
+            ),
+            array(
                 'label'  => __( 'robots.txt', 'thatseoagent' ),
                 'url'    => home_url( '/robots.txt' ),
                 'active' => true,

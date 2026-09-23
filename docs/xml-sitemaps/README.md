@@ -91,6 +91,16 @@ The plugin automatically adds the main sitemap URL to `robots.txt`:
 Sitemap: https://example.com/sitemap.xml
 ```
 
+It keeps every other line other plugins or the theme add, so rules of your own go through WordPress's own filter:
+
+```php
+add_filter( 'robots_txt', function ( $output, $public ) {
+    return $output . "\nUser-agent: *\nDisallow: /private-area/\n";
+}, 10, 2 );
+```
+
+Search results are not blocked here on purpose: they carry `noindex`, and a crawler kept out by robots.txt never reads it.
+
 ## Technical Details
 
 - Uses WordPress rewrite API for clean URLs

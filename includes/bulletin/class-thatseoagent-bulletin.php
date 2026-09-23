@@ -115,16 +115,21 @@ class ThatSeoAgent_Bulletin {
      *
      * @since 1.20.0
      * @since 2.3.0 trust_pages, links.
-     * @return array{indexing: bool, permalinks: bool, other_plugin: string, identity: bool, homepage: bool, trust_pages: array, links: array|null, catalog: array|null, crawlers: array, indexnow: bool, now: int}
+     * @since 2.5.0 sample, new_types, post_names, tagline.
+     * @return array{indexing: bool, permalinks: bool, post_names: bool, tagline: bool, other_plugin: string, identity: bool, homepage: bool, trust_pages: array, sample: array, new_types: array, links: array|null, catalog: array|null, crawlers: array, indexnow: bool, now: int}
      */
     public static function facts() {
         return array(
             'indexing'     => (bool) get_option( 'blog_public' ),
             'permalinks'   => (bool) get_option( 'permalink_structure' ),
+            'post_names'   => false !== strpos( (string) get_option( 'permalink_structure' ), '%postname%' ),
+            'tagline'      => ThatSeoAgent_Homepage::has_default_tagline(),
             'other_plugin' => ThatSeoAgent_Compat::other_seo_plugin(),
             'identity'     => ThatSeoAgent_Identity::is_recognizable(),
             'homepage'     => ThatSeoAgent_Homepage::has_description(),
             'trust_pages'  => ThatSeoAgent_Trust_Pages::found(),
+            'sample'       => ThatSeoAgent_Sample_Content::published(),
+            'new_types'    => ThatSeoAgent_New_Types::unreviewed(),
             // Only a graph already built: the bulletin never requests pages.
             'links'        => ThatSeoAgent_Links::cached(),
             'catalog'      => empty( ThatSeoAgent_Product::post_types() ) ? null : ThatSeoAgent_Product_Report::summary(),
@@ -166,8 +171,22 @@ class ThatSeoAgent_Bulletin {
         }
 
         // Permalinks.
-        $pretty         = $facts['permalinks'];
-        $observations[] = self::observation( 'permalinks', __( 'Permalinks', 'thatseoagent' ), $pretty ? 'ok' : 'red', $pretty ? __( 'Readable', 'thatseoagent' ) : __( 'Plain', 'thatseoagent' ) );
+        $pretty = $facts['permalinks'];
+        $named  = ! isset( $facts['post_names'] ) || $facts['post_names'];
+        if ( ! $pretty ) {
+            $observations[] = self::observation( 'permalinks', __( 'Permalinks', 'thatseoagent' ), 'red', __( 'Plain', 'thatseoagent' ) );
+        } elseif ( ! $named ) {
+            $observations[] = self::observation( 'permalinks', __( 'Permalinks', 'thatseoagent' ), 'yellow', __( 'Numbers', 'thatseoagent' ) );
+            $warnings[]     = self::warning(
+                'yellow',
+                __( 'Post addresses do not say what the post is about', 'thatseoagent' ),
+                __( 'The permalink structure has no %postname%, so addresses are numbers and dates. On a site that has been online a while, changing it moves every post\'s address: do it only with redirects from the old ones.', 'thatseoagent' ),
+                __( 'Open Permalink settings', 'thatseoagent' ),
+                'permalinks'
+            );
+        } else {
+            $observations[] = self::observation( 'permalinks', __( 'Permalinks', 'thatseoagent' ), 'ok', __( 'Readable', 'thatseoagent' ) );
+        }
         if ( ! $pretty ) {
             $warnings[] = self::warning(
                 'red',
@@ -202,6 +221,19 @@ class ThatSeoAgent_Bulletin {
                 __( 'Say whether the site is a person or an organization, and add its logo and social profiles.', 'thatseoagent' ),
                 __( 'Set up the identity', 'thatseoagent' ),
                 'identity'
+            );
+        }
+
+        // WordPress's default tagline, which stands in for a homepage
+        // description that was never written.
+        if ( ! empty( $facts['tagline'] ) && ! $facts['homepage'] ) {
+            $warnings[] = self::warning(
+                'yellow',
+                __( 'Search results describe the site with WordPress\'s default tagline', 'thatseoagent' ),
+                /* translators: %s: the tagline. */
+                sprintf( __( '"%s" is what the homepage says about the site, in search results and in llms.txt. Write a tagline of your own, or a homepage description.', 'thatseoagent' ), get_bloginfo( 'description' ) ),
+                __( 'Open General settings', 'thatseoagent' ),
+                'general'
             );
         }
 
@@ -248,6 +280,36 @@ class ThatSeoAgent_Bulletin {
                 __( 'Visitors look for who runs a site, how to reach it and what it does with their data; search engines and AI assistants read the same pages. Google asks whether that is clear, though it is not a ranking factor.', 'thatseoagent' ),
                 in_array( 'privacy', $missing, true ) ? __( 'Choose the privacy policy page', 'thatseoagent' ) : __( 'Create a page', 'thatseoagent' ),
                 in_array( 'privacy', $missing, true ) ? 'privacy' : 'new_page'
+            );
+        }
+
+        // A public content type nobody has looked at: it is published, and
+        // only the site owner knows whether it lists products.
+        $new_types = isset( $facts['new_types'] ) ? $facts['new_types'] : array();
+        if ( $new_types ) {
+            $names      = wp_list_pluck( $new_types, 'label' );
+            $warnings[] = self::warning(
+                'yellow',
+                /* translators: %s: content type names, e.g. "Machines and Parts". */
+                sprintf( _n( 'A new content type is being published: %s', 'New content types are being published: %s', count( $new_types ), 'thatseoagent' ), wp_sprintf_l( '%l', $names ) ),
+                __( 'Its pages are already in the sitemap and have SEO fields. If they list products — machines, parts, models — mark it as a product catalog so each one is described as a product.', 'thatseoagent' ),
+                __( 'Review it', 'thatseoagent' ),
+                'review_types'
+            );
+        }
+
+        // The sample post and page WordPress installs with, still published.
+        $sample = isset( $facts['sample'] ) ? $facts['sample'] : array();
+        if ( $sample ) {
+            $titles     = wp_list_pluck( $sample, 'title' );
+            $warnings[] = self::warning(
+                'yellow',
+                /* translators: %s: the titles, e.g. "Hello world! and Sample Page". */
+                sprintf( _n( 'WordPress\'s sample content is still published: %s', 'WordPress\'s sample content is still published: %s', count( $sample ), 'thatseoagent' ), wp_sprintf_l( '%l', $titles ) ),
+                __( 'Search engines index it like any page, and it is in the sitemap: a placeholder shown as part of the site. Delete it, or replace it with something of your own.', 'thatseoagent' ),
+                1 === count( $sample ) ? __( 'Edit it', 'thatseoagent' ) : __( 'See the posts', 'thatseoagent' ),
+                1 === count( $sample ) ? 'edit_post' : 'posts',
+                1 === count( $sample ) ? $sample[0]['id'] : 0
             );
         }
 
@@ -432,10 +494,13 @@ class ThatSeoAgent_Bulletin {
      * @param string $label       Action label.
      * @param string $destination Where it is fixed: 'reading', 'permalinks',
      *                            'plugins', 'identity', 'homepage', 'products',
-     *                            'crawlers', 'privacy', 'new_page' or 'audit'.
-     * @return array{level: string, title: string, detail: string, action: array{label: string, destination: string}}
+     *                            'crawlers', 'privacy', 'new_page', 'audit',
+     *                            'posts', 'edit_post', 'review_types' or
+     *                            'general'.
+     * @param int    $id          The post, for 'edit_post'.
+     * @return array{level: string, title: string, detail: string, action: array{label: string, destination: string, id: int}}
      */
-    private static function warning( $level, $title, $detail, $label, $destination ) {
+    private static function warning( $level, $title, $detail, $label, $destination, $id = 0 ) {
         return array(
             'level'  => $level,
             'title'  => $title,
@@ -443,6 +508,7 @@ class ThatSeoAgent_Bulletin {
             'action' => array(
                 'label'       => $label,
                 'destination' => $destination,
+                'id'          => (int) $id,
             ),
         );
     }

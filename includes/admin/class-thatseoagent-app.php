@@ -384,6 +384,8 @@ class ThatSeoAgent_App {
                 return admin_url( 'options-reading.php' );
             case 'permalinks':
                 return admin_url( 'options-permalink.php' );
+            case 'general':
+                return admin_url( 'options-general.php' );
             case 'plugins':
                 return admin_url( 'plugins.php' );
             case 'identity':
@@ -400,6 +402,13 @@ class ThatSeoAgent_App {
                 return admin_url( 'post-new.php?post_type=page' );
             case 'audit':
                 return self::url( 'audit' );
+            case 'posts':
+                return admin_url( 'edit.php?post_status=publish' );
+            case 'review_types':
+                return ThatSeoAgent_New_Types::review_url();
+            case 'edit_post':
+                $link = ! empty( $action['id'] ) ? get_edit_post_link( (int) $action['id'], 'raw' ) : '';
+                return $link ? $link : admin_url( 'edit.php' );
         }
 
         return self::url();

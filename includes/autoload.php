@@ -49,6 +49,7 @@ spl_autoload_register(
         'ThatSeoAgent_Image'             => 'content/class-thatseoagent-image.php',
         'ThatSeoAgent_Post_Seo'          => 'content/class-thatseoagent-post-seo.php',
         'ThatSeoAgent_Primary_Term'      => 'content/class-thatseoagent-primary-term.php',
+        'ThatSeoAgent_Sample_Content'    => 'content/class-thatseoagent-sample-content.php',
         'ThatSeoAgent_Structure'         => 'content/class-thatseoagent-structure.php',
 
         'ThatSeoAgent_Breadcrumbs'       => 'head/class-thatseoagent-breadcrumbs.php',
@@ -57,6 +58,7 @@ spl_autoload_register(
         'ThatSeoAgent_Title'             => 'head/class-thatseoagent-title.php',
 
         'ThatSeoAgent_Attachment_Redirect' => 'indexing/class-thatseoagent-attachment-redirect.php',
+        'ThatSeoAgent_Crawl_Cleanup'     => 'indexing/class-thatseoagent-crawl-cleanup.php',
         'ThatSeoAgent_Indexing'          => 'indexing/class-thatseoagent-indexing.php',
         'ThatSeoAgent_Pagination'        => 'indexing/class-thatseoagent-pagination.php',
 
@@ -66,8 +68,11 @@ spl_autoload_register(
         'ThatSeoAgent_Homepage'          => 'site/class-thatseoagent-homepage.php',
         'ThatSeoAgent_Identity_Applier'  => 'site/class-thatseoagent-identity-applier.php',
         'ThatSeoAgent_Identity'          => 'site/class-thatseoagent-identity.php',
+        'ThatSeoAgent_New_Types'         => 'site/class-thatseoagent-new-types.php',
         'ThatSeoAgent_Trust_Pages'       => 'site/class-thatseoagent-trust-pages.php',
+        'ThatSeoAgent_Verification'      => 'site/class-thatseoagent-verification.php',
 
+        'ThatSeoAgent_Catalog_Feed'      => 'catalog/class-thatseoagent-catalog-feed.php',
         'ThatSeoAgent_Product_Report'    => 'catalog/class-thatseoagent-product-report.php',
         'ThatSeoAgent_Product_Settings'  => 'catalog/class-thatseoagent-product-settings.php',
         'ThatSeoAgent_Product'           => 'catalog/class-thatseoagent-product.php',

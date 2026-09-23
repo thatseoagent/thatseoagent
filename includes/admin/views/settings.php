@@ -24,10 +24,12 @@ $sections = isset( $wp_settings_sections[ $page ] ) ? (array) $wp_settings_secti
 $order = array(
     'thatseoagent_identity_section',
     'thatseoagent_homepage_section',
+    'thatseoagent_verification_section',
     'thatseoagent_products_section',
     'thatseoagent_schema_section',
     'thatseoagent_llms_section',
     'thatseoagent_crawlers_section',
+    'thatseoagent_crawl_section',
     'thatseoagent_indexnow_section',
 );
 uksort(

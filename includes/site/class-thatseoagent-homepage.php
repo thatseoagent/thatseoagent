@@ -79,6 +79,36 @@ class ThatSeoAgent_Homepage {
     }
 
     /**
+     * Whether the tagline is still the one WordPress installed with.
+     *
+     * Without a homepage description of its own, the tagline is what search
+     * results and llms.txt say the site is. Sites installed before 6.1 got
+     * "Just another WordPress site" (earlier still, "weblog"), in the
+     * install's language; newer ones get none.
+     *
+     * @since 2.5.0
+     * @return bool
+     */
+    public static function has_default_tagline() {
+        $tagline = trim( (string) get_option( 'blogdescription' ) );
+
+        if ( '' === $tagline ) {
+            return false;
+        }
+
+        $defaults = array(
+            'Just another WordPress site',
+            'Just another WordPress weblog',
+            // phpcs:ignore WordPress.WP.I18n.TextDomainMismatch -- Core's own string, in the language core translated it to at install.
+            __( 'Just another WordPress site', 'default' ),
+            'Otro sitio realizado con WordPress',
+            'Un sitio más de WordPress',
+        );
+
+        return in_array( $tagline, $defaults, true );
+    }
+
+    /**
      * Register the hooks.
      *
      * @since 1.19.0
