@@ -143,6 +143,9 @@
   check's dot follows its verdict (red, yellow, green or grey), and a
   robots.txt answering a 4xx is yellow, a 5xx red, as the bulletin rates
   them.
+- **The screen's filled buttons and the active section's icon are ink**,
+  not the brand's red, which now stays in the logo, the links and the
+  focus ring: a red button beside a warning read as one more thing wrong.
 - **The blog's posts page** no longer takes the homepage's title and
   description, and its own SEO fields now reach its `<title>` and meta
   description; without a description of its own it says the tagline, as

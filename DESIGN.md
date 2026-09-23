@@ -11,8 +11,8 @@ colors:
   ink-2: "#5f564e"
   ink-3: "#736a5f"
   met: "#c4331a"
-  press: "#c4331a"
-  press-hover: "#b83312"
+  press: "#1c1815"
+  press-hover: "#3a332d"
   on-press: "#f8f5f1"
   level-clear: "#1e7a3e"
   level-yellow: "#9a7200"
@@ -29,7 +29,8 @@ colors:
   night-ink-2: "#a0968a"
   night-ink-3: "#8b8175"
   night-met: "#ff4e20"
-  night-press-hover: "#ff6a45"
+  night-press: "#f4efe7"
+  night-press-hover: "#ddd5ca"
   night-on-press: "#15110e"
   night-level-clear: "#4ade80"
   night-level-yellow: "#c49b00"
@@ -137,7 +138,8 @@ The screen lives inside wp-admin and must not leak into it: no global reset, a r
 ## Colors
 
 ### Accent
-- **Deep Ōtan Red** (met, press): links (underlined), focus outlines, the checked radio and checkbox, the active nav icon, the press fill (with a paper label, 5.0:1). Never a state: red reads as something wrong, so nothing that is fine, finished or in progress is painted with it. **Red Gravy** (press-hover) on hover. In Night it becomes the vivid Ōtan Red `#ff4e20`, which has the contrast there.
+- **Deep Ōtan Red** (met): links (underlined), focus outlines, the checked radio and checkbox, and the logo. Never a state: red reads as something wrong, so nothing that is fine, finished or in progress is painted with it. In Night it becomes the vivid Ōtan Red `#ff4e20`, which has the contrast there.
+- **Press** (the one filled control) and the active nav icon are ink, not red: a red button beside a warning reads as one more thing wrong. Paper label on ink; a lighter ink on hover. In Night, the night ink with an espresso label.
 - **Ōtan Red** (brand-mark): the logo square only, fixed in both editions.
 
 ### Warning Scale

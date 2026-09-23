@@ -74,7 +74,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
                             class="flex items-center gap-2.5 px-3 py-2 font-mono text-[12px] tracking-[0.08em] whitespace-nowrap uppercase <?php echo $active ? 'bg-sheet font-bold text-ink ring-1 ring-rule' : 'text-ink-2 hover:bg-sheet/60 hover:text-ink'; ?>"
                             <?php echo $active ? 'aria-current="page"' : ''; ?>
                         >
-                            <?php ThatSeoAgent_Icons::the( $item['icon'], 'size-4 ' . ( $active ? 'text-met' : 'text-ink-3' ) ); ?>
+                            <?php ThatSeoAgent_Icons::the( $item['icon'], 'size-4 ' . ( $active ? 'text-ink' : 'text-ink-3' ) ); ?>
                             <?php echo esc_html( $item['label'] ); ?>
                         </a>
                     </li>

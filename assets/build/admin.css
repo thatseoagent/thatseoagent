@@ -494,9 +494,6 @@
   .bg-column {
     background-color: var(--tsa-column) !important;
   }
-  .bg-ink {
-    background-color: var(--tsa-ink) !important;
-  }
   .bg-ink-3 {
     background-color: var(--tsa-ink-3) !important;
   }
@@ -511,9 +508,6 @@
   }
   .bg-level-yellow {
     background-color: var(--tsa-level-yellow) !important;
-  }
-  .bg-met {
-    background-color: var(--tsa-met) !important;
   }
   .bg-on-clear {
     background-color: var(--tsa-on-clear) !important;
@@ -755,9 +749,6 @@
   }
   .text-level-red {
     color: var(--tsa-level-red) !important;
-  }
-  .text-met {
-    color: var(--tsa-met) !important;
   }
   .uppercase {
     text-transform: uppercase !important;
@@ -1147,8 +1138,8 @@
   --tsa-ink-2: #5f564e;
   --tsa-ink-3: #736a5f;
   --tsa-met: #c4331a;
-  --tsa-press: #c4331a;
-  --tsa-press-hover: #b83312;
+  --tsa-press: #1c1815;
+  --tsa-press-hover: #3a332d;
   --tsa-on-press: #f8f5f1;
   --tsa-level-clear: #1e7a3e;
   --tsa-level-yellow: #9a7200;
@@ -1170,8 +1161,8 @@
   --tsa-ink-2: #a0968a;
   --tsa-ink-3: #8b8175;
   --tsa-met: #ff4e20;
-  --tsa-press: #ff4e20;
-  --tsa-press-hover: #ff6a45;
+  --tsa-press: #f4efe7;
+  --tsa-press-hover: #ddd5ca;
   --tsa-on-press: #15110e;
   --tsa-level-clear: #4ade80;
   --tsa-level-yellow: #c49b00;
