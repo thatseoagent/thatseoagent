@@ -2,9 +2,9 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ThatSeoAgent 2.3.0\n"
+"Project-Id-Version: ThatSeoAgent 2.4.0\n"
 "Report-Msgid-Bugs-To: angel.cruz@wallbit.io\n"
-"POT-Creation-Date: 2026-09-23T16:45:38+00:00\n"
+"POT-Creation-Date: 2026-09-23T17:17:26+00:00\n"
 "PO-Revision-Date: 2026-09-23 16:30+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1460,12 +1460,13 @@ msgid "No answer"
 msgstr "Sin respuesta"
 
 #. translators: 1: post type plural label, e.g. "Products", 2: site name.
-#: includes/head/class-thatseoagent-meta.php:296
+#: includes/head/class-thatseoagent-meta.php:373
 #, php-format
 msgid "Browse all %1$s on %2$s"
 msgstr "Explora todos los %1$s de %2$s"
 
-#: includes/head/class-thatseoagent-schema.php:442
+#: includes/head/class-thatseoagent-breadcrumbs.php:229
+#: assets/blocks/breadcrumbs.js:48
 msgid "Home"
 msgstr "Inicio"
 
@@ -2671,3 +2672,54 @@ msgid ""
 msgstr ""
 "Una dirección por línea: LinkedIn, un colegio profesional, tu propio sitio. "
 "Las direcciones de este sitio se omiten."
+
+#. translators: %s: taxonomy singular name, e.g. "Category".
+#: includes/content/class-thatseoagent-primary-term.php:292
+#, php-format
+msgid "Primary %s"
+msgstr "%s principal"
+
+#. translators: %s: the term picked automatically.
+#: includes/content/class-thatseoagent-primary-term.php:299
+#, php-format
+msgid "Automatic (%s)"
+msgstr "Automática (%s)"
+
+#: includes/content/class-thatseoagent-primary-term.php:306
+msgid ""
+"The one search results and breadcrumbs name. Choosing one also puts it in "
+"the address when the permalinks include the category. The list shows the "
+"terms saved with the post."
+msgstr ""
+"La que nombran los resultados de búsqueda y las migas. Elegir una también la "
+"pone en la dirección cuando los enlaces permanentes incluyen la categoría. "
+"La lista muestra los términos guardados con la entrada."
+
+#: includes/head/class-thatseoagent-breadcrumbs.php:282
+#: includes/head/class-thatseoagent-breadcrumbs.php:316
+#: assets/blocks/breadcrumbs.js:47
+msgid "Breadcrumb"
+msgstr "Migas de pan"
+
+#: includes/head/class-thatseoagent-breadcrumbs.php:345
+#: assets/blocks/breadcrumbs.js:15 assets/blocks/breadcrumbs.js:34
+msgid "Breadcrumbs"
+msgstr "Migas de pan"
+
+#: includes/head/class-thatseoagent-breadcrumbs.php:346
+msgid "Where the current page sits in the site, as the search results show it."
+msgstr ""
+"Dónde está la página actual dentro del sitio, como la muestran los "
+"resultados de búsqueda."
+
+#: assets/blocks/breadcrumbs.js:36
+msgid "Separator"
+msgstr "Separador"
+
+#: assets/blocks/breadcrumbs.js:50
+msgid "Section"
+msgstr "Sección"
+
+#: assets/blocks/breadcrumbs.js:52
+msgid "Current page"
+msgstr "Página actual"

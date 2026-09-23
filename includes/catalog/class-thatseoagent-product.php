@@ -581,6 +581,24 @@ class ThatSeoAgent_Product {
     }
 
     /**
+     * The attachment IDs of a catalog entry's gallery, in order.
+     *
+     * @since 2.4.0
+     * @param WP_Post $post Post.
+     * @return array<int, int> Empty when it is no catalog entry or has no gallery.
+     */
+    public static function gallery_ids( WP_Post $post ) {
+        if ( ! self::is_product( $post ) ) {
+            return array();
+        }
+
+        $config = self::config();
+        $key    = isset( $config[ $post->post_type ]['gallery_meta_key'] ) ? (string) $config[ $post->post_type ]['gallery_meta_key'] : '';
+
+        return '' !== $key ? self::attachment_ids( get_post_meta( $post->ID, $key, true ) ) : array();
+    }
+
+    /**
      * Attachment IDs from a stored gallery value.
      *
      * Accepts "12,13,14", an array of IDs, or JSON of either.
@@ -662,7 +680,8 @@ class ThatSeoAgent_Product {
      * @return string
      */
     private static function category_path( WP_Post $post, $taxonomy ) {
-        $term = self::first_term( $post, $taxonomy );
+        // The primary one: the same the breadcrumb and the meta tags name.
+        $term = ThatSeoAgent_Primary_Term::get( $post, $taxonomy );
         if ( ! $term ) {
             return '';
         }

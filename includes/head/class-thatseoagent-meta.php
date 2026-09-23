@@ -34,7 +34,8 @@ class ThatSeoAgent_Meta {
      */
     public static function output() {
         $description = self::get_description();
-        $image       = self::get_image();
+        $picture     = ThatSeoAgent_Image::for_request();
+        $image       = $picture ? $picture['url'] : '';
         $url         = self::get_url();
         $context     = self::get_context();
 
@@ -72,7 +73,7 @@ class ThatSeoAgent_Meta {
 
         // Open Graph
         echo '<meta property="og:locale" content="' . esc_attr($locale) . '">' . "\n";
-        echo '<meta property="og:type" content="' . (is_singular('post') ? 'article' : 'website') . '">' . "\n";
+        echo '<meta property="og:type" content="' . esc_attr(self::get_og_type()) . '">' . "\n";
         echo '<meta property="og:title" content="' . esc_attr($og_title) . '">' . "\n";
 
         if ($description) {
@@ -85,21 +86,29 @@ class ThatSeoAgent_Meta {
         if ($image) {
             echo '<meta property="og:image" content="' . esc_url($image) . '">' . "\n";
 
-            // Image dimensions help Pinterest and Facebook render correctly
-            $image_id = is_singular() ? get_post_thumbnail_id() : 0;
-            if ($image_id) {
-                $image_meta = wp_get_attachment_image_src($image_id, 'large');
-                if ($image_meta) {
-                    echo '<meta property="og:image:width" content="' . (int) $image_meta[1] . '">' . "\n";
-                    echo '<meta property="og:image:height" content="' . (int) $image_meta[2] . '">' . "\n";
-                }
+            // Dimensions let Facebook, LinkedIn and Pinterest lay the
+            // preview out before they have fetched the image.
+            if ($picture['width'] && $picture['height']) {
+                echo '<meta property="og:image:width" content="' . (int) $picture['width'] . '">' . "\n";
+                echo '<meta property="og:image:height" content="' . (int) $picture['height'] . '">' . "\n";
+            }
+            if ('' !== $picture['type']) {
+                echo '<meta property="og:image:type" content="' . esc_attr($picture['type']) . '">' . "\n";
+            }
+            if ('' !== $picture['alt']) {
+                echo '<meta property="og:image:alt" content="' . esc_attr($picture['alt']) . '">' . "\n";
             }
         }
 
-        // Article specific
-        if (is_singular('post')) {
+        // Article specific: dated content, not pages or catalog entries,
+        // whose publication date tells a reader nothing.
+        if (self::is_dated_article()) {
             echo '<meta property="article:published_time" content="' . esc_attr(get_the_date('c')) . '">' . "\n";
-            echo '<meta property="article:modified_time" content="' . esc_attr(get_the_modified_date('c')) . '">' . "\n";
+
+            // Only when it changed after it went out.
+            if ((int) get_post_modified_time('U', true) > (int) get_post_time('U', true)) {
+                echo '<meta property="article:modified_time" content="' . esc_attr(get_the_modified_date('c')) . '">' . "\n";
+            }
 
             // article:section — primary category for rich pin categorization
             $primary_category = self::get_primary_category();
@@ -135,15 +144,83 @@ class ThatSeoAgent_Meta {
             echo '<meta name="twitter:site" content="' . esc_attr($twitter_handle) . '">' . "\n";
         }
 
-        echo '<meta name="twitter:title" content="' . esc_attr($og_title) . '">' . "\n";
+        /**
+         * Filter whether twitter:title, twitter:description and
+         * twitter:image repeat what Open Graph already says.
+         *
+         * X reads og:title, og:description and og:image when its own tags
+         * are absent, so by default they are left out: the same three values
+         * printed twice.
+         *
+         * @since 2.4.0
+         * @param bool $repeat Default false.
+         */
+        if (apply_filters('thatseoagent_twitter_repeat_open_graph', false)) {
+            echo '<meta name="twitter:title" content="' . esc_attr($og_title) . '">' . "\n";
 
-        if ($description) {
-            echo '<meta name="twitter:description" content="' . esc_attr($description) . '">' . "\n";
+            if ($description) {
+                echo '<meta name="twitter:description" content="' . esc_attr($description) . '">' . "\n";
+            }
+
+            if ($image) {
+                echo '<meta name="twitter:image" content="' . esc_url($image) . '">' . "\n";
+            }
         }
 
-        if ($image) {
-            echo '<meta name="twitter:image" content="' . esc_url($image) . '">' . "\n";
+        // X has no fallback for the image's description.
+        if ($image && '' !== $picture['alt']) {
+            echo '<meta name="twitter:image:alt" content="' . esc_attr($picture['alt']) . '">' . "\n";
         }
+    }
+
+    /**
+     * The og:type of the current view.
+     *
+     * `article` for any single page but the front page, `profile` for an
+     * author's archive, `website` for the rest.
+     *
+     * @since 2.4.0
+     * @return string
+     */
+    public static function get_og_type() {
+        if (is_front_page() || is_home()) {
+            $type = 'website';
+        } elseif (is_singular()) {
+            $type = 'article';
+        } elseif (is_author()) {
+            $type = 'profile';
+        } else {
+            $type = 'website';
+        }
+
+        /**
+         * Filter the og:type of the current view.
+         *
+         * @since 2.4.0
+         * @param string $type    'article', 'profile' or 'website'.
+         * @param string $context Current page context (see get_context()).
+         */
+        return (string) apply_filters('thatseoagent_og_type', $type, self::get_context());
+    }
+
+    /**
+     * Whether the current view is dated content: a single post of a type
+     * that is neither hierarchical (pages) nor a product catalog.
+     *
+     * @since 2.4.0
+     * @return bool
+     */
+    public static function is_dated_article() {
+        if (! is_singular() || is_front_page()) {
+            return false;
+        }
+
+        $post = get_queried_object();
+        if (! $post instanceof WP_Post || is_post_type_hierarchical($post->post_type) || ThatSeoAgent_Product::is_product($post)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -320,20 +397,17 @@ class ThatSeoAgent_Meta {
     }
 
     /**
-     * Get primary image
+     * The URL of the image the current view is shared with.
+     *
+     * @since 2.4.0 Through ThatSeoAgent_Image: the featured image, a
+     *              gallery or content image, the default sharing image,
+     *              then the theme logo.
+     * @return string
      */
     public static function get_image() {
-        if (is_singular() && has_post_thumbnail()) {
-            return get_the_post_thumbnail_url(get_the_ID(), 'large');
-        }
+        $image = ThatSeoAgent_Image::for_request();
 
-        // Default fallback image
-        $custom_logo_id = get_theme_mod('custom_logo');
-        if ($custom_logo_id) {
-            return wp_get_attachment_image_url($custom_logo_id, 'full');
-        }
-
-        return apply_filters('thatseoagent_default_image', '');
+        return $image ? $image['url'] : '';
     }
 
     /**
@@ -361,19 +435,15 @@ class ThatSeoAgent_Meta {
      * @return string|null Category name or null.
      */
     public static function get_primary_category() {
-        $categories = get_the_category();
-        if (empty($categories)) {
+        $post = get_queried_object();
+        $term = $post instanceof WP_Post ? ThatSeoAgent_Primary_Term::get($post) : null;
+
+        // "Uncategorized" says nothing about the post.
+        if (! $term || ('category' === $term->taxonomy && (int) $term->term_id === (int) get_option('default_category'))) {
             return null;
         }
 
-        // Skip "Uncategorized" — it adds no value for categorization
-        foreach ($categories as $cat) {
-            if ($cat->slug !== 'uncategorized') {
-                return $cat->name;
-            }
-        }
-
-        return null;
+        return $term->name;
     }
 
     /**

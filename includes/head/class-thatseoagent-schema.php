@@ -121,6 +121,10 @@ class ThatSeoAgent_Schema {
          */
         $schema = apply_filters('thatseoagent_schema_graph', $schema);
 
+        // After the filter, so a node removed there takes its references
+        // with it.
+        $schema = self::without_dangling_references(array_values(array_filter((array) $schema)));
+
         // Output
         $output = array(
             '@context' => 'https://schema.org',
@@ -132,6 +136,94 @@ class ThatSeoAgent_Schema {
         // cannot break out of the JSON-LD block.
         echo wp_json_encode($output, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
         echo "\n</script>\n";
+    }
+
+    /**
+     * The graph without references to nodes of this site that it does not
+     * contain.
+     *
+     * A reference is a node holding only an `@id` (and maybe a `@type`); it
+     * means "the node described elsewhere with this @id". When no node of
+     * the page describes it — a breadcrumb dropped as broken, a Person a
+     * filter removed — the reference points at nothing, and validators
+     * report it. References to other sites are left alone: they are
+     * described there.
+     *
+     * @since 2.4.0
+     * @param array<int, array> $graph Nodes.
+     * @return array<int, array>
+     */
+    private static function without_dangling_references(array $graph) {
+        $declared = array();
+        self::collect_ids($graph, $declared);
+
+        $home = untrailingslashit(home_url());
+
+        $prune = function ($value) use (&$prune, $declared, $home) {
+            if (! is_array($value)) {
+                return $value;
+            }
+
+            $clean = array();
+            foreach ($value as $key => $item) {
+                if (is_array($item) && self::is_reference($item)) {
+                    $id = (string) $item['@id'];
+                    if (0 === strpos($id, $home) && ! isset($declared[$id])) {
+                        continue;
+                    }
+                }
+
+                $item = $prune($item);
+
+                // A list emptied of every reference it held goes too.
+                if (is_array($item) && array() === $item && is_array($value[$key])) {
+                    continue;
+                }
+
+                $clean[$key] = $item;
+            }
+
+            return array_keys($value) === range(0, count($value) - 1) ? array_values($clean) : $clean;
+        };
+
+        $result = array();
+        foreach ($graph as $node) {
+            $result[] = is_array($node) ? $prune($node) : $node;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Every @id the graph describes: nodes with more than an @id and a type.
+     *
+     * @since 2.4.0
+     * @param mixed                $value    Graph or node.
+     * @param array<string, bool>  $declared IDs found, by reference.
+     */
+    private static function collect_ids($value, array &$declared) {
+        if (! is_array($value)) {
+            return;
+        }
+
+        if (isset($value['@id']) && ! self::is_reference($value)) {
+            $declared[(string) $value['@id']] = true;
+        }
+
+        foreach ($value as $item) {
+            self::collect_ids($item, $declared);
+        }
+    }
+
+    /**
+     * Whether a node only points at another: an @id and at most a @type.
+     *
+     * @since 2.4.0
+     * @param array $node Node.
+     * @return bool
+     */
+    private static function is_reference(array $node) {
+        return isset($node['@id']) && array() === array_diff(array_keys($node), array('@id', '@type'));
     }
 
     /**
@@ -322,31 +414,12 @@ class ThatSeoAgent_Schema {
             'author' => self::get_author_schema(),
         );
 
-        // Add image
-        if (has_post_thumbnail()) {
-            /**
-             * Image size used for the Article image.
-             *
-             * Google wants at least 1200px wide; the 'large' size caps at
-             * 1024 by default, so 'full' is the safer default.
-             *
-             * @since 1.10.0
-             * @param string $size Registered image size. Default 'full'.
-             */
-            $size = apply_filters('thatseoagent_schema_image_size', 'full');
-
-            $thumb_id = get_post_thumbnail_id(get_the_ID());
-            $thumb_url = get_the_post_thumbnail_url(get_the_ID(), $size);
-            $thumb_meta = wp_get_attachment_metadata($thumb_id);
-            $image_schema = array(
-                '@type' => 'ImageObject',
-                'url' => $thumb_url,
-            );
-            if ($thumb_meta && isset($thumb_meta['width'], $thumb_meta['height'])) {
-                $image_schema['width'] = $thumb_meta['width'];
-                $image_schema['height'] = $thumb_meta['height'];
-            }
-            $schema['image'] = $image_schema;
+        // The post's own image: the featured one, else the first in its
+        // content. Never the site's logo or default image, which say
+        // nothing about this article.
+        $image = self::post_image($post);
+        if ($image) {
+            $schema['image'] = $image;
         }
 
         // Add description
@@ -356,6 +429,35 @@ class ThatSeoAgent_Schema {
         }
 
         return $schema;
+    }
+
+    /**
+     * A post's own image as an ImageObject, or null.
+     *
+     * @since 2.4.0 From ThatSeoAgent_Image; before, only the featured image.
+     * @param WP_Post $post Post.
+     * @return array|null
+     */
+    private static function post_image($post) {
+        $image = ThatSeoAgent_Image::for_post($post, 'schema');
+
+        if (! $image || in_array($image['source'], array('default', 'logo'), true)) {
+            return null;
+        }
+
+        $node = array(
+            '@type' => 'ImageObject',
+            'url'   => $image['url'],
+        );
+        if ($image['width'] && $image['height']) {
+            $node['width']  = $image['width'];
+            $node['height'] = $image['height'];
+        }
+        if ('' !== $image['alt']) {
+            $node['caption'] = $image['alt'];
+        }
+
+        return $node;
     }
 
     /**
@@ -387,20 +489,10 @@ class ThatSeoAgent_Schema {
             $schema['breadcrumb'] = array('@id' => $breadcrumb['@id']);
         }
 
-        if (has_post_thumbnail()) {
-            /** This filter is documented in get_article_schema() */
-            $size = apply_filters('thatseoagent_schema_image_size', 'full');
-            $src  = wp_get_attachment_image_src(get_post_thumbnail_id(), $size);
-
-            if ($src) {
-                $schema['primaryImageOfPage'] = array(
-                    '@type'  => 'ImageObject',
-                    '@id'    => get_permalink() . '#primaryimage',
-                    'url'    => $src[0],
-                    'width'  => (int) $src[1],
-                    'height' => (int) $src[2],
-                );
-            }
+        $post  = get_post();
+        $image = $post ? self::post_image($post) : null;
+        if ($image) {
+            $schema['primaryImageOfPage'] = array_merge(array('@id' => get_permalink() . '#primaryimage'), $image);
         }
 
         if ($main_entity_id) {
@@ -419,116 +511,39 @@ class ThatSeoAgent_Schema {
     /**
      * Breadcrumb schema
      *
-     * Emits a BreadcrumbList. On the homepage, only a single "Home"
-     * crumb is emitted (the current-page entry is omitted to avoid the
-     * "Home → Home" duplicate — see GitHub issue #2), which is not a trail
-     * and is dropped.
-     *
-     * The trail, by view:
-     *
-     *     post                 Home › Category › Post
-     *     page                 Home › Parent › Page
-     *     custom post type     Home › Archive › Entry   (when it has an archive)
-     *     post type archive    Home › Archive
-     *     term archive         Home › [Archive ›] Parent term › Term
-     *     author archive       Home › Author
+     * The BreadcrumbList of the trail ThatSeoAgent_Breadcrumbs computes —
+     * the same trail the visible breadcrumbs print. See that class for the
+     * trail by view.
      *
      * @since 1.16.0 Covers pages' parents, custom post type archives, term
      *              archives and author archives.
+     * @since 2.4.0 From ThatSeoAgent_Breadcrumbs, and dropped when a crumb
+     *              is broken.
      */
     private static function get_breadcrumb_schema() {
-        $crumbs = array(
-            array(
-                'name' => __('Home', 'thatseoagent'),
-                'item' => home_url('/'),
-            ),
-        );
+        $crumbs = ThatSeoAgent_Breadcrumbs::trail();
 
-        if (is_singular()) {
-            $post = get_post();
-
-            if (is_singular('post')) {
-                $categories = get_the_category();
-                if ($categories) {
-                    $crumbs[] = array(
-                        'name' => $categories[0]->name,
-                        'item' => get_category_link($categories[0]->term_id),
-                    );
-                }
-            } elseif (is_post_type_hierarchical($post->post_type)) {
-                foreach (array_reverse(get_post_ancestors($post)) as $ancestor_id) {
-                    $crumbs[] = array(
-                        'name' => get_the_title($ancestor_id),
-                        'item' => get_permalink($ancestor_id),
-                    );
-                }
-            }
-
-            $archive = self::post_type_archive_crumb($post->post_type);
-            if ($archive) {
-                array_splice($crumbs, 1, 0, array($archive));
-            }
-
-            if (! is_front_page() && ! is_home()) {
-                $crumbs[] = array('name' => get_the_title());
-            }
-        } elseif (is_post_type_archive()) {
-            $crumbs[] = array('name' => post_type_archive_title('', false));
-        } elseif (is_category() || is_tag() || is_tax()) {
-            $term = get_queried_object();
-
-            if ($term instanceof WP_Term) {
-                $taxonomy = get_taxonomy($term->taxonomy);
-
-                // A taxonomy that belongs to a single post type with an
-                // archive — a product category — sits under that archive.
-                if ($taxonomy && 1 === count($taxonomy->object_type)) {
-                    $archive = self::post_type_archive_crumb($taxonomy->object_type[0]);
-                    if ($archive) {
-                        $crumbs[] = $archive;
-                    }
-                }
-
-                foreach (array_reverse(get_ancestors($term->term_id, $term->taxonomy, 'taxonomy')) as $ancestor_id) {
-                    $ancestor = get_term($ancestor_id, $term->taxonomy);
-                    if ($ancestor instanceof WP_Term) {
-                        $crumbs[] = array(
-                            'name' => $ancestor->name,
-                            'item' => get_term_link($ancestor),
-                        );
-                    }
-                }
-
-                $crumbs[] = array('name' => $term->name);
-            }
-        } elseif (is_author()) {
-            $author = get_queried_object();
-            if ($author instanceof WP_User) {
-                $crumbs[] = array('name' => $author->display_name);
-            }
-        } elseif (is_home() && ! is_front_page()) {
-            $crumbs[] = array('name' => get_the_title((int) get_option('page_for_posts')));
-        }
-
-        // A single "Home" crumb is not a trail — Google ignores it and it
-        // adds a node that says nothing.
-        if (count($crumbs) < 2) {
+        // A trail with a gap — a crumb with no name, or one before the last
+        // with no link — is dropped whole rather than published broken; so
+        // is a lone "Home", which says nothing. The WebPage then points at
+        // no breadcrumb.
+        if (! ThatSeoAgent_Breadcrumbs::is_complete($crumbs)) {
             return null;
         }
 
+        $last  = count($crumbs) - 1;
         $items = array();
-        foreach (array_values($crumbs) as $index => $crumb) {
+        foreach ($crumbs as $index => $crumb) {
             $item = array(
                 '@type'    => 'ListItem',
                 'position' => $index + 1,
-                'name'     => wp_strip_all_tags((string) $crumb['name']),
+                'name'     => $crumb['name'],
             );
 
-            // The last crumb intentionally omits the item URL per
-            // BreadcrumbList best practices; so does any crumb whose link
-            // could not be built.
-            if (! empty($crumb['item']) && ! is_wp_error($crumb['item'])) {
-                $item['item'] = $crumb['item'];
+            // The last crumb is the page itself and carries no link, as
+            // Google's BreadcrumbList guidance allows.
+            if ($index < $last) {
+                $item['item'] = $crumb['url'];
             }
 
             $items[] = $item;
@@ -547,34 +562,6 @@ class ThatSeoAgent_Schema {
          * @param array $schema Breadcrumb schema array.
          */
         return apply_filters('thatseoagent_breadcrumb_schema', $schema);
-    }
-
-    /**
-     * The crumb for a custom post type's archive, when it has one.
-     *
-     * Posts and pages have no archive of their own in the trail: the blog
-     * index is not a parent of each post.
-     *
-     * @since 1.16.0
-     * @param string $post_type Post type.
-     * @return array{name: string, item: string}|null
-     */
-    private static function post_type_archive_crumb($post_type) {
-        if (in_array($post_type, array('post', 'page'), true)) {
-            return null;
-        }
-
-        $object = get_post_type_object($post_type);
-        $link   = get_post_type_archive_link($post_type);
-
-        if (! $object || ! $object->has_archive || ! $link) {
-            return null;
-        }
-
-        return array(
-            'name' => $object->labels->name,
-            'item' => $link,
-        );
     }
 
     /**

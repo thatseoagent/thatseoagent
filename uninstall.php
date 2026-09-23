@@ -43,6 +43,11 @@ function thatseoagent_uninstall_site() {
         delete_post_meta_by_key( $meta_key );
     }
 
+    // Primary terms: one key per taxonomy, whichever taxonomies existed.
+    global $wpdb;
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- A one-off cleanup; no API deletes meta by prefix.
+    $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE %s", $wpdb->esc_like( ThatSeoAgent_Primary_Term::KEY_PREFIX ) . '%' ) );
+
     wp_unschedule_hook( ThatSeoAgent_IndexNow::CRON_HOOK );
     delete_transient( ThatSeoAgent_Llms::CACHE_KEY );
     delete_transient( ThatSeoAgent_Llms_Full::CACHE_KEY );

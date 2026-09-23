@@ -56,6 +56,8 @@ class ThatSeoAgent {
         ThatSeoAgent_Settings::register();
         ThatSeoAgent_REST::register();
         ThatSeoAgent_Post_Seo::register();
+        ThatSeoAgent_Primary_Term::register();
+        ThatSeoAgent_Breadcrumbs::register();
         ThatSeoAgent_IndexNow::register();
         ThatSeoAgent_Markdown_Endpoint::register();
         ThatSeoAgent_Markdown_Cache::register();

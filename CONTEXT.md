@@ -40,6 +40,10 @@ _Avoid_: meta, SEO settings, overrides
 A page search engines are told not to index (`noindex`): search results, the 404 page, private posts, and posts whose SEO fields say so. It prints no canonical and is listed in no sitemap and not in the AI index; it stays public to anyone with the link.
 _Avoid_: hidden, blocked, deindexed
 
+**Primary category**:
+The one category that names a post where only one fits: search results, the breadcrumb, the product markup. Chosen in the SEO fields, or else the deepest one the post has.
+_Avoid_: main category, primary term
+
 **Generated description**:
 The description a post gets from its own content when its SEO fields have none. What the page publishes and what the editor preview shows are the same generated description.
 _Avoid_: auto description, excerpt, fallback
@@ -91,6 +95,10 @@ _Avoid_: fallback author, publisher
 **Trust pages**:
 The pages that say who runs the site, how to reach it and what it does with visitors' data: about, contact and privacy policy. Found by the privacy page WordPress has assigned, a published page whose address names it, or a menu link to one.
 _Avoid_: legal pages, E-E-A-T pages
+
+**Breadcrumb trail**:
+Where a page sits in the site, from the homepage down: its primary category or parent pages, its archive. One trail per page, stated in the markup and printed wherever the theme places the breadcrumbs.
+_Avoid_: path, navigation
 
 ### Product catalogs
 

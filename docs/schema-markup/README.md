@@ -94,7 +94,7 @@ All schema is combined into a single JSON-LD script with `@graph` structure:
 - **WebSite & Organization**: On all pages
 - **Article**: Only on single post pages
 - **WebPage**: Only on single page pages
-- **BreadcrumbList**: On single post/page pages
+- **BreadcrumbList**: On single pages, archives and author pages, from the trail `ThatSeoAgent_Breadcrumbs` computes — the one visible breadcrumbs print. Dropped when a crumb is broken or the trail is only "Home".
 
 ## Technical Details
 

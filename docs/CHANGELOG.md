@@ -1,5 +1,64 @@
 # Changelog
 
+## [2.4.0] - 2026-09-23
+
+### Changed
+- **The image a page is shared with** (`ThatSeoAgent_Image`): the featured
+  image, else a catalog entry's first gallery image, else the first image in
+  the content (galleries included), else the default sharing image of the
+  site identity, else the theme logo. Before, the theme logo came right
+  after the featured image and the content was never looked at. Listings
+  start at the default sharing image.
+- **Size for sharing**: the largest of full, large and medium_large that
+  weighs 2 MB or less — Facebook, WhatsApp and LinkedIn drop heavier ones.
+  Filter `thatseoagent_og_image_size` to force one.
+- `og:image:width` and `og:image:height` for every image, not only the
+  featured one; `og:image:type`, and `og:image:alt` and `twitter:image:alt`
+  from the media library's alt text.
+- **The schema's primary image and the Article's image** come from the same
+  chain, the post's own images only: the site's logo or default image says
+  nothing about one article. The alt text becomes the ImageObject's caption.
+- `thatseoagent_default_image` now runs before the theme logo rather than
+  after it.
+- **`og:type`** is `article` on every single page but the front page (it
+  was only on posts), `profile` on author archives and `website` elsewhere.
+  Filter `thatseoagent_og_type`.
+- **`article:published_time`, `article:modified_time` and
+  `article:section`** on dated content of any type — not pages, not catalog
+  entries — and `article:modified_time` only when the post changed after it
+  was published.
+- **Primary category** (`ThatSeoAgent_Primary_Term`): the one category
+  that names a post in `article:section`, the BreadcrumbList (with the
+  categories above it) and a catalog entry's Product category. Chosen in the
+  SEO meta box when the post has two or more (`_thatseoagent_primary_{taxonomy}`,
+  in the REST API); otherwise the deepest assigned, leaving out
+  "Uncategorized" when there is another. Each content type has a main
+  taxonomy: `category` for posts, a catalog's mapped category, else one whose
+  name says it is a category (filter `thatseoagent_main_taxonomy`).
+  `%category%` in permalinks follows a category chosen by hand only, so no
+  existing address moves on its own. `wp thatseoagent import` brings Yoast's
+  and Rank Math's primary terms over.
+- Breadcrumbs of custom post types now include their primary category, not
+  only posts'.
+- **Breadcrumbs for people** (`ThatSeoAgent_Breadcrumbs`): the trail the
+  BreadcrumbList states, printed by `thatseoagent_breadcrumbs()` in a
+  template, `[thatseoagent_breadcrumbs]` in content, or the Breadcrumbs block
+  — a `nav` landmark with an ordered list, `aria-current` on the current page,
+  the separator hidden from screen readers, and no styles of its own. The
+  plugin prints them nowhere by itself. Filters `thatseoagent_breadcrumb_trail`
+  (the trail, for the schema and the visible breadcrumbs alike) and
+  `thatseoagent_breadcrumb_home`.
+- **The schema graph is checked before it is printed**: a BreadcrumbList
+  with a crumb missing its name, or a link before the last, is dropped whole
+  along with the WebPage's reference to it, and references to nodes of the
+  site the graph no longer contains — removed by a filter, or never built —
+  are taken out. References to other sites are left alone.
+- **Twitter no longer repeats Open Graph**: X reads og:title,
+  og:description and og:image when its own tags are absent, so
+  `twitter:title`, `twitter:description` and `twitter:image` are left out.
+  `twitter:card`, `twitter:site` and `twitter:image:alt` stay. Filter
+  `thatseoagent_twitter_repeat_open_graph` to print them again.
+
 ## [2.3.0] - 2026-09-23
 
 The content check follows the rules of That SEO Agent's MCP server

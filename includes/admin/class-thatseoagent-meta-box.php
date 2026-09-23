@@ -136,6 +136,8 @@ class ThatSeoAgent_Meta_Box {
             <p class="description"><?php esc_html_e( 'Adds noindex to the page and leaves it out of the sitemap and llms.txt. The page stays public for anyone with the link.', 'thatseoagent' ); ?></p>
         </div>
 
+        <?php ThatSeoAgent_Primary_Term::render_fields( $post ); ?>
+
         <div class="thatseoagent-preview">
             <div class="thatseoagent-preview-title" id="preview-title"><?php echo esc_html($seo_title ?: $post->post_title); ?></div>
             <div class="thatseoagent-preview-url"><?php echo esc_url(get_permalink($post)); ?></div>
@@ -176,5 +178,10 @@ class ThatSeoAgent_Meta_Box {
         }
 
         ThatSeoAgent_Post_Seo::save_from_request($post_id, $submitted);
+
+        if (isset($_POST['thatseoagent_primary'])) {
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Keys sanitized as taxonomy names and values as term IDs in save_from_request().
+            ThatSeoAgent_Primary_Term::save_from_request($post_id, wp_unslash($_POST['thatseoagent_primary']));
+        }
     }
 }

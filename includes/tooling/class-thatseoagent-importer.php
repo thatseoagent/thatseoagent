@@ -82,10 +82,10 @@ class ThatSeoAgent_Importer {
             $wpdb->prepare(
                 "SELECT DISTINCT p.ID FROM {$wpdb->posts} p
                  INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID
-                 WHERE pm.meta_key IN (%s, %s, %s) AND pm.meta_value <> ''
+                 WHERE ( pm.meta_key IN (%s, %s, %s) OR pm.meta_key LIKE %s ) AND pm.meta_value <> ''
                    AND p.post_type IN ($types)
                    AND p.post_status NOT IN ('auto-draft', 'trash', 'inherit')",
-                array_merge( array( $fields['title'], $fields['description'], $fields['noindex'] ), $post_types )
+                array_merge( array( $fields['title'], $fields['description'], $fields['noindex'], $wpdb->esc_like( 'yoast' === $source ? '_yoast_wpseo_primary_' : ( 'rankmath' === $source ? 'rank_math_primary_' : '_thatseoagent_none_' ) ) . '%' ), $post_types )
             )
         );
 
@@ -181,6 +181,35 @@ class ThatSeoAgent_Importer {
 
         if ( $values && ! $dry_run ) {
             ThatSeoAgent_Post_Seo::save( $post, $values );
+        }
+
+        // Primary terms, per taxonomy, where the other plugin chose one the
+        // post still has.
+        $prefix = array(
+            'yoast'    => '_yoast_wpseo_primary_',
+            'rankmath' => 'rank_math_primary_',
+        );
+        if ( isset( $prefix[ $source ] ) ) {
+            foreach ( ThatSeoAgent_Primary_Term::taxonomies( $post->post_type ) as $taxonomy ) {
+                $term_id = (int) get_post_meta( $post->ID, $prefix[ $source ] . $taxonomy, true );
+                if ( ! $term_id || ! has_term( $term_id, $taxonomy, $post ) ) {
+                    continue;
+                }
+
+                $field = 'primary_' . $taxonomy;
+                $term  = get_term( $term_id, $taxonomy );
+                $name  = $term instanceof WP_Term ? $term->name : (string) $term_id;
+
+                if ( ! $overwrite && get_post_meta( $post->ID, ThatSeoAgent_Primary_Term::key( $taxonomy ), true ) ) {
+                    $results[ $field ] = array( 'status' => 'exists', 'value' => $name );
+                    continue;
+                }
+
+                if ( ! $dry_run ) {
+                    ThatSeoAgent_Primary_Term::save( $post, $taxonomy, $term_id );
+                }
+                $results[ $field ] = array( 'status' => 'imported', 'value' => $name );
+            }
         }
 
         return $results;

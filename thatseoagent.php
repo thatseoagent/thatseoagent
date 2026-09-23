@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ThatSeoAgent
  * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, per-post SEO fields, and Markdown for AI agents. A Yoast replacement that doesn't slow your site down.
- * Version: 2.3.0
+ * Version: 2.4.0
  * Author: Angel Cruz
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('THATSEOAGENT_VERSION', '2.3.0');
+define('THATSEOAGENT_VERSION', '2.4.0');
 define('THATSEOAGENT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('THATSEOAGENT_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -48,6 +48,29 @@ function thatseoagent_load_textdomain() {
     load_plugin_textdomain( 'thatseoagent', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 add_action( 'init', 'thatseoagent_load_textdomain' );
+
+if ( ! function_exists( 'thatseoagent_breadcrumbs' ) ) {
+    /**
+     * Print or return the breadcrumbs of the current page, for templates.
+     *
+     * The same trail the BreadcrumbList schema states. Prints nothing on a
+     * page with no trail beyond the homepage.
+     *
+     * @since 2.4.0
+     * @param array $args See ThatSeoAgent_Breadcrumbs::render().
+     * @param bool  $echo Print it (default) or return it.
+     * @return string The HTML.
+     */
+    function thatseoagent_breadcrumbs( $args = array(), $echo = true ) {
+        $html = ThatSeoAgent_Breadcrumbs::render( (array) $args );
+
+        if ( $echo ) {
+            echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in ThatSeoAgent_Breadcrumbs::render().
+        }
+
+        return $html;
+    }
+}
 
 // Abilities API. Guarded rather than assumed: the function comes with the
 // Abilities API, and without it the hook below never fires.

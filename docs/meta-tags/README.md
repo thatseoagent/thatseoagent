@@ -8,7 +8,7 @@ The `ThatSeoAgent_Meta` class handles output of:
 
 - HTML meta description
 - Open Graph tags (og:title, og:description, og:image, og:url, og:type, og:site_name)
-- Twitter Card tags (twitter:card, twitter:title, twitter:description, twitter:image)
+- Twitter Card tags (twitter:card, twitter:site, twitter:image:alt; title, description and image come from Open Graph, which X reads when its own are absent)
 - Canonical URLs
 
 Robots directives and pagination links come from the modules in `includes/indexing/` — see below.
@@ -39,9 +39,22 @@ add_filter('thatseoagent_custom_description', function($description) {
 });
 ```
 
+### Which image a page is shared with
+
+`ThatSeoAgent_Image` picks it, first found wins:
+
+1. the featured image
+2. a catalog entry's first gallery image
+3. the first image in the content (galleries included)
+4. the default sharing image (ThatSeoAgent → Settings → Identity)
+5. the `thatseoagent_default_image` filter
+6. the theme logo
+
+Listings start at 4. For sharing, the largest size under 2 MB is used (filter `thatseoagent_og_image_size` to force one), with its width, height, type and alt text. The schema's primary image uses the post's own images only.
+
 ### Default Fallback Image
 
-Set a default Open Graph image when no post thumbnail is available:
+Set a default Open Graph image when a page has no image of its own:
 
 ```php
 add_filter('thatseoagent_default_image', function($url) {

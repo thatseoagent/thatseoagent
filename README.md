@@ -30,6 +30,7 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 - **Schema/JSON-LD** — WebSite, Organization *or* Person, Article with its author as a Person (with a job title and profiles elsewhere, from two fields the plugin adds to the user profile), WebPage, CollectionPage, ProfilePage, BreadcrumbList, FAQPage (from question headings and Details blocks)
 - **Admin screen** — a site bulletin: whether the site is fine in one sentence, on the color of its warning level, the warnings in force and what to do about each; plus the product report, llms.txt and settings
 - **Product catalogs** — mark a custom post type as a catalog and map its brand, category, specifications and gallery; each entry becomes a validated schema.org Product
+- **Breadcrumbs** — the trail the schema states, for a theme to print with `thatseoagent_breadcrumbs()`, `[thatseoagent_breadcrumbs]` or the Breadcrumbs block; accessible markup, no styles
 - **Canonical URLs** — replaces core's `rel_canonical`; each page of a paginated listing or post is its own canonical, with `rel="prev"`/`rel="next"`
 - **Per-post SEO** — title/description meta box with live search preview, and a "Keep out of search results" box (`noindex`), exposed to the REST API
 - **Attachment pages** — redirected to their file, as WordPress does on sites installed since 6.4
@@ -137,9 +138,12 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_FAQ`, `ThatSeoAgent_FAQ_Section` | Reads content into sections; FAQ extraction |
 | | `ThatSeoAgent_Post_Seo` | Per-post SEO fields: which post types get them, storage, sanitization and slashing |
 | | `ThatSeoAgent_Structure` | How a post is built, as facts for an agent to judge |
+| | `ThatSeoAgent_Image` | The image a page is represented by, for sharing and for the schema |
+| | `ThatSeoAgent_Primary_Term` | The category that names a post where only one fits |
 | `head/` | `ThatSeoAgent_Meta` | `<head>` meta tags and canonical |
 | | `ThatSeoAgent_Title` | The document `<title>`: overrides and separator |
 | | `ThatSeoAgent_Schema` | JSON-LD graph |
+| | `ThatSeoAgent_Breadcrumbs` | The breadcrumb trail: the BreadcrumbList, and the breadcrumbs a theme prints |
 | `indexing/` | `ThatSeoAgent_Indexing` | The single answer to "may search engines index this?": robots meta, and what the sitemaps and llms.txt may list |
 | | `ThatSeoAgent_Pagination` | Paginated listings and posts: page numbers, their URLs, `rel="prev"`/`rel="next"` |
 | | `ThatSeoAgent_Attachment_Redirect` | Attachment pages lead to their file |
@@ -211,6 +215,7 @@ Context is one of `home`, `single`, `archive`, `taxonomy`, `search`, `author`, `
 | `thatseoagent_person_schema` | Person node |
 | `thatseoagent_webpage_schema` | WebPage node |
 | `thatseoagent_breadcrumb_schema` | BreadcrumbList node |
+| `thatseoagent_breadcrumb_trail` | The breadcrumb trail, for the schema and the visible breadcrumbs |
 | `thatseoagent_schema_graph` | The complete `@graph` before output |
 | `thatseoagent_faq_schema_enabled` | Disable FAQ schema per post |
 | `thatseoagent_faq_pairs` | The extracted Q&A pairs |

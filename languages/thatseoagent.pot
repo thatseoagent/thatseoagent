@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ThatSeoAgent 2.3.0\n"
+"Project-Id-Version: ThatSeoAgent 2.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/thatseoagent\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-23T16:45:38+00:00\n"
+"POT-Creation-Date: 2026-09-23T17:17:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thatseoagent\n"
@@ -1565,6 +1565,22 @@ msgstr ""
 msgid "Some images are not image files or have no absolute URL, and were left out."
 msgstr ""
 
+#. translators: %s: taxonomy singular name, e.g. "Category".
+#: includes/content/class-thatseoagent-primary-term.php:292
+#, php-format
+msgid "Primary %s"
+msgstr ""
+
+#. translators: %s: the term picked automatically.
+#: includes/content/class-thatseoagent-primary-term.php:299
+#, php-format
+msgid "Automatic (%s)"
+msgstr ""
+
+#: includes/content/class-thatseoagent-primary-term.php:306
+msgid "The one search results and breadcrumbs name. Choosing one also puts it in the address when the permalinks include the category. The list shows the terms saved with the post."
+msgstr ""
+
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:44
 msgid "Search and answers"
 msgstr ""
@@ -1621,14 +1637,31 @@ msgstr ""
 msgid "No answer"
 msgstr ""
 
-#. translators: 1: post type plural label, e.g. "Products", 2: site name.
-#: includes/head/class-thatseoagent-meta.php:296
-#, php-format
-msgid "Browse all %1$s on %2$s"
+#: includes/head/class-thatseoagent-breadcrumbs.php:229
+#: assets/blocks/breadcrumbs.js:48
+msgid "Home"
 msgstr ""
 
-#: includes/head/class-thatseoagent-schema.php:442
-msgid "Home"
+#: includes/head/class-thatseoagent-breadcrumbs.php:282
+#: includes/head/class-thatseoagent-breadcrumbs.php:316
+#: assets/blocks/breadcrumbs.js:47
+msgid "Breadcrumb"
+msgstr ""
+
+#: includes/head/class-thatseoagent-breadcrumbs.php:345
+#: assets/blocks/breadcrumbs.js:15
+#: assets/blocks/breadcrumbs.js:34
+msgid "Breadcrumbs"
+msgstr ""
+
+#: includes/head/class-thatseoagent-breadcrumbs.php:346
+msgid "Where the current page sits in the site, as the search results show it."
+msgstr ""
+
+#. translators: 1: post type plural label, e.g. "Products", 2: site name.
+#: includes/head/class-thatseoagent-meta.php:373
+#, php-format
+msgid "Browse all %1$s on %2$s"
 msgstr ""
 
 #. translators: %s: name of the other SEO plugin, e.g. "Yoast SEO".
@@ -2153,4 +2186,16 @@ msgstr ""
 
 #: includes/tooling/class-thatseoagent-abilities.php:522
 msgid "That post type does not exist."
+msgstr ""
+
+#: assets/blocks/breadcrumbs.js:36
+msgid "Separator"
+msgstr ""
+
+#: assets/blocks/breadcrumbs.js:50
+msgid "Section"
+msgstr ""
+
+#: assets/blocks/breadcrumbs.js:52
+msgid "Current page"
 msgstr ""
