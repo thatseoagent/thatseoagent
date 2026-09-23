@@ -35,8 +35,65 @@ class ThatSeoAgent_Default_Author {
     }
 
     /**
-     * How many published articles have no author: none assigned, or a user
-     * that no longer exists. They are credited to the site itself.
+     * The default author with WordPress's placeholders for what is not
+     * saved: the site's name and address, as a Person.
+     *
+     * @since 1.3.0 As ThatSeoAgent_Schema::get_publisher_defaults().
+     * @since 2.7.0 Moved here, to the owner of the option.
+     * @return array{author_name: string, author_url: string, author_type: string}
+     */
+    public static function defaults() {
+        $saved = get_option( self::OPTION_KEY, array() );
+
+        return wp_parse_args(
+            is_array( $saved ) ? $saved : array(),
+            array(
+                'author_name' => get_bloginfo( 'name' ),
+                'author_url'  => home_url( '/' ),
+                'author_type' => 'Person',
+            )
+        );
+    }
+
+    /**
+     * Who an unattributed post is credited to, as the markup names them.
+     *
+     * @since 2.7.0
+     * @return array{@type: string, name: string, url: string}|null Null when
+     *         no default author is set.
+     */
+    public static function credited() {
+        if ( ! self::is_set() ) {
+            return null;
+        }
+
+        $author = self::defaults();
+
+        return array(
+            '@type' => $author['author_type'],
+            'name'  => $author['author_name'],
+            'url'   => $author['author_url'],
+        );
+    }
+
+    /**
+     * Whether a post names nobody as its author: none assigned, a user that
+     * no longer exists, or one without a display name.
+     *
+     * @since 2.7.0
+     * @param WP_Post $post Post.
+     * @return bool
+     */
+    public static function is_unattributed( WP_Post $post ) {
+        $user = $post->post_author ? get_userdata( (int) $post->post_author ) : false;
+
+        return ! $user || '' === (string) $user->display_name;
+    }
+
+    /**
+     * How many published articles have no author, as is_unattributed() says:
+     * none assigned, a user that no longer exists, or one without a display
+     * name. They are credited to the site itself.
      *
      * @since 2.6.0
      * @return int
@@ -60,7 +117,7 @@ class ThatSeoAgent_Default_Author {
                  LEFT JOIN {$wpdb->users} u ON u.ID = p.post_author
                  WHERE p.post_status = 'publish'
                    AND p.post_type IN ($placeholders)
-                   AND u.ID IS NULL",
+                   AND ( u.ID IS NULL OR u.display_name = '' )",
                 $types
             )
         );
@@ -152,7 +209,7 @@ class ThatSeoAgent_Default_Author {
         // author name makes every authorless post credit a Person named after
         // the site — the fallback this setting exists to avoid.
         $saved    = get_option( self::OPTION_KEY, array() );
-        $defaults = ThatSeoAgent_Schema::get_publisher_defaults();
+        $defaults = self::defaults();
         $key      = $args['key'];
         $value    = isset( $saved[ $key ] ) ? $saved[ $key ] : '';
 

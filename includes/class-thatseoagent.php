@@ -63,7 +63,6 @@ class ThatSeoAgent {
         ThatSeoAgent_Markdown_Endpoint::register();
         ThatSeoAgent_Markdown_Cache::register();
         ThatSeoAgent_Product_Report::register();
-        ThatSeoAgent_Identity_Applier::register();
         ThatSeoAgent_Links::register();
         ThatSeoAgent_Author_Profile::register();
 

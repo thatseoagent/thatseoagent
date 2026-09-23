@@ -154,7 +154,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Pagination` | Paginated listings and posts: page numbers, their URLs, `rel="prev"`/`rel="next"` |
 | | `ThatSeoAgent_Attachment_Redirect` | Attachment pages lead to their file |
 | | `ThatSeoAgent_Crawl_Cleanup` | What nobody needs to crawl: shortlinks, RSD, the generator, extra feeds, spam searches |
-| `site/` | `ThatSeoAgent_Identity`, `ThatSeoAgent_Identity_Applier` | Who the site is: settings, and the filters that feed them to meta tags and schema |
+| `site/` | `ThatSeoAgent_Identity` | Who the site is: the settings, and the Person or Organization node and the X handle they make |
 | | `ThatSeoAgent_Homepage` | Homepage title and description settings |
 | | `ThatSeoAgent_Default_Author` | The author credited on posts without one |
 | | `ThatSeoAgent_Author_Profile` | An author's job title and profiles elsewhere, in the user profile |

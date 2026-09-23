@@ -66,7 +66,6 @@ spl_autoload_register(
         'ThatSeoAgent_Author_Profile'    => 'site/class-thatseoagent-author-profile.php',
         'ThatSeoAgent_Default_Author'    => 'site/class-thatseoagent-default-author.php',
         'ThatSeoAgent_Homepage'          => 'site/class-thatseoagent-homepage.php',
-        'ThatSeoAgent_Identity_Applier'  => 'site/class-thatseoagent-identity-applier.php',
         'ThatSeoAgent_Identity'          => 'site/class-thatseoagent-identity.php',
         'ThatSeoAgent_New_Types'         => 'site/class-thatseoagent-new-types.php',
         'ThatSeoAgent_Trust_Pages'       => 'site/class-thatseoagent-trust-pages.php',

@@ -82,6 +82,17 @@
   included, passes through `http_request_args` and `pre_http_request`, so a
   filter can see or answer it; before, the broken-link probe and the access
   check went around the WordPress HTTP API.
+- **The site identity reaches the markup directly**: `ThatSeoAgent_Identity`
+  builds the Person node, the Organization's details and the X handle, and
+  the schema and the meta tags ask for them; `thatseoagent_person_schema`,
+  `thatseoagent_organization_schema`, `thatseoagent_primary_entity` and
+  `thatseoagent_twitter_handle` receive the identity's answer instead of an
+  empty default, and still have the last word.
+- **`ThatSeoAgent_Default_Author` answers for the default author**:
+  `defaults()`, `credited()` and `is_unattributed()`. A post is
+  unattributed when it has no author, one that no longer exists, or one
+  without a display name — the same for the markup and the bulletin's
+  count.
 - **The score's colours come from the server**: each row of the content
   check carries its level (`ThatSeoAgent_Audit::level_for_score()`).
 
@@ -114,6 +125,9 @@
 - **`ThatSeoAgent_Identity_Applier::filter_default_image()`**: the default
   sharing image was already read before the `thatseoagent_default_image`
   filter runs.
+- **`ThatSeoAgent_Identity_Applier`** and
+  **`ThatSeoAgent_Schema::get_publisher_defaults()`** (now
+  `ThatSeoAgent_Default_Author::defaults()`).
 - **`ThatSeoAgent_Homepage_Applier`** and
   **`ThatSeoAgent_Duplicates::effective_title()`**: the title and the
   description read the homepage settings themselves, and

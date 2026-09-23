@@ -138,7 +138,7 @@ class ThatSeoAgent_Meta {
          * @since 1.5.0
          * @param string $handle Default empty string.
          */
-        $twitter_handle = apply_filters('thatseoagent_twitter_handle', '');
+        $twitter_handle = apply_filters('thatseoagent_twitter_handle', ThatSeoAgent_Identity::twitter_handle());
         if ($twitter_handle) {
             $twitter_handle = '@' . ltrim($twitter_handle, '@');
             echo '<meta name="twitter:site" content="' . esc_attr($twitter_handle) . '">' . "\n";

@@ -224,15 +224,16 @@ class ThatSeoAgent_Schema {
         /**
          * Filter the site's primary schema entity.
          *
-         * ThatSeoAgent_Identity_Applier sets this to 'person' when the Site
-         * Identity settings say so. When it resolves to 'person' and a Person
-         * node exists, the Organization node is omitted and the Person becomes
-         * the publisher of every Article.
+         * 'person' when the Site Identity settings say so. When it resolves
+         * to 'person' and a Person node exists, the Organization node is
+         * omitted and the Person becomes the publisher of every Article.
          *
          * @since 1.8.0
-         * @param string $entity Either 'organization' (default) or 'person'.
+         * @since 2.7.0 Receives the identity's answer instead of
+         *              'organization'.
+         * @param string $entity Either 'organization' or 'person'.
          */
-        $entity = apply_filters('thatseoagent_primary_entity', 'organization');
+        $entity = apply_filters('thatseoagent_primary_entity', ThatSeoAgent_Identity::primary_entity());
 
         return 'person' === $entity ? 'person' : 'organization';
     }
@@ -321,7 +322,7 @@ class ThatSeoAgent_Schema {
          * @since 1.5.0
          * @param array $schema Organization schema array.
          */
-        return apply_filters('thatseoagent_organization_schema', $schema);
+        return apply_filters('thatseoagent_organization_schema', ThatSeoAgent_Identity::organization_node($schema));
     }
 
     /**
@@ -349,7 +350,8 @@ class ThatSeoAgent_Schema {
      * @return array|null
      */
     private static function filter_person_schema() {
-        $default = null;
+        // The identity's Person node, when the site represents a person.
+        $default = ThatSeoAgent_Identity::person_node();
 
         /**
          * Filter the Person schema node.
@@ -367,7 +369,8 @@ class ThatSeoAgent_Schema {
          *     )
          *
          * @since 1.5.0
-         * @param array|null $schema Default null (omitted).
+         * @since 2.7.0 Receives the identity's Person node, when there is one.
+         * @param array|null $schema The identity's Person node, else null (omitted).
          */
         return apply_filters('thatseoagent_person_schema', $default);
     }
@@ -728,28 +731,6 @@ class ThatSeoAgent_Schema {
     }
 
     /**
-     * Get publisher/author defaults from options.
-     *
-     * @since 1.3.0
-     * @return array {
-     *     @type string $author_name    Fallback author name.
-     *     @type string $author_url     Fallback author URL.
-     *     @type string $author_type    Schema type: 'Person' or 'Organization'.
-     * }
-     */
-    public static function get_publisher_defaults() {
-        $defaults = array(
-            'author_name' => get_bloginfo( 'name' ),
-            'author_url'  => home_url( '/' ),
-            'author_type' => 'Person',
-        );
-
-        $saved = get_option( ThatSeoAgent_Default_Author::OPTION_KEY, array() );
-
-        return wp_parse_args( $saved, $defaults );
-    }
-
-    /**
      * Build author schema for the current post.
      *
      * Uses post author if available, otherwise falls back to
@@ -765,9 +746,9 @@ class ThatSeoAgent_Schema {
         $post      = get_post();
         $author_id = $post ? (int) $post->post_author : 0;
 
-        $author_name = $author_id ? get_the_author_meta( 'display_name', $author_id ) : '';
+        if ( $post && ! ThatSeoAgent_Default_Author::is_unattributed( $post ) ) {
+            $author_name = get_the_author_meta( 'display_name', $author_id );
 
-        if ( $author_name ) {
             // The Person node itself sits in the graph, where the author's
             // archive page uses the same @id. Name and URL stay inline so the
             // Article still names its author if a filter drops that node.
@@ -780,15 +761,9 @@ class ThatSeoAgent_Schema {
         }
 
         // A configured fallback author wins.
-        $saved = get_option( ThatSeoAgent_Default_Author::OPTION_KEY, array() );
-        if ( ! empty( $saved['author_name'] ) ) {
-            $publisher = self::get_publisher_defaults();
-
-            return array(
-                '@type' => $publisher['author_type'],
-                'name'  => $publisher['author_name'],
-                'url'   => $publisher['author_url'],
-            );
+        $credited = ThatSeoAgent_Default_Author::credited();
+        if ( $credited ) {
+            return $credited;
         }
 
         // Nothing configured: point at the entity that already publishes the

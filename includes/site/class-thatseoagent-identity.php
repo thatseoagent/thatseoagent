@@ -1,16 +1,14 @@
 <?php
 /**
- * Site Identity Settings + Applier
+ * Site Identity
  *
- * Provides a UI for configuring who the site represents (a Person or
- * an Organization), their name, description, logo, default OG image,
- * Twitter @handle, and social profile URLs.
- *
- * On its own the class holds no SEO logic — it only persists settings.
- * The ThatSeoAgent_Identity_Applier (same file, below) reads the stored
- * values and feeds them into the filters exposed by PR 1
- * (thatseoagent_twitter_handle, thatseoagent_default_image, thatseoagent_person_schema,
- * thatseoagent_organization_schema).
+ * Who the site represents (a Person or an Organization), their name,
+ * description, logo, default OG image, Twitter @handle, and social profile
+ * URLs: the settings, and what they make of the site in the markup and the
+ * meta tags — the Person node, the Organization's details, the handle.
+ * ThatSeoAgent_Schema and ThatSeoAgent_Meta ask for them and run the public
+ * filters (thatseoagent_person_schema, thatseoagent_organization_schema,
+ * thatseoagent_primary_entity, thatseoagent_twitter_handle) on top.
  *
  * @package ThatSeoAgent
  * @since 1.6.0
@@ -164,6 +162,118 @@ class ThatSeoAgent_Identity {
         $settings = self::get_settings();
 
         return 'person' === $settings['type'] ? 'person' : 'organization';
+    }
+
+    /**
+     * The site's Person node, when the site represents a person.
+     *
+     * Without saved settings there is nothing to describe: a Person node
+     * named after the site would add a second, contentless entity to the
+     * graph.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Identity_Applier.
+     * @return array|null
+     */
+    public static function person_node() {
+        if ( 'person' !== self::primary_entity() ) {
+            return null;
+        }
+
+        $settings = self::get_settings();
+
+        $node = array(
+            '@type' => 'Person',
+            '@id'   => home_url( '/#person' ),
+            'name'  => $settings['name'] ? $settings['name'] : get_bloginfo( 'name' ),
+            'url'   => home_url( '/' ),
+        );
+
+        if ( $settings['description'] ) {
+            $node['description'] = $settings['description'];
+        }
+
+        $logo = ThatSeoAgent_Image::of( $settings['logo_id'] );
+        if ( $logo ) {
+            $node['image'] = ThatSeoAgent_Image::object( $logo, home_url( '/#personimage' ) );
+        }
+
+        $same_as = self::same_as( $settings );
+        if ( $same_as ) {
+            $node['sameAs'] = $same_as;
+        }
+
+        return $node;
+    }
+
+    /**
+     * The Organization node with what the settings say about it: its name,
+     * description, logo and profiles over the ones taken from WordPress.
+     * Unchanged when the site represents a person.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Identity_Applier.
+     * @param array $node The Organization node built from WordPress.
+     * @return array
+     */
+    public static function organization_node( array $node ) {
+        if ( 'organization' !== self::primary_entity() ) {
+            return $node;
+        }
+
+        $settings = self::get_settings();
+
+        if ( $settings['name'] ) {
+            $node['name'] = $settings['name'];
+        }
+
+        if ( $settings['description'] ) {
+            $node['description'] = $settings['description'];
+        }
+
+        $logo = ThatSeoAgent_Image::of( $settings['logo_id'] );
+        if ( $logo ) {
+            $node['logo'] = ThatSeoAgent_Image::object( $logo );
+        }
+
+        $same_as = self::same_as( $settings );
+        if ( $same_as ) {
+            $node['sameAs'] = $same_as;
+        }
+
+        return $node;
+    }
+
+    /**
+     * The site's X (Twitter) handle, as saved.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Identity_Applier.
+     * @return string
+     */
+    public static function twitter_handle() {
+        $settings = self::get_settings();
+
+        return (string) $settings['twitter_handle'];
+    }
+
+    /**
+     * The social profile URLs, each once.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Identity_Applier.
+     * @param array $settings Identity settings.
+     * @return array<int, string>
+     */
+    private static function same_as( array $settings ) {
+        $same_as = array();
+
+        if ( ! empty( $settings['social'] ) && is_array( $settings['social'] ) ) {
+            foreach ( $settings['social'] as $url ) {
+                $url = trim( (string) $url );
+                if ( $url ) {
+                    $same_as[] = $url;
+                }
+            }
+        }
+
+        return array_values( array_unique( $same_as ) );
     }
 
     /**
