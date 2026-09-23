@@ -29,20 +29,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Lean_SEO_Content {
 
     /**
-     * Rendered HTML, keyed by post ID.
-     *
-     * @var array<int, string>
-     */
-    private static $html = array();
-
-    /**
-     * Plain text, keyed by post ID.
-     *
-     * @var array<int, string>
-     */
-    private static $text = array();
-
-    /**
      * Rendered HTML for a post.
      *
      * Blocks and shortcodes are expanded, so headings, images and links are
@@ -58,10 +44,23 @@ class Lean_SEO_Content {
             return '';
         }
 
-        if ( isset( self::$html[ $post->ID ] ) ) {
-            return self::$html[ $post->ID ];
-        }
+        return Lean_SEO_Memo::remember(
+            'content_html',
+            $post->ID,
+            function () use ( $post ) {
+                return self::render( $post );
+            }
+        );
+    }
 
+    /**
+     * Render a post's content, without memoisation.
+     *
+     * @since 1.20.0 Split from html().
+     * @param WP_Post $post Post object.
+     * @return string
+     */
+    private static function render( $post ) {
         $content = (string) $post->post_content;
 
         // Same order as core's `the_content`: blocks, or paragraphs for
@@ -73,9 +72,7 @@ class Lean_SEO_Content {
             $content = shortcode_unautop( wpautop( $content ) );
         }
 
-        self::$html[ $post->ID ] = do_shortcode( $content );
-
-        return self::$html[ $post->ID ];
+        return do_shortcode( $content );
     }
 
     /**
@@ -91,13 +88,13 @@ class Lean_SEO_Content {
             return '';
         }
 
-        if ( isset( self::$text[ $post->ID ] ) ) {
-            return self::$text[ $post->ID ];
-        }
-
-        self::$text[ $post->ID ] = self::to_text( self::html( $post ) );
-
-        return self::$text[ $post->ID ];
+        return Lean_SEO_Memo::remember(
+            'content_text',
+            $post->ID,
+            function () use ( $post ) {
+                return self::to_text( self::html( $post ) );
+            }
+        );
     }
 
     /**
@@ -134,22 +131,5 @@ class Lean_SEO_Content {
      */
     public static function word_count( $post ) {
         return (int) preg_match_all( '/[\p{L}\p{N}]+/u', self::text( $post ) );
-    }
-
-    /**
-     * Drop the memoised content of a post.
-     *
-     * A page load reads a handful of posts and never needs this. A scan
-     * reads hundreds, one after another, and each rendered copy would
-     * otherwise stay in memory until the request ends.
-     *
-     * @since 1.16.0
-     * @param WP_Post|int $post Post object or ID.
-     */
-    public static function forget( $post ) {
-        $post_id = $post instanceof WP_Post ? $post->ID : (int) $post;
-
-        unset( self::$html[ $post_id ], self::$text[ $post_id ] );
-        Lean_SEO_Description::forget( $post_id );
     }
 }

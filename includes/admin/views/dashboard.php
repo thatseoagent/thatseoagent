@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$bulletin  = Lean_SEO_App::bulletin();
-$levels    = Lean_SEO_App::levels();
-$level     = $levels[ $bulletin['level'] ];
-$stats     = Lean_SEO_App::stats();
-$resources = Lean_SEO_App::resources();
+$bulletin  = Lean_SEO_Bulletin::get();
+$levels    = Lean_SEO_Bulletin::levels();
+$level     = $levels[ $bulletin['level'] ] + Lean_SEO_App::level_classes( $bulletin['level'] );
+$stats     = Lean_SEO_Readings::counts();
+$resources = Lean_SEO_Readings::published();
 $site_host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
 $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_format' ), $bulletin['observed'] );
 ?>
@@ -42,9 +42,9 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
         <p class="mt-4 max-w-[38rem] text-[16px] leading-relaxed"><?php echo esc_html( $bulletin['summary'] ); ?></p>
 
         <?php if ( $bulletin['action'] ) : ?>
-            <a href="<?php echo esc_url( $bulletin['action']['url'] ); ?>" class="ls-press mt-6">
+            <a href="<?php echo esc_url( Lean_SEO_App::action_url( $bulletin['action'] ) ); ?>" class="ls-press mt-6">
                 <?php echo esc_html( $bulletin['action']['label'] ); ?>
-                <?php Lean_SEO_App::the_icon( 'arrow', 'size-4' ); ?>
+                <?php Lean_SEO_Icons::the( 'arrow', 'size-4' ); ?>
             </a>
         <?php endif; ?>
     </div>
@@ -54,7 +54,7 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
             <?php foreach ( array_reverse( $levels, true ) as $key => $scale ) : ?>
                 <?php $is_current = $key === $bulletin['level']; ?>
                 <li class="flex items-center gap-2.5 <?php echo $is_current ? 'font-bold' : 'opacity-70 max-md:[&>span:last-child]:sr-only'; ?>">
-                    <span class="grid size-4 place-items-center rounded-[2px] ring-1 ring-black/15 <?php echo esc_attr( $scale['square'] ); ?>" aria-hidden="true">
+                    <span class="grid size-4 place-items-center rounded-[2px] ring-1 ring-black/15 <?php echo esc_attr( Lean_SEO_App::level_classes( $key )['square'] ); ?>" aria-hidden="true">
                         <?php if ( $is_current ) : ?>
                             <span class="size-1.5 rounded-full <?php echo 'clear' === $key || 'red' === $key ? 'bg-white' : 'bg-[#111d27]'; ?>"></span>
                         <?php endif; ?>
@@ -114,14 +114,14 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
         <?php else : ?>
             <ol class="divide-y divide-rule">
                 <?php foreach ( $bulletin['warnings'] as $warning ) : ?>
-                    <?php $warning_level = $levels[ $warning['level'] ]; ?>
+                    <?php $warning_level = $levels[ $warning['level'] ] + Lean_SEO_App::level_classes( $warning['level'] ); ?>
                     <li class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 py-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start">
                         <span class="mt-1.5 size-3 rounded-[1px] ring-1 ring-black/10 <?php echo esc_attr( $warning_level['square'] ); ?>" aria-hidden="true"></span>
                         <div>
                             <h3 class="text-[16px] leading-snug font-semibold text-ink"><?php echo esc_html( $warning['title'] ); ?></h3>
                             <p class="mt-1 max-w-[36rem] text-[14px] text-ink-2"><span class="font-semibold text-ink"><?php echo esc_html( $warning_level['name'] ); ?>.</span> <?php echo esc_html( $warning['detail'] ); ?></p>
                         </div>
-                        <a href="<?php echo esc_url( $warning['action']['url'] ); ?>" class="ls-rule-button col-start-2 justify-self-start sm:col-start-auto">
+                        <a href="<?php echo esc_url( Lean_SEO_App::action_url( $warning['action'] ) ); ?>" class="ls-rule-button col-start-2 justify-self-start sm:col-start-auto">
                             <?php echo esc_html( $warning['action']['label'] ); ?>
                         </a>
                     </li>
@@ -190,7 +190,7 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
                 <?php if ( $resource['active'] && $resource['url'] ) : ?>
                     <a href="<?php echo esc_url( $resource['url'] ); ?>" target="_blank" rel="noopener" class="ls-link inline-flex items-center gap-1 text-[13px]">
                         <?php esc_html_e( 'Open', 'lean-seo' ); ?>
-                        <?php Lean_SEO_App::the_icon( 'external', 'size-3.5' ); ?>
+                        <?php Lean_SEO_Icons::the( 'external', 'size-3.5' ); ?>
                         <span class="sr-only"><?php esc_html_e( '(opens in a new tab)', 'lean-seo' ); ?></span>
                     </a>
                 <?php endif; ?>

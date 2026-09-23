@@ -92,7 +92,7 @@ class Lean_SEO_Product_Report {
             foreach ( $ids as $post_id ) {
                 $summary[ self::worst_severity( Lean_SEO_Product::validate( $post_id ) ) ]++;
                 $summary['total']++;
-                Lean_SEO_Content::forget( $post_id );
+                Lean_SEO_Memo::forget_post( $post_id );
             }
         }
 
@@ -154,7 +154,7 @@ class Lean_SEO_Product_Report {
                 'issues' => $issues,
             );
 
-            Lean_SEO_Content::forget( $post );
+            Lean_SEO_Memo::forget_post( $post );
         }
 
         $report['found'] = (int) $query->found_posts;

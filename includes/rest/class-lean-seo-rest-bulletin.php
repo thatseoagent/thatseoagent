@@ -40,6 +40,6 @@ class Lean_SEO_REST_Bulletin extends Lean_SEO_REST_Controller {
      * @return WP_REST_Response
      */
     public function get_item( $request ) {
-        return $this->fresh( Lean_SEO_App::bulletin_for_js() );
+        return $this->fresh( Lean_SEO_Bulletin::for_js() );
     }
 }

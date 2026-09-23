@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $config   = Lean_SEO_Product::config();
-$levels   = Lean_SEO_App::levels();
+$levels   = Lean_SEO_Bulletin::levels();
 $settings = Lean_SEO_App::url( 'settings' ) . '#lean_seo_products_section';
 
 if ( empty( $config ) ) :
@@ -22,7 +22,7 @@ if ( empty( $config ) ) :
         <p class="mt-2 text-[15px] text-ink-2"><?php esc_html_e( 'Pick the content type that holds them; Lean SEO suggests where each detail is stored.', 'lean-seo' ); ?></p>
         <a href="<?php echo esc_url( $settings ); ?>" class="ls-press mt-6">
             <?php esc_html_e( 'Set up the catalog', 'lean-seo' ); ?>
-            <?php Lean_SEO_App::the_icon( 'arrow', 'size-4' ); ?>
+            <?php Lean_SEO_Icons::the( 'arrow', 'size-4' ); ?>
         </a>
     </section>
     <?php
@@ -63,7 +63,7 @@ if ( 'clear' === $level ) {
 }
 ?>
 
-<section class="ls-field grid gap-6 rounded-(--radius-sheet) px-7 py-7 md:grid-cols-[minmax(0,1fr)_18rem] md:px-9 <?php echo esc_attr( $levels[ $level ]['field'] ); ?>" aria-labelledby="lean-seo-catalog-condition">
+<section class="ls-field grid gap-6 rounded-(--radius-sheet) px-7 py-7 md:grid-cols-[minmax(0,1fr)_18rem] md:px-9 <?php echo esc_attr( Lean_SEO_App::level_classes( $level )['field'] ); ?>" aria-labelledby="lean-seo-catalog-condition">
     <div>
         <h2 id="lean-seo-catalog-condition" class="text-[26px] leading-tight font-extrabold tracking-[-0.02em] md:text-[30px]"><?php echo esc_html( $headline ); ?></h2>
         <p class="mt-2 max-w-[36rem] text-[15px]"><?php esc_html_e( 'Without a price, reviews or ratings Google shows no product stars or prices, but the markup still tells search engines and AI assistants exactly what each product is.', 'lean-seo' ); ?></p>
@@ -124,7 +124,7 @@ if ( 'clear' === $level ) {
     <?php
     $page_counts = array( 'attention' => 0, 'complete' => 0 );
     foreach ( $report['rows'] as $row ) {
-        $page_counts[ 'clear' === Lean_SEO_App::status_level( $row['status'] ) ? 'complete' : 'attention' ]++;
+        $page_counts[ 'clear' === Lean_SEO_Bulletin::level_for_status( $row['status'] ) ? 'complete' : 'attention' ]++;
     }
     $filters = array(
         'all'       => array( __( 'All', 'lean-seo' ), count( $report['rows'] ) ),
@@ -170,12 +170,12 @@ if ( 'clear' === $level ) {
                     <?php foreach ( $report['rows'] as $row ) : ?>
                         <?php
                         $post      = $row['post'];
-                        $row_level = Lean_SEO_App::status_level( $row['status'] );
+                        $row_level = Lean_SEO_Bulletin::level_for_status( $row['status'] );
                         ?>
                         <tr class="align-top" x-show.important="shows('<?php echo esc_js( $row_level ); ?>')">
                             <td class="w-[42%] py-3.5 pr-6">
                                 <div class="flex items-start gap-3">
-                                    <span class="mt-1.5 size-2.5 shrink-0 rounded-[1px] ring-1 ring-black/10 <?php echo esc_attr( $levels[ $row_level ]['square'] ); ?>" aria-hidden="true"></span>
+                                    <span class="mt-1.5 size-2.5 shrink-0 rounded-[1px] ring-1 ring-black/10 <?php echo esc_attr( Lean_SEO_App::level_classes( $row_level )['square'] ); ?>" aria-hidden="true"></span>
                                     <div class="min-w-0">
                                         <a href="<?php echo esc_url( (string) get_edit_post_link( $post->ID ) ); ?>" class="font-semibold text-ink hover:text-met hover:underline"><?php echo esc_html( get_the_title( $post ) ); ?></a>
                                         <p class="mt-0.5 text-[12px] text-ink-3">

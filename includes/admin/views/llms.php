@@ -56,13 +56,13 @@ if ( $physical ) {
     <div class="flex flex-wrap gap-2">
         <a href="<?php echo esc_url( Lean_SEO_App::url( 'settings' ) . '#lean_seo_llms_section' ); ?>" class="ls-rule-button"><?php esc_html_e( 'Settings', 'lean-seo' ); ?></a>
         <button type="button" class="ls-rule-button" x-cloak x-show.important="true" @click="regenerate()" :disabled="busy" :aria-busy="busy ? 'true' : 'false'">
-            <?php Lean_SEO_App::the_icon( 'refresh', 'size-4' ); ?>
+            <?php Lean_SEO_Icons::the( 'refresh', 'size-4' ); ?>
             <span x-text="busy ? <?php echo esc_attr( wp_json_encode( __( 'Rebuilding…', 'lean-seo' ) ) ); ?> : <?php echo esc_attr( wp_json_encode( __( 'Rebuild now', 'lean-seo' ) ) ); ?>"><?php esc_html_e( 'Rebuild now', 'lean-seo' ); ?></span>
         </button>
         <?php if ( $live ) : ?>
             <a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener" class="ls-press">
                 <?php esc_html_e( 'Open llms.txt', 'lean-seo' ); ?>
-                <?php Lean_SEO_App::the_icon( 'external', 'size-4' ); ?>
+                <?php Lean_SEO_Icons::the( 'external', 'size-4' ); ?>
                 <span class="sr-only"><?php esc_html_e( '(opens in a new tab)', 'lean-seo' ); ?></span>
             </a>
         <?php endif; ?>

@@ -1,5 +1,50 @@
 # Changelog
 
+## [1.20.0] - 2026-09-23
+
+Internal reorganization. Every page, admin view, sitemap, llms.txt, Markdown
+page and WP-CLI command produces the same output as in 1.19.0.
+
+### Changed
+- **`Lean_SEO_Bulletin`** (new `includes/bulletin/`) owns the bulletin,
+  taken out of `Lean_SEO_App`. It works in two steps: `facts()` asks each
+  owning module one question, and `compose( $facts )` applies the rules
+  without touching WordPress, so they can be checked with facts written by
+  hand. Callers use `get()`; `levels()` and `level_for_status()` carry the
+  warning scale.
+- **A warning's action names a destination** (`reading`, `permalinks`,
+  `plugins`, `identity`, `homepage`, `products`) instead of a URL;
+  `Lean_SEO_App::action_url()` knows where each one lives. The level colors
+  moved to `Lean_SEO_App::level_classes()`: the bulletin knows nothing
+  about the screen.
+- **`Lean_SEO_Identity::is_recognizable()`** (a logo, a description or
+  social profiles) and **`Lean_SEO_Homepage::has_description()`** answer
+  what the bulletin used to read from their settings itself.
+- **`Lean_SEO_Readings`** holds the dashboard counts and the public files
+  served (`counts()`, `published()`, were `Lean_SEO_App::stats()` and
+  `resources()`). **`Lean_SEO_Icons`** holds the inline icons (`the()`,
+  `get()`).
+- `GET /lean-seo/v1/bulletin` no longer includes the `square` and `bar`
+  class names; the screen's script paints from the level and state alone,
+  as it already did.
+- **Each module declares its own option**: `setting()` next to its
+  `OPTION_KEY` returns the type, sanitizer, default and REST schema, and
+  `Lean_SEO_Settings` only gathers and registers them. Adding an option
+  touches one file. `lean_seo_schema` is now
+  `Lean_SEO_Default_Author::OPTION_KEY`.
+- **`uninstall.php` asks instead of copying**: the options come from
+  `Lean_SEO_Settings::definitions()` and the owners' constants
+  (`Lean_SEO::REWRITE_VERSION_OPTION`, `Lean_SEO_IndexNow::CRON_HOOK`, …),
+  so a new option cannot be left behind. It deletes exactly what it did
+  before.
+- **`Lean_SEO_Memo`** holds every per-request cache: rendered content,
+  generated descriptions, the Person node, taxonomy lastmods, the
+  bulletin. `Lean_SEO_Memo::forget_post()` replaces
+  `Lean_SEO_Content::forget()` and `Lean_SEO_Description::forget()` (and
+  with them the Content ↔ Description cycle); `reset()` empties it, which
+  no static variable inside a function allowed.
+- `docs/adr/0001` records why class names keep the `Lean_SEO_` prefix.
+
 ## [1.19.0] - 2026-09-23
 
 Internal reorganization. No behaviour changes: every page head, sitemap,

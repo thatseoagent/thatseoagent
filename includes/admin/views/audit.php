@@ -73,7 +73,7 @@ $cells = 24;
 
             <div class="flex gap-2 md:justify-end">
                 <button type="button" class="ls-press" x-show.important="'running' !== status" @click="start()" :disabled="loading">
-                    <?php Lean_SEO_App::the_icon( 'refresh', 'size-4' ); ?>
+                    <?php Lean_SEO_Icons::the( 'refresh', 'size-4' ); ?>
                     <span x-text="rows.length ? <?php echo esc_attr( wp_json_encode( __( 'Check again', 'lean-seo' ) ) ); ?> : <?php echo esc_attr( wp_json_encode( __( 'Start the check', 'lean-seo' ) ) ); ?>"><?php esc_html_e( 'Start the check', 'lean-seo' ); ?></span>
                 </button>
                 <button type="button" class="ls-rule-button" x-cloak x-show.important="'running' === status" @click="stop()">

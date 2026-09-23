@@ -13,6 +13,12 @@ if (!defined('ABSPATH')) {
 class Lean_SEO {
 
     /**
+     * Option recording the rule set last flushed, so rewrite rules are
+     * flushed once per change rather than on every request.
+     */
+    const REWRITE_VERSION_OPTION = 'lean_seo_rewrite_version';
+
+    /**
      * Single instance
      */
     private static $instance = null;
@@ -103,7 +109,7 @@ class Lean_SEO {
         // stays missing after it is gone.
         $version = LEAN_SEO_VERSION . (Lean_SEO_Compat::outputs_enabled() ? '' : '-compat');
 
-        if (get_option('lean_seo_rewrite_version') === $version) {
+        if (get_option(self::REWRITE_VERSION_OPTION) === $version) {
             return;
         }
 
@@ -112,6 +118,6 @@ class Lean_SEO {
         // Autoloaded on purpose: this runs on every init, and a
         // non-autoloaded option costs one query per request forever to read a
         // short version string that changes once per release.
-        update_option('lean_seo_rewrite_version', $version, true);
+        update_option(self::REWRITE_VERSION_OPTION, $version, true);
     }
 }

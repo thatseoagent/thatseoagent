@@ -15,26 +15,10 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit;
 }
 
-/**
- * Options created by Lean SEO.
- *
- * @var string[]
- */
-const LEAN_SEO_UNINSTALL_OPTIONS = array(
-    'lean_seo_schema',
-    'lean_seo_identity',
-    'lean_seo_homepage',
-    'lean_seo_products',
-    'lean_seo_llms_txt',
-    'lean_seo_audit_results',
-    'lean_seo_indexnow_key',
-    'lean_seo_rewrite_version',
-    'lean_seo_markdown_cache_version',
-);
-
-// The meta keys are owned by Lean_SEO_Post_Seo. Asking it (the class needs
-// nothing but ABSPATH, and the autoloader nothing but its own directory)
-// beats keeping a copy that can fall out of step when a field is added.
+// Every name below is asked of the module that owns it — the settings from
+// Lean_SEO_Settings, the rest from their classes — instead of kept as a
+// copy that can fall out of step when something is added. The classes need
+// nothing but ABSPATH, and the autoloader nothing but its own directory.
 require_once plugin_dir_path( __FILE__ ) . 'includes/autoload.php';
 
 /**
@@ -43,7 +27,16 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/autoload.php';
  * @return void
  */
 function lean_seo_uninstall_site() {
-    foreach ( LEAN_SEO_UNINSTALL_OPTIONS as $option ) {
+    $options = array_merge(
+        array_keys( Lean_SEO_Settings::definitions() ),
+        array(
+            Lean_SEO_Audit_Run::RESULTS_OPTION,
+            Lean_SEO::REWRITE_VERSION_OPTION,
+            Lean_SEO_Markdown_Cache::VERSION_OPTION,
+        )
+    );
+
+    foreach ( $options as $option ) {
         delete_option( $option );
     }
 
@@ -51,10 +44,10 @@ function lean_seo_uninstall_site() {
         delete_post_meta_by_key( $meta_key );
     }
 
-    wp_unschedule_hook( 'lean_seo_indexnow_submit' );
-    delete_transient( 'lean_seo_llms_txt' );
-    delete_transient( 'lean_seo_product_summary' );
-    delete_metadata( 'user', 0, 'lean_seo_admin_theme', '', true );
+    wp_unschedule_hook( Lean_SEO_IndexNow::CRON_HOOK );
+    delete_transient( Lean_SEO_Llms::CACHE_KEY );
+    delete_transient( Lean_SEO_Product_Report::SUMMARY_KEY );
+    delete_metadata( 'user', 0, Lean_SEO_App::THEME_META, '', true );
 }
 
 /**

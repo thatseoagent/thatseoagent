@@ -105,7 +105,7 @@ class Lean_SEO_Audit_Run {
                 $rows[] = self::row( Lean_SEO_Audit::post( $post ), $post );
             }
 
-            Lean_SEO_Content::forget( $post_id );
+            Lean_SEO_Memo::forget_post( $post_id );
         }
 
         $state['checked'] += count( $slice );

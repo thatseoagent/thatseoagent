@@ -27,6 +27,29 @@ class Lean_SEO_Homepage {
     const OPTION_KEY = 'lean_seo_homepage';
 
     /**
+     * The option as Lean_SEO_Settings registers it: type, sanitizer,
+     * default and REST schema.
+     *
+     * @since 1.20.0 Moved from Lean_SEO_Settings::definitions().
+     * @return array{type: string, sanitize: callable, default: mixed, schema: array}
+     */
+    public static function setting() {
+        return array(
+            'type'     => 'object',
+            'sanitize' => array( __CLASS__, 'sanitize' ),
+            'default'  => array(),
+            'schema'   => array(
+                'type'                 => 'object',
+                'additionalProperties' => false,
+                'properties'           => array(
+                    'title'       => array( 'type' => 'string' ),
+                    'description' => array( 'type' => 'string' ),
+                ),
+            ),
+        );
+    }
+
+    /**
      * Get homepage settings with defaults applied.
      *
      * @return array
@@ -40,6 +63,19 @@ class Lean_SEO_Homepage {
         );
 
         return wp_parse_args( $saved, $defaults );
+    }
+
+    /**
+     * Whether the homepage has a description written for it, rather than
+     * one taken from the page text.
+     *
+     * @since 1.20.0
+     * @return bool
+     */
+    public static function has_description() {
+        $settings = self::get_settings();
+
+        return '' !== $settings['description'];
     }
 
     /**

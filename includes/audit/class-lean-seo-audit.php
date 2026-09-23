@@ -304,7 +304,7 @@ class Lean_SEO_Audit {
                 // Each audit renders the post; the memoised copies are only
                 // useful within one post, and would otherwise pile up for the
                 // whole scan.
-                Lean_SEO_Content::forget( $post );
+                Lean_SEO_Memo::forget_post( $post );
 
                 if ( count( $audit['issues'] ) >= $min_issues ) {
                     $results[] = array(

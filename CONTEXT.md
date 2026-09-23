@@ -18,6 +18,10 @@ _Avoid_: severity, status, grade
 A problem in force that needs someone to act, stated in plain words with one action that fixes it. Optional features that are not set up never raise one.
 _Avoid_: alert, error, issue
 
+**Readings**:
+What the overview shows beside the bulletin without judging it: how many posts carry their own SEO fields, and which public files the site is serving. Readings never raise a warning.
+_Avoid_: stats, metrics, KPIs
+
 **Observation**:
 One fact checked about the site (indexing allowed, permalinks, other SEO plugins, identity, homepage description, product catalog, IndexNow), with its value in a word or two.
 _Avoid_: check, metric, test

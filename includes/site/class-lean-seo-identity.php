@@ -30,6 +30,46 @@ class Lean_SEO_Identity {
     const OPTION_KEY = 'lean_seo_identity';
 
     /**
+     * The option as Lean_SEO_Settings registers it: type, sanitizer,
+     * default and REST schema.
+     *
+     * @since 1.20.0 Moved from Lean_SEO_Settings::definitions().
+     * @return array{type: string, sanitize: callable, default: mixed, schema: array}
+     */
+    public static function setting() {
+        $social = array();
+        foreach ( array_keys( self::get_social_networks() ) as $network ) {
+            $social[ $network ] = array( 'type' => 'string' );
+        }
+
+        return array(
+            'type'     => 'object',
+            'sanitize' => array( __CLASS__, 'sanitize' ),
+            'default'  => array(),
+            'schema'   => array(
+                'type'                 => 'object',
+                'additionalProperties' => false,
+                'properties'           => array(
+                    'type'                => array(
+                        'type' => 'string',
+                        'enum' => array( 'person', 'organization' ),
+                    ),
+                    'name'                => array( 'type' => 'string' ),
+                    'description'         => array( 'type' => 'string' ),
+                    'logo_id'             => array( 'type' => 'integer' ),
+                    'default_og_image_id' => array( 'type' => 'integer' ),
+                    'twitter_handle'      => array( 'type' => 'string' ),
+                    'social'              => array(
+                        'type'                 => 'object',
+                        'additionalProperties' => false,
+                        'properties'           => $social,
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
      * Supported social profile networks.
      *
      * Order here determines display order in the settings UI.
@@ -81,6 +121,26 @@ class Lean_SEO_Identity {
      */
     public static function is_configured() {
         return false !== get_option( self::OPTION_KEY, false );
+    }
+
+    /**
+     * Whether there is something to recognize the site by: a logo, a
+     * description or social profiles.
+     *
+     * Saving the settings stores the option even when nothing in it was
+     * filled in, so is_configured() alone proves nothing about that.
+     *
+     * @since 1.20.0
+     * @return bool
+     */
+    public static function is_recognizable() {
+        if ( ! self::is_configured() ) {
+            return false;
+        }
+
+        $settings = self::get_settings();
+
+        return $settings['logo_id'] || '' !== $settings['description'] || ! empty( $settings['social'] );
     }
 
     /**

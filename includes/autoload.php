@@ -11,6 +11,7 @@
  *     sitemap/       XML sitemaps and robots.txt
  *     markdown/      the Markdown version of each post, and llms.txt
  *     audit/         the SEO audit and the batched content check
+ *     bulletin/      the site's state: the bulletin and the readings
  *     admin/         the Lean SEO screen, the meta box, the bulk action
  *     rest/          the screen's REST controllers (lean-seo/v1)
  *     tooling/       WP-CLI, the Abilities API, the importer
@@ -36,6 +37,7 @@ spl_autoload_register(
     function ( $class ) {
         static $map = array(
         'Lean_SEO_Settings'          => 'class-lean-seo-settings.php',
+        'Lean_SEO_Memo'              => 'class-lean-seo-memo.php',
         'Lean_SEO'                   => 'class-lean-seo.php',
 
         'Lean_SEO_Content'           => 'content/class-lean-seo-content.php',
@@ -69,8 +71,12 @@ spl_autoload_register(
         'Lean_SEO_Audit_Run'         => 'audit/class-lean-seo-audit-run.php',
         'Lean_SEO_Audit'             => 'audit/class-lean-seo-audit.php',
 
+        'Lean_SEO_Bulletin'          => 'bulletin/class-lean-seo-bulletin.php',
+        'Lean_SEO_Readings'          => 'bulletin/class-lean-seo-readings.php',
+
         'Lean_SEO_App'               => 'admin/class-lean-seo-app.php',
         'Lean_SEO_Bulk_Descriptions' => 'admin/class-lean-seo-bulk-descriptions.php',
+        'Lean_SEO_Icons'             => 'admin/class-lean-seo-icons.php',
         'Lean_SEO_Meta_Box'          => 'admin/class-lean-seo-meta-box.php',
 
         'Lean_SEO_REST_Audit'        => 'rest/class-lean-seo-rest-audit.php',

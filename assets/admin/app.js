@@ -108,7 +108,7 @@
 					// The page still shows the last known state; nothing to undo.
 				} );
 			},
-			// Method names differ from the response's fields (square, …):
+			// Method names must differ from the response's fields:
 			// refresh() assigns the response over the store.
 			barClass: function ( index ) {
 				var observation = this.observations && this.observations[ index ];

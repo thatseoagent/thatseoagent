@@ -26,13 +26,34 @@ class Lean_SEO_IndexNow {
 	const API_URL = 'https://api.indexnow.org/indexnow';
 
 	/**
+	 * WP-Cron hook that submits queued URLs.
+	 */
+	const CRON_HOOK = 'lean_seo_indexnow_submit';
+
+	/**
+	 * The option as Lean_SEO_Settings registers it: type, sanitizer,
+	 * default and REST schema.
+	 *
+	 * @since 1.20.0 Moved from Lean_SEO_Settings::definitions().
+	 * @return array{type: string, sanitize: callable, default: mixed, schema: array}
+	 */
+	public static function setting(): array {
+		return array(
+			'type'     => 'string',
+			'sanitize' => array( __CLASS__, 'sanitize_key_setting' ),
+			'default'  => '',
+			'schema'   => array( 'type' => 'string' ),
+		);
+	}
+
+	/**
 	 * Register the hooks.
 	 *
 	 * @since 1.7.1 As init().
 	 */
 	public static function register(): void {
 		add_action( 'save_post', array( __CLASS__, 'on_post_save' ), 10, 3 );
-		add_action( 'lean_seo_indexnow_submit', array( __CLASS__, 'submit_urls' ) );
+		add_action( self::CRON_HOOK, array( __CLASS__, 'submit_urls' ) );
 		add_action( 'init', array( __CLASS__, 'maybe_serve_key_file' ), 5 );
 		add_action( 'admin_init', array( __CLASS__, 'register_settings' ) );
 	}
@@ -254,8 +275,8 @@ class Lean_SEO_IndexNow {
 		// editor's save request open for the duration of the request to the
 		// IndexNow API (up to the timeout below).
 		$args = array( array( $post_url ) );
-		if ( ! wp_next_scheduled( 'lean_seo_indexnow_submit', $args ) ) {
-			wp_schedule_single_event( time() + 30, 'lean_seo_indexnow_submit', $args );
+		if ( ! wp_next_scheduled( self::CRON_HOOK, $args ) ) {
+			wp_schedule_single_event( time() + 30, self::CRON_HOOK, $args );
 		}
 	}
 

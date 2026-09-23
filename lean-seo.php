@@ -3,7 +3,7 @@
  * Plugin Name: Lean SEO
  * Plugin URI: https://github.com/Sarai-Chinwag/lean-seo
  * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, per-post SEO fields, and Markdown for AI agents. A Yoast replacement that doesn't slow your site down.
- * Version: 1.19.0
+ * Version: 1.20.0
  * Author: Sarai Chinwag
  * Author URI: https://saraichinwag.com
  * License: GPL-2.0+
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('LEAN_SEO_VERSION', '1.19.0');
+define('LEAN_SEO_VERSION', '1.20.0');
 define('LEAN_SEO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LEAN_SEO_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -75,17 +75,17 @@ register_activation_hook(__FILE__, 'lean_seo_activate');
  * flushes on the next `init`, once the rules exist.
  */
 function lean_seo_activate() {
-    delete_option('lean_seo_rewrite_version');
+    delete_option(Lean_SEO::REWRITE_VERSION_OPTION);
 }
 
 // Deactivation hook
 register_deactivation_hook(__FILE__, 'lean_seo_deactivate');
 function lean_seo_deactivate() {
-    delete_option('lean_seo_rewrite_version');
+    delete_option(Lean_SEO::REWRITE_VERSION_OPTION);
 
     // Drop any IndexNow submissions still queued; their callback disappears
     // with the plugin and WP-Cron would keep retrying a missing hook.
-    wp_unschedule_hook('lean_seo_indexnow_submit');
+    wp_unschedule_hook(Lean_SEO_IndexNow::CRON_HOOK);
 
     // Not flush_rewrite_rules(): `init` already ran in this request, so the
     // sitemap and .md rules are registered and a flush would persist them —

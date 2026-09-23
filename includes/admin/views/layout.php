@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $theme    = Lean_SEO_App::theme();
-$bulletin = Lean_SEO_App::bulletin();
-$levels   = Lean_SEO_App::levels();
-$level    = $levels[ $bulletin['level'] ];
+$bulletin = Lean_SEO_Bulletin::get();
+$levels   = Lean_SEO_Bulletin::levels();
+$level    = $levels[ $bulletin['level'] ] + Lean_SEO_App::level_classes( $bulletin['level'] );
 ?>
 <!--
 THESIS: The site gets a weather bulletin, not a dashboard: one plain condition on a field of its warning color, the warnings in force, the observations. It refuses the KPI-card grid and the grey settings form.
@@ -70,7 +70,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
                             class="flex items-center gap-2.5 rounded-[4px] px-3 py-2 text-[14px] whitespace-nowrap <?php echo $active ? 'bg-sheet font-semibold text-ink shadow-[0_1px_2px_rgb(17_29_39/0.08)]' : 'font-medium text-ink-2 hover:bg-sheet/60 hover:text-ink'; ?>"
                             <?php echo $active ? 'aria-current="page"' : ''; ?>
                         >
-                            <?php Lean_SEO_App::the_icon( $item['icon'], 'size-4 ' . ( $active ? 'text-met' : 'text-ink-3' ) ); ?>
+                            <?php Lean_SEO_Icons::the( $item['icon'], 'size-4 ' . ( $active ? 'text-met' : 'text-ink-3' ) ); ?>
                             <?php echo esc_html( $item['label'] ); ?>
                         </a>
                     </li>
@@ -96,7 +96,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
                         :class="theme === '<?php echo esc_js( $option ); ?>' ? { 'bg-sheet': true, 'text-ink': true, 'shadow-[0_1px_2px_rgb(17_29_39/0.1)]': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'shadow-[0_1px_2px_rgb(17_29_39/0.1)]': false, 'text-ink-3': true, 'hover:text-ink': true }"
                         class="flex items-center justify-center gap-1.5 rounded-[2px] py-1.5 text-[13px] font-medium <?php echo $pressed ? 'bg-sheet text-ink shadow-[0_1px_2px_rgb(17_29_39/0.1)]' : 'text-ink-3 hover:text-ink'; ?>"
                     >
-                        <?php Lean_SEO_App::the_icon( $meta[1], 'size-3.5' ); ?>
+                        <?php Lean_SEO_Icons::the( $meta[1], 'size-3.5' ); ?>
                         <?php echo esc_html( $meta[0] ); ?>
                     </button>
                 <?php endforeach; ?>

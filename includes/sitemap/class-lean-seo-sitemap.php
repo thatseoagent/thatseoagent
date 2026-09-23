@@ -472,17 +472,24 @@ class Lean_SEO_Sitemap {
      * @return array<int, string> term_id => ISO 8601 date.
      */
     private static function get_term_lastmods($taxonomy) {
-        static $cache = array();
+        return Lean_SEO_Memo::remember('term_lastmods', $taxonomy, function () use ($taxonomy) {
+            return self::query_term_lastmods($taxonomy);
+        });
+    }
 
-        if (isset($cache[$taxonomy])) {
-            return $cache[$taxonomy];
-        }
-
+    /**
+     * The query behind get_term_lastmods(), without memoisation.
+     *
+     * @since 1.20.0 Split from get_term_lastmods().
+     * @param string $taxonomy Taxonomy name.
+     * @return array<int, string> term_id => ISO 8601 date.
+     */
+    private static function query_term_lastmods($taxonomy) {
         global $wpdb;
 
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         // Direct query on purpose: this replaces one WP_Query per term with a
-        // single grouped read. Results are memoised in $cache for the request,
+        // single grouped read. Results are memoised for the request,
         // and a sitemap is fetched rarely enough that a persistent cache would
         // mostly serve stale lastmod values.
         $rows = $wpdb->get_results(
@@ -505,8 +512,6 @@ class Lean_SEO_Sitemap {
                 $map[(int) $row->term_id] = get_date_from_gmt($row->lastmod, 'c');
             }
         }
-
-        $cache[$taxonomy] = $map;
 
         return $map;
     }

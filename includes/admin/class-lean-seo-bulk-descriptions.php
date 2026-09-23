@@ -90,7 +90,7 @@ class Lean_SEO_Bulk_Descriptions {
             }
 
             $description = Lean_SEO_Description::generate( $post_id );
-            Lean_SEO_Content::forget( $post_id );
+            Lean_SEO_Memo::forget_post( $post_id );
 
             if ( '' === $description ) {
                 $skipped++;

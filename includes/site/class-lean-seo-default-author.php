@@ -17,6 +17,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Lean_SEO_Default_Author {
 
     /**
+     * Option holding the default author. Named after the schema it feeds,
+     * from before it had a module of its own.
+     */
+    const OPTION_KEY = 'lean_seo_schema';
+
+    /**
+     * The option as Lean_SEO_Settings registers it: type, sanitizer,
+     * default and REST schema.
+     *
+     * @since 1.20.0 Moved from Lean_SEO_Settings::definitions().
+     * @return array{type: string, sanitize: callable, default: mixed, schema: array}
+     */
+    public static function setting() {
+        return array(
+            'type'     => 'object',
+            'sanitize' => array( __CLASS__, 'sanitize' ),
+            'default'  => array(),
+            'schema'   => array(
+                'type'                 => 'object',
+                'additionalProperties' => false,
+                'properties'           => array(
+                    'author_name' => array( 'type' => 'string' ),
+                    'author_url'  => array( 'type' => 'string' ),
+                    'author_type' => array(
+                        'type' => 'string',
+                        'enum' => array( 'Person', 'Organization' ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
      * Register the hooks.
      *
      * @since 1.19.0
@@ -71,7 +104,7 @@ class Lean_SEO_Default_Author {
         // defaults as values saved them on the first submit, and a saved
         // author name makes every authorless post credit a Person named after
         // the site — the fallback this setting exists to avoid.
-        $saved    = get_option( 'lean_seo_schema', array() );
+        $saved    = get_option( self::OPTION_KEY, array() );
         $defaults = Lean_SEO_Schema::get_publisher_defaults();
         $key      = $args['key'];
         $value    = isset( $saved[ $key ] ) ? $saved[ $key ] : '';

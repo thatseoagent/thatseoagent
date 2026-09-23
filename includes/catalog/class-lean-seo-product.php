@@ -44,6 +44,22 @@ class Lean_SEO_Product {
     const OPTION_KEY = 'lean_seo_products';
 
     /**
+     * The option as Lean_SEO_Settings registers it: type, sanitizer,
+     * default and REST schema.
+     *
+     * @since 1.20.0 Moved from Lean_SEO_Settings::definitions().
+     * @return array{type: string, sanitize: callable, default: mixed, schema: array}
+     */
+    public static function setting() {
+        return array(
+            'type'     => 'object',
+            'sanitize' => array( __CLASS__, 'sanitize' ),
+            'default'  => array(),
+            'schema'   => self::rest_schema(),
+        );
+    }
+
+    /**
      * The mapped fields and what feeds them.
      *
      * @since 1.16.0

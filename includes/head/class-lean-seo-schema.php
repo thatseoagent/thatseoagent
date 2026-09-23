@@ -267,13 +267,18 @@ class Lean_SEO_Schema {
     private static function get_person_schema() {
         // Memoised: output() and get_publisher_id() both ask, and the filter
         // chain behind this reaches the options table and the media library.
-        static $resolved = false;
-        static $cache    = null;
+        return Lean_SEO_Memo::remember( 'person_schema', 'site', function () {
+            return self::filter_person_schema();
+        } );
+    }
 
-        if ( $resolved ) {
-            return $cache;
-        }
-
+    /**
+     * The Person node as the lean_seo_person_schema filter returns it.
+     *
+     * @since 1.20.0 Split from get_person_schema().
+     * @return array|null
+     */
+    private static function filter_person_schema() {
         $default = null;
 
         /**
@@ -294,10 +299,7 @@ class Lean_SEO_Schema {
          * @since 1.5.0
          * @param array|null $schema Default null (omitted).
          */
-        $cache    = apply_filters('lean_seo_person_schema', $default);
-        $resolved = true;
-
-        return $cache;
+        return apply_filters('lean_seo_person_schema', $default);
     }
 
     /**
@@ -744,7 +746,7 @@ class Lean_SEO_Schema {
             'author_type' => 'Person',
         );
 
-        $saved = get_option( 'lean_seo_schema', array() );
+        $saved = get_option( Lean_SEO_Default_Author::OPTION_KEY, array() );
 
         return wp_parse_args( $saved, $defaults );
     }
@@ -780,7 +782,7 @@ class Lean_SEO_Schema {
         }
 
         // A configured fallback author wins.
-        $saved = get_option( 'lean_seo_schema', array() );
+        $saved = get_option( Lean_SEO_Default_Author::OPTION_KEY, array() );
         if ( ! empty( $saved['author_name'] ) ) {
             $publisher = self::get_publisher_defaults();
 

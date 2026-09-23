@@ -12,8 +12,9 @@
  * form) runs `init` before it saves, and REST requests run it before they
  * dispatch — so a form post and a REST update go through the same sanitizer.
  *
- * The modules still own their data: each sanitizer and each settings section
- * stays in the module that reads the option.
+ * The modules own their data: each declares its option in setting() —
+ * type, sanitizer, default and schema — next to the settings section and
+ * the code that reads it. This class only gathers and registers them.
  *
  * @package Lean_SEO
  * @since 1.16.0
@@ -40,92 +41,40 @@ class Lean_SEO_Settings {
     }
 
     /**
+     * The modules that own an option, in the order the options are listed.
+     *
+     * Each declares its option's name (OPTION_KEY) and its definition
+     * (setting()). Adding an option means adding its owner here.
+     *
+     * @since 1.20.0
+     * @return string[] Class names.
+     */
+    private static function owners() {
+        return array(
+            'Lean_SEO_Default_Author',
+            'Lean_SEO_Identity',
+            'Lean_SEO_Homepage',
+            'Lean_SEO_Product',
+            'Lean_SEO_Llms',
+            'Lean_SEO_IndexNow',
+        );
+    }
+
+    /**
      * Every option, keyed by option name.
      *
      * @since 1.16.0
+     * @since 1.20.0 Gathered from each owner's setting().
      * @return array<string, array{type: string, sanitize: callable, default: mixed, schema: array}>
      */
     public static function definitions() {
-        $social = array();
-        foreach ( array_keys( Lean_SEO_Identity::get_social_networks() ) as $network ) {
-            $social[ $network ] = array( 'type' => 'string' );
+        $definitions = array();
+
+        foreach ( self::owners() as $owner ) {
+            $definitions[ $owner::OPTION_KEY ] = $owner::setting();
         }
 
-        return array(
-            'lean_seo_schema'       => array(
-                'type'     => 'object',
-                'sanitize' => array( 'Lean_SEO_Default_Author', 'sanitize' ),
-                'default'  => array(),
-                'schema'   => array(
-                    'type'                 => 'object',
-                    'additionalProperties' => false,
-                    'properties'           => array(
-                        'author_name' => array( 'type' => 'string' ),
-                        'author_url'  => array( 'type' => 'string' ),
-                        'author_type' => array(
-                            'type' => 'string',
-                            'enum' => array( 'Person', 'Organization' ),
-                        ),
-                    ),
-                ),
-            ),
-            'lean_seo_identity'     => array(
-                'type'     => 'object',
-                'sanitize' => array( 'Lean_SEO_Identity', 'sanitize' ),
-                'default'  => array(),
-                'schema'   => array(
-                    'type'                 => 'object',
-                    'additionalProperties' => false,
-                    'properties'           => array(
-                        'type'                => array(
-                            'type' => 'string',
-                            'enum' => array( 'person', 'organization' ),
-                        ),
-                        'name'                => array( 'type' => 'string' ),
-                        'description'         => array( 'type' => 'string' ),
-                        'logo_id'             => array( 'type' => 'integer' ),
-                        'default_og_image_id' => array( 'type' => 'integer' ),
-                        'twitter_handle'      => array( 'type' => 'string' ),
-                        'social'              => array(
-                            'type'                 => 'object',
-                            'additionalProperties' => false,
-                            'properties'           => $social,
-                        ),
-                    ),
-                ),
-            ),
-            'lean_seo_homepage'     => array(
-                'type'     => 'object',
-                'sanitize' => array( 'Lean_SEO_Homepage', 'sanitize' ),
-                'default'  => array(),
-                'schema'   => array(
-                    'type'                 => 'object',
-                    'additionalProperties' => false,
-                    'properties'           => array(
-                        'title'       => array( 'type' => 'string' ),
-                        'description' => array( 'type' => 'string' ),
-                    ),
-                ),
-            ),
-            'lean_seo_products'     => array(
-                'type'     => 'object',
-                'sanitize' => array( 'Lean_SEO_Product', 'sanitize' ),
-                'default'  => array(),
-                'schema'   => Lean_SEO_Product::rest_schema(),
-            ),
-            'lean_seo_llms_txt'     => array(
-                'type'     => 'boolean',
-                'sanitize' => 'rest_sanitize_boolean',
-                'default'  => true,
-                'schema'   => array( 'type' => 'boolean' ),
-            ),
-            'lean_seo_indexnow_key' => array(
-                'type'     => 'string',
-                'sanitize' => array( 'Lean_SEO_IndexNow', 'sanitize_key_setting' ),
-                'default'  => '',
-                'schema'   => array( 'type' => 'string' ),
-            ),
-        );
+        return $definitions;
     }
 
     /**

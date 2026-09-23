@@ -102,7 +102,8 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | Folder | Module | Responsibility |
 |--------|--------|----------------|
 | `includes/` | `Lean_SEO` | Composition root: which modules run, and when |
-| | `Lean_SEO_Settings` | Registers every option, with a schema, for the form and the REST API |
+| | `Lean_SEO_Settings` | Gathers each module's option (`setting()`) and registers it, with a schema, for the form and the REST API |
+| | `Lean_SEO_Memo` | Every per-request cache: `forget_post()` after each post in a loop, `reset()` to read the site again |
 | `content/` | `Lean_SEO_Content` | The single answer to "what is this post's content?" |
 | | `Lean_SEO_Description` | The single answer to "what description does this post get?" |
 | | `Lean_SEO_FAQ`, `Lean_SEO_FAQ_Section` | Reads content into sections; FAQ extraction |
@@ -124,7 +125,10 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `Lean_SEO_Llms` | llms.txt |
 | `audit/` | `Lean_SEO_Audit` | The SEO audit of a post, and site scans |
 | | `Lean_SEO_Audit_Run` | The batched content check and its last results |
-| `admin/` | `Lean_SEO_App` | The Lean SEO screen: navigation, views, the bulletin, styles, scripts |
+| `bulletin/` | `Lean_SEO_Bulletin` | The site's bulletin: facts asked of each module, rules that turn them into warnings |
+| | `Lean_SEO_Readings` | What the dashboard shows beside it: SEO field counts, the public files served |
+| `admin/` | `Lean_SEO_App` | The Lean SEO screen: navigation, views, where each action leads, level colors, styles, scripts |
+| | `Lean_SEO_Icons` | The screen's inline SVG icons |
 | | `Lean_SEO_Meta_Box` | The SEO fields in the post editor |
 | | `Lean_SEO_Bulk_Descriptions` | The "Generate meta description" bulk action |
 | | `views/` | The screen's templates |

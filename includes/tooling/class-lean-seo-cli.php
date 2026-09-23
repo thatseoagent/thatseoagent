@@ -255,7 +255,7 @@ class Lean_SEO_CLI {
 				}
 			}
 
-			Lean_SEO_Content::forget( $post_id );
+			Lean_SEO_Memo::forget_post( $post_id );
 		}
 
 		if ( $rows && ( $dry_run || WP_CLI::get_config( 'debug' ) ) ) {
@@ -350,7 +350,7 @@ class Lean_SEO_CLI {
 			$status = Lean_SEO_Product_Report::worst_severity( $issues );
 			$counts[ $status ]++;
 
-			Lean_SEO_Content::forget( $post_id );
+			Lean_SEO_Memo::forget_post( $post_id );
 
 			if ( 'ok' === $status && ! isset( $assoc_args['all'] ) ) {
 				continue;

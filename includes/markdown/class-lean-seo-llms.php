@@ -46,6 +46,22 @@ class Lean_SEO_Llms {
     const CACHE_KEY = 'lean_seo_llms_txt';
 
     /**
+     * The option as Lean_SEO_Settings registers it: type, sanitizer,
+     * default and REST schema.
+     *
+     * @since 1.20.0 Moved from Lean_SEO_Settings::definitions().
+     * @return array{type: string, sanitize: callable, default: mixed, schema: array}
+     */
+    public static function setting() {
+        return array(
+            'type'     => 'boolean',
+            'sanitize' => 'rest_sanitize_boolean',
+            'default'  => true,
+            'schema'   => array( 'type' => 'boolean' ),
+        );
+    }
+
+    /**
      * Register the hooks.
      *
      * @since 1.16.0
@@ -298,7 +314,7 @@ class Lean_SEO_Llms {
 
             $entries[] = $entry;
 
-            Lean_SEO_Content::forget( $post );
+            Lean_SEO_Memo::forget_post( $post );
         }
 
         return $entries;
