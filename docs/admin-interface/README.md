@@ -4,7 +4,7 @@ Lean SEO adds a user-friendly meta box to the post and page editors for customiz
 
 ## What It Does
 
-The `Lean_SEO_Admin` class provides:
+The `Lean_SEO_Meta_Box` class provides:
 
 - **SEO Meta Box**: Added to post and page editors
 - **Custom Title Field**: Override the default page title
@@ -15,11 +15,13 @@ The `Lean_SEO_Admin` class provides:
 
 ## Code Structure
 
-Located in `includes/class-lean-seo-admin.php`:
+Located in `includes/class-lean-seo-meta-box.php`:
 
-- `add_meta_box()` - Registers the SEO meta box
-- `render_meta_box()` - Outputs the HTML form with fields and preview
-- `save_meta()` - Processes and saves the form data
+- `add()` - Registers the SEO meta box
+- `render()` - Outputs the HTML form with fields and preview
+- `save()` - Processes and saves the form data, through `Lean_SEO_Post_Seo`
+
+The post types that get the fields are answered by `Lean_SEO_Post_Seo::post_types()`.
 
 ## Configuration Options
 

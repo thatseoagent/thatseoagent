@@ -43,13 +43,22 @@ class Lean_SEO_Homepage {
     }
 
     /**
+     * Register the hooks.
+     *
+     * @since 1.19.0
+     */
+    public static function register() {
+        add_action( 'admin_init', array( __CLASS__, 'register_section' ) );
+    }
+
+    /**
      * Register the settings section and fields.
      *
      * The option itself is registered by Lean_SEO_Settings.
      *
-     * Hooked on admin_init from Lean_SEO::init_hooks().
+     * @since 1.7.0 As register().
      */
-    public static function register() {
+    public static function register_section() {
         add_settings_section(
             'lean_seo_homepage_section',
             __( 'Homepage', 'lean-seo' ),

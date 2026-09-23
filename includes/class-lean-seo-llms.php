@@ -64,6 +64,18 @@ class Lean_SEO_Llms {
     }
 
     /**
+     * Register the settings section.
+     *
+     * Separate from register(): the section stays available while another
+     * SEO plugin is active, when the file itself is not served.
+     *
+     * @since 1.19.0
+     */
+    public static function register_settings() {
+        add_action( 'admin_init', array( __CLASS__, 'register_section' ) );
+    }
+
+    /**
      * Whether the site publishes the file.
      *
      * @since 1.16.0

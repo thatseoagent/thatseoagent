@@ -41,6 +41,15 @@ class Lean_SEO_Compat {
     }
 
     /**
+     * Register the hooks.
+     *
+     * @since 1.19.0
+     */
+    public static function register() {
+        add_action( 'admin_notices', array( __CLASS__, 'admin_notice' ) );
+    }
+
+    /**
      * The name of the other active SEO plugin, if any.
      *
      * Needs `plugins_loaded` to have fired: before that, a plugin loading
@@ -100,12 +109,12 @@ class Lean_SEO_Compat {
         }
 
         $screen = get_current_screen();
-        if ( ! $screen || ! in_array( $screen->id, array( 'dashboard', 'plugins', Lean_SEO_Admin::PAGE_HOOK ), true ) ) {
+        if ( ! $screen || ! in_array( $screen->id, array( 'dashboard', 'plugins', Lean_SEO_App::PAGE_HOOK ), true ) ) {
             return;
         }
 
         // Lean SEO's own dashboard explains it in a banner of its own.
-        if ( Lean_SEO_Admin::PAGE_HOOK === $screen->id && 'dashboard' === Lean_SEO_App::current_view() ) {
+        if ( Lean_SEO_App::PAGE_HOOK === $screen->id && 'dashboard' === Lean_SEO_App::current_view() ) {
             return;
         }
 

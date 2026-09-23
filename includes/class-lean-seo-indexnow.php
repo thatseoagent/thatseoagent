@@ -26,9 +26,11 @@ class Lean_SEO_IndexNow {
 	const API_URL = 'https://api.indexnow.org/indexnow';
 
 	/**
-	 * Initialize hooks.
+	 * Register the hooks.
+	 *
+	 * @since 1.7.1 As init().
 	 */
-	public static function init(): void {
+	public static function register(): void {
 		add_action( 'save_post', array( __CLASS__, 'on_post_save' ), 10, 3 );
 		add_action( 'lean_seo_indexnow_submit', array( __CLASS__, 'submit_urls' ) );
 		add_action( 'init', array( __CLASS__, 'maybe_serve_key_file' ), 5 );

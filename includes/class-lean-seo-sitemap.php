@@ -28,6 +28,53 @@ class Lean_SEO_Sitemap {
     const PER_PAGE = 1000;
 
     /**
+     * Register the hooks.
+     *
+     * Routes at init priority 20, before Lean_SEO::maybe_flush_rewrite_rules()
+     * at 21, so a flush persists them.
+     *
+     * @since 1.19.0 Moved out of Lean_SEO.
+     */
+    public static function register() {
+        add_action('init', array(__CLASS__, 'register_routes'), 20);
+        add_filter('query_vars', array(__CLASS__, 'query_vars'));
+        add_action('template_redirect', array(__CLASS__, 'handle_request'));
+        add_filter('redirect_canonical', array(__CLASS__, 'disable_redirect'), 10, 2);
+    }
+
+    /**
+     * Sitemap query vars.
+     *
+     * @since 1.19.0 Moved out of Lean_SEO.
+     * @param array $vars Query vars.
+     * @return array
+     */
+    public static function query_vars($vars) {
+        $vars[] = 'lean_sitemap';
+        $vars[] = 'sitemap_page';
+        $vars[] = 'lean_cpt';
+        return $vars;
+    }
+
+    /**
+     * Disable canonical redirects for sitemap URLs
+     *
+     * Prevents WordPress from redirecting sitemap.xml to sitemap.xml/
+     * which causes "Sitemap error" in Google Search Console
+     *
+     * @since 1.19.0 Moved out of Lean_SEO.
+     * @param string $redirect_url The redirect URL
+     * @param string $requested_url The requested URL
+     * @return string|false The redirect URL or false to prevent redirect
+     */
+    public static function disable_redirect($redirect_url, $requested_url) {
+        if (preg_match('/sitemap[^?]*\.xml/', $requested_url)) {
+            return false;
+        }
+        return $redirect_url;
+    }
+
+    /**
      * Register rewrite rules
      */
     public static function register_routes() {

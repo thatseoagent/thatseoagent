@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $post_types = array();
-foreach ( Lean_SEO_Admin::get_meta_box_post_types() as $post_type ) {
+foreach ( Lean_SEO_Post_Seo::post_types() as $post_type ) {
     $object = get_post_type_object( $post_type );
     if ( $object ) {
         $post_types[ $post_type ] = array(

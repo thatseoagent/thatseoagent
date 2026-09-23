@@ -107,13 +107,23 @@ class Lean_SEO_Identity {
     }
 
     /**
+     * Register the hooks: the settings section and the media picker.
+     *
+     * @since 1.19.0
+     */
+    public static function register() {
+        add_action( 'admin_init', array( __CLASS__, 'register_section' ) );
+        add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
+    }
+
+    /**
      * Register the settings sections and fields.
      *
      * The option itself is registered by Lean_SEO_Settings.
      *
-     * Hooked on admin_init from Lean_SEO::init_hooks().
+     * @since 1.6.0 As register().
      */
-    public static function register() {
+    public static function register_section() {
         add_settings_section(
             'lean_seo_identity_section',
             __( 'Who the site is', 'lean-seo' ),
@@ -341,7 +351,7 @@ class Lean_SEO_Identity {
      * @param string $hook_suffix Current admin page hook.
      */
     public static function enqueue_assets( $hook_suffix ) {
-        if ( Lean_SEO_Admin::PAGE_HOOK !== $hook_suffix ) {
+        if ( Lean_SEO_App::PAGE_HOOK !== $hook_suffix ) {
             return;
         }
 

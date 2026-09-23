@@ -99,14 +99,16 @@ The plugin sends no data anywhere **unless you configure an IndexNow API key**. 
 
 | Module | Responsibility |
 |--------|----------------|
-| `Lean_SEO` | Hook registration |
+| `Lean_SEO` | Composition root: which modules run, and when |
 | `Lean_SEO_Meta` | `<head>` meta tags and canonical |
+| `Lean_SEO_Title` | The document `<title>`: overrides and separator |
 | `Lean_SEO_Schema` | JSON-LD graph |
 | `Lean_SEO_FAQ` | Reads content into sections; FAQ extraction |
 | `Lean_SEO_Content` | The single answer to "what is this post's content?" |
 | `Lean_SEO_Description` | The single answer to "what description does this post get?" |
-| `Lean_SEO_Post_Seo` | Per-post SEO field storage, sanitization and slashing |
-| `Lean_SEO_Sitemap` | Sitemap rendering (returns XML strings) |
+| `Lean_SEO_Post_Seo` | Per-post SEO fields: which post types get them, storage, sanitization and slashing |
+| `Lean_SEO_Sitemap` | Sitemap routes and rendering (returns XML strings) |
+| `Lean_SEO_Robots` | The `Sitemap:` directive in robots.txt |
 | `Lean_SEO_Identity` | Site identity settings + schema applier |
 | `Lean_SEO_Homepage` | Homepage title/description settings + applier |
 | `Lean_SEO_IndexNow` | IndexNow key, verification file and submission |
@@ -114,7 +116,8 @@ The plugin sends no data anywhere **unless you configure an IndexNow API key**. 
 | `Lean_SEO_Markdown_Endpoint` | The `.md` URLs |
 | `Lean_SEO_Markdown_Cache` | Per-post Markdown cache and its invalidation |
 | `Lean_SEO_Product` | Product catalogs: mapping, detection, Product node, validation |
-| `Lean_SEO_Product_Admin` | Catalog settings and the Product schema report |
+| `Lean_SEO_Product_Report` | How complete the catalog is: summary and per-product report |
+| `Lean_SEO_Product_Settings` | The catalog's settings section and field mapping |
 | `Lean_SEO_Llms` | llms.txt |
 | `Lean_SEO_Audit` | The SEO audit of a post, and site scans |
 | `Lean_SEO_Compat` | Stepping aside while another SEO plugin is active |
@@ -123,7 +126,9 @@ The plugin sends no data anywhere **unless you configure an IndexNow API key**. 
 | `Lean_SEO_App` | The Lean SEO admin screen: navigation, views, styles, scripts |
 | `Lean_SEO_REST` | REST controllers of the screen (`lean-seo/v1`) |
 | `Lean_SEO_Audit_Run` | The batched content check and its last results |
-| `Lean_SEO_Admin` | Settings fields, meta box and bulk action |
+| `Lean_SEO_Meta_Box` | The SEO fields in the post editor |
+| `Lean_SEO_Bulk_Descriptions` | The "Generate meta description" bulk action |
+| `Lean_SEO_Default_Author` | The author credited on posts without one |
 | `Lean_SEO_Abilities` | Abilities API registration |
 | `Lean_SEO_CLI` | WP-CLI commands |
 

@@ -41,9 +41,6 @@ require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo.php';
 require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-abilities.php';
 require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-indexnow.php';
 
-// Initialize IndexNow.
-Lean_SEO_IndexNow::init();
-
 // Initialize
 function lean_seo_init() {
     return Lean_SEO::get_instance();

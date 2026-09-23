@@ -221,7 +221,7 @@ class Lean_SEO_CLI {
 
 		$post_types = isset( $assoc_args['post-type'] )
 			? array_filter( array_map( 'trim', explode( ',', $assoc_args['post-type'] ) ) )
-			: Lean_SEO_Admin::get_meta_box_post_types();
+			: Lean_SEO_Post_Seo::post_types();
 
 		foreach ( $post_types as $post_type ) {
 			if ( ! post_type_exists( $post_type ) ) {
@@ -347,7 +347,7 @@ class Lean_SEO_CLI {
 
 		foreach ( $ids as $post_id ) {
 			$issues = Lean_SEO_Product::validate( $post_id );
-			$status = Lean_SEO_Product_Admin::worst_severity( $issues );
+			$status = Lean_SEO_Product_Report::worst_severity( $issues );
 			$counts[ $status ]++;
 
 			Lean_SEO_Content::forget( $post_id );

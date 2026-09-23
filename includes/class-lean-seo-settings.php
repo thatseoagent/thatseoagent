@@ -54,7 +54,7 @@ class Lean_SEO_Settings {
         return array(
             'lean_seo_schema'       => array(
                 'type'     => 'object',
-                'sanitize' => array( 'Lean_SEO_Admin', 'sanitize_schema_settings' ),
+                'sanitize' => array( 'Lean_SEO_Default_Author', 'sanitize' ),
                 'default'  => array(),
                 'schema'   => array(
                     'type'                 => 'object',

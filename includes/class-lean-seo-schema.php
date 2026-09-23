@@ -13,6 +13,15 @@ if (!defined('ABSPATH')) {
 class Lean_SEO_Schema {
 
     /**
+     * Register the hooks.
+     *
+     * @since 1.19.0 Moved out of Lean_SEO.
+     */
+    public static function register() {
+        add_action('wp_head', array(__CLASS__, 'output'), 2);
+    }
+
+    /**
      * Output JSON-LD schema
      */
     public static function output() {

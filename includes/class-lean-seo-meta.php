@@ -13,6 +13,23 @@ if (!defined('ABSPATH')) {
 class Lean_SEO_Meta {
 
     /**
+     * Register the hooks.
+     *
+     * Priority 1, after the Markdown alternate link registered at the same
+     * priority by Lean_SEO_Markdown_Endpoint: the head reads link, meta
+     * tags, canonical, then the JSON-LD at 2.
+     *
+     * @since 1.19.0 Moved out of Lean_SEO.
+     */
+    public static function register() {
+        add_action('wp_head', array(__CLASS__, 'output'), 1);
+        add_action('wp_head', array(__CLASS__, 'output_canonical'), 1);
+
+        // Replaced by output_canonical().
+        remove_action('wp_head', 'rel_canonical');
+    }
+
+    /**
      * Output meta tags
      */
     public static function output() {

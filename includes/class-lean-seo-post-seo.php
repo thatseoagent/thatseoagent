@@ -164,6 +164,61 @@ class Lean_SEO_Post_Seo {
     }
 
     /**
+     * Register the fields on `init`, once the post types exist.
+     *
+     * @since 1.19.0 Moved out of Lean_SEO.
+     */
+    public static function register() {
+        add_action( 'init', array( __CLASS__, 'register_for_post_types' ) );
+    }
+
+    /**
+     * Register the fields for every post type that has them.
+     *
+     * @since 1.19.0
+     */
+    public static function register_for_post_types() {
+        self::register_meta( self::post_types() );
+    }
+
+    /**
+     * Post types that get the SEO fields: the meta box in the editor, the
+     * registered meta, the bulk action, the content check and WP-CLI.
+     *
+     * Defaults to every post type with an editing screen. The rest of the
+     * plugin already treats custom post types as first-class — they appear in
+     * the sitemap, they get WebPage and BreadcrumbList schema, and a stored
+     * `_lean_seo_description` is honoured on the front end for any post type
+     * — so limiting the editing UI to posts and pages (the default before
+     * 1.12.0) left no way to enter the values the plugin was already reading.
+     *
+     * Attachments are excluded: the media modal has no meta box.
+     *
+     * @since 1.12.0 As Lean_SEO_Admin::get_meta_box_post_types().
+     * @since 1.19.0 Moved here: it is a fact about the fields, not the admin.
+     * @return array<int, string>
+     */
+    public static function post_types() {
+        $post_types = get_post_types(
+            array(
+                'public'  => true,
+                'show_ui' => true,
+            ),
+            'names'
+        );
+
+        unset( $post_types['attachment'] );
+
+        /**
+         * Filter the post types that get the SEO meta box.
+         *
+         * @since 1.0.0
+         * @param array<int, string> $post_types Post type names.
+         */
+        return (array) apply_filters( 'lean_seo_meta_box_post_types', array_values( $post_types ) );
+    }
+
+    /**
      * Expose the fields to the REST API and the block editor.
      *
      * @since 1.9.0

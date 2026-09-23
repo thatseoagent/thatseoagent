@@ -40,6 +40,10 @@ class Lean_SEO_Markdown_Endpoint {
         add_action( 'init', array( __CLASS__, 'register_routes' ), 20 );
         add_filter( 'query_vars', array( __CLASS__, 'query_vars' ) );
         add_action( 'parse_request', array( __CLASS__, 'handle_request' ) );
+
+        // Printed even while another SEO plugin is active: no other plugin
+        // serves these URLs.
+        add_action( 'wp_head', array( __CLASS__, 'output_alternate_link' ), 1 );
     }
 
     /**

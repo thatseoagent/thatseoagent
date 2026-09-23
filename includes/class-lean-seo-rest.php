@@ -244,7 +244,7 @@ class Lean_SEO_REST_Audit extends Lean_SEO_REST_Controller {
      * @return true|WP_Error
      */
     public function validate_post_type( $value ) {
-        if ( in_array( $value, Lean_SEO_Admin::get_meta_box_post_types(), true ) ) {
+        if ( in_array( $value, Lean_SEO_Post_Seo::post_types(), true ) ) {
             return true;
         }
 

@@ -26,6 +26,14 @@ class Lean_SEO_App {
     const SLUG = 'lean-seo';
 
     /**
+     * Hook suffix of the screen, as passed to admin_enqueue_scripts and as
+     * the id of its WP_Screen.
+     *
+     * @since 1.15.0 As Lean_SEO_Admin::PAGE_HOOK.
+     */
+    const PAGE_HOOK = 'toplevel_page_lean-seo';
+
+    /**
      * User meta holding the chosen edition. Absent means Day.
      */
     const THEME_META = 'lean_seo_admin_theme';
@@ -181,7 +189,7 @@ class Lean_SEO_App {
     public static function is_screen() {
         $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 
-        return $screen && Lean_SEO_Admin::PAGE_HOOK === $screen->id;
+        return $screen && Lean_SEO_App::PAGE_HOOK === $screen->id;
     }
 
     /**
@@ -223,7 +231,7 @@ class Lean_SEO_App {
      * @param string $hook_suffix Current admin page.
      */
     public static function enqueue( $hook_suffix ) {
-        if ( Lean_SEO_Admin::PAGE_HOOK !== $hook_suffix ) {
+        if ( Lean_SEO_App::PAGE_HOOK !== $hook_suffix ) {
             return;
         }
 
@@ -492,7 +500,7 @@ class Lean_SEO_App {
         if ( empty( Lean_SEO_Product::post_types() ) ) {
             $observations[] = self::observation( 'products', __( 'Products', 'lean-seo' ), 'off', __( 'No catalog', 'lean-seo' ) );
         } else {
-            $summary = Lean_SEO_Product_Admin::summary();
+            $summary = Lean_SEO_Product_Report::summary();
             $state   = $summary['error'] ? 'orange' : ( $summary['warning'] ? 'yellow' : 'ok' );
 
             $observations[] = self::observation(
@@ -646,7 +654,7 @@ class Lean_SEO_App {
 
         $product_types = Lean_SEO_Product::post_types();
 
-        foreach ( Lean_SEO_Admin::get_meta_box_post_types() as $post_type ) {
+        foreach ( Lean_SEO_Post_Seo::post_types() as $post_type ) {
             $published = (int) wp_count_posts( $post_type )->publish;
 
             $stats['published']    += $published;

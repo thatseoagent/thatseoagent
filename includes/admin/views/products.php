@@ -29,9 +29,9 @@ if ( empty( $config ) ) :
     return;
 endif;
 
-$summary = Lean_SEO_Product_Admin::summary();
+$summary = Lean_SEO_Product_Report::summary();
 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only pagination.
-$report  = Lean_SEO_Product_Admin::report( isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1 );
+$report  = Lean_SEO_Product_Report::report( isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1 );
 $total   = max( 1, $summary['total'] );
 $level   = $summary['error'] ? 'orange' : ( $summary['warning'] ? 'yellow' : 'clear' );
 $labels  = array(
@@ -151,7 +151,7 @@ if ( 'clear' === $level ) {
             </div>
             <p class="text-[13px] text-ink-3 tabular-nums">
                 <?php
-                $first = ( $report['paged'] - 1 ) * Lean_SEO_Product_Admin::PER_PAGE + 1;
+                $first = ( $report['paged'] - 1 ) * Lean_SEO_Product_Report::PER_PAGE + 1;
                 /* translators: 1: first row, 2: last row, 3: total. */
                 echo esc_html( sprintf( __( '%1$d–%2$d of %3$d', 'lean-seo' ), $first, $first + count( $report['rows'] ) - 1, $report['found'] ) );
                 ?>
