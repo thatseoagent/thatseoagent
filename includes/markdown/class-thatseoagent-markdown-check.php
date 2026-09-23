@@ -98,47 +98,27 @@ class ThatSeoAgent_Markdown_Check {
      * @return array{status: int, type: string, markdown: bool, vary: bool, headers: array<string, string>, body: string, error: string}
      */
     private static function request( $url, $accept ) {
-        $response = wp_remote_get(
+        $response = ThatSeoAgent_Loopback::get(
             $url,
             array(
-                'timeout'     => 10,
-                'redirection' => 5,
-                'headers'     => array( 'Accept' => $accept ),
-                'user-agent'  => 'ThatSeoAgent/' . THATSEOAGENT_VERSION . ' (markdown check; +' . home_url( '/' ) . ')',
-                // Same rule core applies to its own loopback requests.
-                'sslverify'   => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
+                'headers'    => array( 'Accept' => $accept ),
+                'user-agent' => 'ThatSeoAgent/' . THATSEOAGENT_VERSION . ' (markdown check; +' . home_url( '/' ) . ')',
             )
         );
 
-        if ( is_wp_error( $response ) ) {
-            return array(
-                'status'   => 0,
-                'type'     => '',
-                'markdown' => false,
-                'vary'     => false,
-                'headers'  => array(),
-                'body'     => '',
-                'error'    => $response->get_error_message(),
-            );
-        }
-
-        $headers = array();
-        foreach ( wp_remote_retrieve_headers( $response ) as $name => $value ) {
-            $headers[ strtolower( $name ) ] = is_array( $value ) ? implode( ', ', $value ) : (string) $value;
-        }
-
-        $type = isset( $headers['content-type'] ) ? $headers['content-type'] : '';
-        $vary = isset( $headers['vary'] ) ? $headers['vary'] : '';
+        $headers = $response['headers'];
+        $type    = isset( $headers['content-type'] ) ? $headers['content-type'] : '';
+        $vary    = isset( $headers['vary'] ) ? $headers['vary'] : '';
 
         return array(
-            'status'   => (int) wp_remote_retrieve_response_code( $response ),
+            'status'   => $response['status'],
             'type'     => $type,
             'markdown' => (bool) preg_match( '#text/(x-)?markdown#i', $type ),
             'vary'     => (bool) preg_match( '/(^|,)\s*(accept|\*)\s*(,|$)/i', $vary ),
             'headers'  => $headers,
             // Enough to spot a page cache plugin's signature comment.
-            'body'     => substr( (string) wp_remote_retrieve_body( $response ), -2000 ),
-            'error'    => '',
+            'body'     => substr( $response['body'], -2000 ),
+            'error'    => $response['error'],
         );
     }
 

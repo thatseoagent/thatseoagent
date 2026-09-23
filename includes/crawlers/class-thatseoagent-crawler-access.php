@@ -171,39 +171,18 @@ class ThatSeoAgent_Crawler_Access {
             }
 
             $requests[ $token ] = array(
-                'url'     => $url,
-                'type'    => 'GET',
-                'headers' => array( 'User-Agent' => self::user_agent( $token ) ),
+                'url'        => $url,
+                'user-agent' => self::user_agent( $token ),
             );
         }
 
-        $options = array(
-            'timeout'         => 10,
-            'follow_redirects' => true,
-            // Same rule core applies to its own loopback requests.
-            'verify'          => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
-        );
+        $results = array();
 
-        $responses = \WpOrg\Requests\Requests::request_multiple( $requests, $options );
-        $results   = array();
-
-        foreach ( $requests as $token => $request ) {
-            $response = isset( $responses[ $token ] ) ? $responses[ $token ] : null;
-
-            if ( ! $response instanceof \WpOrg\Requests\Response ) {
-                $results[ $token ] = array(
-                    'status'  => 0,
-                    'reached' => false,
-                    'error'   => $response instanceof Exception ? $response->getMessage() : __( 'No answer', 'thatseoagent' ),
-                );
-                continue;
-            }
-
-            $status            = (int) $response->status_code;
+        foreach ( ThatSeoAgent_Loopback::many( $requests ) as $token => $response ) {
             $results[ $token ] = array(
-                'status'  => $status,
-                'reached' => ! in_array( $status, array( 401, 403, 406, 429, 503 ), true ),
-                'error'   => '',
+                'status'  => $response['status'],
+                'reached' => $response['status'] && ! in_array( $response['status'], array( 401, 403, 406, 429, 503 ), true ),
+                'error'   => $response['error'],
             );
         }
 
@@ -222,16 +201,9 @@ class ThatSeoAgent_Crawler_Access {
      * @return int 0 when the request failed.
      */
     public static function robots_status() {
-        $response = wp_remote_get(
-            home_url( '/robots.txt' ),
-            array(
-                'timeout'     => 10,
-                'redirection' => 5,
-                'sslverify'   => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
-            )
-        );
+        $response = ThatSeoAgent_Loopback::get( home_url( '/robots.txt' ) );
 
-        return is_wp_error( $response ) ? 0 : (int) wp_remote_retrieve_response_code( $response );
+        return $response['status'];
     }
 
     /**

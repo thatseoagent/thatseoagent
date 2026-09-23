@@ -76,6 +76,12 @@
   for search engines and AI assistants, the check `listed_query_args()`
   makes in a query. llms.txt's trust pages use it, and so does IndexNow,
   which no longer announces password-protected posts.
+- **`ThatSeoAgent_Loopback` is the only way the checks ask the site for its
+  own pages**: the content check's homepage and addresses, the access check
+  and robots.txt, the Markdown check. Every request, the ones sent at once
+  included, passes through `http_request_args` and `pre_http_request`, so a
+  filter can see or answer it; before, the broken-link probe and the access
+  check went around the WordPress HTTP API.
 - **The score's colours come from the server**: each row of the content
   check carries its level (`ThatSeoAgent_Audit::level_for_score()`).
 

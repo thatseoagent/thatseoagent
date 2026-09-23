@@ -40,6 +40,7 @@ spl_autoload_register(
         static $map = array(
         'ThatSeoAgent_Settings'          => 'class-thatseoagent-settings.php',
         'ThatSeoAgent_Memo'              => 'class-thatseoagent-memo.php',
+        'ThatSeoAgent_Loopback'          => 'class-thatseoagent-loopback.php',
         'ThatSeoAgent'                   => 'class-thatseoagent.php',
 
         'ThatSeoAgent_Content'           => 'content/class-thatseoagent-content.php',

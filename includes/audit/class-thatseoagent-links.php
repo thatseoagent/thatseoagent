@@ -349,18 +349,15 @@ class ThatSeoAgent_Links {
             }
         }
 
-        $home = wp_remote_get(
+        $home = ThatSeoAgent_Loopback::get(
             home_url( '/' ),
             array(
-                'timeout'     => 10,
                 'redirection' => 3,
-                'user-agent'  => 'ThatSeoAgent/' . THATSEOAGENT_VERSION . ' (link check; +' . home_url( '/' ) . ')',
-                // Same rule core applies to its own loopback requests.
-                'sslverify'   => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
+                'user-agent'  => self::user_agent(),
             )
         );
-        if ( ! is_wp_error( $home ) && 200 === (int) wp_remote_retrieve_response_code( $home ) ) {
-            $links = array_merge( $links, self::internal_links( (string) wp_remote_retrieve_body( $home ) ) );
+        if ( 200 === $home['status'] ) {
+            $links = array_merge( $links, self::internal_links( $home['body'] ) );
         }
 
         return array_values( array_unique( $links ) );
@@ -448,30 +445,31 @@ class ThatSeoAgent_Links {
         $requests = array();
         foreach ( $paths as $path ) {
             $requests[ $path ] = array(
-                'url'     => home_url( user_trailingslashit( $path ) ),
-                'type'    => 'HEAD',
-                'headers' => array( 'User-Agent' => 'ThatSeoAgent/' . THATSEOAGENT_VERSION . ' (link check; +' . home_url( '/' ) . ')' ),
+                'url'        => home_url( user_trailingslashit( $path ) ),
+                'method'     => 'HEAD',
+                'timeout'    => 5,
+                'user-agent' => self::user_agent(),
             );
         }
 
-        $responses = \WpOrg\Requests\Requests::request_multiple(
-            $requests,
-            array(
-                'timeout'          => 5,
-                'follow_redirects' => true,
-                // Same rule core applies to its own loopback requests.
-                'verify'           => apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Core hook.
-            )
-        );
-
         $statuses = array();
-        foreach ( $requests as $path => $request ) {
-            if ( isset( $responses[ $path ] ) && $responses[ $path ] instanceof \WpOrg\Requests\Response ) {
-                $statuses[ $path ] = (int) $responses[ $path ]->status_code;
+        foreach ( ThatSeoAgent_Loopback::many( $requests ) as $path => $response ) {
+            if ( $response['status'] ) {
+                $statuses[ $path ] = $response['status'];
             }
         }
 
         return $statuses;
+    }
+
+    /**
+     * How the link check introduces itself.
+     *
+     * @since 2.7.0
+     * @return string
+     */
+    private static function user_agent() {
+        return 'ThatSeoAgent/' . THATSEOAGENT_VERSION . ' (link check; +' . home_url( '/' ) . ')';
     }
 
     /**

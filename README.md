@@ -137,6 +137,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | `includes/` | `ThatSeoAgent` | Composition root: which modules run, and when |
 | | `ThatSeoAgent_Settings` | Gathers each module's option (`setting()`) and registers it, with a schema, for the form and the REST API |
 | | `ThatSeoAgent_Memo` | Every per-request cache: `forget_post()` after each post in a loop, `reset()` to read the site again |
+| | `ThatSeoAgent_Loopback` | Every request the checks make to the site itself, through the WordPress HTTP API's filters |
 | `content/` | `ThatSeoAgent_Content` | The single answer to "what is this post's content?" |
 | | `ThatSeoAgent_Description` | The single answer to "what description does this post get?" |
 | | `ThatSeoAgent_FAQ`, `ThatSeoAgent_FAQ_Section` | Reads content into sections; FAQ extraction |
