@@ -342,8 +342,7 @@ class Lean_SEO_Identity {
      * @param string $hook_suffix Current admin page hook.
      */
     public static function enqueue_assets( $hook_suffix ) {
-        // The settings page hook is 'settings_page_lean-seo' (slug from add_options_page).
-        if ( 'settings_page_lean-seo' !== $hook_suffix ) {
+        if ( Lean_SEO_Admin::PAGE_HOOK !== $hook_suffix ) {
             return;
         }
 

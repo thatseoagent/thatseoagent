@@ -18,7 +18,7 @@ cp -r lean-seo /path/to/wp-content/plugins/
 wp plugin activate lean-seo
 ```
 
-Zero configuration required — activate and it works. Settings live under **Settings → Lean SEO**.
+Zero configuration required — activate and it works. Settings live in their own **Lean SEO** admin menu.
 
 ## Features
 

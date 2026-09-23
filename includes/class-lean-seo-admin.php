@@ -112,18 +112,47 @@ class Lean_SEO_Admin {
     }
 
     /**
-     * Add settings page under Settings menu.
+     * Hook suffix of the settings page, as passed to admin_enqueue_scripts.
+     *
+     * @since 1.15.0
+     */
+    const PAGE_HOOK = 'toplevel_page_lean-seo';
+
+    /**
+     * Add the settings page as a top-level admin menu.
      *
      * @since 1.3.0
+     * @since 1.15.0 Top-level menu instead of a submenu of Settings.
      */
     public static function add_settings_page() {
-        add_options_page(
+        add_menu_page(
             __( 'Lean SEO', 'lean-seo' ),
             __( 'Lean SEO', 'lean-seo' ),
             'manage_options',
             'lean-seo',
-            array( __CLASS__, 'render_settings_page' )
+            array( __CLASS__, 'render_settings_page' ),
+            'dashicons-search',
+            81
         );
+    }
+
+    /**
+     * Send the old Settings → Lean SEO URL to the new page.
+     *
+     * Keeps bookmarks and links from before 1.15.0 working.
+     *
+     * @since 1.15.0
+     */
+    public static function redirect_legacy_settings_url() {
+        global $pagenow;
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only redirect.
+        if ( 'options-general.php' !== $pagenow || ! isset( $_GET['page'] ) || 'lean-seo' !== $_GET['page'] ) {
+            return;
+        }
+
+        wp_safe_redirect( admin_url( 'admin.php?page=lean-seo' ) );
+        exit;
     }
 
     /**
@@ -135,6 +164,10 @@ class Lean_SEO_Admin {
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Lean SEO Settings', 'lean-seo' ); ?></h1>
+            <?php
+            // Core prints these by itself only on pages under Settings.
+            settings_errors();
+            ?>
             <form method="post" action="options.php">
                 <?php
                 settings_fields( 'lean_seo_settings' );

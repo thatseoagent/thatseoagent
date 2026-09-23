@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.15.0] - 2026-09-22
+
+### Changed
+- **Lean SEO has its own admin menu.** The settings page moved from
+  Settings → Lean SEO to a top-level **Lean SEO** menu, at
+  `admin.php?page=lean-seo`. The old `options-general.php?page=lean-seo` URL
+  redirects there.
+
 ## [1.14.0] - 2026-09-22
 
 Every post and page is now also available as Markdown, for AI agents, at its

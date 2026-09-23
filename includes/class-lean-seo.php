@@ -87,6 +87,7 @@ class Lean_SEO {
             add_action('save_post', array($this, 'save_meta'), 10, 1);
             add_action('admin_menu', array('Lean_SEO_Admin', 'add_settings_page'));
             add_action('admin_init', array('Lean_SEO_Admin', 'register_settings'));
+            add_action('admin_init', array('Lean_SEO_Admin', 'redirect_legacy_settings_url'));
             add_action('admin_init', array('Lean_SEO_Identity', 'register'));
             add_action('admin_init', array('Lean_SEO_Homepage', 'register'));
             add_action('admin_enqueue_scripts', array('Lean_SEO_Identity', 'enqueue_assets'));
