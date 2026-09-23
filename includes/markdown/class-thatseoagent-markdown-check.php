@@ -52,6 +52,8 @@ class ThatSeoAgent_Markdown_Check {
             $verdict = 'markdown_to_browsers';
         } elseif ( ! $agent['markdown'] ) {
             $verdict = 'html_to_agents';
+        } elseif ( self::converted_by_cloudflare( $agent ) ) {
+            $verdict = 'cloudflare_markdown';
         } else {
             $verdict = 'works';
         }
@@ -141,6 +143,21 @@ class ThatSeoAgent_Markdown_Check {
     }
 
     /**
+     * Whether the Markdown is Cloudflare's conversion of the HTML page,
+     * not ThatSeoAgent's.
+     *
+     * Markdown for Agents stamps each answer it converts with its token
+     * counts; ThatSeoAgent's Markdown carries neither header.
+     *
+     * @since 2.6.0
+     * @param array $response Request result.
+     * @return bool
+     */
+    private static function converted_by_cloudflare( array $response ) {
+        return isset( $response['headers']['x-markdown-tokens'] ) || isset( $response['headers']['x-original-tokens'] );
+    }
+
+    /**
      * Which layer answered, from the traces caches leave.
      *
      * @since 2.3.0
@@ -199,7 +216,7 @@ class ThatSeoAgent_Markdown_Check {
      * The result, in the words the screen shows.
      *
      * @since 2.3.0
-     * @param string $verdict 'works', 'html_to_agents', 'markdown_to_browsers', 'no_answer' or 'no_post'.
+     * @param string $verdict 'works', 'cloudflare_markdown', 'html_to_agents', 'markdown_to_browsers', 'no_answer' or 'no_post'.
      * @param string $url     URL asked for.
      * @param array  $agent   Agent request.
      * @param array  $browser Browser request.
@@ -216,6 +233,10 @@ class ThatSeoAgent_Markdown_Check {
                 if ( ! $agent['vary'] || ! $browser['vary'] ) {
                     $detail .= ' ' . __( 'But something between WordPress and the visitor removed Vary: Accept from the answer, so a cache added later could mix the two up.', 'thatseoagent' );
                 }
+                break;
+            case 'cloudflare_markdown':
+                $headline = __( 'Agents get Cloudflare’s Markdown, not ThatSeoAgent’s', 'thatseoagent' );
+                $detail   = __( 'Markdown for Agents is on in Cloudflare: it converts the HTML page and answers in place of WordPress. Agents get Markdown, but made from the theme’s page, and without what ThatSeoAgent’s adds: the author, the dates, the content type and the SEO title.', 'thatseoagent' );
                 break;
             case 'html_to_agents':
                 $headline = __( 'Agents that ask for Markdown get the HTML page', 'thatseoagent' );
@@ -245,7 +266,7 @@ class ThatSeoAgent_Markdown_Check {
             'agent'    => self::describe( $agent ),
             'browser'  => self::describe( $browser ),
             'layer'    => $layer,
-            'advice'   => in_array( $verdict, array( 'html_to_agents', 'markdown_to_browsers' ), true ) ? self::advice( $layer, $htaccess ) : '',
+            'advice'   => in_array( $verdict, array( 'cloudflare_markdown', 'html_to_agents', 'markdown_to_browsers' ), true ) ? self::advice( 'cloudflare_markdown' === $verdict ? 'cloudflare_markdown' : $layer, $htaccess ) : '',
             'htaccess' => $htaccess,
         );
     }
@@ -270,15 +291,20 @@ class ThatSeoAgent_Markdown_Check {
      * What to change in the layer that answered.
      *
      * @since 2.3.0
-     * @param string $layer    See layer().
+     * @since 2.6.0 'cloudflare_markdown': Cloudflare's conversion answered.
+     * @param string $layer    See layer(), or 'cloudflare_markdown'.
      * @param array  $htaccess ThatSeoAgent_Markdown_Htaccess::status().
      * @return string
      */
     private static function advice( $layer, array $htaccess ) {
         $plugins = array_values( ThatSeoAgent_Markdown_Htaccess::cache_blocks() );
 
+        if ( 'cloudflare_markdown' === $layer ) {
+            return __( 'In Cloudflare, turn Markdown for Agents off under AI Crawl Control, or keep it for the rest of the zone and turn it off for this site with a Configuration Rule. Then run this check again.', 'thatseoagent' );
+        }
+
         if ( 'cloudflare' === $layer ) {
-            return __( 'Cloudflare stores the page by its URL. In Cloudflare, under Caching → Cache Rules, add a rule for requests whose Accept header contains text/markdown and set it to bypass the cache. Then run this check again: it tells you whether the rule took.', 'thatseoagent' );
+            return __( 'Cloudflare stores the page by its URL. Settings → Caches and CDN gives the two ways to fix it in its Cache Rules, with links to Cloudflare’s documentation. Then run this check again: it tells you whether the change took.', 'thatseoagent' );
         }
 
         if ( in_array( $layer, $plugins, true ) || ( $htaccess['applies'] && in_array( $layer, array( '', 'cache' ), true ) ) ) {
@@ -287,11 +313,11 @@ class ThatSeoAgent_Markdown_Check {
                 return sprintf( __( '%s serves its stored pages before WordPress. Exclude requests whose Accept header contains text/markdown in its settings, if it offers that.', 'thatseoagent' ), $layer );
             }
             if ( ! $htaccess['present'] ) {
-                return __( 'Add the .htaccess rule below: it sends requests asking for Markdown to WordPress before any page cache can answer them.', 'thatseoagent' );
+                return __( 'Add the .htaccess rule in Settings → Caches and CDN: it sends requests asking for Markdown to WordPress before any page cache can answer them.', 'thatseoagent' );
             }
             if ( '' !== $htaccess['below'] ) {
                 /* translators: %s: page cache plugin name. */
-                return sprintf( __( 'The .htaccess rule is below the rules of %s, which run first. Use “Write it again at the top” below.', 'thatseoagent' ), $htaccess['below'] );
+                return sprintf( __( 'The .htaccess rule is below the rules of %s, which run first. Use “Write it again at the top” in Settings → Caches and CDN.', 'thatseoagent' ), $htaccess['below'] );
             }
         }
 

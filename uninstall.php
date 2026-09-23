@@ -55,6 +55,7 @@ function thatseoagent_uninstall_site() {
     delete_transient( ThatSeoAgent_Llms_Full::CACHE_KEY );
     delete_transient( ThatSeoAgent_Links::CACHE_KEY );
     delete_transient( ThatSeoAgent_Product_Report::SUMMARY_KEY );
+    delete_transient( ThatSeoAgent_Product_Report::STATUS_KEY );
     delete_metadata( 'user', 0, ThatSeoAgent_App::THEME_META, '', true );
     foreach ( ThatSeoAgent_Author_Profile::keys() as $meta_key ) {
         delete_metadata( 'user', 0, $meta_key, '', true );

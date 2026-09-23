@@ -116,7 +116,8 @@ class ThatSeoAgent_Bulletin {
      * @since 1.20.0
      * @since 2.3.0 trust_pages, links.
      * @since 2.5.0 sample, new_types, post_names, tagline.
-     * @return array{indexing: bool, permalinks: bool, post_names: bool, tagline: bool, other_plugin: string, identity: bool, homepage: bool, trust_pages: array, sample: array, new_types: array, links: array|null, catalog: array|null, crawlers: array, indexnow: bool, now: int}
+     * @since 2.6.0 unattributed.
+     * @return array{indexing: bool, permalinks: bool, post_names: bool, tagline: bool, other_plugin: string, identity: bool, homepage: bool, trust_pages: array, sample: array, new_types: array, unattributed: int, links: array|null, catalog: array|null, crawlers: array, indexnow: bool, now: int}
      */
     public static function facts() {
         return array(
@@ -130,6 +131,9 @@ class ThatSeoAgent_Bulletin {
             'trust_pages'  => ThatSeoAgent_Trust_Pages::found(),
             'sample'       => ThatSeoAgent_Sample_Content::published(),
             'new_types'    => ThatSeoAgent_New_Types::unreviewed(),
+            // Only while nobody is credited instead: with a default author
+            // set, those posts do name someone.
+            'unattributed' => ThatSeoAgent_Default_Author::is_set() ? 0 : ThatSeoAgent_Default_Author::unattributed_count(),
             // Only a graph already built: the bulletin never requests pages.
             'links'        => ThatSeoAgent_Links::cached(),
             'catalog'      => empty( ThatSeoAgent_Product::post_types() ) ? null : ThatSeoAgent_Product_Report::summary(),
@@ -295,6 +299,19 @@ class ThatSeoAgent_Bulletin {
                 __( 'Its pages are already in the sitemap and have SEO fields. If they list products — machines, parts, models — mark it as a product catalog so each one is described as a product.', 'thatseoagent' ),
                 __( 'Review it', 'thatseoagent' ),
                 'review_types'
+            );
+        }
+
+        // Articles credited to nobody: the site stands in as their author.
+        $unattributed = isset( $facts['unattributed'] ) ? (int) $facts['unattributed'] : 0;
+        if ( $unattributed ) {
+            $warnings[] = self::warning(
+                'yellow',
+                /* translators: %d: number of posts. */
+                sprintf( _n( '%d post has no author', '%d posts have no author', $unattributed, 'thatseoagent' ), $unattributed ),
+                __( 'They are credited to the site itself. Google asks for a byline where one is expected: assign each post its author — whose profile can carry a job title and profiles elsewhere — or set a default author in the settings.', 'thatseoagent' ),
+                __( 'See the posts', 'thatseoagent' ),
+                'posts'
             );
         }
 

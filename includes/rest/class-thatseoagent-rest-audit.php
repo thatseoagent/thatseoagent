@@ -90,11 +90,15 @@ class ThatSeoAgent_REST_Audit extends ThatSeoAgent_REST_Controller {
      * GET /audit: the last finished check.
      *
      * @since 1.18.0
+     * @since 2.6.0 Answers { last }, last being null when there is none.
      * @param WP_REST_Request $request Request.
      * @return WP_REST_Response
      */
     public function get_item( $request ) {
-        return $this->fresh( ThatSeoAgent_Audit_Run::last( $request['post_type'] ) );
+        // Always an object: a content type never checked has no last check,
+        // and a bare null would go out as an empty body — the REST server
+        // writes none for null — which no client can parse as JSON.
+        return $this->fresh( array( 'last' => ThatSeoAgent_Audit_Run::last( $request['post_type'] ) ) );
     }
 
     /**

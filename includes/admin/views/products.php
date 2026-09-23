@@ -30,8 +30,12 @@ if ( empty( $config ) ) :
 endif;
 
 $summary = ThatSeoAgent_Product_Report::summary();
-// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only pagination.
-$report  = ThatSeoAgent_Product_Report::report( isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1 );
+// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only tab and page.
+$report  = ThatSeoAgent_Product_Report::report(
+    isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1,
+    isset( $_GET['state'] ) ? sanitize_key( wp_unslash( $_GET['state'] ) ) : 'all'
+);
+// phpcs:enable WordPress.Security.NonceVerification.Recommended
 $total   = max( 1, $summary['total'] );
 $level   = $summary['error'] ? 'orange' : ( $summary['warning'] ? 'yellow' : 'clear' );
 $labels  = array(
@@ -63,14 +67,14 @@ if ( 'clear' === $level ) {
 }
 ?>
 
-<section class="tsa-field grid gap-6 rounded-(--radius-sheet) px-7 py-7 md:grid-cols-[minmax(0,1fr)_18rem] md:px-9 <?php echo esc_attr( ThatSeoAgent_App::level_classes( $level )['field'] ); ?>" aria-labelledby="thatseoagent-catalog-condition">
+<section class="tsa-field grid gap-6 px-7 py-7 md:grid-cols-[minmax(0,1fr)_18rem] md:px-9 <?php echo esc_attr( ThatSeoAgent_App::level_classes( $level )['field'] ); ?>" aria-labelledby="thatseoagent-catalog-condition">
     <div>
-        <h2 id="thatseoagent-catalog-condition" class="text-[26px] leading-tight font-extrabold tracking-[-0.02em] md:text-[30px]"><?php echo esc_html( $headline ); ?></h2>
+        <h2 id="thatseoagent-catalog-condition" class="text-[26px] leading-tight font-bold tracking-[-0.02em] md:text-[30px]"><?php echo esc_html( $headline ); ?></h2>
         <p class="mt-2 max-w-[36rem] text-[15px]"><?php esc_html_e( 'Without a price, reviews or ratings Google shows no product stars or prices, but the markup still tells search engines and AI assistants exactly what each product is.', 'thatseoagent' ); ?></p>
     </div>
 
     <figure class="self-end">
-        <div class="flex h-3 overflow-hidden rounded-[2px] ring-1 ring-black/15" role="img" aria-label="<?php echo esc_attr( implode( ', ', array_map( function ( $segment ) { return $segment['label'] . ': ' . $segment['count']; }, $segments ) ) ); ?>">
+        <div class="flex h-3 overflow-hidden ring-1 ring-black/15" role="img" aria-label="<?php echo esc_attr( implode( ', ', array_map( function ( $segment ) { return $segment['label'] . ': ' . $segment['count']; }, $segments ) ) ); ?>">
             <?php foreach ( $segments as $segment ) : ?>
                 <?php if ( $segment['count'] ) : ?>
                     <span class="<?php echo esc_attr( $segment['bar'] ); ?> border-r border-black/20 last:border-r-0" style="width: <?php echo esc_attr( round( 100 * $segment['count'] / $total, 2 ) ); ?>%"></span>
@@ -80,9 +84,9 @@ if ( 'clear' === $level ) {
         <dl class="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
             <?php foreach ( $segments as $segment ) : ?>
                 <div class="flex items-center gap-1.5">
-                    <span class="size-2 rounded-[1px] ring-1 ring-black/20 <?php echo esc_attr( $segment['bar'] ); ?>" aria-hidden="true"></span>
+                    <span class="size-2 ring-1 ring-black/20 <?php echo esc_attr( $segment['bar'] ); ?>" aria-hidden="true"></span>
                     <dt><?php echo esc_html( $segment['label'] ); ?></dt>
-                    <dd class="font-bold tabular-nums"><?php echo esc_html( number_format_i18n( $segment['count'] ) ); ?></dd>
+                    <dd class="font-mono font-bold tabular-nums"><?php echo esc_html( number_format_i18n( $segment['count'] ) ); ?></dd>
                 </div>
             <?php endforeach; ?>
         </dl>
@@ -122,65 +126,84 @@ if ( 'clear' === $level ) {
     </aside>
 
     <?php
-    $page_counts = array( 'attention' => 0, 'complete' => 0 );
-    foreach ( $report['rows'] as $row ) {
-        $page_counts[ 'clear' === ThatSeoAgent_Bulletin::level_for_status( $row['status'] ) ? 'complete' : 'attention' ]++;
-    }
+    // Each tab is its own list, over the whole catalog, with its own pages.
+    $counts  = ThatSeoAgent_Product_Report::tab_counts();
     $filters = array(
-        'all'       => array( __( 'All', 'thatseoagent' ), count( $report['rows'] ) ),
-        'attention' => array( __( 'Need attention', 'thatseoagent' ), $page_counts['attention'] ),
-        'complete'  => array( __( 'Complete', 'thatseoagent' ), $page_counts['complete'] ),
+        'all'       => __( 'All', 'thatseoagent' ),
+        'attention' => __( 'Need attention', 'thatseoagent' ),
+        'complete'  => __( 'Complete', 'thatseoagent' ),
     );
+    $tab_url = function ( $state, $paged = 1 ) {
+        $args = array();
+        if ( 'all' !== $state ) {
+            $args['state'] = $state;
+        }
+        if ( $paged > 1 ) {
+            $args['paged'] = $paged;
+        }
+        return ThatSeoAgent_App::url( 'products', $args );
+    };
     ?>
-    <section aria-labelledby="thatseoagent-products-table" class="min-w-0" x-data="tsaProducts">
+    <section aria-labelledby="thatseoagent-products-table" class="min-w-0">
         <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-b border-rule-strong pb-2.5">
             <h2 id="thatseoagent-products-table" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Product by product', 'thatseoagent' ); ?></h2>
-            <div class="order-last flex w-full rounded-[4px] border border-rule bg-paper p-0.5 text-[13px] sm:order-none sm:w-auto" role="group" aria-label="<?php esc_attr_e( 'Show', 'thatseoagent' ); ?>" x-cloak x-show.important="true">
-                <?php foreach ( $filters as $key => $filter ) : ?>
-                    <button
-                        type="button"
-                        class="flex-1 rounded-[2px] px-2.5 py-1 font-medium whitespace-nowrap sm:flex-none"
-                        :class="'<?php echo esc_js( $key ); ?>' === filter ? { 'bg-sheet': true, 'text-ink': true, 'font-semibold': true, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'font-semibold': false, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': false, 'text-ink-3': true, 'hover:text-ink': true }"
-                        :aria-pressed="'<?php echo esc_js( $key ); ?>' === filter ? 'true' : 'false'"
-                        @click="filter = '<?php echo esc_js( $key ); ?>'"
+            <nav class="order-last flex w-full border border-rule bg-paper p-0.5 text-[13px] sm:order-none sm:w-auto" aria-label="<?php esc_attr_e( 'Show', 'thatseoagent' ); ?>">
+                <?php foreach ( $filters as $key => $label ) : ?>
+                    <?php $active = $key === $report['state']; ?>
+                    <a
+                        href="<?php echo esc_url( $tab_url( $key ) ); ?>"
+                        class="flex-1 px-2.5 py-1 text-center whitespace-nowrap sm:flex-none <?php echo $active ? 'bg-sheet font-semibold text-ink ring-1 ring-rule-strong' : 'font-medium text-ink-3 hover:text-ink'; ?>"
+                        <?php echo $active ? 'aria-current="page"' : ''; ?>
                     >
-                        <?php echo esc_html( $filter[0] ); ?>
-                        <span class="ml-0.5 text-ink-3 tabular-nums"><?php echo esc_html( number_format_i18n( $filter[1] ) ); ?></span>
-                    </button>
+                        <?php echo esc_html( $label ); ?>
+                        <span class="ml-0.5 text-ink-3 tabular-nums"><?php echo esc_html( number_format_i18n( $counts[ $key ] ) ); ?></span>
+                    </a>
                 <?php endforeach; ?>
-            </div>
+            </nav>
             <p class="text-[13px] text-ink-3 tabular-nums">
                 <?php
+                if ( ! $report['found'] ) {
+                    esc_html_e( 'None', 'thatseoagent' );
+                }
                 $first = ( $report['paged'] - 1 ) * ThatSeoAgent_Product_Report::PER_PAGE + 1;
-                /* translators: 1: first row, 2: last row, 3: total. */
-                echo esc_html( sprintf( __( '%1$d–%2$d of %3$d', 'thatseoagent' ), $first, $first + count( $report['rows'] ) - 1, $report['found'] ) );
+                if ( $report['found'] ) {
+                    /* translators: 1: first row, 2: last row, 3: total. */
+                    echo esc_html( sprintf( __( '%1$d–%2$d of %3$d', 'thatseoagent' ), $first, $first + count( $report['rows'] ) - 1, $report['found'] ) );
+                }
                 ?>
             </p>
         </div>
 
+        <?php if ( ! $report['rows'] ) : ?>
+            <p class="py-8 text-ink-2"><?php echo esc_html( 'complete' === $report['state'] ? __( 'No product is complete yet.', 'thatseoagent' ) : __( 'No product needs attention.', 'thatseoagent' ) ); ?></p>
+        <?php else : ?>
         <div class="overflow-x-auto">
             <table class="text-left">
                 <thead>
-                    <tr class="border-b border-rule text-[12px] font-semibold text-ink-3">
+                    <tr class="tsa-label border-b border-rule">
                         <th scope="col" class="py-2.5 pr-4 font-semibold"><?php esc_html_e( 'Product', 'thatseoagent' ); ?></th>
                         <th scope="col" class="py-2.5 font-semibold"><?php esc_html_e( 'What is missing', 'thatseoagent' ); ?></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-rule">
+                <?php // Each row draws its own bottom rule but the last: the list ends without one. ?>
+                <tbody>
                     <?php foreach ( $report['rows'] as $row ) : ?>
                         <?php
                         $post      = $row['post'];
                         $row_level = ThatSeoAgent_Bulletin::level_for_status( $row['status'] );
                         ?>
-                        <tr class="align-top" x-show.important="shows('<?php echo esc_js( $row_level ); ?>')">
+                        <tr class="border-b border-rule align-top last:border-b-0">
                             <td class="w-[42%] py-3.5 pr-6">
                                 <div class="flex items-start gap-3">
-                                    <span class="mt-1.5 size-2.5 shrink-0 rounded-[1px] ring-1 ring-black/10 <?php echo esc_attr( ThatSeoAgent_App::level_classes( $row_level )['square'] ); ?>" aria-hidden="true"></span>
+                                    <span class="mt-1.5 size-2.5 shrink-0 ring-1 ring-black/10 <?php echo esc_attr( ThatSeoAgent_App::level_classes( $row_level )['square'] ); ?>" aria-hidden="true"></span>
                                     <div class="min-w-0">
                                         <a href="<?php echo esc_url( (string) get_edit_post_link( $post->ID ) ); ?>" class="font-semibold text-ink hover:text-met hover:underline"><?php echo esc_html( get_the_title( $post ) ); ?></a>
                                         <p class="mt-0.5 text-[12px] text-ink-3">
-                                            <?php echo esc_html( 'clear' === $row_level ? __( 'Complete', 'thatseoagent' ) : $levels[ $row_level ]['name'] ); ?>
-                                            ·
+                                            <?php if ( 'clear' === $row_level ) : ?>
+                                                <?php esc_html_e( 'Complete', 'thatseoagent' ); ?> ·
+                                            <?php else : ?>
+                                                <span class="sr-only"><?php echo esc_html( $levels[ $row_level ]['name'] ); ?>.</span>
+                                            <?php endif; ?>
                                             <a href="<?php echo esc_url( get_permalink( $post ) ); ?>" target="_blank" rel="noopener" class="hover:text-met hover:underline"><?php esc_html_e( 'View page', 'thatseoagent' ); ?><span class="sr-only"> <?php esc_html_e( '(opens in a new tab)', 'thatseoagent' ); ?></span></a>
                                         </p>
                                     </div>
@@ -204,11 +227,12 @@ if ( 'clear' === $level ) {
                 </tbody>
             </table>
         </div>
+        <?php endif; ?>
 
         <?php if ( $report['pages'] > 1 ) : ?>
-            <nav class="mt-2 flex items-center justify-between gap-3 border-t border-rule pt-4 text-[13px]" aria-label="<?php esc_attr_e( 'Pages', 'thatseoagent' ); ?>">
+            <nav class="flex items-center justify-between gap-3 pt-4 text-[13px]" aria-label="<?php esc_attr_e( 'Pages', 'thatseoagent' ); ?>">
                 <?php if ( $report['paged'] > 1 ) : ?>
-                    <a href="<?php echo esc_url( ThatSeoAgent_App::url( 'products', array( 'paged' => $report['paged'] - 1 ) ) ); ?>" class="tsa-rule-button"><?php esc_html_e( 'Previous', 'thatseoagent' ); ?></a>
+                    <a href="<?php echo esc_url( $tab_url( $report['state'], $report['paged'] - 1 ) ); ?>" class="tsa-rule-button"><?php esc_html_e( 'Previous', 'thatseoagent' ); ?></a>
                 <?php else : ?>
                     <span></span>
                 <?php endif; ?>
@@ -219,7 +243,7 @@ if ( 'clear' === $level ) {
                     ?>
                 </p>
                 <?php if ( $report['paged'] < $report['pages'] ) : ?>
-                    <a href="<?php echo esc_url( ThatSeoAgent_App::url( 'products', array( 'paged' => $report['paged'] + 1 ) ) ); ?>" class="tsa-rule-button"><?php esc_html_e( 'Next', 'thatseoagent' ); ?></a>
+                    <a href="<?php echo esc_url( $tab_url( $report['state'], $report['paged'] + 1 ) ); ?>" class="tsa-rule-button"><?php esc_html_e( 'Next', 'thatseoagent' ); ?></a>
                 <?php else : ?>
                     <span></span>
                 <?php endif; ?>

@@ -59,10 +59,10 @@ $cells = 24;
 <div x-data="tsaAudit(<?php echo esc_attr( wp_json_encode( $initial ) ); ?>)">
 
     <noscript>
-        <p class="mb-6 rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4 text-ink-2"><?php esc_html_e( 'The content check needs JavaScript in the browser.', 'thatseoagent' ); ?></p>
+        <p class="mb-6 border border-rule bg-sheet px-5 py-4 text-ink-2"><?php esc_html_e( 'The content check needs JavaScript in the browser.', 'thatseoagent' ); ?></p>
     </noscript>
 
-    <section class="rounded-(--radius-sheet) border border-rule bg-sheet" aria-labelledby="thatseoagent-run">
+    <section class="border border-rule bg-sheet" aria-labelledby="thatseoagent-run">
         <div class="grid gap-6 px-6 py-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:px-7">
             <div>
                 <h2 id="thatseoagent-run" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Check the content', 'thatseoagent' ); ?></h2>
@@ -107,7 +107,7 @@ $cells = 24;
             </div>
             <div class="mt-2 flex gap-0.5" aria-hidden="true">
                 <?php for ( $i = 0; $i < $cells; $i++ ) : ?>
-                    <span class="h-1.5 flex-1 rounded-[1px] bg-rule" :class="{ 'bg-met': <?php echo (int) $i; ?> < Math.round( percent * <?php echo (int) $cells; ?> / 100 ), 'bg-rule': <?php echo (int) $i; ?> >= Math.round( percent * <?php echo (int) $cells; ?> / 100 ) }"></span>
+                    <span class="h-1.5 flex-1 bg-rule" :class="{ 'bg-met': <?php echo (int) $i; ?> < Math.round( percent * <?php echo (int) $cells; ?> / 100 ), 'bg-rule': <?php echo (int) $i; ?> >= Math.round( percent * <?php echo (int) $cells; ?> / 100 ) }"></span>
                 <?php endfor; ?>
             </div>
         </div>
@@ -116,15 +116,15 @@ $cells = 24;
     <dl class="mt-8 grid grid-cols-3 divide-x divide-rule border-y border-rule" x-cloak x-show.important="rows.length">
         <div class="px-4 py-4 first:pl-0">
             <dt class="text-[13px] text-ink-2"><?php esc_html_e( 'Pages checked', 'thatseoagent' ); ?></dt>
-            <dd class="mt-1 text-[22px] leading-none font-bold text-ink tabular-nums" x-text="rows.length"></dd>
+            <dd class="mt-1 font-mono text-[22px] leading-none font-bold text-ink tabular-nums" x-text="rows.length"></dd>
         </div>
         <div class="px-4 py-4">
             <dt class="text-[13px] text-ink-2"><?php esc_html_e( 'With something to improve', 'thatseoagent' ); ?></dt>
-            <dd class="mt-1 text-[22px] leading-none font-bold text-ink tabular-nums" x-text="withIssues"></dd>
+            <dd class="mt-1 font-mono text-[22px] leading-none font-bold text-ink tabular-nums" x-text="withIssues"></dd>
         </div>
         <div class="px-4 py-4">
             <dt class="text-[13px] text-ink-2"><?php esc_html_e( 'Average score', 'thatseoagent' ); ?></dt>
-            <dd class="mt-1 text-[22px] leading-none font-bold text-ink tabular-nums"><span x-text="average"></span><span class="text-[14px] font-medium text-ink-3"> / 100</span></dd>
+            <dd class="mt-1 font-mono text-[22px] leading-none font-bold text-ink tabular-nums"><span x-text="average"></span><span class="text-[14px] font-medium text-ink-3"> / 100</span></dd>
         </div>
     </dl>
 
@@ -132,9 +132,9 @@ $cells = 24;
         <section aria-labelledby="thatseoagent-results" class="min-w-0">
             <div class="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule-strong pb-2.5">
                 <h2 id="thatseoagent-results" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Pages to improve', 'thatseoagent' ); ?></h2>
-                <div class="flex rounded-[4px] border border-rule bg-paper p-0.5 text-[13px]" role="group" aria-label="<?php esc_attr_e( 'Show', 'thatseoagent' ); ?>" x-cloak x-show.important="rows.length">
-                    <button type="button" class="rounded-[2px] px-2.5 py-1 font-medium" :class="'issues' === filter ? { 'bg-sheet': true, 'text-ink': true, 'font-semibold': true, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'font-semibold': false, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': false, 'text-ink-3': true, 'hover:text-ink': true }" :aria-pressed="'issues' === filter ? 'true' : 'false'" @click="filter = 'issues'"><?php esc_html_e( 'To improve', 'thatseoagent' ); ?></button>
-                    <button type="button" class="rounded-[2px] px-2.5 py-1 font-medium" :class="'all' === filter ? { 'bg-sheet': true, 'text-ink': true, 'font-semibold': true, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'font-semibold': false, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': false, 'text-ink-3': true, 'hover:text-ink': true }" :aria-pressed="'all' === filter ? 'true' : 'false'" @click="filter = 'all'"><?php esc_html_e( 'All pages', 'thatseoagent' ); ?></button>
+                <div class="flex border border-rule bg-paper p-0.5 text-[13px]" role="group" aria-label="<?php esc_attr_e( 'Show', 'thatseoagent' ); ?>" x-cloak x-show.important="rows.length">
+                    <button type="button" class="px-2.5 py-1 font-medium" :class="'issues' === filter ? { 'bg-sheet': true, 'text-ink': true, 'font-semibold': true, 'ring-1 ring-rule-strong': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'font-semibold': false, 'ring-1 ring-rule-strong': false, 'text-ink-3': true, 'hover:text-ink': true }" :aria-pressed="'issues' === filter ? 'true' : 'false'" @click="filter = 'issues'; page = 1"><?php esc_html_e( 'To improve', 'thatseoagent' ); ?></button>
+                    <button type="button" class="px-2.5 py-1 font-medium" :class="'all' === filter ? { 'bg-sheet': true, 'text-ink': true, 'font-semibold': true, 'ring-1 ring-rule-strong': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'font-semibold': false, 'ring-1 ring-rule-strong': false, 'text-ink-3': true, 'hover:text-ink': true }" :aria-pressed="'all' === filter ? 'true' : 'false'" @click="filter = 'all'; page = 1"><?php esc_html_e( 'All pages', 'thatseoagent' ); ?></button>
                 </div>
             </div>
 
@@ -149,11 +149,11 @@ $cells = 24;
             </div>
 
             <ol class="divide-y divide-rule" x-cloak x-show="visible.length">
-                <template x-for="row in visible" :key="row.id">
+                <template x-for="row in pageRows" :key="row.id">
                     <li class="grid grid-cols-[3rem_minmax(0,1fr)] gap-x-4 py-4">
                         <div class="text-right">
                             <span class="inline-flex items-center gap-1.5">
-                                <span class="size-2.5 rounded-[1px] ring-1 ring-black/10" :class="scoreClass(row.score)" aria-hidden="true"></span>
+                                <span class="size-2.5 ring-1 ring-black/10" :class="scoreClass(row.score)" aria-hidden="true"></span>
                                 <span class="text-[17px] leading-none font-bold text-ink tabular-nums" x-text="row.score"></span>
                             </span>
                             <span class="sr-only"><?php esc_html_e( 'out of 100', 'thatseoagent' ); ?></span>
@@ -178,6 +178,13 @@ $cells = 24;
                     </li>
                 </template>
             </ol>
+
+            <nav class="mt-2 flex items-center justify-between gap-3 border-t border-rule pt-4 text-[13px]" x-cloak x-show.important="pages > 1" aria-label="<?php esc_attr_e( 'Pages', 'thatseoagent' ); ?>">
+                <button type="button" class="tsa-rule-button" @click="turn( -1 )" :disabled="page <= 1"><?php esc_html_e( 'Previous', 'thatseoagent' ); ?></button>
+                <?php /* translators: 1: current page, 2: total pages. */ ?>
+                <p class="text-ink-3 tabular-nums" x-text="<?php echo esc_attr( wp_json_encode( __( 'Page %1$d of %2$d', 'thatseoagent' ) ) ); ?>.replace( '%1$d', page ).replace( '%2$d', pages )"></p>
+                <button type="button" class="tsa-rule-button" @click="turn( 1 )" :disabled="page >= pages"><?php esc_html_e( 'Next', 'thatseoagent' ); ?></button>
+            </nav>
         </section>
 
         <section aria-labelledby="thatseoagent-checks">

@@ -28,6 +28,7 @@ $order = array(
     'thatseoagent_products_section',
     'thatseoagent_schema_section',
     'thatseoagent_llms_section',
+    'thatseoagent_cache_section',
     'thatseoagent_crawlers_section',
     'thatseoagent_crawl_section',
     'thatseoagent_indexnow_section',
@@ -78,7 +79,7 @@ foreach ( array_keys( $sections ) as $index => $id ) {
 
 <div class="tsa-settings grid gap-x-12 gap-y-6 lg:grid-cols-[12rem_minmax(0,1fr)]" x-data="tsaSettings">
     <nav class="tsa-index lg:sticky lg:top-[calc(var(--wp-admin--admin-bar--height)+1.75rem)] lg:self-start" aria-label="<?php esc_attr_e( 'Settings sections', 'thatseoagent' ); ?>">
-        <p class="mb-2 hidden text-[12px] font-medium text-ink-3 lg:block"><?php esc_html_e( 'On this page', 'thatseoagent' ); ?></p>
+        <p class="tsa-label mb-3 hidden lg:block"><?php esc_html_e( 'On this page', 'thatseoagent' ); ?></p>
         <ul class="flex flex-wrap gap-1.5 text-[14px] lg:flex-col lg:gap-0 lg:border-l lg:border-rule">
             <?php foreach ( $sections as $section ) : ?>
                 <li>
@@ -86,7 +87,7 @@ foreach ( array_keys( $sections ) as $index => $id ) {
                         href="#<?php echo esc_attr( $section['id'] ); ?>"
                         :aria-current="current === '<?php echo esc_js( $section['id'] ); ?>' ? 'location' : null"
                         :class="{ 'font-bold': current === '<?php echo esc_js( $section['id'] ); ?>', 'text-ink': current === '<?php echo esc_js( $section['id'] ); ?>', 'border-ink': current === '<?php echo esc_js( $section['id'] ); ?>', 'lg:border-ink': current === '<?php echo esc_js( $section['id'] ); ?>' }"
-                        class="block rounded-[4px] border border-rule bg-sheet px-3 py-1.5 font-medium text-ink-2 hover:border-ink hover:text-ink focus-visible:text-ink lg:-ml-px lg:rounded-none lg:border-0 lg:border-l lg:border-transparent lg:bg-transparent lg:py-1.5 lg:pr-0 lg:pl-4 lg:hover:border-ink">
+                        class="block border border-rule bg-sheet px-3 py-1.5 font-medium text-ink-2 hover:border-ink hover:text-ink focus-visible:text-ink lg:-ml-px lg:rounded-none lg:border-0 lg:border-l lg:border-transparent lg:bg-transparent lg:py-1.5 lg:pr-0 lg:pl-4 lg:hover:border-ink">
                         <?php echo esc_html( $section['title'] ); ?>
                     </a>
                 </li>
@@ -98,7 +99,7 @@ foreach ( array_keys( $sections ) as $index => $id ) {
         <?php settings_fields( $page ); ?>
 
         <?php foreach ( $sections as $section ) : ?>
-            <section id="<?php echo esc_attr( $section['id'] ); ?>" class="scroll-mt-[calc(var(--wp-admin--admin-bar--height)+1.5rem)] border-b border-rule pt-2 pb-8 not-first:pt-8">
+            <section id="<?php echo esc_attr( $section['id'] ); ?>" class="scroll-mt-[calc(var(--wp-admin--admin-bar--height)+1.5rem)] border-b border-rule pt-2 pb-8 not-first:pt-8 last-of-type:border-b-0">
                 <h2 class="text-[19px] font-bold tracking-[-0.01em] text-ink"><?php echo esc_html( $section['title'] ); ?></h2>
                 <?php if ( ! empty( $section['callback'] ) ) : ?>
                     <div class="mt-1 max-w-[42rem] space-y-1 text-ink-2">

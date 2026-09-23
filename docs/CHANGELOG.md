@@ -1,5 +1,84 @@
 # Changelog
 
+## [2.6.0] - Unreleased
+
+### Added
+- **A bulletin warning when published posts have no author** — none
+  assigned, or a user that no longer exists — while no default author is
+  set: they are credited to the site itself. It leads to the posts list;
+  the detail names the default author as the other way out.
+- **AboutPage and ContactPage**: the about and contact pages the bulletin
+  finds are marked up with those WebPage subtypes instead of a plain
+  WebPage.
+
+### Fixed
+- **Content check: choosing a content type never checked failed with "The
+  response is not a valid JSON response."** `GET /thatseoagent/v1/audit`
+  answered null for it, which the REST server sends as an empty body. It now
+  answers `{ "last": … }`, `last` being null when there is no check yet.
+- **A page left open across an update of the plugin no longer runs the old
+  script against the new server.** Each view the router fetches carries the
+  version of the screen's script and styles; when it differs from the one
+  the page loaded, the link loads as a whole page.
+
+- **No doubled rules at the end of a list**: the last Settings section, the
+  last product row and the last crawler of each AI crawlers group no longer
+  draw a bottom rule against the separator that follows.
+
+### Changed
+- **The screen moves between its views without reloading.** A link to
+  another view — the navigation, a warning's action, the products' pages —
+  fetches that view alone (the `X-ThatSeoAgent-View` header; the server
+  answers with the screen, its title and the bulletin, as JSON) and swaps it
+  in: history, the title and the sidebar follow, the page scrolls to the
+  link's anchor, and a view with unsaved settings asks before it goes.
+  Anything unexpected falls back to loading the page, and without
+  JavaScript every link works as before.
+- **Shorter lists**: the products report shows 20 per page (was 50), and
+  the content check pages its results 20 at a time.
+- **Each Products tab is its own list** — All, Need attention, Complete —
+  filtered over the whole catalog on the server (`&state=`), with its own
+  pages and counts that stay the same from page to page. They used to
+  filter only the page on screen, so the counts changed as you paged. Each
+  entry's state is validated once for the catalog and cached with the
+  summary (`ThatSeoAgent_Product_Report::statuses()`); only the rows shown
+  are validated again for their issues.
+- **Settings → AI crawlers: each group lists its own crawlers.** Under a
+  group's Allow and Block, each of its crawlers has a three-way choice — as
+  the group, allow, block — and the first names what the group does now,
+  following it as it changes. The separate "Choose crawler by crawler" list
+  is gone; the saved setting is the same.
+- **Settings → Caches and CDN**, a section of its own for what a cache in
+  front of WordPress needs so that agents asking for Markdown get it. The
+  .htaccess rule for page cache plugins moved here from AI index, and is
+  shown on every server: where .htaccess rewrites are not applied (nginx),
+  with a notice that it does nothing there and its lines to paste on an
+  Apache server; its buttons still appear only where it works. Beside it,
+  the Cloudflare steps — keep one copy per format with Vary on Accept, or a
+  Cache Rule that bypasses the cache for requests asking for Markdown —
+  with links to Cloudflare's documentation. The Markdown check stays in AI
+  index, and its advice now points to the section.
+- **The Markdown check tells when Cloudflare answers with its own
+  conversion.** Cloudflare's Markdown for Agents stamps what it converts
+  with `x-markdown-tokens`; when that is what agents get, the check says so
+  — Markdown made from the theme's page, without the author, dates, content
+  type and SEO title of ThatSeoAgent's — and how to turn it off in
+  Cloudflare.
+- **The screen wears the That SEO Agent brand**, the one the MCP server
+  and the website share: warm paper (`#f8f5f1`), white cells, hairline
+  rules, square corners and no shadow; Deep Ōtan Red (`#c4331a`) as the one
+  accent, for links, focus, the active mark and the filled button; the brand
+  mark beside the name in the sidebar. Space Grotesk for sentences and Space
+  Mono — uppercase, letter-spaced — for labels, numbers, the menu and the
+  buttons, both self-hosted (`pnpm run vendor:fonts`); Public Sans is gone.
+  The condition is no longer painted in its warning color: it sits in a
+  white cell beside the warning scale, and the levels use the brand's
+  status tones. The level's name is written only in the sidebar and the
+  scale; in the warnings list and the products report its square shows
+  it, and screen readers still hear the name. The Night edition is the report's warm espresso.
+- The Article post types filter, `thatseoagent_article_post_types`, is read
+  through `ThatSeoAgent_Schema::article_post_types()`.
+
 ## [2.5.0] - 2026-09-23
 
 ### Added

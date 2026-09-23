@@ -4,10 +4,15 @@
  * Build: pnpm run build:css  →  assets/build/admin.css (committed).
  *
  * The screen reads like a weather service bulletin: one condition in plain
- * words on a field of its warning color, the warnings in force, a row of
- * observations, then the readings. Warning levels follow the European
- * weather-warning scale (none, yellow, orange, red), which people read
- * without knowing anything about SEO.
+ * words, the warnings in force, a row of observations, then the readings.
+ * Warning levels follow the European weather-warning scale (none, yellow,
+ * orange, red), which people read without knowing anything about SEO.
+ *
+ * Since 2.6.0 it wears the That SEO Agent brand, the one the MCP server and
+ * the website share: warm paper, hairline rules, square corners, no shadow,
+ * Space Grotesk for sentences and Space Mono for labels and numbers, and
+ * Deep Ōtan Red as the single accent. The warning levels are the brand's
+ * status tones, always named beside their color.
  *
  * Loaded only on the ThatSeoAgent screen, and written so it neither leaks into
  * the rest of wp-admin nor gets overridden by it:
@@ -21,7 +26,8 @@
  *     display:none that an important utility overrides: use x-show.important
  *     on elements that also carry a display utility.)
  *   - Only the templates are scanned, so the output holds only their classes.
- *   - Public Sans is self-hosted from assets/fonts: no request leaves the site.
+ *   - Space Grotesk and Space Mono are self-hosted from assets/fonts
+ *     (pnpm run vendor:fonts): no request leaves the site.
  */
 
 @layer theme, base, components, utilities;
@@ -31,33 +37,70 @@
 
 @source "../../includes/admin";
 @source "../../includes/crawlers";
+@source "../../includes/markdown/class-thatseoagent-cache-settings.php";
 @source "../admin/app.js";
 
 @font-face {
-    font-family: "Public Sans";
+    font-family: "Space Grotesk";
     font-style: normal;
     font-display: swap;
-    font-weight: 100 900;
-    src: url("../fonts/public-sans-latin-wght-normal.woff2") format("woff2-variations");
+    font-weight: 300 700;
+    src: url("../fonts/space-grotesk-latin-wght-normal.woff2") format("woff2-variations");
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-    font-family: "Public Sans";
+    font-family: "Space Grotesk";
     font-style: normal;
     font-display: swap;
-    font-weight: 100 900;
-    src: url("../fonts/public-sans-latin-ext-wght-normal.woff2") format("woff2-variations");
+    font-weight: 300 700;
+    src: url("../fonts/space-grotesk-latin-ext-wght-normal.woff2") format("woff2-variations");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: "Space Mono";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 400;
+    src: url("../fonts/space-mono-latin-400-normal.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Space Mono";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 400;
+    src: url("../fonts/space-mono-latin-ext-400-normal.woff2") format("woff2");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: "Space Mono";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 700;
+    src: url("../fonts/space-mono-latin-700-normal.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Space Mono";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 700;
+    src: url("../fonts/space-mono-latin-ext-700-normal.woff2") format("woff2");
     unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 /*
  * Colors by role. Each resolves to a variable set per theme.
  *
- *   paper   the page ground          sheet   tables and forms
- *   column  the sidebar              rule    1px dividers
- *   ink     text, and the one filled control (press)
- *   met     links and interactive text, the service blue
+ *   paper   the page ground          sheet   cells, tables and forms
+ *   column  the sidebar, insets      rule    1px dividers
+ *   ink     text                     press   the one filled control
+ *   met     links, focus and the active mark: Deep Ōtan Red, the one lamp
  *   level-* the warning scale, each with its own text color (on-*)
  */
 @theme inline {
@@ -71,6 +114,7 @@
     --color-ink-3: var(--tsa-ink-3);
     --color-met: var(--tsa-met);
     --color-press: var(--tsa-press);
+    --color-press-hover: var(--tsa-press-hover);
     --color-on-press: var(--tsa-on-press);
 
     --color-level-clear: var(--tsa-level-clear);
@@ -82,55 +126,68 @@
     --color-on-orange: var(--tsa-on-orange);
     --color-on-red: var(--tsa-on-red);
 
-    --font-sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --font-sans: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "Space Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
 
-    --radius-sheet: 6px;
+    /* Square corners, as on the MCP server and the website. */
+    --radius-sheet: 0px;
 }
 
 /* Themes -------------------------------------------------------------- */
 
-/* Office daylight on a laptop: the light bulletin is the default. */
+/* Warm paper: the brand's ground, and the default edition. Every text tier
+   is AA on paper; the levels are the brand's status tones, darkened so that
+   each reads as text on paper too. */
 .thatseoagent-screen {
-    --tsa-paper: #f2f4f3;
+    --tsa-paper: #f8f5f1;
     --tsa-sheet: #ffffff;
-    --tsa-column: #e6eae9;
-    --tsa-rule: #d2d9d7;
-    --tsa-rule-strong: #a3aeac;
-    --tsa-ink: #111d27;
-    --tsa-ink-2: #44525f;
-    --tsa-ink-3: #5f6c78;
-    --tsa-met: #0b5378;
-    --tsa-press: #111d27;
-    --tsa-on-press: #ffffff;
+    --tsa-column: #f1ece3;
+    --tsa-rule: #e7e0d8;
+    --tsa-rule-strong: #d6ccc0;
+    --tsa-ink: #1c1815;
+    --tsa-ink-2: #5f564e;
+    --tsa-ink-3: #736a5f;
+    --tsa-met: #c4331a;
+    --tsa-press: #c4331a;
+    --tsa-press-hover: #b83312;
+    --tsa-on-press: #f8f5f1;
 
-    --tsa-level-clear: #1d774a;
-    --tsa-level-yellow: #f1c02b;
-    --tsa-level-orange: #e5711a;
-    --tsa-level-red: #c41f38;
+    --tsa-level-clear: #1e7a3e;
+    --tsa-level-yellow: #9a7200;
+    --tsa-level-orange: #b45309;
+    --tsa-level-red: #c0362b;
     --tsa-on-clear: #ffffff;
-    --tsa-on-yellow: #111d27;
-    --tsa-on-orange: #111d27;
+    --tsa-on-yellow: #ffffff;
+    --tsa-on-orange: #ffffff;
     --tsa-on-red: #ffffff;
 
     color-scheme: light;
 }
 
-/* The night edition: a deep service blue, never neutral black. */
+/* The night edition: the report's warm espresso, never cold black. Here the
+   vivid Ōtan Red has the contrast to appear at full strength. */
 .thatseoagent-screen.thatseoagent-theme-dark {
-    --tsa-paper: #0e1b24;
-    --tsa-sheet: #13242f;
-    --tsa-column: #0a151d;
-    --tsa-rule: #223844;
-    --tsa-rule-strong: #3a5664;
-    --tsa-ink: #e4ebee;
-    --tsa-ink-2: #a8b6bf;
-    --tsa-ink-3: #8b9aa4;
-    --tsa-met: #8ccaee;
-    --tsa-press: #e4ebee;
-    --tsa-on-press: #0e1b24;
+    --tsa-paper: #15110e;
+    --tsa-sheet: #1e1813;
+    --tsa-column: #110d0b;
+    --tsa-rule: #2a231c;
+    --tsa-rule-strong: #3a3128;
+    --tsa-ink: #f4efe7;
+    --tsa-ink-2: #a0968a;
+    --tsa-ink-3: #8b8175;
+    --tsa-met: #ff4e20;
+    --tsa-press: #ff4e20;
+    --tsa-press-hover: #ff6a45;
+    --tsa-on-press: #15110e;
 
-    --tsa-level-clear: #238a57;
+    --tsa-level-clear: #4ade80;
+    --tsa-level-yellow: #c49b00;
+    --tsa-level-orange: #f0883e;
+    --tsa-level-red: #f04444;
+    --tsa-on-clear: #15110e;
+    --tsa-on-yellow: #15110e;
+    --tsa-on-orange: #15110e;
+    --tsa-on-red: #15110e;
 
     color-scheme: dark;
 }
@@ -138,6 +195,12 @@
 /* Alpine: anything that starts hidden stays hidden until Alpine runs. */
 #thatseoagent-app [x-cloak] {
     display: none !important;
+}
+
+/* The view being replaced, while the next one loads (the router's aria-busy). */
+#thatseoagent-app[aria-busy="true"] main {
+    opacity: 0.6;
+    transition: opacity 150ms;
 }
 
 /* wp-admin chrome around the app --------------------------------------- */
@@ -165,7 +228,8 @@
     color: var(--tsa-ink);
     font-family: var(--font-sans);
     font-size: 14px;
-    line-height: 1.5;
+    font-weight: 400;
+    line-height: 1.55;
     font-feature-settings: "kern", "liga";
     -webkit-font-smoothing: antialiased;
     caret-color: var(--tsa-met);
@@ -221,7 +285,7 @@
 #thatseoagent-app :is(a, button, input, select, textarea, summary):focus-visible {
     outline: 2px solid var(--tsa-met);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 0;
 }
 
 #thatseoagent-app button {
@@ -247,8 +311,8 @@
 
 #thatseoagent-app code {
     padding: 0.08em 0.35em;
-    border-radius: 4px;
-    background: color-mix(in oklab, var(--tsa-ink) 7%, transparent);
+    border-radius: 0;
+    background: var(--tsa-column);
     color: var(--tsa-ink);
     overflow-wrap: anywhere;
 }
@@ -259,48 +323,54 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* Links in running text and tables: service blue, underline on hover. */
+/* Links in running text and tables: the lamp, underlined, as on the MCP
+   server's page; the underline thickens on hover. */
 #thatseoagent-app .tsa-link {
     color: var(--tsa-met);
-    font-weight: 600;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 #thatseoagent-app .tsa-link:hover {
-    text-decoration: underline;
+    text-decoration-thickness: 2px;
 }
 
-/* The one filled control: ink on paper, or on a warning field. */
+/* Every label, eyebrow and caption: Space Mono, uppercase, letter-spaced.
+   If it labels or counts, it is mono; if it speaks in sentences, it is not. */
+#thatseoagent-app .tsa-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: var(--tsa-ink-3);
+}
+
+/* The one filled control: the lamp, with a paper label. Flat: depth comes
+   from tone, never from shadow, and it changes color only. */
 #thatseoagent-app .tsa-press {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     min-height: 2.5rem;
-    padding: 0 1.1rem;
-    border-radius: 4px;
+    padding: 0 1.25rem;
+    border-radius: 0;
     background: var(--tsa-press);
     color: var(--tsa-on-press);
-    font-weight: 650;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     white-space: nowrap;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
-    transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 160ms;
+    transition: background-color 150ms, color 150ms;
 }
 
 #thatseoagent-app .tsa-press:hover {
+    background: var(--tsa-press-hover);
     color: var(--tsa-on-press);
-    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.28);
-    transform: translateY(-1px);
-}
-
-#thatseoagent-app .tsa-press:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
-}
-
-/* On a warning field the button keeps ink and white whatever the theme:
-   the field's own colors do not change between editions. */
-#thatseoagent-app .tsa-field .tsa-press {
-    background: #111d27;
-    color: #ffffff;
 }
 
 /* Secondary control: ruled, not filled. */
@@ -309,16 +379,70 @@
     align-items: center;
     gap: 0.45rem;
     min-height: 2.25rem;
-    padding: 0 0.85rem;
+    padding: 0 0.9rem;
     border: 1px solid var(--tsa-rule-strong);
-    border-radius: 4px;
+    border-radius: 0;
     color: var(--tsa-ink);
-    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     white-space: nowrap;
 }
 
 #thatseoagent-app .tsa-rule-button:hover {
     border-color: var(--tsa-ink);
+}
+
+/* A choice among a few options as one ruled strip: real radios, each label
+   one segment, the chosen one raised like the screen's tabs. */
+#thatseoagent-app .tsa-segmented {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 2px;
+    border: 1px solid var(--tsa-rule);
+    border-radius: 0;
+    background: var(--tsa-paper);
+    font-size: 13px;
+}
+
+#thatseoagent-app .tsa-segmented label.tsa-segment {
+    position: relative;
+    padding: 0.2rem 0.7rem;
+    border-radius: 0;
+    color: var(--tsa-ink-3);
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#thatseoagent-app .tsa-segmented label.tsa-segment:hover {
+    color: var(--tsa-ink);
+}
+
+/* The radio stays in the page, focusable and announced, over its label. */
+#thatseoagent-app .tsa-segmented label.tsa-segment input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+#thatseoagent-app .tsa-segmented label.tsa-segment:has(input:checked) {
+    background: var(--tsa-sheet);
+    color: var(--tsa-ink);
+    font-weight: 600;
+    /* A hairline, not a shadow. */
+    box-shadow: inset 0 0 0 1px var(--tsa-rule-strong);
+}
+
+#thatseoagent-app .tsa-segmented label.tsa-segment:has(input:focus-visible) {
+    outline: 2px solid var(--tsa-met);
+    outline-offset: 1px;
 }
 
 /* The observation row: one sweep of light when the page loads, meaning
@@ -363,7 +487,7 @@
     margin: 0 0 1.5rem;
     padding: 0.75rem 1rem 0.75rem 2.25rem;
     border: 1px solid var(--tsa-rule);
-    border-radius: var(--radius-sheet);
+    border-radius: 0;
     background: var(--tsa-sheet);
     color: var(--tsa-ink);
     box-shadow: none;
@@ -376,8 +500,9 @@
     left: 1rem;
     width: 0.625rem;
     height: 0.625rem;
-    border-radius: 1px;
-    background: var(--tsa-met);
+    border-radius: 0;
+    /* Plain information takes no color: red is kept for what matters. */
+    background: var(--tsa-ink-3);
 }
 
 #thatseoagent-app .notice p {
@@ -416,7 +541,7 @@
     min-height: 2.5rem;
     padding: 0.5rem 0.75rem;
     border: 1px solid var(--tsa-rule-strong);
-    border-radius: 4px;
+    border-radius: 0;
     /* background-color, not background: wp-admin draws the select arrow as a
        background image. */
     background-color: var(--tsa-sheet);
@@ -443,7 +568,8 @@
 
 #thatseoagent-app :is(input, select, textarea):focus {
     border-color: var(--tsa-met);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--tsa-met) 22%, transparent);
+    /* A second hairline, never a glow. */
+    box-shadow: 0 0 0 1px var(--tsa-met);
     outline: none;
 }
 
@@ -535,7 +661,7 @@
 
 #thatseoagent-app .thatseoagent-media-preview img {
     border: 1px solid var(--tsa-rule) !important;
-    border-radius: 4px;
+    border-radius: 0;
     background: var(--tsa-sheet) !important;
 }
 
@@ -543,12 +669,14 @@
     min-height: 2.25rem;
     padding: 0 0.85rem;
     border: 1px solid var(--tsa-rule-strong);
-    border-radius: 4px;
+    border-radius: 0;
     background: var(--tsa-sheet);
     color: var(--tsa-ink);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     line-height: 2.1rem;
     box-shadow: none;
 }
@@ -565,16 +693,16 @@
     border-color: var(--tsa-press);
     background: var(--tsa-press);
     color: var(--tsa-on-press);
-    font-size: 14px;
+    font-size: 12px;
     line-height: 2.4rem;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+    box-shadow: none;
 }
 
 #thatseoagent-app .button-primary:hover {
-    border-color: var(--tsa-press);
-    background: var(--tsa-press);
+    border-color: var(--tsa-press-hover);
+    background: var(--tsa-press-hover);
     color: var(--tsa-on-press);
-    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.28);
+    box-shadow: none;
 }
 
 @media screen and (max-width: 782px) {

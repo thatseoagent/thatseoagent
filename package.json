@@ -8,10 +8,12 @@
     "build:css": "tailwindcss -i assets/src/admin.css -o assets/build/admin.css --minify",
     "watch:css": "tailwindcss -i assets/src/admin.css -o assets/build/admin.css --watch",
     "vendor:alpine": "mkdir -p assets/vendor && cp node_modules/alpinejs/dist/cdn.min.js assets/vendor/alpine.min.js",
-    "build": "pnpm run vendor:alpine && pnpm run build:css"
+    "vendor:fonts": "mkdir -p assets/fonts && cp node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2 node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-ext-wght-normal.woff2 node_modules/@fontsource/space-mono/files/space-mono-latin-400-normal.woff2 node_modules/@fontsource/space-mono/files/space-mono-latin-700-normal.woff2 node_modules/@fontsource/space-mono/files/space-mono-latin-ext-400-normal.woff2 node_modules/@fontsource/space-mono/files/space-mono-latin-ext-700-normal.woff2 assets/fonts/ && cp node_modules/@fontsource-variable/space-grotesk/LICENSE assets/fonts/SPACE-GROTESK-LICENSE.txt && cp node_modules/@fontsource/space-mono/LICENSE assets/fonts/SPACE-MONO-LICENSE.txt",
+    "build": "pnpm run vendor:alpine && pnpm run vendor:fonts && pnpm run build:css"
   },
   "devDependencies": {
-    "@fontsource-variable/public-sans": "^5.3.0",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
+    "@fontsource/space-mono": "^5.3.0",
     "@tailwindcss/cli": "^4.3.3",
     "alpinejs": "3.17.4",
     "tailwindcss": "^4.3.3"

@@ -2,8 +2,8 @@
  * ThatSeoAgent screen: the interactive layer.
  *
  * Every view is server-rendered and works without this file; Alpine.js adds
- * saving without reloads, the batched content check, filters and the live
- * sidebar. Components start from the state the page was rendered with
+ * saving without reloads, the batched content check, filters, the live
+ * sidebar, and moving between views without reloading the page. Components start from the state the page was rendered with
  * (window.thatSeoAgent, printed before this file), so nothing is fetched on load.
  *
  * Load order: this file, then Alpine (assets/vendor/alpine.min.js), both
@@ -120,6 +120,167 @@
 		} ) );
 
 		/*
+		 * Moving between views without reloading the page.
+		 *
+		 * go() fetches a view with the X-ThatSeoAgent-View header — the
+		 * server answers with the screen alone, as JSON — and swaps the
+		 * navigation and the main column. Alpine's own mutation observer
+		 * stops the components that leave and starts the ones that arrive,
+		 * so nothing is initialised twice. History, the title and the
+		 * sidebar's bulletin follow. Anything unexpected loads the page
+		 * instead.
+		 *
+		 * `leave` is asked before the current view is replaced: a view with
+		 * unsaved work sets it, and clears it when it goes.
+		 */
+		Alpine.store( 'router', {
+			leave: null,
+			loading: false,
+			// The view on screen, without its hash.
+			shown: window.location.href.split( '#' )[ 0 ],
+			request: 0,
+
+			go: function ( href, push ) {
+				var store = this;
+
+				if ( ! window.fetch || ! window.DOMParser ) {
+					window.location.href = href;
+					return;
+				}
+
+				if ( store.leave && ! store.leave() ) {
+					if ( ! push ) {
+						// Back or forward was cancelled: put the address back.
+						window.history.pushState( {}, '', store.shown );
+					}
+					return;
+				}
+
+				var request = ++store.request;
+				store.loading = true;
+
+				window.fetch( href, {
+					credentials: 'same-origin',
+					headers: { 'X-ThatSeoAgent-View': '1', Accept: 'application/json' },
+				} ).then( function ( response ) {
+					if ( ! response.ok || -1 === ( response.headers.get( 'content-type' ) || '' ).indexOf( 'json' ) ) {
+						throw new Error( 'not a view' );
+					}
+					return response.json();
+				} ).then( function ( answer ) {
+					// A later click won: this answer is stale.
+					if ( request !== store.request ) {
+						return;
+					}
+
+					// The plugin was updated since this page loaded: this script
+					// is the old one, and the new view needs the new one.
+					if ( answer.version && data.version && answer.version !== data.version ) {
+						window.location.href = href;
+						return;
+					}
+
+					var app = document.getElementById( 'thatseoagent-app' );
+					var next = new window.DOMParser().parseFromString( answer.html, 'text/html' );
+					var main = app && app.querySelector( 'main' );
+					var nav = app && app.querySelector( 'aside nav' );
+					var nextMain = next.querySelector( '#thatseoagent-app main' );
+					var nextNav = next.querySelector( '#thatseoagent-app aside nav' );
+
+					if ( ! main || ! nextMain ) {
+						throw new Error( 'no view' );
+					}
+
+					// The address first: a view reads its hash as it starts.
+					if ( push ) {
+						window.history.pushState( {}, '', href );
+					}
+					store.shown = href.split( '#' )[ 0 ];
+
+					main.replaceWith( document.importNode( nextMain, true ) );
+					if ( nav && nextNav ) {
+						nav.replaceWith( document.importNode( nextNav, true ) );
+					}
+
+					if ( answer.title ) {
+						document.title = answer.title;
+					}
+					if ( answer.bulletin ) {
+						Object.assign( Alpine.store( 'bulletin' ), answer.bulletin );
+					}
+
+					store.loading = false;
+
+					// Once Alpine has started the new view.
+					Alpine.nextTick( function () {
+						store.arrive( new URL( href, window.location.href ).hash );
+					} );
+				} ).catch( function () {
+					window.location.href = href;
+				} );
+			},
+
+			// Scroll to the link's anchor, or to the top with focus on the
+			// new view's title, where a screen reader should land.
+			arrive: function ( hash ) {
+				var target = hash ? document.getElementById( decodeURIComponent( hash.slice( 1 ) ) ) : null;
+
+				if ( target ) {
+					target.scrollIntoView();
+					return;
+				}
+
+				window.scrollTo( 0, 0 );
+
+				var heading = document.querySelector( '#thatseoagent-app main h1, #thatseoagent-app main h2' );
+				if ( heading ) {
+					heading.setAttribute( 'tabindex', '-1' );
+					heading.focus( { preventScroll: true } );
+				}
+			},
+		} );
+
+		/*
+		 * The screen itself, on #thatseoagent-app: sends clicks on links to
+		 * another of its views, and back and forward, through the router.
+		 */
+		Alpine.data( 'tsaScreen', function () {
+			return {
+				follow: function ( event ) {
+					if ( event.defaultPrevented || 0 !== event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ) {
+						return;
+					}
+
+					var link = event.target.closest( 'a' );
+					if ( ! link || ! link.href || link.hasAttribute( 'download' ) || ( link.target && '_self' !== link.target ) ) {
+						return;
+					}
+
+					var url = new URL( link.href, window.location.href );
+					var isView = url.origin === window.location.origin &&
+						/\/wp-admin\/admin\.php$/.test( url.pathname ) &&
+						'thatseoagent' === url.searchParams.get( 'page' );
+
+					// Another screen, or an anchor of this same view: the
+					// browser does it.
+					if ( ! isView || ( url.hash && url.href.split( '#' )[ 0 ] === this.$store.router.shown ) ) {
+						return;
+					}
+
+					event.preventDefault();
+					this.$store.router.go( url.href, true );
+				},
+
+				back: function () {
+					// Back to an anchor of the view on screen only scrolls.
+					if ( window.location.href.split( '#' )[ 0 ] !== this.$store.router.shown ) {
+						this.$store.router.go( window.location.href, false );
+					}
+				},
+			};
+		} );
+
+		/*
 		 * One message at a time, bottom corner, announced to screen readers.
 		 */
 		Alpine.store( 'toast', {
@@ -214,10 +375,17 @@
 					};
 					window.addEventListener( 'beforeunload', this.onLeave );
 
+					// Moving to another view replaces this one without unloading
+					// the page, so beforeunload never fires: ask here too.
+					Alpine.store( 'router' ).leave = function () {
+						return 'dirty' !== self.status || window.confirm( t( 'leave' ) );
+					};
+
 					this.watchSections();
 				},
 
 				destroy: function () {
+					Alpine.store( 'router' ).leave = null;
 					window.removeEventListener( 'beforeunload', this.onLeave );
 					window.removeEventListener( 'focus', this.onFocus );
 					if ( this.observer ) {
@@ -346,6 +514,9 @@
 				rows: initial.last ? initial.last.rows : [],
 				finished: initial.last ? initial.last.finished : 0,
 				filter: 'issues',
+				// A few pages at a time, so the list stays short.
+				page: 1,
+				perPage: 20,
 				error: '',
 				loading: false,
 				run: 0,
@@ -365,6 +536,24 @@
 					return 'issues' === this.filter ? rows.filter( function ( row ) {
 						return row.issues.length > 0;
 					} ) : rows;
+				},
+
+				get pages() {
+					return Math.max( 1, Math.ceil( this.visible.length / this.perPage ) );
+				},
+
+				get pageRows() {
+					var page = Math.min( this.page, this.pages );
+					return this.visible.slice( ( page - 1 ) * this.perPage, page * this.perPage );
+				},
+
+				turn: function ( step ) {
+					this.page = Math.min( this.pages, Math.max( 1, this.page + step ) );
+
+					var list = this.$root.querySelector( '#thatseoagent-results' );
+					if ( list ) {
+						list.scrollIntoView( { block: 'start' } );
+					}
 				},
 
 				get withIssues() {
@@ -401,6 +590,7 @@
 					this.status = 'running';
 					this.error = '';
 					this.rows = [];
+					this.page = 1;
 					this.checked = 0;
 					this.total = 0;
 
@@ -457,8 +647,11 @@
 					this.loading = true;
 					this.error = '';
 
-					return api( { path: '/thatseoagent/v1/audit?post_type=' + encodeURIComponent( this.postType ) } ).then( function ( last ) {
+					return api( { path: '/thatseoagent/v1/audit?post_type=' + encodeURIComponent( this.postType ) } ).then( function ( answer ) {
+						// null when this content type was never checked.
+						var last = answer && answer.last;
 						self.rows = last ? last.rows : [];
+						self.page = 1;
 						self.total = last ? last.total : 0;
 						self.checked = self.total;
 						self.finished = last ? last.finished : 0;
@@ -469,22 +662,6 @@
 					} ).then( function () {
 						self.loading = false;
 					} );
-				},
-			};
-		} );
-
-		/*
-		 * Products: filter the rows on this page by state.
-		 */
-		Alpine.data( 'tsaProducts', function () {
-			return {
-				filter: 'all', // all | attention | complete
-
-				shows: function ( level ) {
-					if ( 'all' === this.filter ) {
-						return true;
-					}
-					return 'complete' === this.filter ? 'clear' === level : 'clear' !== level;
 				},
 			};
 		} );
@@ -521,15 +698,11 @@
 		} );
 
 		/*
-		 * Markdown for agents: the on-demand check, and the .htaccess rule
-		 * that keeps page caches out of the way.
+		 * Markdown for agents: the on-demand check.
 		 */
-		Alpine.data( 'tsaMarkdown', function ( initial ) {
-			initial = initial || {};
-
+		Alpine.data( 'tsaMarkdown', function () {
 			return {
 				result: null,
-				htaccess: initial.htaccess || {},
 				checking: false,
 				busy: false,
 
@@ -541,7 +714,6 @@
 
 					return api( { path: '/thatseoagent/v1/markdown/check', method: 'POST' } ).then( function ( result ) {
 						self.result = result;
-						self.htaccess = result.htaccess;
 						Alpine.store( 'toast' ).show( t( 'mdChecked' ), 'ok' );
 					} ).catch( function ( error ) {
 						Alpine.store( 'toast' ).show( t( 'mdCheckFailed' ) + ' ' + errorText( error ), 'error' );
@@ -550,6 +722,25 @@
 						self.checking = false;
 					} );
 				},
+
+				describe: function ( response ) {
+					if ( ! response || ! response.status ) {
+						return t( 'mdNoAnswer' );
+					}
+					var type = ( response.type || '' ).split( ';' )[ 0 ] || '—';
+					return type + ' (' + response.status + ')' + ( response.vary ? ', Vary: Accept' : '' );
+				},
+			};
+		} );
+
+		/*
+		 * Settings → Caches and CDN: the .htaccess rule that keeps page
+		 * caches away from requests asking for Markdown.
+		 */
+		Alpine.data( 'tsaHtaccess', function ( initial ) {
+			return {
+				htaccess: initial || {},
+				busy: false,
 
 				install: function () {
 					return this.write( 'POST', t( 'mdRuleAdded' ) );
@@ -574,16 +765,8 @@
 					} );
 				},
 
-				describe: function ( response ) {
-					if ( ! response || ! response.status ) {
-						return t( 'mdNoAnswer' );
-					}
-					var type = ( response.type || '' ).split( ';' )[ 0 ] || '—';
-					return type + ' (' + response.status + ')' + ( response.vary ? ', Vary: Accept' : '' );
-				},
-
-				htaccessText: function () {
-					var h = this.htaccess || {};
+				text: function () {
+					var h = this.htaccess;
 					if ( ! h.applies ) {
 						return t( 'mdRuleNotApache' );
 					}

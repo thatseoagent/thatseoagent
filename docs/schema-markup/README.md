@@ -10,6 +10,7 @@ The `ThatSeoAgent_Schema` class outputs Schema.org JSON-LD markup including:
 - **Organization**: Publisher information with logo
 - **Article**: For blog posts with author, dates, images
 - **WebPage**: For pages and general content
+- **AboutPage / ContactPage**: the about and contact pages the bulletin finds, instead of a plain WebPage
 - **BreadcrumbList**: Navigation breadcrumbs
 
 ## Code Structure

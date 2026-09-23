@@ -63,6 +63,10 @@ add_action('save_post', function($post_id) {
 }, 11); // After ThatSeoAgent saves (priority 10)
 ```
 
+## Moving between views
+
+The ThatSeoAgent screen behaves like a single-page app: links between its views are fetched with the `X-ThatSeoAgent-View` header, which makes `ThatSeoAgent_App::maybe_send_view()` answer with the screen alone as JSON (`html`, `title`, `bulletin`) instead of the whole admin page. In `assets/admin/app.js`, the `tsaScreen` component on `#thatseoagent-app` sends clicks on links to other views, and back and forward (`@popstate.window`), to `Alpine.store( 'router' ).go()`, which swaps the navigation and the main column and keeps history, the title and the sidebar in step. Alpine's own mutation observer stops the components that leave and starts the ones that arrive, so none is initialised twice; `$store.router.loading` sets `aria-busy` on the screen while the next view loads. A view with unsaved work sets `Alpine.store( 'router' ).leave` to be asked before it is replaced. Without JavaScript, or on any error, the link loads as a normal page.
+
 ## Usage
 
 ### Meta Box Fields

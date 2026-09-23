@@ -79,7 +79,7 @@ curl -H 'Accept: text/markdown' https://example.com/my-post
 
 Browsers never ask for it, so people keep getting the HTML. Both responses say `Vary: Accept`, and the Markdown one tells page caches not to store it.
 
-A cache that answers before WordPress — a page cache plugin, a CDN — would still hand agents the stored HTML. **AI index → Markdown for agents** checks this from outside on demand and says which layer answered and what to change; on Apache it can write a rule at the top of `.htaccess` that sends requests asking for Markdown to WordPress before any page cache plugin serves them.
+A cache that answers before WordPress — a page cache plugin, a CDN — would still hand agents the stored HTML. **AI index → Markdown for agents** checks this from outside on demand and says which layer answered and what to change. **Settings → Caches and CDN** has the fixes: on Apache it can write a rule at the top of `.htaccess` that sends requests asking for Markdown to WordPress before any page cache plugin serves them (elsewhere it shows the lines to copy), and it gives the Cloudflare Cache Rules steps with links to Cloudflare's documentation.
 
 An agent fetching the HTML pays for the navigation, sidebar, footer and scripts; the Markdown is only the content, typically 80–99% fewer tokens. The frontmatter carries the title, dates, author, permalink, excerpt, the same description the meta tags use, categories, tags and featured image.
 
@@ -174,6 +174,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Markdown_Cache` | Per-post Markdown cache and its invalidation |
 | | `ThatSeoAgent_Markdown_Check` | Whether agents asking for Markdown get it: the on-demand check from outside |
 | | `ThatSeoAgent_Markdown_Htaccess` | The .htaccess rule that keeps page caches away from Markdown requests |
+| | `ThatSeoAgent_Cache_Settings` | Settings → Caches and CDN: the .htaccess rule and the Cloudflare steps |
 | | `ThatSeoAgent_Llms` | llms.txt |
 | | `ThatSeoAgent_Llms_Full` | llms-full.txt: the full text of the pages llms.txt lists |
 | `audit/` | `ThatSeoAgent_Audit` | The SEO audit of a post, and site scans |
@@ -334,7 +335,7 @@ The screen's components live in `assets/admin/app.js` and register on `alpine:in
 
 REST endpoints for the screen, all administrators-only, under `thatseoagent/v1`: `GET /bulletin`, `POST /preferences`, `GET /audit`, `POST /audit/runs`, `POST|DELETE /audit/runs/{token}`, `POST /llms`. Settings are saved through core's `/wp/v2/settings`.
 
-Tailwind scans `includes/admin/` and `assets/admin/app.js` only, so the output holds just the classes they use. Colors are named by role (`bg-paper`, `bg-sheet`, `text-ink-2`, `border-rule`, `text-met`, `bg-level-yellow`…) and resolve to CSS variables that switch between the Day and Night editions. Public Sans is self-hosted from `assets/fonts/` (SIL Open Font License); `pnpm install` also pulls it from npm, should it need updating.
+Tailwind scans `includes/admin/`, `includes/crawlers/`, the Caches and CDN settings and `assets/admin/app.js` only, so the output holds just the classes they use. Colors are named by role (`bg-paper`, `bg-sheet`, `text-ink-2`, `border-rule`, `text-met`, `bg-level-yellow`…) and resolve to CSS variables that switch between the Day and Night editions. The screen wears the That SEO Agent brand shared with the MCP server and the website (see DESIGN.md). Space Grotesk and Space Mono are self-hosted from `assets/fonts/` (SIL Open Font License); `pnpm run vendor:fonts` copies them again from npm, should they need updating.
 
 ### Dependencies
 
@@ -363,7 +364,7 @@ Deleting the plugin removes its options, its post meta and any queued IndexNow e
 
 ThatSeoAgent began as a fork of [Lean SEO](https://github.com/Sarai-Chinwag/lean-seo) 1.9.0, by [Sarai Chinwag](https://saraichinwag.com) for [Extra Chill](https://extrachill.com), released under the GPL. It has since been rewritten and extended; the original copyright is kept in [LICENSE](LICENSE).
 
-Bundled: [Alpine.js](https://alpinejs.dev) (MIT), [league/html-to-markdown](https://github.com/thephpleague/html-to-markdown) (MIT), [Public Sans](https://public-sans.digital.gov) (SIL Open Font License), icons from [Lucide](https://lucide.dev) (ISC).
+Bundled: [Alpine.js](https://alpinejs.dev) (MIT), [league/html-to-markdown](https://github.com/thephpleague/html-to-markdown) (MIT), [Space Grotesk](https://github.com/floriankarsten/space-grotesk) and [Space Mono](https://github.com/googlefonts/spacemono) (SIL Open Font License), icons from [Lucide](https://lucide.dev) (ISC).
 
 ---
 

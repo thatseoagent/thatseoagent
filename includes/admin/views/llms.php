@@ -1,12 +1,12 @@
 <?php
 /**
  * AI index: whether llms.txt is served, and what it says; whether agents
- * asking for Markdown get it, and the .htaccess rule that keeps page caches
- * out of the way.
+ * asking for Markdown get it.
  *
  * @package ThatSeoAgent
  * @since 1.17.0
  * @since 2.3.0 The Markdown check and the .htaccess rule.
+ * @since 2.6.0 The .htaccess rule moved to Settings → Caches and CDN.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,7 +28,6 @@ if ( ! is_string( $body ) ) {
 }
 
 $file     = ThatSeoAgent_Llms::describe( $body );
-$htaccess = ThatSeoAgent_Markdown_Htaccess::status();
 $entries  = $file['entries'];
 $sections = $file['sections'];
 
@@ -84,7 +83,7 @@ if ( $physical ) {
         <dl class="divide-y divide-rule">
             <div class="flex items-baseline justify-between gap-3 py-3">
                 <dt class="text-ink-2"><?php esc_html_e( 'Pages listed', 'thatseoagent' ); ?></dt>
-                <dd class="text-[22px] leading-none font-bold text-ink tabular-nums" x-text="entries"><?php echo esc_html( number_format_i18n( $entries ) ); ?></dd>
+                <dd class="font-mono text-[22px] leading-none font-bold text-ink tabular-nums" x-text="entries"><?php echo esc_html( number_format_i18n( $entries ) ); ?></dd>
             </div>
         </dl>
         <ul class="divide-y divide-rule border-t border-rule text-[13px]" aria-label="<?php esc_attr_e( 'Sections', 'thatseoagent' ); ?>">
@@ -102,11 +101,11 @@ if ( $physical ) {
             <h2 id="thatseoagent-llms-preview" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Preview', 'thatseoagent' ); ?></h2>
             <p class="truncate font-mono text-[12px] text-ink-3"><?php echo esc_html( $url ); ?></p>
         </div>
-        <pre class="mt-4 max-h-[36rem] overflow-auto rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4 text-[12.5px] leading-relaxed whitespace-pre-wrap text-ink-2" x-text="body" :aria-busy="busy ? 'true' : 'false'" :class="{ 'opacity-50': busy }"><?php echo esc_html( $body ); ?></pre>
+        <pre class="mt-4 max-h-[36rem] overflow-auto border border-rule bg-sheet px-5 py-4 text-[12.5px] leading-relaxed whitespace-pre-wrap text-ink-2" x-text="body" :aria-busy="busy ? 'true' : 'false'" :class="{ 'opacity-50': busy }"><?php echo esc_html( $body ); ?></pre>
     </section>
 </div>
 
-<section class="mt-12" x-data="tsaMarkdown(<?php echo esc_attr( wp_json_encode( array( 'htaccess' => $htaccess ) ) ); ?>)" aria-labelledby="thatseoagent-markdown">
+<section class="mt-12" x-data="tsaMarkdown" aria-labelledby="thatseoagent-markdown">
     <div class="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule-strong pb-2.5">
         <h2 id="thatseoagent-markdown" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Markdown for agents', 'thatseoagent' ); ?></h2>
         <button type="button" class="tsa-press" x-cloak x-show.important="true" @click="check()" :disabled="busy" :aria-busy="busy ? 'true' : 'false'">
@@ -115,8 +114,9 @@ if ( $physical ) {
         </button>
     </div>
     <p class="mt-3 max-w-[44rem] text-ink-2"><?php esc_html_e( 'Each post answers an agent that asks for Markdown with its Markdown version, at its own address. A cache in front of WordPress can undo that without WordPress knowing, so the check asks one of your posts from outside: first as an agent, then as a browser.', 'thatseoagent' ); ?></p>
+    <p class="mt-2 max-w-[44rem] text-ink-2"><a href="<?php echo esc_url( ThatSeoAgent_App::url( 'settings' ) . '#' . ThatSeoAgent_Cache_Settings::SECTION ); ?>"><?php esc_html_e( 'What a page cache or Cloudflare needs, in Settings → Caches and CDN', 'thatseoagent' ); ?></a></p>
 
-    <div class="mt-6 max-w-[44rem] rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4" x-cloak x-show="result" aria-live="polite">
+    <div class="mt-6 max-w-[44rem] border border-rule bg-sheet px-5 py-4" x-cloak x-show="result" aria-live="polite">
         <p class="flex items-center gap-2.5">
             <span class="size-2.5 rounded-full" :class="result && 'works' === result.verdict ? 'bg-level-clear' : 'bg-rule-strong'" aria-hidden="true"></span>
             <span class="text-[16px] font-semibold text-ink" x-text="result ? result.headline : ''"></span>
@@ -136,16 +136,5 @@ if ( $physical ) {
         <p class="mt-3 font-semibold text-ink" x-show="result && result.advice" x-text="result ? result.advice : ''"></p>
     </div>
 
-    <?php if ( $htaccess['applies'] || $htaccess['present'] ) : ?>
-        <div class="mt-6 max-w-[44rem] rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4">
-            <h3 class="text-[15px] font-bold text-ink"><?php esc_html_e( 'Rule for page caches in .htaccess', 'thatseoagent' ); ?></h3>
-            <p class="mt-1 text-ink-2" x-text="htaccessText()"></p>
-            <pre class="mt-3 overflow-auto rounded-[4px] border border-rule bg-paper px-4 py-3 font-mono text-[12.5px] text-ink" x-text="htaccess.lines"><?php echo esc_html( $htaccess['lines'] ); ?></pre>
-            <div class="mt-3 flex flex-wrap gap-2" x-cloak x-show.important="htaccess.applies">
-                <button type="button" class="tsa-press" @click="install()" :disabled="busy" x-text="htaccess.present ? <?php echo esc_attr( wp_json_encode( __( 'Write it again at the top', 'thatseoagent' ) ) ); ?> : <?php echo esc_attr( wp_json_encode( __( 'Add the rule to .htaccess', 'thatseoagent' ) ) ); ?>"></button>
-                <button type="button" class="tsa-rule-button" x-show.important="htaccess.present" @click="remove()" :disabled="busy"><?php esc_html_e( 'Remove the rule', 'thatseoagent' ); ?></button>
-            </div>
-        </div>
-    <?php endif; ?>
 </section>
 </div>

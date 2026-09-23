@@ -65,19 +65,7 @@ class ThatSeoAgent_Schema {
                 $schema[] = $product;
             }
 
-            /**
-             * Post types that get an Article node.
-             *
-             * A product or a landing page is not an Article, so this stays
-             * narrow by default. Add a news-style custom post type here to
-             * have it marked up as one.
-             *
-             * @since 1.10.0
-             * @param array $post_types Default array('post').
-             */
-            $article_types = apply_filters('thatseoagent_article_post_types', array('post'));
-
-            if (! $product && is_singular((array) $article_types)) {
+            if (! $product && is_singular(self::article_post_types())) {
                 $schema[] = self::get_article_schema();
 
                 $author_schema = self::get_author_person_schema((int) get_post()->post_author);
@@ -432,6 +420,43 @@ class ThatSeoAgent_Schema {
     }
 
     /**
+     * The WebPage type of the current page: AboutPage or ContactPage for
+     * the trust pages the site has, WebPage for the rest.
+     *
+     * @since 2.6.0
+     * @return string
+     */
+    private static function webpage_type() {
+        $kind = ThatSeoAgent_Trust_Pages::kind_of(get_queried_object_id());
+
+        return array(
+            'about'   => 'AboutPage',
+            'contact' => 'ContactPage',
+        )[$kind] ?? 'WebPage';
+    }
+
+    /**
+     * Post types that get an Article node.
+     *
+     * @since 2.6.0 Extracted from output(), for the bulletin's count of
+     *              posts without an author.
+     * @return array<int, string>
+     */
+    public static function article_post_types() {
+        /**
+         * Post types that get an Article node.
+         *
+         * A product or a landing page is not an Article, so this stays
+         * narrow by default. Add a news-style custom post type here to
+         * have it marked up as one.
+         *
+         * @since 1.10.0
+         * @param array $post_types Default array('post').
+         */
+        return (array) apply_filters('thatseoagent_article_post_types', array('post'));
+    }
+
+    /**
      * A post's own image as an ImageObject, or null.
      *
      * @since 2.4.0 From ThatSeoAgent_Image; before, only the featured image.
@@ -470,7 +495,9 @@ class ThatSeoAgent_Schema {
      */
     private static function get_webpage_schema($main_entity_id = '', $breadcrumb = null) {
         $schema = array(
-            '@type' => 'WebPage',
+            // The about and contact pages say what they are: AboutPage and
+            // ContactPage are the WebPage subtypes schema.org has for them.
+            '@type' => self::webpage_type(),
             '@id' => get_permalink() . '#webpage',
             'url' => get_permalink(),
             'name' => get_the_title(),

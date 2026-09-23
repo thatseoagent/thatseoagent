@@ -23,6 +23,53 @@ class ThatSeoAgent_Default_Author {
     const OPTION_KEY = 'thatseoagent_schema';
 
     /**
+     * Whether a default author is set.
+     *
+     * @since 2.6.0
+     * @return bool
+     */
+    public static function is_set() {
+        $saved = get_option( self::OPTION_KEY, array() );
+
+        return is_array( $saved ) && ! empty( $saved['author_name'] );
+    }
+
+    /**
+     * How many published articles have no author: none assigned, or a user
+     * that no longer exists. They are credited to the site itself.
+     *
+     * @since 2.6.0
+     * @return int
+     */
+    public static function unattributed_count() {
+        global $wpdb;
+
+        $types = ThatSeoAgent_Schema::article_post_types();
+        if ( ! $types ) {
+            return 0;
+        }
+
+        $placeholders = implode( ',', array_fill( 0, count( $types ), '%s' ) );
+
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // A count with a join to users no query API offers; read on the
+        // bulletin, memoised with it.
+        $count = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->posts} p
+                 LEFT JOIN {$wpdb->users} u ON u.ID = p.post_author
+                 WHERE p.post_status = 'publish'
+                   AND p.post_type IN ($placeholders)
+                   AND u.ID IS NULL",
+                $types
+            )
+        );
+        // phpcs:enable
+
+        return $count;
+    }
+
+    /**
      * The option as ThatSeoAgent_Settings registers it: type, sanitizer,
      * default and REST schema.
      *

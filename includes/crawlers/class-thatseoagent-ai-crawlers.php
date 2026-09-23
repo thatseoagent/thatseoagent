@@ -321,19 +321,19 @@ class ThatSeoAgent_AI_Crawlers {
             );
         }
 
-        add_settings_field(
-            'thatseoagent_crawlers_bots',
-            __( 'Exceptions', 'thatseoagent' ),
-            array( __CLASS__, 'render_exceptions' ),
-            ThatSeoAgent_Settings::GROUP,
-            'thatseoagent_crawlers_section'
-        );
     }
 
     /**
-     * Render the allow/block choice of one group.
+     * Render one group: its allow/block choice, and under it each of its
+     * crawlers, which follow the group unless given a choice of their own.
+     *
+     * The rule and its exceptions sit together, so reading a group says
+     * everything about it. Each crawler's first option names what the group
+     * does now, and follows the group's choice as it changes.
      *
      * @since 2.1.0
+     * @since 2.6.0 The group's crawlers, each with its own choice, replace
+     *              the separate "crawler by crawler" list.
      * @param array $args Field arguments.
      */
     public static function render_group( $args ) {
@@ -341,64 +341,49 @@ class ThatSeoAgent_AI_Crawlers {
         $groups   = self::groups();
         $settings = self::get_settings();
         $name     = self::OPTION_KEY . '[' . $group . ']';
-        $tokens   = array();
-
-        foreach ( self::bots() as $token => $bot ) {
-            if ( $group === $bot['group'] ) {
-                $tokens[] = $token;
-            }
-        }
-        ?>
-        <fieldset>
-            <legend class="screen-reader-text"><?php echo esc_html( $groups[ $group ]['label'] ); ?></legend>
-            <label><input type="radio" name="<?php echo esc_attr( $name ); ?>" value="allow" <?php checked( $settings[ $group ], 'allow' ); ?>> <?php esc_html_e( 'Allow', 'thatseoagent' ); ?></label>
-            <label style="margin-left: 16px;"><input type="radio" name="<?php echo esc_attr( $name ); ?>" value="block" <?php checked( $settings[ $group ], 'block' ); ?>> <?php esc_html_e( 'Block', 'thatseoagent' ); ?></label>
-            <p class="description"><?php echo esc_html( $groups[ $group ]['description'] ); ?></p>
-            <p class="description"><?php echo esc_html( implode( ', ', $tokens ) ); ?></p>
-        </fieldset>
-        <?php
-    }
-
-    /**
-     * Render the per-crawler exceptions, folded away by default.
-     *
-     * @since 2.1.0
-     */
-    public static function render_exceptions() {
-        $settings = self::get_settings();
-        $groups   = self::groups();
-        $options  = array(
-            ''      => __( 'Follow its group', 'thatseoagent' ),
-            'allow' => __( 'Always allow', 'thatseoagent' ),
-            'block' => __( 'Always block', 'thatseoagent' ),
+        $like     = array(
+            'allow' => __( 'As the group: allow', 'thatseoagent' ),
+            'block' => __( 'As the group: block', 'thatseoagent' ),
         );
         ?>
-        <details <?php echo empty( $settings['bots'] ) ? '' : 'open'; ?>>
-            <summary><?php esc_html_e( 'Choose crawler by crawler', 'thatseoagent' ); ?></summary>
-            <table class="mt-3 w-full max-w-[40rem] border-y border-rule">
-                <tbody class="divide-y divide-rule">
-                    <?php foreach ( self::bots() as $token => $bot ) : ?>
-                        <?php
-                        if ( 'core' === $bot['group'] ) {
-                            continue;
-                        }
-                        $id    = 'thatseoagent_crawler_' . sanitize_html_class( $token );
-                        $value = isset( $settings['bots'][ $token ] ) ? $settings['bots'][ $token ] : '';
-                        ?>
-                        <tr>
-                            <td class="py-2.5 pr-4"><label for="<?php echo esc_attr( $id ); ?>" class="font-semibold text-ink"><?php echo esc_html( $token ); ?></label><br><span class="description"><?php echo esc_html( $bot['operator'] . ' · ' . $groups[ $bot['group'] ]['label'] ); ?></span></td>
-                            <td class="py-2.5 text-right">
-                                <select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( self::OPTION_KEY . '[bots][' . $token . ']' ); ?>">
-                                    <?php foreach ( $options as $option => $label ) : ?>
-                                        <option value="<?php echo esc_attr( $option ); ?>" <?php selected( $value, $option ); ?>><?php echo esc_html( $label ); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </details>
+        <fieldset x-data="{ choice: <?php echo esc_attr( wp_json_encode( $settings[ $group ] ) ); ?>, like: <?php echo esc_attr( wp_json_encode( $like ) ); ?> }">
+            <legend class="screen-reader-text"><?php echo esc_html( $groups[ $group ]['label'] ); ?></legend>
+            <label><input type="radio" name="<?php echo esc_attr( $name ); ?>" value="allow" @change="choice = 'allow'" <?php checked( $settings[ $group ], 'allow' ); ?>> <?php esc_html_e( 'Allow', 'thatseoagent' ); ?></label>
+            <label style="margin-left: 16px;"><input type="radio" name="<?php echo esc_attr( $name ); ?>" value="block" @change="choice = 'block'" <?php checked( $settings[ $group ], 'block' ); ?>> <?php esc_html_e( 'Block', 'thatseoagent' ); ?></label>
+            <p class="description"><?php echo esc_html( $groups[ $group ]['description'] ); ?></p>
+
+            <ul class="mt-3 max-w-[40rem] divide-y divide-rule border-t border-rule">
+                <?php foreach ( self::bots() as $token => $bot ) : ?>
+                    <?php
+                    if ( $group !== $bot['group'] ) {
+                        continue;
+                    }
+                    $field = self::OPTION_KEY . '[bots][' . $token . ']';
+                    $value = isset( $settings['bots'][ $token ] ) ? $settings['bots'][ $token ] : '';
+                    ?>
+                    <li class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 py-2">
+                        <span class="min-w-0">
+                            <span class="font-semibold text-ink"><?php echo esc_html( $token ); ?></span>
+                            <span class="ml-1 text-[12px] text-ink-3"><?php echo esc_html( $bot['operator'] ); ?></span>
+                        </span>
+                        <span class="tsa-segmented" role="radiogroup" aria-label="<?php echo esc_attr( $token ); ?>">
+                            <label class="tsa-segment">
+                                <input type="radio" name="<?php echo esc_attr( $field ); ?>" value="" <?php checked( $value, '' ); ?>>
+                                <span x-text="like[ choice ]"><?php echo esc_html( $like[ $settings[ $group ] ] ); ?></span>
+                            </label>
+                            <label class="tsa-segment">
+                                <input type="radio" name="<?php echo esc_attr( $field ); ?>" value="allow" <?php checked( $value, 'allow' ); ?>>
+                                <?php esc_html_e( 'Allow', 'thatseoagent' ); ?>
+                            </label>
+                            <label class="tsa-segment">
+                                <input type="radio" name="<?php echo esc_attr( $field ); ?>" value="block" <?php checked( $value, 'block' ); ?>>
+                                <?php esc_html_e( 'Block', 'thatseoagent' ); ?>
+                            </label>
+                        </span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </fieldset>
         <?php
     }
 }

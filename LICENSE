@@ -18,7 +18,8 @@ GNU General Public License for more details.
 Bundled third-party components keep their own licenses:
 - Alpine.js (assets/vendor/alpine.min.js): MIT
 - league/html-to-markdown (vendor-prefixed/league/): MIT, see its LICENSE
-- Public Sans (assets/fonts/): SIL Open Font License 1.1, see its license file
+- Space Grotesk and Space Mono (assets/fonts/): SIL Open Font License 1.1,
+  see SPACE-GROTESK-LICENSE.txt and SPACE-MONO-LICENSE.txt
 - Lucide icon paths (includes/admin/class-thatseoagent-icons.php): ISC
 
 ===========================================================================

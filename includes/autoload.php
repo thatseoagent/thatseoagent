@@ -80,6 +80,7 @@ spl_autoload_register(
         'ThatSeoAgent_Robots'            => 'sitemap/class-thatseoagent-robots.php',
         'ThatSeoAgent_Sitemap'           => 'sitemap/class-thatseoagent-sitemap.php',
 
+        'ThatSeoAgent_Cache_Settings'    => 'markdown/class-thatseoagent-cache-settings.php',
         'ThatSeoAgent_Llms'              => 'markdown/class-thatseoagent-llms.php',
         'ThatSeoAgent_Llms_Full'         => 'markdown/class-thatseoagent-llms-full.php',
         'ThatSeoAgent_Markdown_Cache'    => 'markdown/class-thatseoagent-markdown-cache.php',

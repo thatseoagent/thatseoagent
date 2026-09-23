@@ -148,6 +148,28 @@ class ThatSeoAgent_Trust_Pages {
     }
 
     /**
+     * Which trust page a post is, if it is one.
+     *
+     * @since 2.6.0
+     * @param int $post_id Post ID.
+     * @return string 'about', 'contact', 'privacy', or ''.
+     */
+    public static function kind_of( $post_id ) {
+        $post_id = (int) $post_id;
+        if ( ! $post_id ) {
+            return '';
+        }
+
+        foreach ( self::found() as $kind => $url ) {
+            if ( '' !== $url && 0 !== strpos( $url, 'mailto:' ) && url_to_postid( $url ) === $post_id ) {
+                return $kind;
+            }
+        }
+
+        return '';
+    }
+
+    /**
      * Every link in the site's menus.
      *
      * @since 2.3.0

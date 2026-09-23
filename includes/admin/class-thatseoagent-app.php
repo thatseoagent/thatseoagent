@@ -48,6 +48,7 @@ class ThatSeoAgent_App {
      */
     public static function register() {
         add_action( 'admin_menu', array( __CLASS__, 'add_page' ) );
+        add_action( 'load-' . self::PAGE_HOOK, array( __CLASS__, 'maybe_send_view' ) );
         add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
         add_filter( 'admin_body_class', array( __CLASS__, 'body_class' ) );
     }
@@ -239,6 +240,8 @@ class ThatSeoAgent_App {
      */
     private static function script_data() {
         return array(
+            // Compared with each view the router fetches: see maybe_send_view().
+            'version'  => self::client_version(),
             'theme'    => self::theme(),
             'bulletin' => ThatSeoAgent_Bulletin::for_js(),
             'i18n'     => array(
@@ -266,7 +269,7 @@ class ThatSeoAgent_App {
                 'mdRuleAdded'     => __( 'The rule is at the top of .htaccess.', 'thatseoagent' ),
                 'mdRuleRemoved'   => __( 'The rule was removed from .htaccess.', 'thatseoagent' ),
                 'mdRuleFailed'    => __( '.htaccess was not changed.', 'thatseoagent' ),
-                'mdRuleNotApache' => __( 'This server does not read .htaccess rewrite rules, so the rule would do nothing here.', 'thatseoagent' ),
+                'mdRuleNotApache' => __( 'This server does not apply .htaccess rewrite rules, so here the rule does nothing. The lines are here to paste at the very top of .htaccess on an Apache server, before a page cache that serves from that file.', 'thatseoagent' ),
                 'mdRuleMissing'   => __( 'Not in .htaccess. Without a page cache it changes nothing; add it before installing one, and it keeps requests asking for Markdown away from the cached copies.', 'thatseoagent' ),
                 'mdRuleNotWritable' => __( 'WordPress cannot write to the file: paste the lines at its very top by hand.', 'thatseoagent' ),
                 /* translators: %s: page cache plugin name. */
@@ -288,6 +291,58 @@ class ThatSeoAgent_App {
         $path = THATSEOAGENT_PLUGIN_DIR . $relative;
 
         return file_exists( $path ) ? THATSEOAGENT_VERSION . '.' . filemtime( $path ) : THATSEOAGENT_VERSION;
+    }
+
+    /**
+     * Answer a view request from the screen's own navigation.
+     *
+     * The screen moves between its views without reloading (app.js): a link
+     * to another view is fetched with the X-ThatSeoAgent-View header, and
+     * the answer is the screen alone — no admin menu, bar or footer — with
+     * the document title and the bulletin, so the sidebar can follow. Runs
+     * on the page's load hook: admin_init has already registered the
+     * settings, and what a link does on arrival (the review link of new
+     * content types) has already been done.
+     *
+     * @since 2.6.0
+     */
+    public static function maybe_send_view() {
+        if ( empty( $_SERVER['HTTP_X_THATSEOAGENT_VIEW'] ) || ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+
+        $views = self::views();
+        $view  = $views[ self::current_view() ];
+
+        ob_start();
+        self::render();
+        $html = ob_get_clean();
+
+        nocache_headers();
+        wp_send_json(
+            array(
+                'version'  => self::client_version(),
+                'html'     => $html,
+                /* translators: 1: view title, 2: site name. */
+                'title'    => sprintf( __( '%1$s ‹ %2$s — WordPress', 'thatseoagent' ), $view['title'], get_bloginfo( 'name' ) ),
+                'bulletin' => ThatSeoAgent_Bulletin::for_js(),
+            )
+        );
+    }
+
+    /**
+     * The version of the screen's script and styles as served now.
+     *
+     * The router compares it with the one the open page loaded: a page
+     * left open across an update of the plugin runs the old script, which
+     * would misread what the new server answers, so a view fetched with a
+     * different version is loaded as a whole page instead.
+     *
+     * @since 2.6.0
+     * @return string
+     */
+    private static function client_version() {
+        return self::asset_version( 'assets/admin/app.js' ) . '/' . self::asset_version( 'assets/build/admin.css' );
     }
 
     /**
@@ -330,19 +385,23 @@ class ThatSeoAgent_App {
         $classes = array(
             'clear'  => array(
                 'square' => 'bg-level-clear',
-                'field'  => 'bg-level-clear text-on-clear',
+                'field'  => 'border border-rule bg-sheet text-ink',
+                'dot'    => 'bg-on-clear',
             ),
             'yellow' => array(
                 'square' => 'bg-level-yellow',
-                'field'  => 'bg-level-yellow text-on-yellow',
+                'field'  => 'border border-rule bg-sheet text-ink',
+                'dot'    => 'bg-on-yellow',
             ),
             'orange' => array(
                 'square' => 'bg-level-orange',
-                'field'  => 'bg-level-orange text-on-orange',
+                'field'  => 'border border-rule bg-sheet text-ink',
+                'dot'    => 'bg-on-orange',
             ),
             'red'    => array(
                 'square' => 'bg-level-red',
-                'field'  => 'bg-level-red text-on-red',
+                'field'  => 'border border-rule bg-sheet text-ink',
+                'dot'    => 'bg-on-red',
             ),
         );
 

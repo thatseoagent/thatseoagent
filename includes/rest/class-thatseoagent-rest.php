@@ -6,7 +6,7 @@
  *
  *     GET    /bulletin               the site bulletin (level, observations)
  *     POST   /preferences            the current user's screen preferences
- *     GET    /audit?post_type=       the last finished content check
+ *     GET    /audit?post_type=       the last finished content check, as { last }
  *     POST   /audit/runs             start a content check
  *     POST   /audit/runs/{token}     check the next batch
  *     DELETE /audit/runs/{token}     stop the check

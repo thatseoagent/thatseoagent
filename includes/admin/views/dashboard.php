@@ -36,9 +36,9 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
     </span>
 </p>
 
-<section class="tsa-field mt-5 grid gap-8 rounded-(--radius-sheet) px-7 py-8 md:grid-cols-[1fr_auto] md:px-10 md:py-10 <?php echo esc_attr( $level['field'] ); ?>" aria-labelledby="thatseoagent-condition">
+<section class="tsa-field mt-5 grid gap-8 px-7 py-8 md:grid-cols-[1fr_auto] md:px-10 md:py-10 <?php echo esc_attr( $level['field'] ); ?>" aria-labelledby="thatseoagent-condition">
     <div class="max-w-[46rem]">
-        <h1 id="thatseoagent-condition" class="text-[32px] leading-[1.08] font-extrabold tracking-[-0.025em] md:text-[44px]"><?php echo esc_html( $bulletin['headline'] ); ?></h1>
+        <h1 id="thatseoagent-condition" class="text-[32px] leading-[1.02] font-bold tracking-[-0.03em] text-ink md:text-[44px]"><?php echo esc_html( $bulletin['headline'] ); ?></h1>
         <p class="mt-4 max-w-[38rem] text-[16px] leading-relaxed"><?php echo esc_html( $bulletin['summary'] ); ?></p>
 
         <?php if ( $bulletin['action'] ) : ?>
@@ -54,9 +54,9 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
             <?php foreach ( array_reverse( $levels, true ) as $key => $scale ) : ?>
                 <?php $is_current = $key === $bulletin['level']; ?>
                 <li class="flex items-center gap-2.5 <?php echo $is_current ? 'font-bold' : 'opacity-70 max-md:[&>span:last-child]:sr-only'; ?>">
-                    <span class="grid size-4 place-items-center rounded-[2px] ring-1 ring-black/15 <?php echo esc_attr( ThatSeoAgent_App::level_classes( $key )['square'] ); ?>" aria-hidden="true">
+                    <span class="grid size-4 place-items-center ring-1 ring-black/15 <?php echo esc_attr( ThatSeoAgent_App::level_classes( $key )['square'] ); ?>" aria-hidden="true">
                         <?php if ( $is_current ) : ?>
-                            <span class="size-1.5 rounded-full <?php echo 'clear' === $key || 'red' === $key ? 'bg-white' : 'bg-[#111d27]'; ?>"></span>
+                            <span class="size-1.5 rounded-full <?php echo esc_attr( ThatSeoAgent_App::level_classes( $key )['dot'] ); ?>"></span>
                         <?php endif; ?>
                     </span>
                     <span><?php echo esc_html( $scale['name'] ); ?></span>
@@ -71,7 +71,7 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
 
 <section class="mt-3" aria-labelledby="thatseoagent-observations">
     <h2 id="thatseoagent-observations" class="sr-only"><?php esc_html_e( 'Observations', 'thatseoagent' ); ?></h2>
-    <ol class="tsa-sweep grid grid-cols-3 gap-px overflow-hidden rounded-(--radius-sheet) border border-rule bg-rule xl:grid-cols-9">
+    <ol class="tsa-sweep grid grid-cols-3 gap-px overflow-hidden border border-rule bg-rule xl:grid-cols-9">
         <?php foreach ( $bulletin['observations'] as $observation ) : ?>
             <?php
             $state = $observation['state'];
@@ -85,8 +85,8 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
             ?>
             <li class="bg-sheet px-4 pt-0 pb-3.5">
                 <span class="-mx-4 mb-3 block h-1 <?php echo esc_attr( ThatSeoAgent_App::state_bar( $state ) ); ?>" aria-hidden="true"></span>
-                <p class="text-[12px] font-semibold text-ink-2"><?php echo esc_html( $observation['label'] ); ?></p>
-                <p class="mt-0.5 truncate text-[14px] font-semibold <?php echo 'off' === $state ? 'text-ink-3' : 'text-ink'; ?>" title="<?php echo esc_attr( $observation['value'] ); ?>"><?php echo esc_html( $observation['value'] ); ?></p>
+                <p class="tsa-label"><?php echo esc_html( $observation['label'] ); ?></p>
+                <p class="mt-1.5 truncate text-[14px] font-semibold <?php echo 'off' === $state ? 'text-ink-3' : 'text-ink'; ?>" title="<?php echo esc_attr( $observation['value'] ); ?>"><?php echo esc_html( $observation['value'] ); ?></p>
                 <p class="sr-only"><?php echo esc_html( $word ); ?></p>
             </li>
         <?php endforeach; ?>
@@ -116,10 +116,10 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
                 <?php foreach ( $bulletin['warnings'] as $warning ) : ?>
                     <?php $warning_level = $levels[ $warning['level'] ] + ThatSeoAgent_App::level_classes( $warning['level'] ); ?>
                     <li class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 py-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start">
-                        <span class="mt-1.5 size-3 rounded-[1px] ring-1 ring-black/10 <?php echo esc_attr( $warning_level['square'] ); ?>" aria-hidden="true"></span>
+                        <span class="mt-1.5 size-3 ring-1 ring-black/10 <?php echo esc_attr( $warning_level['square'] ); ?>" aria-hidden="true"></span>
                         <div>
                             <h3 class="text-[16px] leading-snug font-semibold text-ink"><?php echo esc_html( $warning['title'] ); ?></h3>
-                            <p class="mt-1 max-w-[36rem] text-[14px] text-ink-2"><span class="font-semibold text-ink"><?php echo esc_html( $warning_level['name'] ); ?>.</span> <?php echo esc_html( $warning['detail'] ); ?></p>
+                            <p class="mt-1 max-w-[36rem] text-[14px] text-ink-2"><?php // The level's name is for screen readers: on screen its square says it. ?><span class="sr-only"><?php echo esc_html( $warning_level['name'] ); ?>. </span><?php echo esc_html( $warning['detail'] ); ?></p>
                         </div>
                         <a href="<?php echo esc_url( ThatSeoAgent_App::action_url( $warning['action'] ) ); ?>" class="tsa-rule-button col-start-2 justify-self-start sm:col-start-auto">
                             <?php echo esc_html( $warning['action']['label'] ); ?>
@@ -167,7 +167,7 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
             <?php foreach ( $readings as $reading ) : ?>
                 <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 py-3.5">
                     <dt class="text-[14px] font-medium text-ink"><?php echo esc_html( $reading[0] ); ?></dt>
-                    <dd class="row-span-2 text-right text-[22px] leading-none font-bold text-ink tabular-nums"><?php echo esc_html( $reading[1] ); ?></dd>
+                    <dd class="row-span-2 text-right font-mono text-[22px] leading-none font-bold text-ink tabular-nums"><?php echo esc_html( $reading[1] ); ?></dd>
                     <dd class="text-[12px] text-ink-3"><?php echo esc_html( $reading[2] ); ?></dd>
                 </div>
             <?php endforeach; ?>

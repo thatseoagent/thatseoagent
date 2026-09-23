@@ -67,19 +67,19 @@ foreach ( $diagnosis['bots'] as $token => $bot ) {
     </div>
 </section>
 
-<section class="mt-8 max-w-[44rem] rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4" x-cloak x-show="null !== robots && 200 !== robots" aria-live="polite">
+<section class="mt-8 max-w-[44rem] border border-rule bg-sheet px-5 py-4" x-cloak x-show="null !== robots && 200 !== robots" aria-live="polite">
     <p class="flex items-center gap-2 text-[15px] font-bold text-ink">
-        <span class="size-2.5 shrink-0 rounded-[1px] bg-level-orange ring-1 ring-black/10" aria-hidden="true"></span>
+        <span class="size-2.5 shrink-0 bg-level-orange ring-1 ring-black/10" aria-hidden="true"></span>
         <span x-text="<?php echo esc_attr( wp_json_encode( __( 'robots.txt answers with status %d', 'thatseoagent' ) ) ); ?>.replace('%d', robots || '—')"></span>
     </p>
     <p class="mt-1 text-[14px] text-ink-2"><?php esc_html_e( 'Crawlers only read the rules when robots.txt answers 200. With a 404 or any other 4xx they assume there are none and read everything; with a 5xx most stay away. The file itself looks fine, so the server, a theme router or a security layer is changing the status.', 'thatseoagent' ); ?></p>
 </section>
 
 <?php if ( $diagnosis['physical'] && '' !== $copy ) : ?>
-    <section class="mt-8 max-w-[44rem] rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4" aria-labelledby="thatseoagent-crawlers-copy">
+    <section class="mt-8 max-w-[44rem] border border-rule bg-sheet px-5 py-4" aria-labelledby="thatseoagent-crawlers-copy">
         <h2 id="thatseoagent-crawlers-copy" class="text-[15px] font-bold text-ink"><?php esc_html_e( 'Rules to add to your robots.txt file', 'thatseoagent' ); ?></h2>
         <p class="mt-1 text-[14px] text-ink-2"><?php esc_html_e( 'Paste these lines into the robots.txt file in the site root, or delete that file so WordPress serves its own with these rules.', 'thatseoagent' ); ?></p>
-        <pre class="mt-3 overflow-auto rounded-[4px] border border-rule bg-paper px-4 py-3 font-mono text-[12.5px] text-ink"><?php echo esc_html( $copy ); ?></pre>
+        <pre class="mt-3 overflow-auto border border-rule bg-paper px-4 py-3 font-mono text-[12.5px] text-ink"><?php echo esc_html( $copy ); ?></pre>
     </section>
 <?php endif; ?>
 
@@ -98,7 +98,7 @@ foreach ( $diagnosis['bots'] as $token => $bot ) {
 
             <table class="w-full text-left text-[14px] md:table-fixed">
                 <thead class="sr-only md:not-sr-only">
-                    <tr class="text-[12px] text-ink-3">
+                    <tr class="tsa-label">
                         <th scope="col" class="py-2 pr-4 font-medium md:w-[32%]"><?php esc_html_e( 'Crawler', 'thatseoagent' ); ?></th>
                         <th scope="col" class="py-2 pr-4 font-medium md:w-[26%]"><?php esc_html_e( 'robots.txt', 'thatseoagent' ); ?></th>
                         <th scope="col" class="py-2 pr-4 font-medium md:w-[16%]"><?php esc_html_e( 'Your choice', 'thatseoagent' ); ?></th>
@@ -135,7 +135,7 @@ foreach ( $diagnosis['bots'] as $token => $bot ) {
                             </td>
                             <td class="md:py-3 md:pr-4">
                                 <span class="flex items-center gap-2">
-                                    <span class="size-2.5 shrink-0 rounded-[1px] ring-1 ring-black/10 <?php echo esc_attr( $square ); ?>" aria-hidden="true"></span>
+                                    <span class="size-2.5 shrink-0 ring-1 ring-black/10 <?php echo esc_attr( $square ); ?>" aria-hidden="true"></span>
                                     <span class="<?php echo $blocked_search ? 'font-semibold text-ink' : 'text-ink'; ?>"><?php echo esc_html( $bot['allowed'] ? __( 'Allowed', 'thatseoagent' ) : __( 'Blocked', 'thatseoagent' ) ); ?></span>
                                 </span>
                                 <span class="block text-[12px] text-ink-3"><?php echo esc_html( $rule_note ); ?></span>

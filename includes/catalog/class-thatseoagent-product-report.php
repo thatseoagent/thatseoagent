@@ -4,8 +4,8 @@
  *
  * Validates catalog entries through ThatSeoAgent_Product::validate() and answers
  * two questions: how many entries are complete across the whole catalog
- * (summary(), cached), and what each entry on one page of the list is
- * missing (report()). The bulletin, the Products view and WP-CLI read it.
+ * (statuses() and summary(), cached), and what each entry on one page of a
+ * tab of the list is missing (report()). The bulletin, the Products view and WP-CLI read it.
  *
  * @package ThatSeoAgent
  * @since 1.17.0 Part of ThatSeoAgent_Product_Admin.
@@ -21,12 +21,31 @@ class ThatSeoAgent_Product_Report {
     /**
      * Products per report page.
      */
-    const PER_PAGE = 50;
+    const PER_PAGE = 20;
 
     /**
-     * Transient holding the catalog summary.
+     * Transient that held the catalog summary before 2.6.0, when it became
+     * a count of statuses(). Still cleared, so no stale copy lingers.
      */
     const SUMMARY_KEY = 'thatseoagent_product_summary';
+
+    /**
+     * Transient holding each catalog entry's state, in list order.
+     *
+     * @since 2.6.0
+     */
+    const STATUS_KEY = 'thatseoagent_product_statuses';
+
+    /**
+     * The report's tabs, and the states each one lists.
+     *
+     * @since 2.6.0
+     */
+    const STATES = array(
+        'all'       => array( 'error', 'warning', 'info', 'ok' ),
+        'attention' => array( 'error', 'warning' ),
+        'complete'  => array( 'info', 'ok' ),
+    );
 
     /**
      * Drop the summary when anything it counts may have changed.
@@ -51,6 +70,72 @@ class ThatSeoAgent_Product_Report {
      */
     public static function purge_summary() {
         delete_transient( self::SUMMARY_KEY );
+        delete_transient( self::STATUS_KEY );
+    }
+
+    /**
+     * Every catalog entry's worst severity, by post ID, in list order
+     * (title, A to Z).
+     *
+     * Validated once for the whole catalog and kept an hour, or until a
+     * change: the summary, the tabs' counts and each tab's pages all read
+     * this, so they agree, and paging through a tab validates nothing again
+     * but the rows it shows.
+     *
+     * @since 2.6.0
+     * @return array<int, string> Post ID => 'error', 'warning', 'info' or 'ok'.
+     */
+    public static function statuses() {
+        $cached = get_transient( self::STATUS_KEY );
+        if ( is_array( $cached ) ) {
+            return $cached;
+        }
+
+        $statuses   = array();
+        $post_types = ThatSeoAgent_Product::post_types();
+
+        if ( $post_types ) {
+            $ids = get_posts(
+                array(
+                    'post_type'      => $post_types,
+                    'post_status'    => 'publish',
+                    'posts_per_page' => -1,
+                    'fields'         => 'ids',
+                    'orderby'        => 'title',
+                    'order'          => 'ASC',
+                    'no_found_rows'  => true,
+                )
+            );
+
+            foreach ( $ids as $post_id ) {
+                $statuses[ (int) $post_id ] = self::worst_severity( ThatSeoAgent_Product::validate( $post_id ) );
+                ThatSeoAgent_Memo::forget_post( $post_id );
+            }
+        }
+
+        set_transient( self::STATUS_KEY, $statuses, HOUR_IN_SECONDS );
+
+        return $statuses;
+    }
+
+    /**
+     * How many entries each tab lists.
+     *
+     * @since 2.6.0
+     * @return array{all: int, attention: int, complete: int}
+     */
+    public static function tab_counts() {
+        $counts = array_fill_keys( array_keys( self::STATES ), 0 );
+
+        foreach ( self::statuses() as $status ) {
+            foreach ( self::STATES as $tab => $states ) {
+                if ( in_array( $status, $states, true ) ) {
+                    $counts[ $tab ]++;
+                }
+            }
+        }
+
+        return $counts;
     }
 
     /**
@@ -63,11 +148,6 @@ class ThatSeoAgent_Product_Report {
      * @return array{error: int, warning: int, info: int, ok: int, total: int}
      */
     public static function summary() {
-        $cached = get_transient( self::SUMMARY_KEY );
-        if ( is_array( $cached ) && isset( $cached['total'] ) ) {
-            return $cached;
-        }
-
         $summary = array(
             'error'   => 0,
             'warning' => 0,
@@ -76,89 +156,66 @@ class ThatSeoAgent_Product_Report {
             'total'   => 0,
         );
 
-        $post_types = ThatSeoAgent_Product::post_types();
-
-        if ( $post_types ) {
-            $ids = get_posts(
-                array(
-                    'post_type'      => $post_types,
-                    'post_status'    => 'publish',
-                    'posts_per_page' => -1,
-                    'fields'         => 'ids',
-                    'no_found_rows'  => true,
-                )
-            );
-
-            foreach ( $ids as $post_id ) {
-                $summary[ self::worst_severity( ThatSeoAgent_Product::validate( $post_id ) ) ]++;
-                $summary['total']++;
-                ThatSeoAgent_Memo::forget_post( $post_id );
-            }
+        foreach ( self::statuses() as $status ) {
+            $summary[ $status ]++;
+            $summary['total']++;
         }
-
-        set_transient( self::SUMMARY_KEY, $summary, HOUR_IN_SECONDS );
 
         return $summary;
     }
 
     /**
-     * One page of the validation report.
+     * One page of one tab of the validation report.
      *
-     * One page of catalog entries at a time: validating renders each entry's
-     * description, which is too much work for every product at once on a
-     * large catalog. `wp thatseoagent validate-products` covers the whole catalog.
+     * The tab is filtered over the whole catalog, from statuses(), and then
+     * paged: each tab has its own pages, and its count is the catalog's, not
+     * the page's. Only the rows of the page are validated again, for the
+     * issues they list.
      *
      * @since 1.17.0 Replaces the Product schema admin page's own renderer.
-     * @param int $paged Page number.
-     * @return array{rows: array, counts: array<string, int>, found: int, pages: int, paged: int}
+     * @since 2.6.0 $state: a tab of its own, with its own pages.
+     * @param int    $paged Page number.
+     * @param string $state 'all', 'attention' or 'complete'.
+     * @return array{rows: array, found: int, pages: int, paged: int, state: string}
      */
-    public static function report( $paged = 1 ) {
-        $paged  = max( 1, (int) $paged );
-        $report = array(
-            'rows'   => array(),
-            'counts' => array(
-                'error'   => 0,
-                'warning' => 0,
-                'info'    => 0,
-                'ok'      => 0,
-            ),
-            'found'  => 0,
-            'pages'  => 0,
-            'paged'  => $paged,
-        );
-
-        $post_types = ThatSeoAgent_Product::post_types();
-        if ( empty( $post_types ) ) {
-            return $report;
-        }
-
-        $query = new WP_Query(
-            array(
-                'post_type'      => $post_types,
-                'post_status'    => 'publish',
-                'posts_per_page' => self::PER_PAGE,
-                'paged'          => $paged,
-                'orderby'        => 'title',
-                'order'          => 'ASC',
+    public static function report( $paged = 1, $state = 'all' ) {
+        $state = isset( self::STATES[ $state ] ) ? $state : 'all';
+        $ids   = array_keys(
+            array_filter(
+                self::statuses(),
+                function ( $status ) use ( $state ) {
+                    return in_array( $status, self::STATES[ $state ], true );
+                }
             )
         );
 
-        foreach ( $query->posts as $post ) {
-            $issues = ThatSeoAgent_Product::validate( $post );
-            $status = self::worst_severity( $issues );
+        $found = count( $ids );
+        $pages = (int) ceil( $found / self::PER_PAGE );
+        $paged = min( max( 1, (int) $paged ), max( 1, $pages ) );
 
-            $report['counts'][ $status ]++;
+        $report = array(
+            'rows'  => array(),
+            'found' => $found,
+            'pages' => $pages,
+            'paged' => $paged,
+            'state' => $state,
+        );
+
+        foreach ( array_slice( $ids, ( $paged - 1 ) * self::PER_PAGE, self::PER_PAGE ) as $post_id ) {
+            $post = get_post( $post_id );
+            if ( ! $post ) {
+                continue;
+            }
+
+            $issues           = ThatSeoAgent_Product::validate( $post );
             $report['rows'][] = array(
                 'post'   => $post,
-                'status' => $status,
+                'status' => self::worst_severity( $issues ),
                 'issues' => $issues,
             );
 
             ThatSeoAgent_Memo::forget_post( $post );
         }
-
-        $report['found'] = (int) $query->found_posts;
-        $report['pages'] = (int) $query->max_num_pages;
 
         return $report;
     }

@@ -81,6 +81,7 @@ class ThatSeoAgent {
             ThatSeoAgent_Product_Settings::register();
             ThatSeoAgent_AI_Crawlers::register();
             ThatSeoAgent_Llms::register_settings();
+            ThatSeoAgent_Cache_Settings::register();
             ThatSeoAgent_Crawl_Cleanup::register_settings();
             ThatSeoAgent_Verification::register_settings();
             ThatSeoAgent_New_Types::register();
