@@ -108,7 +108,7 @@ class Lean_SEO_FAQ {
      *
      * Strategies run in order; the first to yield MIN_PAIRS wins.
      *
-     * 1. Real question headings — always on.
+     * 1. Real question headings and question-shaped Details blocks — always on.
      * 2. Numbered / stepped headings — opt-in, synthesises a question.
      * 3. Thematic headings on spiritual-meaning posts — opt-in, synthesises.
      *
@@ -123,12 +123,11 @@ class Lean_SEO_FAQ {
         }
 
         $sections = self::sections( Lean_SEO_Content::html( $post ) );
-        if ( empty( $sections ) ) {
-            return array();
-        }
 
-        $pairs = self::question_pairs( $sections );
-        if ( count( $pairs ) >= self::MIN_PAIRS ) {
+        // Question headings and Details blocks are both questions the visitor
+        // can read on the page; together they make one FAQ.
+        $pairs = self::merge_pairs( self::question_pairs( $sections ), self::details_pairs( $post ) );
+        if ( count( $pairs ) >= self::MIN_PAIRS || empty( $sections ) ) {
             return $pairs;
         }
 
@@ -264,6 +263,116 @@ class Lean_SEO_FAQ {
     }
 
     /**
+     * Details blocks whose summary is a question.
+     *
+     * The core Details block is the editor's own accordion: a `<summary>` the
+     * visitor clicks and an answer that opens beneath it. When the summary is
+     * a question, that is an FAQ item written by hand — the most reliable
+     * source there is, since nothing is inferred. A summary that is not a
+     * question ("Show specifications") is an ordinary disclosure and is left
+     * alone.
+     *
+     * The answer is rendered from the block's inner blocks, so dynamic blocks
+     * inside it contribute their text.
+     *
+     * @since 1.16.0
+     * @param WP_Post $post Post to read.
+     * @return array<int, array{question: string, answer: string}>
+     */
+    private static function details_pairs( WP_Post $post ) {
+        if ( ! has_block( 'core/details', $post ) ) {
+            return array();
+        }
+
+        $pairs = array();
+
+        foreach ( self::find_blocks( parse_blocks( $post->post_content ), 'core/details' ) as $block ) {
+            $question = isset( $block['attrs']['summary'] ) ? (string) $block['attrs']['summary'] : '';
+
+            // Older serializations keep the summary only in the saved markup.
+            if ( '' === $question && preg_match( '/<summary[^>]*>(.*?)<\/summary>/is', (string) $block['innerHTML'], $m ) ) {
+                $question = $m[1];
+            }
+
+            $question = trim( html_entity_decode( wp_strip_all_tags( $question ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+
+            if ( '' === $question || ! self::is_question_heading( $question ) ) {
+                continue;
+            }
+
+            $answer_html = '';
+            foreach ( $block['innerBlocks'] as $inner ) {
+                $answer_html .= render_block( $inner );
+            }
+
+            $answer = self::clean_answer_text( $answer_html );
+            if ( mb_strlen( $answer ) < self::MIN_ANSWER ) {
+                continue;
+            }
+
+            $pairs[] = array(
+                'question' => $question,
+                'answer'   => $answer,
+            );
+        }
+
+        return $pairs;
+    }
+
+    /**
+     * Every block of a type, at any depth.
+     *
+     * @since 1.16.0
+     * @param array  $blocks Parsed blocks.
+     * @param string $name   Block name.
+     * @return array<int, array>
+     */
+    private static function find_blocks( array $blocks, $name ) {
+        $found = array();
+
+        foreach ( $blocks as $block ) {
+            if ( $name === $block['blockName'] ) {
+                $found[] = $block;
+                // A Details block inside another's answer is part of that
+                // answer, not a question of its own.
+                continue;
+            }
+
+            if ( ! empty( $block['innerBlocks'] ) ) {
+                $found = array_merge( $found, self::find_blocks( $block['innerBlocks'], $name ) );
+            }
+        }
+
+        return $found;
+    }
+
+    /**
+     * Combine pair lists, dropping repeated questions.
+     *
+     * @since 1.16.0
+     * @param array ...$lists Pair lists.
+     * @return array<int, array{question: string, answer: string}>
+     */
+    private static function merge_pairs( ...$lists ) {
+        $pairs = array();
+        $seen  = array();
+
+        foreach ( $lists as $list ) {
+            foreach ( $list as $pair ) {
+                $key = mb_strtolower( $pair['question'] );
+                if ( isset( $seen[ $key ] ) ) {
+                    continue;
+                }
+
+                $seen[ $key ] = true;
+                $pairs[]      = $pair;
+            }
+        }
+
+        return $pairs;
+    }
+
+    /**
      * Strategy 2 — numbered or stepped H3 headings.
      *
      * "1. Parrots Are Exceptionally Smart" → "Parrots Are Exceptionally Smart?"
@@ -375,7 +484,9 @@ class Lean_SEO_FAQ {
      * @return bool
      */
     public static function is_question_heading( $heading ) {
-        if ( '?' === mb_substr( $heading, -1 ) ) {
+        // "¿…?" opens with its own mark, so a question that runs on after the
+        // closing "?" ("¿Qué incluye? Todo.") still reads as one.
+        if ( '?' === mb_substr( $heading, -1 ) || '¿' === mb_substr( $heading, 0, 1 ) ) {
             return true;
         }
 

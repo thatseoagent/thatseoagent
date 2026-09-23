@@ -1,5 +1,162 @@
 # Changelog
 
+## [1.18.0] - 2026-09-22
+
+The Lean SEO screen now does what it shows. Alpine.js adds the interactive
+layer on top of the server-rendered views, which still work without it.
+
+### Added
+- **Content check runs.** Pick a content type and start it: pages are checked
+  a few at a time over the REST API, with a progress bar, so it finishes on any
+  hosting. It can be stopped midway. Results come in worst first, filterable
+  between pages to improve and all pages, each with its score, its reasons and
+  links to edit and view it. The last finished check of each content type is
+  kept and shown on the next visit.
+- **Settings save without a reload**, through `/wp/v2/settings` and the same
+  sanitizers as the form. The save bar says when there are unsaved changes,
+  while saving, when saved and what went wrong; leaving the page with unsaved
+  changes asks first. An IndexNow key that fails validation is reported
+  instead of silently kept. The sidebar's bulletin updates after saving.
+- **The settings index follows the scroll**, marking the section in view.
+- **Day / Night** switches at once and is remembered per user.
+- **Products** can be filtered on the page: all, needing attention, complete.
+- **AI index**: "Rebuild now" regenerates llms.txt and refreshes the preview.
+- REST API `lean-seo/v1`: `GET /bulletin`, `POST /preferences`,
+  `GET /audit`, `POST /audit/runs`, `POST|DELETE /audit/runs/{token}`,
+  `POST /llms`. Administrators only; failures are `WP_Error`s with a message
+  meant for people, and responses are sent uncached.
+- Alpine.js 3.17.4 ships in `assets/vendor/` (`pnpm run vendor:alpine`): the
+  screen still makes no request outside the site.
+
+### Changed
+- The site identity no longer counts as set up merely because the settings
+  were saved once: it needs a logo, a description or a social profile.
+- The product catalog's field mapping opens and closes with Alpine instead of
+  its own inline script.
+
+## [1.17.0] - 2026-09-22
+
+A new admin screen that reads like a weather bulletin: whether the site is
+fine, in one plain sentence, on the color of its warning level.
+
+### Added
+- **Lean SEO screen** at `admin.php?page=lean-seo`, with its own navigation:
+  - **Overview** — the site bulletin. A condition sentence on a field in the
+    color of the warning level (none, yellow, orange, red — the European
+    weather-warning scale), the one action to take next, the level scale, a
+    row of observations (indexing, permalinks, other SEO plugins, identity,
+    homepage description, product catalog, IndexNow), the warnings in force
+    in plain words with a link to fix each, the readings, and the public
+    files the site serves. Everything is computed from the site's current
+    state on every load; optional features never raise a warning.
+  - **Products** — the catalog's state, the split between complete products
+    and products with gaps, how the catalog is read, and product by product
+    what is missing.
+  - **Content check** — the layout of the batched content check and the
+    checks it runs. The check itself arrives with the Alpine.js layer.
+  - **AI index** — whether llms.txt is served and why not, and a preview.
+  - **Settings** — the existing settings as bulletin sections with an index.
+  - The sidebar shows the current warning level and the observation row on
+    every view.
+- A Day (default) and a Night edition. The switch is shown; saving the choice
+  arrives with the Alpine.js layer.
+- Styles are Tailwind CSS v4, compiled with `pnpm run build:css` into
+  `assets/build/admin.css`, which is committed: installing the plugin needs no
+  Node. Loaded on this screen only, without Tailwind's global reset and with
+  important utilities, so it neither restyles the rest of wp-admin nor is
+  overridden by it.
+- Public Sans (SIL Open Font License), self-hosted in `assets/fonts/`: the
+  screen makes no request outside the site.
+- The catalog summary behind the Overview and Products views is cached for an
+  hour and dropped whenever a post, its terms or its meta change.
+
+### Changed
+- The Product schema report moved from its own admin page to the Products
+  view; `admin.php?page=lean-seo-products` redirects there, and the settings
+  URL from before 1.15.0 to the Settings view.
+
+## [1.16.0] - 2026-09-22
+
+Lean SEO stops being zero-configuration where configuration earns its keep:
+product catalogs built on custom post types, an importer for other SEO
+plugins, and llms.txt. Ideas taken from a review of AEO God Mode, rebuilt to
+this plugin's rules — no remote service, no tables, nothing guessed.
+
+### Added
+- **Product schema for custom post type catalogs.** Lean SEO → Settings →
+  Product catalogs lists every active public post type, whoever registered
+  it. Tick the one that holds products and map where its data lives: brand
+  and category taxonomies, a specifications meta key, a gallery meta key, and
+  optional SKU, MPN and GTIN keys. Taxonomies and meta keys are detected from
+  the site's own data and pre-selected by name.
+  - Each entry gets a `Product` node — name, description, images, `Brand`,
+    `category` as a "Parent > Child" path, `additionalProperty` as
+    `PropertyValue`s — as the `WebPage`'s `mainEntity`, instead of an
+    `Article`.
+  - Every field is validated before output and dropped when invalid: images
+    must be image attachments with absolute URLs, specification pairs need a
+    name and a value, a GTIN needs 8/12/13/14 digits and a valid check digit.
+    No `offers` is emitted without a price.
+  - Lean SEO → Product schema reports, per product, what its markup is missing;
+    `wp lean-seo validate-products` does the same for the whole catalog, and
+    the SEO audit includes the same findings.
+  - Filters: `lean_seo_product_post_types`, `lean_seo_product_schema`,
+    `lean_seo_product_properties`.
+- **`wp lean-seo import --from=yoast|rankmath|aioseo`.** Imports per-post
+  titles and descriptions, and with `--identity` the site's Person or
+  Organization, name, logo and social profiles. Template variables are
+  resolved against each post; values with a variable that cannot be resolved
+  are skipped, as are titles equal to what Lean SEO outputs anyway. Existing
+  values are kept unless `--overwrite`. The other plugin's data is only read.
+- **Stepping aside for other SEO plugins.** While Yoast SEO, Rank Math, All in
+  One SEO, SEOPress, The SEO Framework or Squirrly is active, Lean SEO prints
+  no meta tags, canonical or JSON-LD, serves no sitemaps or llms.txt and
+  leaves robots.txt alone, and says so on the Dashboard, the Plugins screen
+  and its own page. Two SEO plugins duplicated every tag. The
+  `lean_seo_other_seo_plugin` filter overrides the detection.
+- **`<link rel="alternate" type="text/markdown">`** on every page that has a
+  Markdown version, so agents can find the `.md` URLs. Filter:
+  `lean_seo_markdown_alternate_link`.
+- **llms.txt**, generated from the posts served as Markdown and the product
+  catalogs, linking to the `.md` version where there is one. Cached until a
+  post or the site identity changes; can be switched off in the settings.
+  Filters: `lean_seo_llms_txt_post_types`, `lean_seo_llms_txt_limit`,
+  `lean_seo_llms_txt`.
+- **FAQ schema from Details blocks.** A core Details block whose summary is a
+  question counts as a question and answer, alongside question headings.
+  Questions opening with "¿" are recognised.
+- **"Generate meta description" bulk action** on the posts list of every post
+  type with the SEO meta box. Saves the description the page already had, for
+  posts without one of their own.
+- **Graph.** Post authors are `Person` nodes with a stable `@id`, shared with
+  a `ProfilePage` on their archive; `sameAs` comes from the profile's website
+  field (filter: `lean_seo_author_schema`). `WebPage` gains `description`,
+  `breadcrumb` and `primaryImageOfPage`. Archives and the blog index are
+  `CollectionPage`s (filter: `lean_seo_listing_page_schema`). Breadcrumbs cover
+  page parents, custom post type archives and term archives:
+  Home › Products › Brand.
+- `Lean_SEO_Settings` registers every option with a JSON schema and
+  `show_in_rest`, so `/wp/v2/settings` can read and write them through the
+  same sanitizers as the settings form.
+- `Lean_SEO_Audit` holds the audit behind the abilities, WP-CLI and the admin.
+  `scan-seo-issues` accepts a `post_type`.
+
+### Fixed
+- **Saving the settings page switched the site to a Person.** The identity
+  radio pre-selected "Person" on a site that had never been configured, so
+  saving the page for any other reason replaced the Organization schema.
+  Likewise the fallback author fields rendered their defaults as values and
+  saved them, crediting every authorless post to a Person named after the
+  site. Both now show only what was saved.
+- **Images with `alt=""` counted as missing alt text.** An empty alt is
+  correct for decorative images. The audit now tells missing, decorative and
+  described images apart, and notes a featured image without alt text.
+- **The blog page declared the homepage as its canonical**, and post type
+  archives had no canonical at all.
+- A scan no longer keeps every rendered post in memory until it ends.
+- Saving the IndexNow key through the REST API no longer calls a wp-admin-only
+  function.
+
 ## [1.15.0] - 2026-09-22
 
 ### Changed

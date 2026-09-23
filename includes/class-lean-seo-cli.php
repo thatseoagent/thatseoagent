@@ -175,6 +175,210 @@ class Lean_SEO_CLI {
 	}
 
 	/**
+	 * Import titles, descriptions and site identity from another SEO plugin.
+	 *
+	 * Reads the other plugin's data without changing it. Template variables
+	 * (%%title%%, %sitename%, #post_title, …) are resolved against each post;
+	 * a value with a variable that cannot be resolved is skipped, and so is a
+	 * title that equals what Lean SEO outputs anyway.
+	 *
+	 * ## OPTIONS
+	 *
+	 * --from=<plugin>
+	 * : Plugin to import from.
+	 * ---
+	 * options:
+	 *   - yoast
+	 *   - rankmath
+	 *   - aioseo
+	 * ---
+	 *
+	 * [--post-type=<types>]
+	 * : Comma-separated post types. Default: every type with the SEO meta box.
+	 *
+	 * [--identity]
+	 * : Also import the site identity: Person or Organization, name, logo and social profiles.
+	 *
+	 * [--overwrite]
+	 * : Replace values Lean SEO already has. By default they are kept.
+	 *
+	 * [--dry-run]
+	 * : Show what would be imported without saving.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp lean-seo import --from=yoast --dry-run
+	 *     wp lean-seo import --from=rankmath --identity
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Associative arguments.
+	 */
+	public function import( $args, $assoc_args ) {
+		$source    = $assoc_args['from'];
+		$overwrite = isset( $assoc_args['overwrite'] );
+		$dry_run   = isset( $assoc_args['dry-run'] );
+		$sources   = Lean_SEO_Importer::sources();
+
+		$post_types = isset( $assoc_args['post-type'] )
+			? array_filter( array_map( 'trim', explode( ',', $assoc_args['post-type'] ) ) )
+			: Lean_SEO_Admin::get_meta_box_post_types();
+
+		foreach ( $post_types as $post_type ) {
+			if ( ! post_type_exists( $post_type ) ) {
+				WP_CLI::error( sprintf( 'Post type "%s" does not exist.', $post_type ) );
+			}
+		}
+
+		if ( $dry_run ) {
+			WP_CLI::log( 'DRY RUN — nothing will be saved.' );
+		}
+
+		$ids = Lean_SEO_Importer::post_ids( $source, $post_types );
+		WP_CLI::log( sprintf( 'Found %d posts with %s data.', count( $ids ), $sources[ $source ]['label'] ) );
+
+		$totals = array();
+		$rows   = array();
+
+		foreach ( $ids as $post_id ) {
+			$result = Lean_SEO_Importer::import_post( $source, $post_id, $overwrite, $dry_run );
+
+			foreach ( $result as $field => $outcome ) {
+				$totals[ $field ][ $outcome['status'] ] = ( $totals[ $field ][ $outcome['status'] ] ?? 0 ) + 1;
+
+				if ( 'empty' !== $outcome['status'] ) {
+					$rows[] = array(
+						'ID'     => $post_id,
+						'field'  => $field,
+						'status' => $outcome['status'],
+						'value'  => $outcome['value'],
+					);
+				}
+			}
+
+			Lean_SEO_Content::forget( $post_id );
+		}
+
+		if ( $rows && ( $dry_run || WP_CLI::get_config( 'debug' ) ) ) {
+			\WP_CLI\Utils\format_items( 'table', $rows, array( 'ID', 'field', 'status', 'value' ) );
+		}
+
+		foreach ( $totals as $field => $statuses ) {
+			$parts = array();
+			foreach ( $statuses as $status => $count ) {
+				$parts[] = sprintf( '%d %s', $count, $status );
+			}
+			WP_CLI::log( sprintf( '%s: %s', ucfirst( $field ), implode( ', ', $parts ) ) );
+		}
+
+		if ( isset( $assoc_args['identity'] ) ) {
+			$identity = Lean_SEO_Importer::identity( $source );
+
+			if ( empty( $identity ) ) {
+				WP_CLI::log( sprintf( 'Identity: %s has no site identity configured.', $sources[ $source ]['label'] ) );
+			} else {
+				$written = Lean_SEO_Importer::apply_identity( $identity, $overwrite, $dry_run );
+				WP_CLI::log( sprintf( 'Identity: %s', $written ? implode( ', ', $written ) : 'nothing new (already set; use --overwrite to replace)' ) );
+			}
+		}
+
+		WP_CLI::success( $dry_run ? 'Dry run complete.' : 'Import complete.' );
+	}
+
+	/**
+	 * Validate the Product schema of every catalog entry.
+	 *
+	 * Lists each published product with the problems found in its markup:
+	 * errors (no Product node at all), warnings (a recommended field is
+	 * missing or was left out) and notes.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--post-type=<type>]
+	 * : Only this catalog post type. Default: every configured one.
+	 *
+	 * [--all]
+	 * : List complete products too, not only the ones with issues.
+	 *
+	 * [--format=<format>]
+	 * : Output format.
+	 * ---
+	 * default: table
+	 * options:
+	 *   - table
+	 *   - csv
+	 *   - json
+	 * ---
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp lean-seo validate-products
+	 *     wp lean-seo validate-products --post-type=producto --format=csv
+	 *
+	 * @subcommand validate-products
+	 *
+	 * @param array $args       Positional arguments.
+	 * @param array $assoc_args Associative arguments.
+	 */
+	public function validate_products( $args, $assoc_args ) {
+		$post_types = Lean_SEO_Product::post_types();
+
+		if ( empty( $post_types ) ) {
+			WP_CLI::error( 'No post type is configured as a product catalog. Choose one under Lean SEO → Settings.' );
+		}
+
+		if ( isset( $assoc_args['post-type'] ) ) {
+			if ( ! in_array( $assoc_args['post-type'], $post_types, true ) ) {
+				WP_CLI::error( sprintf( '"%s" is not configured as a product catalog.', $assoc_args['post-type'] ) );
+			}
+			$post_types = array( $assoc_args['post-type'] );
+		}
+
+		$ids = get_posts( array(
+			'post_type'      => $post_types,
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		) );
+
+		$rows   = array();
+		$counts = array( 'error' => 0, 'warning' => 0, 'info' => 0, 'ok' => 0 );
+
+		foreach ( $ids as $post_id ) {
+			$issues = Lean_SEO_Product::validate( $post_id );
+			$status = Lean_SEO_Product_Admin::worst_severity( $issues );
+			$counts[ $status ]++;
+
+			Lean_SEO_Content::forget( $post_id );
+
+			if ( 'ok' === $status && ! isset( $assoc_args['all'] ) ) {
+				continue;
+			}
+
+			$rows[] = array(
+				'ID'     => $post_id,
+				'title'  => html_entity_decode( get_the_title( $post_id ), ENT_QUOTES, 'UTF-8' ),
+				'status' => $status,
+				'issues' => implode( '; ', wp_list_pluck( $issues, 'type' ) ),
+			);
+		}
+
+		if ( $rows ) {
+			\WP_CLI\Utils\format_items( $assoc_args['format'] ?? 'table', $rows, array( 'ID', 'title', 'status', 'issues' ) );
+		}
+
+		WP_CLI::success( sprintf(
+			'%d products: %d with errors, %d with warnings, %d with notes, %d complete.',
+			count( $ids ),
+			$counts['error'],
+			$counts['warning'],
+			$counts['info'],
+			$counts['ok']
+		) );
+	}
+
+	/**
 	 * Count published posts missing a description.
 	 *
 	 * @param string $post_type Post type to count.

@@ -1,0 +1,4 @@
+# @parcel/watcher ships prebuilt binaries; its install script only builds a
+# fallback. Nothing else in the tree needs to run install scripts.
+allowBuilds:
+  '@parcel/watcher': false

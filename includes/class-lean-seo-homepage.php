@@ -43,23 +43,19 @@ class Lean_SEO_Homepage {
     }
 
     /**
-     * Register settings, section, and fields.
+     * Register the settings section and fields.
+     *
+     * The option itself is registered by Lean_SEO_Settings.
      *
      * Hooked on admin_init from Lean_SEO::init_hooks().
      */
     public static function register() {
-        register_setting( 'lean_seo_settings', self::OPTION_KEY, array(
-            'type'              => 'array',
-            'sanitize_callback' => array( __CLASS__, 'sanitize' ),
-            'default'           => array(),
-        ) );
-
         add_settings_section(
             'lean_seo_homepage_section',
-            __( 'Homepage SEO', 'lean-seo' ),
+            __( 'Homepage', 'lean-seo' ),
             function () {
-                echo '<p>' . esc_html__( 'Customize the title and meta description for the homepage. Leave blank to use WordPress defaults.', 'lean-seo' ) . '</p>';
-                echo '<p><strong>' . esc_html__( 'Available variables:', 'lean-seo' ) . '</strong> ';
+                echo '<p>' . esc_html__( 'What search results show for the homepage. Leave blank to use the site name and tagline.', 'lean-seo' ) . '</p>';
+                echo '<p><strong>' . esc_html__( 'You can use:', 'lean-seo' ) . '</strong> ';
                 echo '<code>%%sitename%%</code>, <code>%%tagline%%</code>, <code>%%sep%%</code></p>';
             },
             'lean_seo_settings'
@@ -67,7 +63,7 @@ class Lean_SEO_Homepage {
 
         add_settings_field(
             'lean_seo_homepage_title',
-            __( 'Homepage Title', 'lean-seo' ),
+            __( 'Title', 'lean-seo' ),
             array( __CLASS__, 'render_title_field' ),
             'lean_seo_settings',
             'lean_seo_homepage_section'
@@ -75,7 +71,7 @@ class Lean_SEO_Homepage {
 
         add_settings_field(
             'lean_seo_homepage_description',
-            __( 'Homepage Description', 'lean-seo' ),
+            __( 'Description', 'lean-seo' ),
             array( __CLASS__, 'render_description_field' ),
             'lean_seo_settings',
             'lean_seo_homepage_section'
@@ -98,7 +94,7 @@ class Lean_SEO_Homepage {
             placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>"
         >
         <p class="description">
-            <?php esc_html_e( 'Recommended: 50-60 characters. Leave blank to use the site name.', 'lean-seo' ); ?>
+            <?php esc_html_e( 'Aim for 50–60 characters. Leave blank to use the site name.', 'lean-seo' ); ?>
         </p>
         <?php
     }
@@ -119,7 +115,7 @@ class Lean_SEO_Homepage {
             placeholder="<?php echo esc_attr( get_bloginfo( 'description' ) ); ?>"
         ><?php echo esc_textarea( $value ); ?></textarea>
         <p class="description">
-            <?php esc_html_e( 'Recommended: 150-160 characters. Appears in search results and social shares for the homepage.', 'lean-seo' ); ?>
+            <?php esc_html_e( 'Aim for 150–160 characters: the sentence people read under the title in search results and link previews.', 'lean-seo' ); ?>
         </p>
         <?php
     }

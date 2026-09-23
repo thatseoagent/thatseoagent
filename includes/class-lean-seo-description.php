@@ -37,6 +37,13 @@ class Lean_SEO_Description {
     const MIN_SENTENCE = 40;
 
     /**
+     * Generated descriptions, keyed by post ID.
+     *
+     * @var array<int, string>
+     */
+    private static $generated = array();
+
+    /**
      * The description this post actually gets.
      *
      * Custom meta wins; otherwise one is generated from the content.
@@ -83,15 +90,26 @@ class Lean_SEO_Description {
         // Memoised per post: rendering blocks is the expensive part, and the
         // meta tags and the JSON-LD graph each ask for the description
         // separately during one request.
-        static $cache = array();
-
-        if ( isset( $cache[ $post->ID ] ) ) {
-            return $cache[ $post->ID ];
+        if ( isset( self::$generated[ $post->ID ] ) ) {
+            return self::$generated[ $post->ID ];
         }
 
-        $cache[ $post->ID ] = self::build( $post );
+        self::$generated[ $post->ID ] = self::build( $post );
 
-        return $cache[ $post->ID ];
+        return self::$generated[ $post->ID ];
+    }
+
+    /**
+     * Drop the memoised description of a post.
+     *
+     * Called by Lean_SEO_Content::forget(), since the description is built
+     * from the content being forgotten.
+     *
+     * @since 1.16.0
+     * @param int $post_id Post ID.
+     */
+    public static function forget( $post_id ) {
+        unset( self::$generated[ (int) $post_id ] );
     }
 
     /**

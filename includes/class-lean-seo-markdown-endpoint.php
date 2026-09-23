@@ -80,6 +80,80 @@ class Lean_SEO_Markdown_Endpoint {
     }
 
     /**
+     * The `.md` URL of a post, or an empty string when it has none.
+     *
+     * Mirrors what handle_request() will accept: a served post type, a
+     * public post, and pretty permalinks — the rewrite rule does not exist
+     * without them.
+     *
+     * @since 1.16.0
+     * @param WP_Post|int $post Post object or ID.
+     * @return string
+     */
+    public static function url_for( $post ) {
+        $post = get_post( $post );
+
+        if ( ! $post || ! get_option( 'permalink_structure' ) ) {
+            return '';
+        }
+
+        if ( 'publish' !== $post->post_status || post_password_required( $post ) ) {
+            return '';
+        }
+
+        if ( ! in_array( $post->post_type, self::post_types(), true ) ) {
+            return '';
+        }
+
+        // A static front page's permalink is the home URL, which has no path
+        // to append `.md` to; its own path resolves to the same page.
+        if ( 'page' === $post->post_type && (int) get_option( 'page_on_front' ) === $post->ID ) {
+            $permalink = home_url( user_trailingslashit( get_page_uri( $post ) ) );
+        } else {
+            $permalink = get_permalink( $post );
+        }
+
+        if ( ! $permalink || false !== strpos( $permalink, '?' ) ) {
+            return '';
+        }
+
+        return untrailingslashit( $permalink ) . '.md';
+    }
+
+    /**
+     * Point agents at the Markdown version from the HTML page.
+     *
+     * The `.md` URLs are otherwise undiscoverable: nothing links to them.
+     * `rel="alternate"` with a media type is how HTML declares "the same
+     * document in another format", as it does for RSS feeds.
+     *
+     * @since 1.16.0
+     */
+    public static function output_alternate_link() {
+        if ( ! is_singular() ) {
+            return;
+        }
+
+        /**
+         * Filter whether to print the Markdown alternate link.
+         *
+         * @since 1.16.0
+         * @param bool    $enabled Default true.
+         * @param WP_Post $post    Current post.
+         */
+        if ( ! apply_filters( 'lean_seo_markdown_alternate_link', true, get_post() ) ) {
+            return;
+        }
+
+        $url = self::url_for( get_post() );
+        if ( '' === $url ) {
+            return;
+        }
+
+        echo '<link rel="alternate" type="text/markdown" href="' . esc_url( $url ) . '">' . "\n";
+    }
+
+    /**
      * Answer a `.md` request.
      *
      * @since 1.14.0

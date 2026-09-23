@@ -2,22 +2,23 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Lean SEO 1.14.0\n"
+"Project-Id-Version: Lean SEO 1.18.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lean-seo\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-22T23:41:50+00:00\n"
+"POT-Creation-Date: 2026-09-23T02:20:45+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: lean-seo\n"
 
 #. Plugin Name of the plugin
 #: lean-seo.php
-#: includes/class-lean-seo-admin.php:121
-#: includes/class-lean-seo-admin.php:122
+#: includes/admin/views/layout.php:36
+#: includes/class-lean-seo-app.php:54
+#: includes/class-lean-seo-app.php:55
 msgid "Lean SEO"
 msgstr ""
 
@@ -39,6 +40,563 @@ msgstr ""
 #. Author URI of the plugin
 #: lean-seo.php
 msgid "https://saraichinwag.com"
+msgstr ""
+
+#: includes/admin/views/audit.php:37
+msgid "Title length"
+msgstr ""
+
+#: includes/admin/views/audit.php:37
+msgid "Under 30 characters says too little; over 60 gets cut off in search results."
+msgstr ""
+
+#: includes/admin/views/audit.php:38
+msgid "Description length"
+msgstr ""
+
+#: includes/admin/views/audit.php:38
+msgid "Under 100 characters says too little; over 160 gets cut off."
+msgstr ""
+
+#: includes/admin/views/audit.php:39
+msgid "Amount of text"
+msgstr ""
+
+#: includes/admin/views/audit.php:39
+msgid "Pages under 300 words give search engines little to go on."
+msgstr ""
+
+#: includes/admin/views/audit.php:40
+msgid "Headings"
+msgstr ""
+
+#: includes/admin/views/audit.php:40
+msgid "Long pages without subheadings are hard to scan, for people and for search engines."
+msgstr ""
+
+#: includes/admin/views/audit.php:41
+msgid "Links to other pages"
+msgstr ""
+
+#: includes/admin/views/audit.php:41
+msgid "Pages that link nowhere else on the site are dead ends."
+msgstr ""
+
+#: includes/admin/views/audit.php:42
+msgid "Image descriptions"
+msgstr ""
+
+#: includes/admin/views/audit.php:42
+msgid "Images need alt text, except decorative ones, which are marked empty on purpose."
+msgstr ""
+
+#: includes/admin/views/audit.php:43
+msgid "Product details"
+msgstr ""
+
+#: includes/admin/views/audit.php:43
+msgid "For products: what their product description to search engines is missing."
+msgstr ""
+
+#: includes/admin/views/audit.php:52
+msgid "The content check needs JavaScript in the browser."
+msgstr ""
+
+#: includes/admin/views/audit.php:58
+msgid "Check the content"
+msgstr ""
+
+#: includes/admin/views/audit.php:59
+msgid "Reads a few pages at a time, so it finishes on any hosting. Nothing is changed; you get a list of pages to improve, worst first."
+msgstr ""
+
+#: includes/admin/views/audit.php:61
+msgid "What to check"
+msgstr ""
+
+#. translators: 1: post type label, 2: number of published items.
+#: includes/admin/views/audit.php:67
+#, php-format
+msgid "%1$s (%2$d)"
+msgstr ""
+
+#: includes/admin/views/audit.php:77
+msgid "Check again"
+msgstr ""
+
+#: includes/admin/views/audit.php:77
+msgid "Start the check"
+msgstr ""
+
+#: includes/admin/views/audit.php:80
+msgid "Stop"
+msgstr ""
+
+#: includes/admin/views/audit.php:88
+msgid "Not checked yet"
+msgstr ""
+
+#: includes/admin/views/audit.php:89
+msgid "Checking…"
+msgstr ""
+
+#: includes/admin/views/audit.php:91
+msgid "Last checked"
+msgstr ""
+
+#: includes/admin/views/audit.php:93
+msgid "Stopped before the end."
+msgstr ""
+
+#: includes/admin/views/audit.php:108
+msgid "Pages checked"
+msgstr ""
+
+#: includes/admin/views/audit.php:112
+msgid "With something to improve"
+msgstr ""
+
+#: includes/admin/views/audit.php:116
+msgid "Average score"
+msgstr ""
+
+#: includes/admin/views/audit.php:124
+msgid "Pages to improve"
+msgstr ""
+
+#: includes/admin/views/audit.php:125
+#: includes/admin/views/products.php:138
+msgid "Show"
+msgstr ""
+
+#: includes/admin/views/audit.php:126
+msgid "To improve"
+msgstr ""
+
+#: includes/admin/views/audit.php:127
+msgid "All pages"
+msgstr ""
+
+#: includes/admin/views/audit.php:132
+msgid "The list appears here after the first check."
+msgstr ""
+
+#: includes/admin/views/audit.php:133
+msgid "Each page gets a score out of 100 and the reasons, with a link to edit it. AI assistants connected to the site can run the same check through the Abilities API."
+msgstr ""
+
+#: includes/admin/views/audit.php:137
+msgid "Every page passed."
+msgstr ""
+
+#: includes/admin/views/audit.php:138
+msgid "Nothing to improve in this content type."
+msgstr ""
+
+#: includes/admin/views/audit.php:149
+msgid "out of 100"
+msgstr ""
+
+#: includes/admin/views/audit.php:154
+#: includes/admin/views/products.php:184
+msgid "View page"
+msgstr ""
+
+#: includes/admin/views/audit.php:154
+#: includes/admin/views/dashboard.php:194
+#: includes/admin/views/llms.php:66
+#: includes/admin/views/products.php:184
+msgid "(opens in a new tab)"
+msgstr ""
+
+#: includes/admin/views/audit.php:161
+msgid "Nothing to improve."
+msgstr ""
+
+#: includes/admin/views/audit.php:169
+msgid "What is checked"
+msgstr ""
+
+#. translators: %s: site name.
+#: includes/admin/views/dashboard.php:26
+#, php-format
+msgid "Bulletin for %s"
+msgstr ""
+
+#. translators: %s: date and time.
+#: includes/admin/views/dashboard.php:33
+#, php-format
+msgid "Observed %s"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:35
+msgid "checked again every time this page opens"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:52
+msgid "Warning scale"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:64
+msgid "(current)"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:73
+msgid "Observations"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:79
+msgid "OK"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:80
+msgid "Not in use"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:100
+msgid "Warnings in force"
+msgstr ""
+
+#. translators: %d: number of warnings.
+#: includes/admin/views/dashboard.php:104
+#, php-format
+msgid "%d warning"
+msgid_plural "%d warnings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/views/dashboard.php:111
+msgid "No warnings in force."
+msgstr ""
+
+#: includes/admin/views/dashboard.php:112
+msgid "Come back after big changes to the site: new sections, a new theme, another plugin."
+msgstr ""
+
+#: includes/admin/views/dashboard.php:134
+msgid "Readings"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:139
+msgid "Pages published"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:141
+msgid "posts, pages and products"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:144
+msgid "Descriptions written by hand"
+msgstr ""
+
+#. translators: %d: number of pages.
+#: includes/admin/views/dashboard.php:147
+#, php-format
+msgid "%d written automatically from the content"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:150
+msgid "Custom titles"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:152
+msgid "the rest use the page title and the site name"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:155
+msgid "Products marked up"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:157
+msgid "no catalog set up"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:157
+msgid "as schema.org Product"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:174
+msgid "What the site publishes"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:182
+msgid "(published)"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:182
+msgid "(not published)"
+msgstr ""
+
+#: includes/admin/views/dashboard.php:192
+msgid "Open"
+msgstr ""
+
+#: includes/admin/views/layout.php:37
+msgid "Site bulletin"
+msgstr ""
+
+#: includes/admin/views/layout.php:63
+msgid "Lean SEO sections"
+msgstr ""
+
+#: includes/admin/views/layout.php:82
+msgid "Edition"
+msgstr ""
+
+#: includes/admin/views/layout.php:83
+msgid "Color theme"
+msgstr ""
+
+#: includes/admin/views/layout.php:86
+msgid "Day"
+msgstr ""
+
+#: includes/admin/views/layout.php:87
+msgid "Night"
+msgstr ""
+
+#: includes/admin/views/layout.php:104
+msgid "Everything here is checked on this site. Nothing is sent anywhere."
+msgstr ""
+
+#: includes/admin/views/layout.php:139
+msgid "Dismiss"
+msgstr ""
+
+#: includes/admin/views/llms.php:32
+msgid "A file named llms.txt already sits in the site folder, so the web server sends that one instead of this."
+msgstr ""
+
+#: includes/admin/views/llms.php:34
+msgid "Switched off while another SEO plugin is active."
+msgstr ""
+
+#: includes/admin/views/llms.php:36
+msgid "Needs readable permalinks to have an address."
+msgstr ""
+
+#: includes/admin/views/llms.php:38
+msgid "Switched off in the settings."
+msgstr ""
+
+#: includes/admin/views/llms.php:40
+msgid "Rewritten automatically whenever a page or the site details change."
+msgstr ""
+
+#: includes/admin/views/llms.php:50
+msgid "Published"
+msgstr ""
+
+#: includes/admin/views/llms.php:50
+msgid "Not published"
+msgstr ""
+
+#: includes/admin/views/llms.php:53
+msgid "llms.txt is a proposed convention: a short list of your pages, each linking to a clean text version an AI assistant can read. It costs nothing to publish. No AI company has promised to read it, and it does not affect rankings."
+msgstr ""
+
+#: includes/admin/views/llms.php:57
+#: includes/class-lean-seo-app.php:118
+#: includes/class-lean-seo-app.php:119
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/views/llms.php:60
+msgid "Rebuilding…"
+msgstr ""
+
+#: includes/admin/views/llms.php:60
+msgid "Rebuild now"
+msgstr ""
+
+#: includes/admin/views/llms.php:64
+msgid "Open llms.txt"
+msgstr ""
+
+#: includes/admin/views/llms.php:74
+msgid "In the file"
+msgstr ""
+
+#: includes/admin/views/llms.php:77
+msgid "Pages listed"
+msgstr ""
+
+#: includes/admin/views/llms.php:81
+msgid "Sections"
+msgstr ""
+
+#: includes/admin/views/llms.php:93
+msgid "Preview"
+msgstr ""
+
+#: includes/admin/views/products.php:20
+msgid "No product catalog yet"
+msgstr ""
+
+#: includes/admin/views/products.php:21
+msgid "If the site lists products — machines, parts, models — they can be described to search engines as products, with their brand, category and specifications, instead of as plain pages."
+msgstr ""
+
+#: includes/admin/views/products.php:22
+msgid "Pick the content type that holds them; Lean SEO suggests where each detail is stored."
+msgstr ""
+
+#: includes/admin/views/products.php:24
+msgid "Set up the catalog"
+msgstr ""
+
+#: includes/admin/views/products.php:38
+#: includes/class-lean-seo-product-admin.php:70
+msgid "Brand"
+msgstr ""
+
+#: includes/admin/views/products.php:39
+#: includes/class-lean-seo-product-admin.php:74
+msgid "Category"
+msgstr ""
+
+#: includes/admin/views/products.php:40
+#: includes/class-lean-seo-product-admin.php:78
+msgid "Specifications"
+msgstr ""
+
+#: includes/admin/views/products.php:41
+#: includes/class-lean-seo-product-admin.php:82
+msgid "Gallery"
+msgstr ""
+
+#: includes/admin/views/products.php:42
+#: includes/class-lean-seo-product-admin.php:86
+msgid "SKU"
+msgstr ""
+
+#: includes/admin/views/products.php:43
+#: includes/class-lean-seo-product-admin.php:90
+msgid "MPN"
+msgstr ""
+
+#: includes/admin/views/products.php:44
+#: includes/class-lean-seo-product-admin.php:94
+msgid "GTIN / EAN"
+msgstr ""
+
+#: includes/admin/views/products.php:49
+#: includes/admin/views/products.php:132
+#: includes/admin/views/products.php:182
+#: includes/class-lean-seo-product-admin.php:343
+msgid "Complete"
+msgstr ""
+
+#: includes/admin/views/products.php:50
+msgid "With gaps"
+msgstr ""
+
+#: includes/admin/views/products.php:51
+msgid "Not marked up"
+msgstr ""
+
+#: includes/admin/views/products.php:55
+msgid "Every product is described in full."
+msgstr ""
+
+#. translators: 1: products with gaps or errors, 2: all products.
+#: includes/admin/views/products.php:59
+#, php-format
+msgid "%1$d of %2$d products needs attention."
+msgid_plural "%1$d of %2$d products need attention."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/views/products.php:69
+msgid "Without a price, reviews or ratings Google shows no product stars or prices, but the markup still tells search engines and AI assistants exactly what each product is."
+msgstr ""
+
+#: includes/admin/views/products.php:96
+msgid "How the catalog is read"
+msgstr ""
+
+#: includes/admin/views/products.php:97
+msgid "Change"
+msgstr ""
+
+#. translators: 1: post type label, 2: post type name.
+#: includes/admin/views/products.php:104
+#, php-format
+msgid "From %1$s %2$s"
+msgstr ""
+
+#: includes/admin/views/products.php:115
+msgid "not used"
+msgstr ""
+
+#: includes/admin/views/products.php:130
+msgid "All"
+msgstr ""
+
+#: includes/admin/views/products.php:131
+msgid "Need attention"
+msgstr ""
+
+#: includes/admin/views/products.php:137
+msgid "Product by product"
+msgstr ""
+
+#. translators: 1: first row, 2: last row, 3: total.
+#: includes/admin/views/products.php:156
+#, php-format
+msgid "%1$d–%2$d of %3$d"
+msgstr ""
+
+#: includes/admin/views/products.php:165
+msgid "Product"
+msgstr ""
+
+#: includes/admin/views/products.php:166
+msgid "What is missing"
+msgstr ""
+
+#: includes/admin/views/products.php:191
+msgid "Nothing"
+msgstr ""
+
+#: includes/admin/views/products.php:209
+msgid "Pages"
+msgstr ""
+
+#: includes/admin/views/products.php:211
+msgid "Previous"
+msgstr ""
+
+#. translators: 1: current page, 2: total pages.
+#: includes/admin/views/products.php:218
+#, php-format
+msgid "Page %1$d of %2$d"
+msgstr ""
+
+#: includes/admin/views/products.php:222
+msgid "Next"
+msgstr ""
+
+#: includes/admin/views/settings.php:77
+msgid "Settings sections"
+msgstr ""
+
+#: includes/admin/views/settings.php:78
+msgid "On this page"
+msgstr ""
+
+#: includes/admin/views/settings.php:122
+#: includes/admin/views/settings.php:124
+msgid "Changes apply to the whole site as soon as they are saved."
+msgstr ""
+
+#: includes/admin/views/settings.php:133
+msgid "Save settings"
+msgstr ""
+
+#: includes/admin/views/settings.php:134
+#: includes/class-lean-seo-app.php:269
+msgid "Saving…"
 msgstr ""
 
 #: includes/class-lean-seo-abilities.php:22
@@ -73,168 +631,543 @@ msgstr ""
 msgid "Post ID to audit."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:163
+#: includes/class-lean-seo-abilities.php:164
 msgid "Scan SEO Issues"
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:164
+#: includes/class-lean-seo-abilities.php:165
 msgid "Scans multiple posts for SEO issues and returns a summary."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:181
+#: includes/class-lean-seo-abilities.php:182
 msgid "Maximum posts to scan (default: 50)."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:186
+#: includes/class-lean-seo-abilities.php:187
 msgid "Minimum issues to include in results (default: 1)."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:211
+#: includes/class-lean-seo-abilities.php:192
+msgid "Post type to scan (default: post)."
+msgstr ""
+
+#: includes/class-lean-seo-abilities.php:217
 msgid "Update Post SEO"
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:212
+#: includes/class-lean-seo-abilities.php:218
 msgid "Updates SEO meta for a specific post."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:234
+#: includes/class-lean-seo-abilities.php:240
 msgid "Post ID to update."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:238
+#: includes/class-lean-seo-abilities.php:244
 msgid "Custom SEO title. Empty string clears the value."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:242
+#: includes/class-lean-seo-abilities.php:248
 msgid "Custom meta description. Empty string clears the value."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:320
-#: includes/class-lean-seo-abilities.php:355
-#: includes/class-lean-seo-abilities.php:384
+#: includes/class-lean-seo-abilities.php:326
+#: includes/class-lean-seo-abilities.php:361
+#: includes/class-lean-seo-abilities.php:390
 msgid "Post ID is required."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:325
-#: includes/class-lean-seo-abilities.php:360
-#: includes/class-lean-seo-abilities.php:389
+#: includes/class-lean-seo-abilities.php:331
+#: includes/class-lean-seo-abilities.php:366
+#: includes/class-lean-seo-abilities.php:395
 msgid "No post exists with that ID."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:445
-msgid "Title is too short (under 30 characters)"
+#: includes/class-lean-seo-abilities.php:413
+msgid "That post type does not exist."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:453
-msgid "Title may be truncated in search results (over 60 characters)"
+#: includes/class-lean-seo-admin.php:25
+msgid "Default author"
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:464
-msgid "Meta description is too short (under 100 characters)"
+#: includes/class-lean-seo-admin.php:27
+msgid "Credited on posts that have no author assigned. Leave blank to credit the site itself."
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:472
-msgid "Meta description may be truncated (over 160 characters)"
+#: includes/class-lean-seo-admin.php:33
+#: includes/class-lean-seo-identity.php:128
+msgid "Name"
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:483
-msgid "Content is very thin (under 300 words)"
+#: includes/class-lean-seo-admin.php:34
+msgid "Web address"
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:491
-msgid "Content is relatively short (under 800 words)"
+#: includes/class-lean-seo-admin.php:35
+msgid "The author is"
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:502
-msgid "No H2 headings found - consider adding structure"
+#: includes/class-lean-seo-admin.php:73
+#: includes/class-lean-seo-identity.php:161
+msgid "A person"
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:513
-msgid "No internal links - consider linking to related content"
+#: includes/class-lean-seo-admin.php:74
+msgid "An organization"
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:524
-msgid "No images in content"
+#: includes/class-lean-seo-admin.php:189
+msgid "Generate meta description"
 msgstr ""
 
-#: includes/class-lean-seo-abilities.php:535
-msgid "Some images are missing alt text"
-msgstr ""
+#. translators: %d: number of posts.
+#: includes/class-lean-seo-admin.php:262
+#, php-format
+msgid "Meta description saved for %d post."
+msgid_plural "Meta description saved for %d posts."
+msgstr[0] ""
+msgstr[1] ""
 
-#: includes/class-lean-seo-admin.php:29
-msgid "Schema / Publisher Defaults"
-msgstr ""
+#. translators: %d: number of posts.
+#: includes/class-lean-seo-admin.php:269
+#, php-format
+msgid "%d skipped: it already had one or has no content to describe."
+msgid_plural "%d skipped: they already had one or have no content to describe."
+msgstr[0] ""
+msgstr[1] ""
 
-#: includes/class-lean-seo-admin.php:31
-msgid "Fallback author used when a post has no WordPress author assigned."
-msgstr ""
-
-#: includes/class-lean-seo-admin.php:37
-msgid "Author Name"
-msgstr ""
-
-#: includes/class-lean-seo-admin.php:38
-msgid "Author URL"
-msgstr ""
-
-#: includes/class-lean-seo-admin.php:39
-msgid "Author Type"
-msgstr ""
-
-#: includes/class-lean-seo-admin.php:137
-msgid "Lean SEO Settings"
-msgstr ""
-
-#: includes/class-lean-seo-admin.php:192
+#: includes/class-lean-seo-admin.php:285
 msgid "🔍 SEO Settings"
 msgstr ""
 
-#: includes/class-lean-seo-admin.php:248
+#: includes/class-lean-seo-admin.php:341
 msgid "SEO Title"
 msgstr ""
 
-#: includes/class-lean-seo-admin.php:259
+#: includes/class-lean-seo-admin.php:352
 msgid "Leave blank to use the post title. Recommended: 50-60 characters."
 msgstr ""
 
-#: includes/class-lean-seo-admin.php:264
+#: includes/class-lean-seo-admin.php:357
 msgid "Meta Description"
 msgstr ""
 
-#: includes/class-lean-seo-admin.php:272
+#: includes/class-lean-seo-admin.php:365
 msgid "Leave blank to auto-generate from content..."
 msgstr ""
 
-#: includes/class-lean-seo-admin.php:275
+#: includes/class-lean-seo-admin.php:368
 msgid "Recommended: 150-160 characters. This appears in search results."
 msgstr ""
 
-#: includes/class-lean-seo-homepage.php:59
-msgid "Homepage SEO"
+#: includes/class-lean-seo-app.php:66
+msgid "Product schema"
 msgstr ""
 
-#: includes/class-lean-seo-homepage.php:61
-msgid "Customize the title and meta description for the homepage. Leave blank to use WordPress defaults."
+#: includes/class-lean-seo-app.php:94
+#: includes/class-lean-seo-app.php:95
+msgid "Overview"
 msgstr ""
 
-#: includes/class-lean-seo-homepage.php:62
-msgid "Available variables:"
+#: includes/class-lean-seo-app.php:100
+#: includes/class-lean-seo-app.php:101
+#: includes/class-lean-seo-app.php:493
+#: includes/class-lean-seo-app.php:500
+msgid "Products"
 msgstr ""
 
-#: includes/class-lean-seo-homepage.php:70
-msgid "Homepage Title"
+#: includes/class-lean-seo-app.php:102
+msgid "How each product in the catalog is described to search engines, and what is missing."
 msgstr ""
 
-#: includes/class-lean-seo-homepage.php:78
-msgid "Homepage Description"
+#: includes/class-lean-seo-app.php:106
+#: includes/class-lean-seo-app.php:107
+msgid "Content check"
 msgstr ""
 
-#: includes/class-lean-seo-homepage.php:101
-msgid "Recommended: 50-60 characters. Leave blank to use the site name."
+#: includes/class-lean-seo-app.php:108
+msgid "Titles, descriptions, headings, links and images, page by page."
 msgstr ""
 
-#: includes/class-lean-seo-homepage.php:122
-msgid "Recommended: 150-160 characters. Appears in search results and social shares for the homepage."
+#: includes/class-lean-seo-app.php:112
+#: includes/class-lean-seo-app.php:113
+#: includes/class-lean-seo-llms.php:316
+msgid "AI index"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:114
+msgid "llms.txt: the list of your pages that AI assistants can read."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:120
+msgid "Who the site is, the homepage, the product catalog and integrations."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:270
+msgid "Saved. The changes are live."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:271
+msgid "You have unsaved changes."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:272
+msgid "You have unsaved changes. Leave anyway?"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:273
+msgid "The settings were not saved."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:274
+msgid "The IndexNow key was not changed: it must be 8 to 128 letters, numbers or dashes."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:275
+msgid "The edition could not be saved; it will reset on the next visit."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:276
+msgid "The check stopped because of an error."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:277
+msgid "The site could not be reached. Check your connection and try again."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:278
+msgid "llms.txt was rebuilt."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:279
+msgid "llms.txt could not be rebuilt."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:371
+msgid "No warnings"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:377
+msgid "Yellow warning"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:383
+msgid "Orange warning"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:389
+msgid "Red warning"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:424
+msgid "Indexing"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:424
+msgid "Allowed"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:424
+msgid "Blocked"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:428
+msgid "Search engines are asked to stay away"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:429
+msgid "\"Discourage search engines from indexing this site\" is ticked, so the site will not appear in search results."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:430
+msgid "Open Reading settings"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:437
+msgid "Permalinks"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:437
+msgid "Readable"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:437
+msgid "Plain"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:441
+msgid "Sitemaps and llms.txt are offline"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:442
+msgid "Plain permalinks (?p=123) leave no address for the sitemap, llms.txt or the Markdown pages."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:443
+msgid "Choose a permalink structure"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:449
+msgid "SEO plugins"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:449
+msgid "Only this one"
+msgstr ""
+
+#. translators: %s: name of the other SEO plugin.
+#: includes/class-lean-seo-app.php:454
+#, php-format
+msgid "%s is active, so Lean SEO is standing aside"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:455
+msgid "Two SEO plugins would print every tag twice. Import its data with wp lean-seo import, then deactivate one of them."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:456
+msgid "Open Plugins"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:467
+msgid "Identity"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:467
+msgid "Set"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:467
+msgid "Missing"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:471
+msgid "Search engines do not know who runs the site"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:472
+msgid "Say whether the site is a person or an organization, and add its logo and social profiles."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:473
+msgid "Set up the identity"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:480
+#: includes/class-lean-seo-homepage.php:55
+msgid "Homepage"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:480
+msgid "Described"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:480
+msgid "Automatic"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:484
+msgid "The homepage description is taken from the page text"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:485
+msgid "It is the first thing people read about the site in search results; a sentence written for them works better."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:486
+msgid "Write it"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:493
+msgid "No catalog"
+msgstr ""
+
+#. translators: 1: complete products, 2: all products.
+#: includes/class-lean-seo-app.php:503
+#, php-format
+msgid "%1$d of %2$d complete"
+msgstr ""
+
+#. translators: %d: number of products.
+#: includes/class-lean-seo-app.php:510
+#, php-format
+msgid "%d product is not marked up as a product"
+msgid_plural "%d products are not marked up as products"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lean-seo-app.php:511
+msgid "Without a title there is no Product markup at all."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:512
+#: includes/class-lean-seo-app.php:523
+msgid "See the products"
+msgstr ""
+
+#. translators: %d: number of products.
+#: includes/class-lean-seo-app.php:521
+#, php-format
+msgid "%d product has gaps in its details"
+msgid_plural "%d products have gaps in their details"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lean-seo-app.php:522
+msgid "Missing specifications, images or brand make the product harder to find and to compare."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:531
+#: includes/class-lean-seo-indexnow.php:109
+msgid "IndexNow"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:531
+msgid "On"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:531
+msgid "Off"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:544
+msgid "Clear. Nothing needs you right now."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:545
+msgid "Mostly fine, with room to do better."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:546
+msgid "Something is holding the site back."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:547
+msgid "Search engines cannot see this site properly."
+msgstr ""
+
+#. translators: 1: the most serious warning, 2: number of other warnings.
+#: includes/class-lean-seo-app.php:553
+#, php-format
+msgid "%1$s — and %2$d more below."
+msgid_plural "%1$s — and %2$d more below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lean-seo-app.php:556
+msgid "Every check passed. The meta tags, schema and sitemaps are being published as they should."
+msgstr ""
+
+#: includes/class-lean-seo-app.php:675
+msgid "Off while another SEO plugin is active"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:679
+msgid "XML sitemap"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:685
+#: includes/class-lean-seo-llms.php:325
+msgid "llms.txt"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:688
+msgid "Switched off in the settings"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:691
+msgid "robots.txt"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:697
+msgid "Markdown of the homepage"
+msgstr ""
+
+#: includes/class-lean-seo-app.php:700
+msgid "Needs a static front page and readable permalinks"
+msgstr ""
+
+#: includes/class-lean-seo-audit-run.php:92
+msgid "This check was stopped or replaced by a newer one. Start it again."
+msgstr ""
+
+#: includes/class-lean-seo-audit-run.php:218
+msgid "(no title)"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:76
+msgid "Title is too short (under 30 characters)"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:84
+msgid "Title may be truncated in search results (over 60 characters)"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:95
+msgid "Meta description is too short (under 100 characters)"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:103
+msgid "Meta description may be truncated (over 160 characters)"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:114
+msgid "Content is very thin (under 300 words)"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:122
+msgid "Content is relatively short (under 800 words)"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:133
+msgid "No H2 headings found - consider adding structure"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:144
+msgid "No internal links - consider linking to related content"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:155
+msgid "No images in content"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:166
+msgid "Some images are missing alt text"
+msgstr ""
+
+#: includes/class-lean-seo-audit.php:179
+msgid "The featured image has no alt text in the media library"
+msgstr ""
+
+#. translators: %s: name of the other SEO plugin, e.g. "Yoast SEO".
+#: includes/class-lean-seo-compat.php:117
+#, php-format
+msgid "%s is active, so Lean SEO is not printing meta tags, schema or sitemaps: two SEO plugins would duplicate every tag. Deactivate one of them. The Markdown versions of your posts keep working."
+msgstr ""
+
+#: includes/class-lean-seo-homepage.php:57
+msgid "What search results show for the homepage. Leave blank to use the site name and tagline."
+msgstr ""
+
+#: includes/class-lean-seo-homepage.php:58
+msgid "You can use:"
+msgstr ""
+
+#: includes/class-lean-seo-homepage.php:66
+msgid "Title"
+msgstr ""
+
+#: includes/class-lean-seo-homepage.php:74
+msgid "Description"
+msgstr ""
+
+#: includes/class-lean-seo-homepage.php:97
+msgid "Aim for 50–60 characters. Leave blank to use the site name."
+msgstr ""
+
+#: includes/class-lean-seo-homepage.php:118
+msgid "Aim for 150–160 characters: the sentence people read under the title in search results and link previews."
 msgstr ""
 
 #: includes/class-lean-seo-identity.php:41
@@ -265,136 +1198,254 @@ msgstr ""
 msgid "Mastodon"
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:123
-msgid "Site Identity"
+#: includes/class-lean-seo-identity.php:119
+msgid "Who the site is"
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:125
-msgid "Tell search engines who this site represents. These values populate Open Graph meta tags and JSON-LD schema (Person or Organization)."
+#: includes/class-lean-seo-identity.php:121
+msgid "Tell search engines whether the site belongs to a person or an organization, and how to recognize it: name, logo and social profiles."
+msgstr ""
+
+#: includes/class-lean-seo-identity.php:127
+msgid "The site belongs to"
+msgstr ""
+
+#: includes/class-lean-seo-identity.php:129
+msgid "Short description"
+msgstr ""
+
+#: includes/class-lean-seo-identity.php:130
+msgid "Logo or photo"
 msgstr ""
 
 #: includes/class-lean-seo-identity.php:131
-msgid "Identity Type"
+msgid "Default sharing image"
 msgstr ""
 
 #: includes/class-lean-seo-identity.php:132
-msgid "Name"
+msgid "X (Twitter) username"
 msgstr ""
 
 #: includes/class-lean-seo-identity.php:133
-msgid "Description / Bio"
+msgid "Social profiles"
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:134
-msgid "Logo / Photo"
+#: includes/class-lean-seo-identity.php:165
+msgid "An organization or business"
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:135
-msgid "Default OG Image"
+#: includes/class-lean-seo-identity.php:167
+msgid "Search engines describe the site as one or the other."
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:136
-msgid "Twitter @handle"
-msgstr ""
-
-#: includes/class-lean-seo-identity.php:137
-msgid "Social Profiles"
-msgstr ""
-
-#: includes/class-lean-seo-identity.php:162
-msgid "Person"
-msgstr ""
-
-#: includes/class-lean-seo-identity.php:166
-msgid "Organization"
-msgstr ""
-
-#: includes/class-lean-seo-identity.php:168
-msgid "Determines whether the site outputs Person or Organization schema."
-msgstr ""
-
-#: includes/class-lean-seo-identity.php:185
+#: includes/class-lean-seo-identity.php:184
 msgid "@username"
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:186
-msgid "Used as twitter:site on social cards. The leading @ is optional."
+#: includes/class-lean-seo-identity.php:185
+msgid "Shown on link previews on X. The @ is optional."
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:189
+#: includes/class-lean-seo-identity.php:188
 msgid "The name of the person or organization this site represents."
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:219
-msgid "Short bio or organization description used in schema output."
+#: includes/class-lean-seo-identity.php:218
+msgid "One or two sentences about who you are and what you do."
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:235
-msgid "Used in Person/Organization schema output. Separate from the theme Site Logo."
+#: includes/class-lean-seo-identity.php:234
+msgid "Shown to search engines next to the site's name. Separate from the theme's logo."
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:237
-msgid "Fallback Open Graph image for posts without a featured image."
+#: includes/class-lean-seo-identity.php:236
+msgid "Used when a page without an image of its own is shared on social media."
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:252
+#: includes/class-lean-seo-identity.php:251
 msgid "Select Image"
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:253
+#: includes/class-lean-seo-identity.php:252
 msgid "Remove"
 msgstr ""
 
-#: includes/class-lean-seo-identity.php:286
-msgid "Emitted as sameAs links in schema so search engines can link your site to these profiles."
+#: includes/class-lean-seo-identity.php:285
+msgid "Lets search engines connect the site with these profiles."
 msgstr ""
 
-#: includes/class-lean-seo-indexnow.php:115
-msgid "IndexNow"
-msgstr ""
-
-#: includes/class-lean-seo-indexnow.php:117
+#: includes/class-lean-seo-indexnow.php:111
 msgid "Notify Bing, Yandex and other IndexNow engines whenever a post is published or updated. Leave the key blank to disable."
 msgstr ""
 
-#: includes/class-lean-seo-indexnow.php:124
+#: includes/class-lean-seo-indexnow.php:118
 msgid "API Key"
 msgstr ""
 
-#: includes/class-lean-seo-indexnow.php:149
+#: includes/class-lean-seo-indexnow.php:143
 msgid "8–128 characters, letters, numbers and dashes only."
 msgstr ""
 
-#: includes/class-lean-seo-indexnow.php:151
+#: includes/class-lean-seo-indexnow.php:145
 msgid "Suggested key:"
 msgstr ""
 
-#: includes/class-lean-seo-indexnow.php:153
+#: includes/class-lean-seo-indexnow.php:147
 msgid "Verification file:"
 msgstr ""
 
-#: includes/class-lean-seo-indexnow.php:155
+#: includes/class-lean-seo-indexnow.php:149
 msgid "(served automatically by this plugin)"
 msgstr ""
 
-#: includes/class-lean-seo-indexnow.php:192
+#: includes/class-lean-seo-indexnow.php:189
 msgid "The IndexNow key must be between 8 and 128 characters."
 msgstr ""
 
-#: includes/class-lean-seo-indexnow.php:271
+#: includes/class-lean-seo-indexnow.php:269
 msgid "IndexNow API key not configured."
 msgstr ""
 
 #. translators: %d: HTTP status code returned by the IndexNow API.
-#: includes/class-lean-seo-indexnow.php:305
+#: includes/class-lean-seo-indexnow.php:303
 #, php-format
 msgid "IndexNow API returned %d"
 msgstr ""
 
-#: includes/class-lean-seo-markdown-endpoint.php:96
+#: includes/class-lean-seo-llms.php:115
+msgid "Not found."
+msgstr ""
+
+#: includes/class-lean-seo-llms.php:234
+msgid "Sitemap"
+msgstr ""
+
+#: includes/class-lean-seo-llms.php:318
+msgid "A plain-text index of the site for AI assistants, linking to the Markdown version of each page. It is a proposed convention, not a ranking factor: publishing it costs nothing, but no AI provider has committed to reading it."
+msgstr ""
+
+#: includes/class-lean-seo-llms.php:345
+msgid "Publish the list at /llms.txt"
+msgstr ""
+
+#: includes/class-lean-seo-llms.php:352
+msgid "View"
+msgstr ""
+
+#: includes/class-lean-seo-markdown-endpoint.php:170
 msgid "Post not found."
 msgstr ""
 
-#: includes/class-lean-seo-markdown-endpoint.php:100
+#: includes/class-lean-seo-markdown-endpoint.php:174
 msgid "Access denied."
+msgstr ""
+
+#. translators: 1: post type plural label, e.g. "Products", 2: site name.
+#: includes/class-lean-seo-meta.php:270
+#, php-format
+msgid "Browse all %1$s on %2$s"
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:45
+msgid "Product catalog"
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:47
+msgid "Tick the content type that lists your products. Each one is then described to search engines as a product, with the details below."
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:54
+msgid "Content types"
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:71
+msgid "Taxonomy whose term is the brand."
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:75
+msgid "Taxonomy whose term is the product category."
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:79
+msgid "Meta key holding a list of name/value pairs (JSON or array)."
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:83
+msgid "Meta key holding image IDs, added after the featured image."
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:87
+msgid "Meta key holding your own product code."
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:91
+msgid "Meta key holding the manufacturer's part number or model."
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:95
+msgid "Meta key holding the barcode number. Invalid values are left out."
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:154
+msgid "— None —"
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:340
+msgid "Error"
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:341
+msgid "Warning"
+msgstr ""
+
+#: includes/class-lean-seo-product-admin.php:342
+msgid "Note"
+msgstr ""
+
+#: includes/class-lean-seo-product.php:415
+msgid "The product has no title, so no Product schema is output."
+msgstr ""
+
+#: includes/class-lean-seo-product.php:435
+msgid "No description: add an excerpt, content or a meta description."
+msgstr ""
+
+#: includes/class-lean-seo-product.php:451
+msgid "No brand assigned."
+msgstr ""
+
+#: includes/class-lean-seo-product.php:460
+msgid "No category assigned."
+msgstr ""
+
+#: includes/class-lean-seo-product.php:489
+msgid "No specifications could be read."
+msgstr ""
+
+#: includes/class-lean-seo-product.php:496
+msgid "Some specifications have an empty name or value and were left out."
+msgstr ""
+
+#: includes/class-lean-seo-product.php:520
+msgid "The GTIN is not 8, 12, 13 or 14 digits with a valid check digit, so it was left out."
+msgstr ""
+
+#: includes/class-lean-seo-product.php:557
+msgid "No featured image. Google recommends an image for every product."
+msgstr ""
+
+#: includes/class-lean-seo-product.php:561
+msgid "Some images are not image files or have no absolute URL, and were left out."
+msgstr ""
+
+#: includes/class-lean-seo-rest.php:54
+msgid "Only administrators can do this."
+msgstr ""
+
+#: includes/class-lean-seo-rest.php:251
+msgid "That content type cannot be checked."
+msgstr ""
+
+#: includes/class-lean-seo-schema.php:431
+msgid "Home"
 msgstr ""

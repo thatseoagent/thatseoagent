@@ -3,7 +3,7 @@
  * Plugin Name: Lean SEO
  * Plugin URI: https://github.com/Sarai-Chinwag/lean-seo
  * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, per-post SEO fields, and Markdown for AI agents. A Yoast replacement that doesn't slow your site down.
- * Version: 1.15.0
+ * Version: 1.18.0
  * Author: Sarai Chinwag
  * Author URI: https://saraichinwag.com
  * License: GPL-2.0+
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('LEAN_SEO_VERSION', '1.15.0');
+define('LEAN_SEO_VERSION', '1.18.0');
 define('LEAN_SEO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LEAN_SEO_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -30,10 +30,11 @@ define('LEAN_SEO_PLUGIN_URL', plugin_dir_url(__FILE__));
 require_once LEAN_SEO_PLUGIN_DIR . 'vendor-prefixed/autoload.php';
 
 // Loaded at file scope: the abilities and WP-CLI modules are required below,
-// before Lean_SEO boots on plugins_loaded, and all three need it.
+// before Lean_SEO boots on plugins_loaded, and they need these.
 require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-content.php';
 require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-post-seo.php';
 require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-description.php';
+require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-audit.php';
 
 // Load the main class
 require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo.php';
@@ -113,6 +114,7 @@ function lean_seo_deactivate() {
 
 // WP-CLI commands.
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
+    require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-importer.php';
     require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-cli.php';
     WP_CLI::add_command( 'lean-seo', 'Lean_SEO_CLI' );
 }

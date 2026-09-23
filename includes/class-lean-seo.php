@@ -39,6 +39,13 @@ class Lean_SEO {
      * Load dependencies
      */
     private function load_dependencies() {
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-compat.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-settings.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-product.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-product-admin.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-app.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-audit-run.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-rest.php';
         require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-meta.php';
         require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-sitemap.php';
         require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-faq.php';
@@ -49,12 +56,58 @@ class Lean_SEO {
         require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-markdown.php';
         require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-markdown-cache.php';
         require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-markdown-endpoint.php';
+        require_once LEAN_SEO_PLUGIN_DIR . 'includes/class-lean-seo-llms.php';
     }
 
     /**
      * Initialize hooks
      */
     private function init_hooks() {
+        // Options, for the settings page and the REST API alike.
+        Lean_SEO_Settings::register();
+
+        // The Lean SEO screen's own endpoints.
+        Lean_SEO_REST::register();
+
+        // Per-post SEO fields (also exposes them to the REST API / block editor)
+        add_action('init', array($this, 'register_meta_fields'));
+        add_action('init', array($this, 'maybe_flush_rewrite_rules'), 21);
+
+        // Markdown for AI agents at post URL + .md
+        Lean_SEO_Markdown_Endpoint::register();
+        Lean_SEO_Markdown_Cache::register();
+        add_action('wp_head', array('Lean_SEO_Markdown_Endpoint', 'output_alternate_link'), 1);
+
+        // Admin
+        if (is_admin()) {
+            add_action('add_meta_boxes', array($this, 'add_meta_box'));
+            add_action('save_post', array($this, 'save_meta'), 10, 1);
+            Lean_SEO_App::register();
+            add_action('admin_init', array('Lean_SEO_Admin', 'register_settings'));
+            add_action('admin_init', array('Lean_SEO_Identity', 'register'));
+            add_action('admin_init', array('Lean_SEO_Homepage', 'register'));
+            add_action('admin_enqueue_scripts', array('Lean_SEO_Identity', 'enqueue_assets'));
+            add_action('admin_enqueue_scripts', array('Lean_SEO_Admin', 'enqueue_meta_box_assets'));
+            add_action('admin_notices', array('Lean_SEO_Compat', 'admin_notice'));
+            Lean_SEO_Product_Admin::register();
+            add_action('admin_init', array('Lean_SEO_Admin', 'register_bulk_actions'));
+            add_action('admin_init', array('Lean_SEO_Llms', 'register_section'));
+            add_action('admin_notices', array('Lean_SEO_Admin', 'bulk_action_notice'));
+        }
+
+        // The catalog summary is cached; any save may change it.
+        Lean_SEO_Product_Admin::register_cache();
+
+        // Filter appliers run everywhere (front-end + admin previews).
+        Lean_SEO_Identity_Applier::register();
+        Lean_SEO_Homepage_Applier::register();
+
+        // Everything below writes to <head>, serves sitemaps or edits
+        // robots.txt — all of which another active SEO plugin does too.
+        if (! Lean_SEO_Compat::outputs_enabled()) {
+            return;
+        }
+
         // Meta tags
         add_filter('pre_get_document_title', array($this, 'filter_document_title'), 10);
         add_filter('document_title_separator', array($this, 'title_separator'));
@@ -65,41 +118,19 @@ class Lean_SEO {
         // Remove WP default canonical
         remove_action('wp_head', 'rel_canonical');
 
-        // Per-post SEO fields (also exposes them to the REST API / block editor)
-        add_action('init', array($this, 'register_meta_fields'));
-
         // Sitemap
         add_action('init', array($this, 'register_sitemap_routes'), 20);
-        add_action('init', array($this, 'maybe_flush_rewrite_rules'), 21);
         add_filter('query_vars', array($this, 'sitemap_query_vars'));
         add_action('template_redirect', array($this, 'handle_sitemap'));
 
         // Disable canonical redirects for sitemap URLs to prevent redirect chains
         add_filter('redirect_canonical', array($this, 'disable_sitemap_redirect'), 10, 2);
 
-        // Markdown for AI agents at post URL + .md
-        Lean_SEO_Markdown_Endpoint::register();
-        Lean_SEO_Markdown_Cache::register();
-
-        // Admin
-        if (is_admin()) {
-            add_action('add_meta_boxes', array($this, 'add_meta_box'));
-            add_action('save_post', array($this, 'save_meta'), 10, 1);
-            add_action('admin_menu', array('Lean_SEO_Admin', 'add_settings_page'));
-            add_action('admin_init', array('Lean_SEO_Admin', 'register_settings'));
-            add_action('admin_init', array('Lean_SEO_Admin', 'redirect_legacy_settings_url'));
-            add_action('admin_init', array('Lean_SEO_Identity', 'register'));
-            add_action('admin_init', array('Lean_SEO_Homepage', 'register'));
-            add_action('admin_enqueue_scripts', array('Lean_SEO_Identity', 'enqueue_assets'));
-            add_action('admin_enqueue_scripts', array('Lean_SEO_Admin', 'enqueue_meta_box_assets'));
-        }
-
-        // Filter appliers run everywhere (front-end + admin previews).
-        Lean_SEO_Identity_Applier::register();
-        Lean_SEO_Homepage_Applier::register();
-
         // Filter robots.txt to include our sitemap
         add_filter('robots_txt', array($this, 'filter_robots_txt'), 999, 2);
+
+        // llms.txt — Yoast, Rank Math and AIOSEO generate one of their own.
+        Lean_SEO_Llms::register();
     }
 
     /**
@@ -268,7 +299,13 @@ class Lean_SEO {
      * @since 1.7.1
      */
     public function maybe_flush_rewrite_rules() {
-        if (get_option('lean_seo_rewrite_version') === LEAN_SEO_VERSION) {
+        // The rule set differs while another SEO plugin is active (no
+        // sitemap routes), so the stored version records that too: activating
+        // or deactivating that plugin must trigger a flush, or /sitemap.xml
+        // stays missing after it is gone.
+        $version = LEAN_SEO_VERSION . (Lean_SEO_Compat::outputs_enabled() ? '' : '-compat');
+
+        if (get_option('lean_seo_rewrite_version') === $version) {
             return;
         }
 
@@ -277,7 +314,7 @@ class Lean_SEO {
         // Autoloaded on purpose: this runs on every init, and a
         // non-autoloaded option costs one query per request forever to read a
         // short version string that changes once per release.
-        update_option('lean_seo_rewrite_version', LEAN_SEO_VERSION, true);
+        update_option('lean_seo_rewrite_version', $version, true);
     }
 
     /**

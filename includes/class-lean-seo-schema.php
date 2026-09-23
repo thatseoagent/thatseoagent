@@ -42,7 +42,19 @@ class Lean_SEO_Schema {
         // and 'page' were handled, so every custom post type reached search
         // engines with no WebPage and no BreadcrumbList at all.
         if (is_singular()) {
-            $schema[] = self::get_webpage_schema();
+            // Built first: the WebPage node points at it.
+            $breadcrumb = self::get_breadcrumb_schema();
+
+            // A catalog entry is a Product, and the page is about it. Not an
+            // Article as well, even when its post type is listed as one: a
+            // page has one main entity.
+            $product = Lean_SEO_Product::schema(get_post());
+
+            $schema[] = self::get_webpage_schema($product ? $product['@id'] : '', $breadcrumb);
+
+            if ($product) {
+                $schema[] = $product;
+            }
 
             /**
              * Post types that get an Article node.
@@ -56,8 +68,13 @@ class Lean_SEO_Schema {
              */
             $article_types = apply_filters('lean_seo_article_post_types', array('post'));
 
-            if (is_singular((array) $article_types)) {
+            if (! $product && is_singular((array) $article_types)) {
                 $schema[] = self::get_article_schema();
+
+                $author_schema = self::get_author_person_schema((int) get_post()->post_author);
+                if ($author_schema) {
+                    $schema[] = $author_schema;
+                }
 
                 $faq_schema = self::get_faq_schema();
                 if ($faq_schema) {
@@ -65,7 +82,19 @@ class Lean_SEO_Schema {
                 }
             }
 
-            $schema[] = self::get_breadcrumb_schema();
+            $schema[] = $breadcrumb;
+        } elseif (is_author()) {
+            $breadcrumb = self::get_breadcrumb_schema();
+            $person     = self::get_author_person_schema(get_queried_object_id());
+
+            $schema[] = self::get_listing_page_schema('ProfilePage', $breadcrumb, $person ? $person['@id'] : '');
+            $schema[] = $person;
+            $schema[] = $breadcrumb;
+        } elseif (self::is_listing()) {
+            $breadcrumb = self::get_breadcrumb_schema();
+
+            $schema[] = self::get_listing_page_schema('CollectionPage', $breadcrumb);
+            $schema[] = $breadcrumb;
         }
 
         // Filter empty values
@@ -320,8 +349,13 @@ class Lean_SEO_Schema {
 
     /**
      * WebPage schema
+     *
+     * @since 1.16.0 Accepts the page's main entity and breadcrumb, and adds
+     *              the description and primary image.
+     * @param string     $main_entity_id @id of the node the page is about, or ''.
+     * @param array|null $breadcrumb     BreadcrumbList node, if any.
      */
-    private static function get_webpage_schema() {
+    private static function get_webpage_schema($main_entity_id = '', $breadcrumb = null) {
         $schema = array(
             '@type' => 'WebPage',
             '@id' => get_permalink() . '#webpage',
@@ -332,6 +366,35 @@ class Lean_SEO_Schema {
             'datePublished' => get_the_date('c'),
             'dateModified' => get_the_modified_date('c'),
         );
+
+        $description = Lean_SEO_Meta::get_description();
+        if ($description) {
+            $schema['description'] = $description;
+        }
+
+        if ($breadcrumb) {
+            $schema['breadcrumb'] = array('@id' => $breadcrumb['@id']);
+        }
+
+        if (has_post_thumbnail()) {
+            /** This filter is documented in get_article_schema() */
+            $size = apply_filters('lean_seo_schema_image_size', 'full');
+            $src  = wp_get_attachment_image_src(get_post_thumbnail_id(), $size);
+
+            if ($src) {
+                $schema['primaryImageOfPage'] = array(
+                    '@type'  => 'ImageObject',
+                    '@id'    => get_permalink() . '#primaryimage',
+                    'url'    => $src[0],
+                    'width'  => (int) $src[1],
+                    'height' => (int) $src[2],
+                );
+            }
+        }
+
+        if ($main_entity_id) {
+            $schema['mainEntity'] = array('@id' => $main_entity_id);
+        }
 
         /**
          * Filter the WebPage schema node.
@@ -347,56 +410,122 @@ class Lean_SEO_Schema {
      *
      * Emits a BreadcrumbList. On the homepage, only a single "Home"
      * crumb is emitted (the current-page entry is omitted to avoid the
-     * "Home → Home" duplicate — see GitHub issue #2). On singular views,
-     * the home crumb is followed by an optional category (posts) and
-     * the current page title.
+     * "Home → Home" duplicate — see GitHub issue #2), which is not a trail
+     * and is dropped.
+     *
+     * The trail, by view:
+     *
+     *     post                 Home › Category › Post
+     *     page                 Home › Parent › Page
+     *     custom post type     Home › Archive › Entry   (when it has an archive)
+     *     post type archive    Home › Archive
+     *     term archive         Home › [Archive ›] Parent term › Term
+     *     author archive       Home › Author
+     *
+     * @since 1.16.0 Covers pages' parents, custom post type archives, term
+     *              archives and author archives.
      */
     private static function get_breadcrumb_schema() {
-        $items = array();
-        $position = 1;
-
-        // Home crumb
-        $items[] = array(
-            '@type' => 'ListItem',
-            'position' => $position++,
-            'name' => 'Home',
-            'item' => home_url('/')
+        $crumbs = array(
+            array(
+                'name' => __('Home', 'lean-seo'),
+                'item' => home_url('/'),
+            ),
         );
 
-        // Category for posts
-        if (is_singular('post')) {
-            $categories = get_the_category();
-            if ($categories) {
-                $cat = $categories[0];
-                $items[] = array(
-                    '@type' => 'ListItem',
-                    'position' => $position++,
-                    'name' => $cat->name,
-                    'item' => get_category_link($cat->term_id)
-                );
-            }
-        }
+        if (is_singular()) {
+            $post = get_post();
 
-        // Current page (singular only — the homepage is already "Home").
-        // Last crumb intentionally omits the item URL per BreadcrumbList
-        // best practices.
-        if (is_singular() && ! is_front_page() && ! is_home()) {
-            $items[] = array(
-                '@type' => 'ListItem',
-                'position' => $position,
-                'name' => get_the_title()
-            );
+            if (is_singular('post')) {
+                $categories = get_the_category();
+                if ($categories) {
+                    $crumbs[] = array(
+                        'name' => $categories[0]->name,
+                        'item' => get_category_link($categories[0]->term_id),
+                    );
+                }
+            } elseif (is_post_type_hierarchical($post->post_type)) {
+                foreach (array_reverse(get_post_ancestors($post)) as $ancestor_id) {
+                    $crumbs[] = array(
+                        'name' => get_the_title($ancestor_id),
+                        'item' => get_permalink($ancestor_id),
+                    );
+                }
+            }
+
+            $archive = self::post_type_archive_crumb($post->post_type);
+            if ($archive) {
+                array_splice($crumbs, 1, 0, array($archive));
+            }
+
+            if (! is_front_page() && ! is_home()) {
+                $crumbs[] = array('name' => get_the_title());
+            }
+        } elseif (is_post_type_archive()) {
+            $crumbs[] = array('name' => post_type_archive_title('', false));
+        } elseif (is_category() || is_tag() || is_tax()) {
+            $term = get_queried_object();
+
+            if ($term instanceof WP_Term) {
+                $taxonomy = get_taxonomy($term->taxonomy);
+
+                // A taxonomy that belongs to a single post type with an
+                // archive — a product category — sits under that archive.
+                if ($taxonomy && 1 === count($taxonomy->object_type)) {
+                    $archive = self::post_type_archive_crumb($taxonomy->object_type[0]);
+                    if ($archive) {
+                        $crumbs[] = $archive;
+                    }
+                }
+
+                foreach (array_reverse(get_ancestors($term->term_id, $term->taxonomy, 'taxonomy')) as $ancestor_id) {
+                    $ancestor = get_term($ancestor_id, $term->taxonomy);
+                    if ($ancestor instanceof WP_Term) {
+                        $crumbs[] = array(
+                            'name' => $ancestor->name,
+                            'item' => get_term_link($ancestor),
+                        );
+                    }
+                }
+
+                $crumbs[] = array('name' => $term->name);
+            }
+        } elseif (is_author()) {
+            $author = get_queried_object();
+            if ($author instanceof WP_User) {
+                $crumbs[] = array('name' => $author->display_name);
+            }
+        } elseif (is_home() && ! is_front_page()) {
+            $crumbs[] = array('name' => get_the_title((int) get_option('page_for_posts')));
         }
 
         // A single "Home" crumb is not a trail — Google ignores it and it
         // adds a node that says nothing.
-        if (count($items) < 2) {
+        if (count($crumbs) < 2) {
             return null;
+        }
+
+        $items = array();
+        foreach (array_values($crumbs) as $index => $crumb) {
+            $item = array(
+                '@type'    => 'ListItem',
+                'position' => $index + 1,
+                'name'     => wp_strip_all_tags((string) $crumb['name']),
+            );
+
+            // The last crumb intentionally omits the item URL per
+            // BreadcrumbList best practices; so does any crumb whose link
+            // could not be built.
+            if (! empty($crumb['item']) && ! is_wp_error($crumb['item'])) {
+                $item['item'] = $crumb['item'];
+            }
+
+            $items[] = $item;
         }
 
         $schema = array(
             '@type' => 'BreadcrumbList',
-            '@id' => ((is_front_page() || is_home()) ? home_url('/') : get_permalink()) . '#breadcrumb',
+            '@id' => self::current_url() . '#breadcrumb',
             'itemListElement' => $items
         );
 
@@ -407,6 +536,186 @@ class Lean_SEO_Schema {
          * @param array $schema Breadcrumb schema array.
          */
         return apply_filters('lean_seo_breadcrumb_schema', $schema);
+    }
+
+    /**
+     * The crumb for a custom post type's archive, when it has one.
+     *
+     * Posts and pages have no archive of their own in the trail: the blog
+     * index is not a parent of each post.
+     *
+     * @since 1.16.0
+     * @param string $post_type Post type.
+     * @return array{name: string, item: string}|null
+     */
+    private static function post_type_archive_crumb($post_type) {
+        if (in_array($post_type, array('post', 'page'), true)) {
+            return null;
+        }
+
+        $object = get_post_type_object($post_type);
+        $link   = get_post_type_archive_link($post_type);
+
+        if (! $object || ! $object->has_archive || ! $link) {
+            return null;
+        }
+
+        return array(
+            'name' => $object->labels->name,
+            'item' => $link,
+        );
+    }
+
+    /**
+     * Whether the view lists posts: an archive or the blog index.
+     *
+     * @since 1.16.0
+     * @return bool
+     */
+    private static function is_listing() {
+        return is_post_type_archive()
+            || is_category()
+            || is_tag()
+            || is_tax()
+            || (is_home() && ! is_front_page());
+    }
+
+    /**
+     * The URL of the current view, as the canonical tag states it.
+     *
+     * @since 1.16.0
+     * @return string
+     */
+    private static function current_url() {
+        if (is_singular()) {
+            return get_permalink();
+        }
+
+        $canonical = Lean_SEO_Meta::get_canonical();
+
+        return $canonical ? $canonical : home_url('/');
+    }
+
+    /**
+     * The page node of a listing: a CollectionPage or a ProfilePage.
+     *
+     * @since 1.16.0
+     * @param string     $type           'CollectionPage' or 'ProfilePage'.
+     * @param array|null $breadcrumb     BreadcrumbList node, if any.
+     * @param string     $main_entity_id @id of the node the page is about, or ''.
+     * @return array
+     */
+    private static function get_listing_page_schema($type, $breadcrumb = null, $main_entity_id = '') {
+        $url = self::current_url();
+
+        $schema = array(
+            '@type'      => $type,
+            '@id'        => $url . '#webpage',
+            'url'        => $url,
+            'name'       => wp_strip_all_tags(self::listing_title()),
+            'isPartOf'   => array('@id' => home_url('/#website')),
+            'inLanguage' => self::get_language(),
+        );
+
+        $description = Lean_SEO_Meta::get_description();
+        if ($description) {
+            $schema['description'] = $description;
+        }
+
+        if ($breadcrumb) {
+            $schema['breadcrumb'] = array('@id' => $breadcrumb['@id']);
+        }
+
+        if ($main_entity_id) {
+            $schema['mainEntity'] = array('@id' => $main_entity_id);
+        }
+
+        /**
+         * Filter the CollectionPage or ProfilePage node of a listing.
+         *
+         * @since 1.16.0
+         * @param array  $schema Page node.
+         * @param string $type   'CollectionPage' or 'ProfilePage'.
+         */
+        return apply_filters('lean_seo_listing_page_schema', $schema, $type);
+    }
+
+    /**
+     * The title of the listing being viewed.
+     *
+     * @since 1.16.0
+     * @return string
+     */
+    private static function listing_title() {
+        if (is_post_type_archive()) {
+            return post_type_archive_title('', false);
+        }
+
+        if (is_category() || is_tag() || is_tax()) {
+            return single_term_title('', false);
+        }
+
+        if (is_author()) {
+            $author = get_queried_object();
+            return $author instanceof WP_User ? $author->display_name : '';
+        }
+
+        if (is_home()) {
+            return get_the_title((int) get_option('page_for_posts'));
+        }
+
+        return wp_get_document_title();
+    }
+
+    /**
+     * The Person node of a post author, shared by their posts and archive.
+     *
+     * The same @id on every Article they wrote and on their ProfilePage lets
+     * search engines join them into one person rather than one anonymous
+     * author per post.
+     *
+     * @since 1.16.0
+     * @param int $user_id User ID.
+     * @return array|null
+     */
+    private static function get_author_person_schema($user_id) {
+        $user = $user_id ? get_userdata($user_id) : false;
+        if (! $user || '' === $user->display_name) {
+            return null;
+        }
+
+        $url = get_author_posts_url($user->ID);
+
+        $schema = array(
+            '@type' => 'Person',
+            '@id'   => $url . '#person',
+            'name'  => $user->display_name,
+            'url'   => $url,
+        );
+
+        if ($user->description) {
+            $schema['description'] = wp_strip_all_tags($user->description);
+        }
+
+        // The profile's website field: often a personal site or a social
+        // profile, which is what sameAs is for. The site's own URL adds
+        // nothing.
+        $website = $user->user_url ? esc_url_raw($user->user_url) : '';
+        if ($website && untrailingslashit($website) !== untrailingslashit(home_url('/'))) {
+            $schema['sameAs'] = array($website);
+        }
+
+        /**
+         * Filter the Person node of a post author.
+         *
+         * Add sameAs profiles, jobTitle, image or any other Person property.
+         * Return null to omit the node; Articles then still name the author.
+         *
+         * @since 1.16.0
+         * @param array   $schema Person node.
+         * @param WP_User $user   The author.
+         */
+        return apply_filters('lean_seo_author_schema', $schema, $user);
     }
 
     /**
@@ -450,8 +759,12 @@ class Lean_SEO_Schema {
         $author_name = $author_id ? get_the_author_meta( 'display_name', $author_id ) : '';
 
         if ( $author_name ) {
+            // The Person node itself sits in the graph, where the author's
+            // archive page uses the same @id. Name and URL stay inline so the
+            // Article still names its author if a filter drops that node.
             return array(
                 '@type' => 'Person',
+                '@id'   => get_author_posts_url( $author_id ) . '#person',
                 'name'  => $author_name,
                 'url'   => get_author_posts_url( $author_id ),
             );

@@ -29,6 +29,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Lean_SEO_Content {
 
     /**
+     * Rendered HTML, keyed by post ID.
+     *
+     * @var array<int, string>
+     */
+    private static $html = array();
+
+    /**
+     * Plain text, keyed by post ID.
+     *
+     * @var array<int, string>
+     */
+    private static $text = array();
+
+    /**
      * Rendered HTML for a post.
      *
      * Blocks and shortcodes are expanded, so headings, images and links are
@@ -44,10 +58,8 @@ class Lean_SEO_Content {
             return '';
         }
 
-        static $cache = array();
-
-        if ( isset( $cache[ $post->ID ] ) ) {
-            return $cache[ $post->ID ];
+        if ( isset( self::$html[ $post->ID ] ) ) {
+            return self::$html[ $post->ID ];
         }
 
         $content = (string) $post->post_content;
@@ -61,9 +73,9 @@ class Lean_SEO_Content {
             $content = shortcode_unautop( wpautop( $content ) );
         }
 
-        $cache[ $post->ID ] = do_shortcode( $content );
+        self::$html[ $post->ID ] = do_shortcode( $content );
 
-        return $cache[ $post->ID ];
+        return self::$html[ $post->ID ];
     }
 
     /**
@@ -79,15 +91,13 @@ class Lean_SEO_Content {
             return '';
         }
 
-        static $cache = array();
-
-        if ( isset( $cache[ $post->ID ] ) ) {
-            return $cache[ $post->ID ];
+        if ( isset( self::$text[ $post->ID ] ) ) {
+            return self::$text[ $post->ID ];
         }
 
-        $cache[ $post->ID ] = self::to_text( self::html( $post ) );
+        self::$text[ $post->ID ] = self::to_text( self::html( $post ) );
 
-        return $cache[ $post->ID ];
+        return self::$text[ $post->ID ];
     }
 
     /**
@@ -124,5 +134,22 @@ class Lean_SEO_Content {
      */
     public static function word_count( $post ) {
         return (int) preg_match_all( '/[\p{L}\p{N}]+/u', self::text( $post ) );
+    }
+
+    /**
+     * Drop the memoised content of a post.
+     *
+     * A page load reads a handful of posts and never needs this. A scan
+     * reads hundreds, one after another, and each rendered copy would
+     * otherwise stay in memory until the request ends.
+     *
+     * @since 1.16.0
+     * @param WP_Post|int $post Post object or ID.
+     */
+    public static function forget( $post ) {
+        $post_id = $post instanceof WP_Post ? $post->ID : (int) $post;
+
+        unset( self::$html[ $post_id ], self::$text[ $post_id ] );
+        Lean_SEO_Description::forget( $post_id );
     }
 }

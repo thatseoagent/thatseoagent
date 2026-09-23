@@ -13,30 +13,26 @@ if (!defined('ABSPATH')) {
 class Lean_SEO_Admin {
 
     /**
-     * Register settings page and fields.
+     * Register the settings page sections and fields.
+     *
+     * The option itself is registered by Lean_SEO_Settings.
      *
      * @since 1.3.0
      */
     public static function register_settings() {
-        register_setting( 'lean_seo_settings', 'lean_seo_schema', array(
-            'type'              => 'array',
-            'sanitize_callback' => array( __CLASS__, 'sanitize_schema_settings' ),
-            'default'           => array(),
-        ) );
-
         add_settings_section(
             'lean_seo_schema_section',
-            __( 'Schema / Publisher Defaults', 'lean-seo' ),
+            __( 'Default author', 'lean-seo' ),
             function () {
-                echo '<p>' . esc_html__( 'Fallback author used when a post has no WordPress author assigned.', 'lean-seo' ) . '</p>';
+                echo '<p>' . esc_html__( 'Credited on posts that have no author assigned. Leave blank to credit the site itself.', 'lean-seo' ) . '</p>';
             },
             'lean_seo_settings'
         );
 
         $fields = array(
-            'author_name' => __( 'Author Name', 'lean-seo' ),
-            'author_url'  => __( 'Author URL', 'lean-seo' ),
-            'author_type' => __( 'Author Type', 'lean-seo' ),
+            'author_name' => __( 'Name', 'lean-seo' ),
+            'author_url'  => __( 'Web address', 'lean-seo' ),
+            'author_type' => __( 'The author is', 'lean-seo' ),
         );
 
         foreach ( $fields as $key => $label ) {
@@ -58,9 +54,14 @@ class Lean_SEO_Admin {
      * @param array $args Field arguments.
      */
     public static function render_schema_field( $args ) {
+        // Saved values only; the defaults are placeholders. Rendering the
+        // defaults as values saved them on the first submit, and a saved
+        // author name makes every authorless post credit a Person named after
+        // the site — the fallback this setting exists to avoid.
+        $saved    = get_option( 'lean_seo_schema', array() );
         $defaults = Lean_SEO_Schema::get_publisher_defaults();
         $key      = $args['key'];
-        $value    = $defaults[ $key ];
+        $value    = isset( $saved[ $key ] ) ? $saved[ $key ] : '';
 
         if ( 'author_type' === $key ) {
             printf(
@@ -68,22 +69,27 @@ class Lean_SEO_Admin {
                 esc_attr( $key ),
                 esc_attr( $key )
             );
-            foreach ( array( 'Person', 'Organization' ) as $type ) {
+            $types = array(
+                'Person'       => __( 'A person', 'lean-seo' ),
+                'Organization' => __( 'An organization', 'lean-seo' ),
+            );
+            foreach ( $types as $type => $label ) {
                 printf(
                     '<option value="%s"%s>%s</option>',
                     esc_attr( $type ),
                     selected( $value, $type, false ),
-                    esc_html( $type )
+                    esc_html( $label )
                 );
             }
             echo '</select>';
         } else {
             printf(
-                '<input type="%s" name="lean_seo_schema[%s]" id="lean_seo_schema_%s" value="%s" class="regular-text">',
+                '<input type="%s" name="lean_seo_schema[%s]" id="lean_seo_schema_%s" value="%s" placeholder="%s" class="regular-text">',
                 'author_url' === $key ? 'url' : 'text',
                 esc_attr( $key ),
                 esc_attr( $key ),
-                esc_attr( $value )
+                esc_attr( $value ),
+                esc_attr( $defaults[ $key ] )
             );
         }
     }
@@ -119,67 +125,6 @@ class Lean_SEO_Admin {
     const PAGE_HOOK = 'toplevel_page_lean-seo';
 
     /**
-     * Add the settings page as a top-level admin menu.
-     *
-     * @since 1.3.0
-     * @since 1.15.0 Top-level menu instead of a submenu of Settings.
-     */
-    public static function add_settings_page() {
-        add_menu_page(
-            __( 'Lean SEO', 'lean-seo' ),
-            __( 'Lean SEO', 'lean-seo' ),
-            'manage_options',
-            'lean-seo',
-            array( __CLASS__, 'render_settings_page' ),
-            'dashicons-search',
-            81
-        );
-    }
-
-    /**
-     * Send the old Settings → Lean SEO URL to the new page.
-     *
-     * Keeps bookmarks and links from before 1.15.0 working.
-     *
-     * @since 1.15.0
-     */
-    public static function redirect_legacy_settings_url() {
-        global $pagenow;
-
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only redirect.
-        if ( 'options-general.php' !== $pagenow || ! isset( $_GET['page'] ) || 'lean-seo' !== $_GET['page'] ) {
-            return;
-        }
-
-        wp_safe_redirect( admin_url( 'admin.php?page=lean-seo' ) );
-        exit;
-    }
-
-    /**
-     * Render the settings page.
-     *
-     * @since 1.3.0
-     */
-    public static function render_settings_page() {
-        ?>
-        <div class="wrap">
-            <h1><?php esc_html_e( 'Lean SEO Settings', 'lean-seo' ); ?></h1>
-            <?php
-            // Core prints these by itself only on pages under Settings.
-            settings_errors();
-            ?>
-            <form method="post" action="options.php">
-                <?php
-                settings_fields( 'lean_seo_settings' );
-                do_settings_sections( 'lean_seo_settings' );
-                submit_button();
-                ?>
-            </form>
-        </div>
-        <?php
-    }
-
-    /**
      * Post types that get the SEO meta box and the registered meta fields.
      *
      * Defaults to every post type with an editing screen. The rest of the
@@ -212,6 +157,121 @@ class Lean_SEO_Admin {
          * @param array<int, string> $post_types Post type names.
          */
         return (array) apply_filters( 'lean_seo_meta_box_post_types', array_values( $post_types ) );
+    }
+
+    /**
+     * Bulk action on the posts list: write the generated description.
+     */
+    const BULK_ACTION = 'lean_seo_generate_descriptions';
+
+    /**
+     * Add the bulk action to every post type with the meta box.
+     *
+     * Runs on admin_init, after `init` has registered the post types.
+     *
+     * @since 1.16.0
+     */
+    public static function register_bulk_actions() {
+        foreach ( self::get_meta_box_post_types() as $post_type ) {
+            add_filter( 'bulk_actions-edit-' . $post_type, array( __CLASS__, 'add_bulk_action' ) );
+            add_filter( 'handle_bulk_actions-edit-' . $post_type, array( __CLASS__, 'handle_bulk_action' ), 10, 3 );
+        }
+    }
+
+    /**
+     * Offer the bulk action.
+     *
+     * @since 1.16.0
+     * @param array $actions Bulk actions.
+     * @return array
+     */
+    public static function add_bulk_action( $actions ) {
+        $actions[ self::BULK_ACTION ] = __( 'Generate meta description', 'lean-seo' );
+        return $actions;
+    }
+
+    /**
+     * Save the generated description of each selected post that has none.
+     *
+     * The description saved is exactly the one the front end was already
+     * emitting — Lean_SEO_Description::generate() — so the page does not
+     * change; the value just stops depending on the content staying as it is.
+     * Posts with a description of their own are left alone. edit.php has
+     * already checked the bulk-posts nonce by the time this runs.
+     *
+     * @since 1.16.0
+     * @param string $redirect Redirect URL.
+     * @param string $action   Chosen action.
+     * @param array  $post_ids Selected post IDs.
+     * @return string
+     */
+    public static function handle_bulk_action( $redirect, $action, $post_ids ) {
+        if ( self::BULK_ACTION !== $action ) {
+            return $redirect;
+        }
+
+        $generated = 0;
+        $skipped   = 0;
+
+        foreach ( (array) $post_ids as $post_id ) {
+            $post_id = (int) $post_id;
+
+            if ( ! current_user_can( 'edit_post', $post_id ) || '' !== Lean_SEO_Post_Seo::get( $post_id, 'description' ) ) {
+                $skipped++;
+                continue;
+            }
+
+            $description = Lean_SEO_Description::generate( $post_id );
+            Lean_SEO_Content::forget( $post_id );
+
+            if ( '' === $description ) {
+                $skipped++;
+                continue;
+            }
+
+            Lean_SEO_Post_Seo::save( $post_id, array( 'description' => $description ) );
+            $generated++;
+        }
+
+        return add_query_arg(
+            array(
+                'lean_seo_generated' => $generated,
+                'lean_seo_skipped'   => $skipped,
+            ),
+            $redirect
+        );
+    }
+
+    /**
+     * Report the result of the bulk action.
+     *
+     * @since 1.16.0
+     */
+    public static function bulk_action_notice() {
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display only: counts from our own redirect.
+        if ( ! isset( $_GET['lean_seo_generated'] ) ) {
+            return;
+        }
+
+        $generated = absint( $_GET['lean_seo_generated'] );
+        $skipped   = isset( $_GET['lean_seo_skipped'] ) ? absint( $_GET['lean_seo_skipped'] ) : 0;
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+        $message = sprintf(
+            /* translators: %d: number of posts. */
+            _n( 'Meta description saved for %d post.', 'Meta description saved for %d posts.', $generated, 'lean-seo' ),
+            $generated
+        );
+
+        if ( $skipped ) {
+            $message .= ' ' . sprintf(
+                /* translators: %d: number of posts. */
+                _n( '%d skipped: it already had one or has no content to describe.', '%d skipped: they already had one or have no content to describe.', $skipped, 'lean-seo' ),
+                $skipped
+            );
+        }
+
+        printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html( $message ) );
     }
 
     /**

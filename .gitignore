@@ -7,3 +7,9 @@
 
 # Build artifacts
 *.zip
+
+# Impeccable: review captures and decision payloads are scratch; design.json
+# is the DESIGN.md sidecar and is kept.
+/.impeccable/review/
+/.impeccable/direction-payload.json
+/.impeccable/questions/

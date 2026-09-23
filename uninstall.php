@@ -24,6 +24,9 @@ const LEAN_SEO_UNINSTALL_OPTIONS = array(
     'lean_seo_schema',
     'lean_seo_identity',
     'lean_seo_homepage',
+    'lean_seo_products',
+    'lean_seo_llms_txt',
+    'lean_seo_audit_results',
     'lean_seo_indexnow_key',
     'lean_seo_rewrite_version',
     'lean_seo_markdown_cache_version',
@@ -49,6 +52,9 @@ function lean_seo_uninstall_site() {
     }
 
     wp_unschedule_hook( 'lean_seo_indexnow_submit' );
+    delete_transient( 'lean_seo_llms_txt' );
+    delete_transient( 'lean_seo_product_summary' );
+    delete_metadata( 'user', 0, 'lean_seo_admin_theme', '', true );
 }
 
 /**

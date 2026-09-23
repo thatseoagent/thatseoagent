@@ -1,0 +1,593 @@
+/*
+ * Lean SEO admin screen — "the site bulletin".
+ *
+ * Build: pnpm run build:css  →  assets/build/admin.css (committed).
+ *
+ * The screen reads like a weather service bulletin: one condition in plain
+ * words on a field of its warning color, the warnings in force, a row of
+ * observations, then the readings. Warning levels follow the European
+ * weather-warning scale (none, yellow, orange, red), which people read
+ * without knowing anything about SEO.
+ *
+ * Loaded only on the Lean SEO screen, and written so it neither leaks into
+ * the rest of wp-admin nor gets overridden by it:
+ *
+ *   - No Preflight. Tailwind's reset is global and would restyle the admin
+ *     menu, the toolbar and every notice; a reset scoped to #lean-seo-app
+ *     stands in for it.
+ *   - Utilities are `important`. wp-admin's stylesheets are unlayered, and an
+ *     unlayered rule beats any layered rule however specific; `!important`
+ *     inside a layer beats both. (Alpine's x-show sets an inline
+ *     display:none that an important utility overrides: use x-show.important
+ *     on elements that also carry a display utility.)
+ *   - Only the templates are scanned, so the output holds only their classes.
+ *   - Public Sans is self-hosted from assets/fonts: no request leaves the site.
+ */
+
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) important source(none);
+
+@source "../../includes/admin/views";
+@source "../../includes/class-lean-seo-app.php";
+@source "../admin/app.js";
+
+@font-face {
+    font-family: "Public Sans";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 900;
+    src: url("../fonts/public-sans-latin-wght-normal.woff2") format("woff2-variations");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Public Sans";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 900;
+    src: url("../fonts/public-sans-latin-ext-wght-normal.woff2") format("woff2-variations");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/*
+ * Colors by role. Each resolves to a variable set per theme.
+ *
+ *   paper   the page ground          sheet   tables and forms
+ *   column  the sidebar              rule    1px dividers
+ *   ink     text, and the one filled control (press)
+ *   met     links and interactive text, the service blue
+ *   level-* the warning scale, each with its own text color (on-*)
+ */
+@theme inline {
+    --color-paper: var(--ls-paper);
+    --color-sheet: var(--ls-sheet);
+    --color-column: var(--ls-column);
+    --color-rule: var(--ls-rule);
+    --color-rule-strong: var(--ls-rule-strong);
+    --color-ink: var(--ls-ink);
+    --color-ink-2: var(--ls-ink-2);
+    --color-ink-3: var(--ls-ink-3);
+    --color-met: var(--ls-met);
+    --color-press: var(--ls-press);
+    --color-on-press: var(--ls-on-press);
+
+    --color-level-clear: var(--ls-level-clear);
+    --color-level-yellow: var(--ls-level-yellow);
+    --color-level-orange: var(--ls-level-orange);
+    --color-level-red: var(--ls-level-red);
+    --color-on-clear: var(--ls-on-clear);
+    --color-on-yellow: var(--ls-on-yellow);
+    --color-on-orange: var(--ls-on-orange);
+    --color-on-red: var(--ls-on-red);
+
+    --font-sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+    --radius-sheet: 6px;
+}
+
+/* Themes -------------------------------------------------------------- */
+
+/* Office daylight on a laptop: the light bulletin is the default. */
+.lean-seo-screen {
+    --ls-paper: #f2f4f3;
+    --ls-sheet: #ffffff;
+    --ls-column: #e6eae9;
+    --ls-rule: #d2d9d7;
+    --ls-rule-strong: #a3aeac;
+    --ls-ink: #111d27;
+    --ls-ink-2: #44525f;
+    --ls-ink-3: #5f6c78;
+    --ls-met: #0b5378;
+    --ls-press: #111d27;
+    --ls-on-press: #ffffff;
+
+    --ls-level-clear: #1d774a;
+    --ls-level-yellow: #f1c02b;
+    --ls-level-orange: #e5711a;
+    --ls-level-red: #c41f38;
+    --ls-on-clear: #ffffff;
+    --ls-on-yellow: #111d27;
+    --ls-on-orange: #111d27;
+    --ls-on-red: #ffffff;
+
+    color-scheme: light;
+}
+
+/* The night edition: a deep service blue, never neutral black. */
+.lean-seo-screen.lean-seo-theme-dark {
+    --ls-paper: #0e1b24;
+    --ls-sheet: #13242f;
+    --ls-column: #0a151d;
+    --ls-rule: #223844;
+    --ls-rule-strong: #3a5664;
+    --ls-ink: #e4ebee;
+    --ls-ink-2: #a8b6bf;
+    --ls-ink-3: #8b9aa4;
+    --ls-met: #8ccaee;
+    --ls-press: #e4ebee;
+    --ls-on-press: #0e1b24;
+
+    --ls-level-clear: #238a57;
+
+    color-scheme: dark;
+}
+
+/* Alpine: anything that starts hidden stays hidden until Alpine runs. */
+#lean-seo-app [x-cloak] {
+    display: none !important;
+}
+
+/* wp-admin chrome around the app --------------------------------------- */
+
+.lean-seo-screen #wpcontent {
+    padding-left: 0;
+}
+
+.lean-seo-screen #wpbody,
+.lean-seo-screen #wpbody-content {
+    background: var(--ls-paper);
+    padding-bottom: 0;
+}
+
+/* The footer's credit line overlaps the full-height sidebar. */
+.lean-seo-screen #wpfooter {
+    display: none;
+}
+
+/* Scoped reset --------------------------------------------------------- */
+
+#lean-seo-app {
+    min-height: calc(100vh - var(--wp-admin--admin-bar--height, 32px));
+    background: var(--ls-paper);
+    color: var(--ls-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    font-feature-settings: "kern", "liga";
+    -webkit-font-smoothing: antialiased;
+    caret-color: var(--ls-met);
+    scrollbar-color: var(--ls-rule-strong) transparent;
+}
+
+#lean-seo-app ::selection {
+    background: color-mix(in oklab, var(--ls-met) 22%, transparent);
+    color: var(--ls-ink);
+}
+
+#lean-seo-app *,
+#lean-seo-app ::before,
+#lean-seo-app ::after {
+    box-sizing: border-box;
+    border: 0 solid var(--ls-rule);
+}
+
+#lean-seo-app :is(h1, h2, h3, h4, p, ul, ol, li, figure, pre, dl, dd, dt) {
+    margin: 0;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+
+#lean-seo-app :is(h1, h2, h3) {
+    text-wrap: balance;
+}
+
+#lean-seo-app p {
+    text-wrap: pretty;
+}
+
+#lean-seo-app :is(ul, ol) {
+    list-style: none;
+}
+
+#lean-seo-app a {
+    color: inherit;
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    transition: color 160ms, background-color 160ms, border-color 160ms, text-decoration-color 160ms;
+}
+
+#lean-seo-app :is(a, button, input, select, textarea, summary):focus {
+    box-shadow: none;
+    outline: none;
+}
+
+#lean-seo-app :is(a, button, input, select, textarea, summary):focus-visible {
+    outline: 2px solid var(--ls-met);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+#lean-seo-app button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    cursor: pointer;
+}
+
+#lean-seo-app button:disabled {
+    cursor: not-allowed;
+}
+
+#lean-seo-app svg {
+    flex-shrink: 0;
+}
+
+#lean-seo-app code,
+#lean-seo-app pre {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+}
+
+#lean-seo-app code {
+    padding: 0.08em 0.35em;
+    border-radius: 4px;
+    background: color-mix(in oklab, var(--ls-ink) 7%, transparent);
+    color: var(--ls-ink);
+    overflow-wrap: anywhere;
+}
+
+#lean-seo-app table {
+    border-collapse: collapse;
+    width: 100%;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Links in running text and tables: service blue, underline on hover. */
+#lean-seo-app .ls-link {
+    color: var(--ls-met);
+    font-weight: 600;
+}
+
+#lean-seo-app .ls-link:hover {
+    text-decoration: underline;
+}
+
+/* The one filled control: ink on paper, or on a warning field. */
+#lean-seo-app .ls-press {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.5rem;
+    padding: 0 1.1rem;
+    border-radius: 4px;
+    background: var(--ls-press);
+    color: var(--ls-on-press);
+    font-weight: 650;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+    transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 160ms;
+}
+
+#lean-seo-app .ls-press:hover {
+    color: var(--ls-on-press);
+    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.28);
+    transform: translateY(-1px);
+}
+
+#lean-seo-app .ls-press:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+}
+
+/* On a warning field the button keeps ink and white whatever the theme:
+   the field's own colors do not change between editions. */
+#lean-seo-app .ls-field .ls-press {
+    background: #111d27;
+    color: #ffffff;
+}
+
+/* Secondary control: ruled, not filled. */
+#lean-seo-app .ls-rule-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2.25rem;
+    padding: 0 0.85rem;
+    border: 1px solid var(--ls-rule-strong);
+    border-radius: 4px;
+    color: var(--ls-ink);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#lean-seo-app .ls-rule-button:hover {
+    border-color: var(--ls-ink);
+}
+
+/* The observation row: one sweep of light when the page loads, meaning
+   "these were just checked". Content is visible before and after. */
+#lean-seo-app .ls-sweep {
+    position: relative;
+    overflow: hidden;
+}
+
+#lean-seo-app .ls-sweep::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--ls-sheet) 70%, transparent) 45%, transparent 60%);
+    transform: translateX(-100%);
+    animation: ls-sweep 1100ms cubic-bezier(0.16, 1, 0.3, 1) 150ms 1 both;
+    pointer-events: none;
+}
+
+@keyframes ls-sweep {
+    to {
+        transform: translateX(100%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #lean-seo-app .ls-sweep::after {
+        animation: none;
+        display: none;
+    }
+
+    #lean-seo-app *,
+    #lean-seo-app *::before {
+        transition-duration: 0ms !important;
+    }
+}
+
+/* wp-admin notices, which common.js moves under .wp-header-end ---------- */
+
+#lean-seo-app .notice {
+    position: relative;
+    margin: 0 0 1.5rem;
+    padding: 0.75rem 1rem 0.75rem 2.25rem;
+    border: 1px solid var(--ls-rule);
+    border-radius: var(--radius-sheet);
+    background: var(--ls-sheet);
+    color: var(--ls-ink);
+    box-shadow: none;
+}
+
+#lean-seo-app .notice::before {
+    content: "";
+    position: absolute;
+    top: 1.05rem;
+    left: 1rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 1px;
+    background: var(--ls-met);
+}
+
+#lean-seo-app .notice p {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+#lean-seo-app :is(.notice-success, .updated)::before {
+    background: var(--ls-level-clear);
+}
+
+#lean-seo-app .notice-warning::before {
+    background: var(--ls-level-orange);
+}
+
+#lean-seo-app :is(.notice-error, .error)::before {
+    background: var(--ls-level-red);
+}
+
+#lean-seo-app .notice-dismiss::before {
+    color: var(--ls-ink-3);
+}
+
+/* Forms --------------------------------------------------------------- */
+
+/*
+ * The settings view still renders Settings API fields, which print wp-admin
+ * markup (form-table, regular-text, button). Restyled here into the bulletin
+ * until the view moves to the REST API.
+ */
+
+#lean-seo-app :is(input[type="text"], input[type="url"], input[type="email"], input[type="number"], input[type="password"], input[type="search"], select, textarea) {
+    width: 100%;
+    max-width: 30rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--ls-rule-strong);
+    border-radius: 4px;
+    /* background-color, not background: wp-admin draws the select arrow as a
+       background image. */
+    background-color: var(--ls-sheet);
+    color: var(--ls-ink);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    box-shadow: none;
+    transition: border-color 160ms, box-shadow 160ms;
+}
+
+#lean-seo-app select {
+    padding-right: 2rem;
+    background-position: right 0.6rem center;
+}
+
+#lean-seo-app :is(textarea.large-text, input.large-text) {
+    max-width: 44rem;
+}
+
+#lean-seo-app :is(input, select, textarea):hover {
+    border-color: var(--ls-ink-3);
+}
+
+#lean-seo-app :is(input, select, textarea):focus {
+    border-color: var(--ls-met);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--ls-met) 22%, transparent);
+    outline: none;
+}
+
+#lean-seo-app ::placeholder {
+    color: var(--ls-ink-3);
+    opacity: 1;
+}
+
+/* The browser's own controls, tinted: wp-admin draws its own with ::before,
+   which does not survive the theme's colors. */
+#lean-seo-app :is(input[type="checkbox"], input[type="radio"]) {
+    -webkit-appearance: auto;
+    appearance: auto;
+    width: 1rem;
+    height: 1rem;
+    min-width: 0;
+    min-height: 0;
+    margin: 0 0.5rem 0 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    vertical-align: -0.15em;
+    accent-color: var(--ls-met);
+}
+
+#lean-seo-app :is(input[type="checkbox"], input[type="radio"])::before {
+    content: none;
+}
+
+#lean-seo-app :is(input[type="checkbox"], input[type="radio"]):focus {
+    box-shadow: none;
+}
+
+#lean-seo-app .ls-form .form-table {
+    margin: 0;
+}
+
+#lean-seo-app .ls-form .form-table th {
+    width: 13rem;
+    padding: 1.1rem 2rem 1.1rem 0;
+    color: var(--ls-ink);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    vertical-align: top;
+}
+
+#lean-seo-app .ls-form .form-table td {
+    padding: 0.85rem 0;
+    color: var(--ls-ink);
+    font-size: 14px;
+    vertical-align: top;
+}
+
+#lean-seo-app .ls-form .form-table > tbody > tr + tr > :is(th, td) {
+    border-top: 1px solid var(--ls-rule);
+}
+
+#lean-seo-app .ls-form .form-table .form-table th {
+    width: 10rem;
+    padding: 0.6rem 1.5rem 0.6rem 1.6rem;
+    font-weight: 500;
+    color: var(--ls-ink-2);
+}
+
+#lean-seo-app .ls-form .form-table .form-table td {
+    padding: 0.4rem 0;
+}
+
+#lean-seo-app .ls-form :is(p.description, .description) {
+    margin-top: 0.4rem;
+    max-width: 38rem;
+    color: var(--ls-ink-2);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+#lean-seo-app .ls-form fieldset label {
+    color: var(--ls-ink);
+}
+
+#lean-seo-app .ls-form .lean-seo-product-type {
+    padding: 0.35rem 0;
+}
+
+#lean-seo-app .ls-form .lean-seo-product-type code {
+    margin-left: 0.35rem;
+}
+
+#lean-seo-app .lean-seo-media-preview img {
+    border: 1px solid var(--ls-rule) !important;
+    border-radius: 4px;
+    background: var(--ls-sheet) !important;
+}
+
+#lean-seo-app :is(.button, .button-secondary) {
+    min-height: 2.25rem;
+    padding: 0 0.85rem;
+    border: 1px solid var(--ls-rule-strong);
+    border-radius: 4px;
+    background: var(--ls-sheet);
+    color: var(--ls-ink);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 2.1rem;
+    box-shadow: none;
+}
+
+#lean-seo-app .button:hover {
+    border-color: var(--ls-ink);
+    background: var(--ls-sheet);
+    color: var(--ls-ink);
+}
+
+#lean-seo-app .button-primary {
+    min-height: 2.5rem;
+    padding: 0 1.25rem;
+    border-color: var(--ls-press);
+    background: var(--ls-press);
+    color: var(--ls-on-press);
+    font-size: 14px;
+    line-height: 2.4rem;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+}
+
+#lean-seo-app .button-primary:hover {
+    border-color: var(--ls-press);
+    background: var(--ls-press);
+    color: var(--ls-on-press);
+    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.28);
+}
+
+@media screen and (max-width: 782px) {
+    #lean-seo-app .ls-form .form-table th {
+        width: auto;
+        padding-bottom: 0.25rem;
+    }
+
+    #lean-seo-app .ls-form .form-table > tbody > tr + tr > td {
+        border-top: 0;
+    }
+
+    #lean-seo-app .ls-form .form-table .form-table th {
+        padding-left: 0;
+    }
+}

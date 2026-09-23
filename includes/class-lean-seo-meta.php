@@ -259,6 +259,18 @@ class Lean_SEO_Meta {
             return get_bloginfo('description');
         }
 
+        if (is_post_type_archive()) {
+            $object = get_queried_object();
+            if ($object instanceof WP_Post_Type) {
+                if ($object->description) {
+                    return wp_strip_all_tags($object->description);
+                }
+
+                /* translators: 1: post type plural label, e.g. "Products", 2: site name. */
+                return sprintf(__('Browse all %1$s on %2$s', 'lean-seo'), $object->labels->name, get_bloginfo('name'));
+            }
+        }
+
         if (is_category() || is_tag() || is_tax()) {
             $term = get_queried_object();
             if ($term && $term->description) {
@@ -356,10 +368,24 @@ class Lean_SEO_Meta {
             return get_permalink();
         }
         
-        if (is_home() || is_front_page()) {
+        if (is_front_page()) {
             return home_url('/');
         }
-        
+
+        // The blog index on its own page ("Posts page" in Settings →
+        // Reading). Before 1.16.0 it declared the homepage as its canonical,
+        // telling search engines the blog was a duplicate of the front page.
+        if (is_home()) {
+            $posts_page = (int) get_option('page_for_posts');
+            return $posts_page ? get_permalink($posts_page) : home_url('/');
+        }
+
+        if (is_post_type_archive()) {
+            $post_type = get_query_var('post_type');
+            $link      = get_post_type_archive_link(is_array($post_type) ? reset($post_type) : $post_type);
+            return $link ? $link : null;
+        }
+
         if (is_category() || is_tag() || is_tax()) {
             $link = get_term_link(get_queried_object());
             return is_wp_error($link) ? null : $link;

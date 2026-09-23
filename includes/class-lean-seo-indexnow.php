@@ -104,12 +104,6 @@ class Lean_SEO_IndexNow {
 	 * @since 1.7.1
 	 */
 	public static function register_settings(): void {
-		register_setting( 'lean_seo_settings', self::OPTION_KEY, array(
-			'type'              => 'string',
-			'sanitize_callback' => array( __CLASS__, 'sanitize_key_setting' ),
-			'default'           => '',
-		) );
-
 		add_settings_section(
 			'lean_seo_indexnow_section',
 			__( 'IndexNow', 'lean-seo' ),
@@ -186,11 +180,15 @@ class Lean_SEO_IndexNow {
 		}
 
 		if ( strlen( $key ) < 8 || strlen( $key ) > 128 ) {
-			add_settings_error(
-				self::OPTION_KEY,
-				'lean_seo_indexnow_key_length',
-				__( 'The IndexNow key must be between 8 and 128 characters.', 'lean-seo' )
-			);
+			// add_settings_error() lives in wp-admin and is not loaded when the
+			// option is saved through the REST API.
+			if ( function_exists( 'add_settings_error' ) ) {
+				add_settings_error(
+					self::OPTION_KEY,
+					'lean_seo_indexnow_key_length',
+					__( 'The IndexNow key must be between 8 and 128 characters.', 'lean-seo' )
+				);
+			}
 
 			return (string) get_option( self::OPTION_KEY, '' );
 		}

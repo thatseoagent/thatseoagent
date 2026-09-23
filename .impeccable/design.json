@@ -1,0 +1,411 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-23T02:07:48.904730+00:00",
+  "title": "Design System: Lean SEO admin",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Bulletin Paper",
+        "tonalRamp": [
+          "#3a4240",
+          "#5c6664",
+          "#a3aeac",
+          "#d2d9d7",
+          "#e6eae9",
+          "#f2f4f3",
+          "#f8f9f9",
+          "#ffffff"
+        ]
+      },
+      "sheet": {
+        "role": "neutral",
+        "displayName": "Sheet White"
+      },
+      "column": {
+        "role": "neutral",
+        "displayName": "Column Grey"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule"
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Strong Rule"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "#0a1118",
+          "#111d27",
+          "#26343f",
+          "#44525f",
+          "#5f6c78",
+          "#8b9aa4",
+          "#c3ccd2",
+          "#e4ebee"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2"
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3"
+      },
+      "met-blue": {
+        "role": "primary",
+        "displayName": "Service Blue",
+        "tonalRamp": [
+          "#06283a",
+          "#0b3e5a",
+          "#0b5378",
+          "#236d95",
+          "#4a8ab0",
+          "#7aaac9",
+          "#aecbe0",
+          "#dde9f2"
+        ]
+      },
+      "press": {
+        "role": "neutral",
+        "displayName": "Press Ink"
+      },
+      "on-press": {
+        "role": "neutral",
+        "displayName": "On Press"
+      },
+      "level-clear": {
+        "role": "warning",
+        "displayName": "No Warnings Green",
+        "tonalRamp": [
+          "#0c3320",
+          "#134d30",
+          "#1d774a",
+          "#2f9161",
+          "#56ab80",
+          "#88c6a4",
+          "#bcdfca",
+          "#e6f3eb"
+        ]
+      },
+      "level-yellow": {
+        "role": "warning",
+        "displayName": "Yellow Warning",
+        "tonalRamp": [
+          "#4a3908",
+          "#7a5e0c",
+          "#b08813",
+          "#f1c02b",
+          "#f5cf5a",
+          "#f8dd88",
+          "#fbeab6",
+          "#fdf6e1"
+        ]
+      },
+      "level-orange": {
+        "role": "warning",
+        "displayName": "Orange Warning",
+        "tonalRamp": [
+          "#46210a",
+          "#733710",
+          "#a65016",
+          "#e5711a",
+          "#ec9048",
+          "#f2af7b",
+          "#f7cfae",
+          "#fcebdc"
+        ]
+      },
+      "level-red": {
+        "role": "warning",
+        "displayName": "Red Warning",
+        "tonalRamp": [
+          "#3d0911",
+          "#63101d",
+          "#93182b",
+          "#c41f38",
+          "#d44d61",
+          "#e07e8d",
+          "#ecb0b9",
+          "#f8e0e4"
+        ]
+      },
+      "field-ink": {
+        "role": "neutral",
+        "displayName": "Field Ink"
+      },
+      "night-paper": {
+        "role": "neutral",
+        "displayName": "Bulletin Paper (Night)"
+      },
+      "night-sheet": {
+        "role": "neutral",
+        "displayName": "Sheet White (Night)"
+      },
+      "night-column": {
+        "role": "neutral",
+        "displayName": "Column Grey (Night)"
+      },
+      "night-rule": {
+        "role": "neutral",
+        "displayName": "Rule (Night)"
+      },
+      "night-rule-strong": {
+        "role": "neutral",
+        "displayName": "Strong Rule (Night)"
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "Ink (Night)"
+      },
+      "night-ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2 (Night)"
+      },
+      "night-ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3 (Night)"
+      },
+      "night-met-blue": {
+        "role": "primary",
+        "displayName": "Service Blue (Night)"
+      },
+      "night-press": {
+        "role": "neutral",
+        "displayName": "Press Ink (Night)"
+      },
+      "night-on-press": {
+        "role": "neutral",
+        "displayName": "On Press (Night)"
+      },
+      "night-level-clear": {
+        "role": "warning",
+        "displayName": "No Warnings Green (Night)"
+      }
+    },
+    "typographyMeta": {
+      "condition": {
+        "displayName": "Condition",
+        "purpose": "The one condition sentence on the Overview warning field; 32px below md."
+      },
+      "page-title": {
+        "displayName": "Page Title",
+        "purpose": "Header of every view except Overview."
+      },
+      "section-title": {
+        "displayName": "Section Title",
+        "purpose": "Section headings over a strong rule."
+      },
+      "reading": {
+        "displayName": "Reading",
+        "purpose": "A single tabular number in a readings list."
+      },
+      "item-title": {
+        "displayName": "Item Title",
+        "purpose": "A warning title."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running text, 36-42rem measure."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Bulletin line, counts, notes."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Observation labels and table heads; sentence case."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Code, meta keys, URLs."
+      }
+    },
+    "shadows": [
+      {
+        "name": "press-rest",
+        "value": "0 1px 2px rgb(0 0 0 / 0.18)",
+        "purpose": "Filled press button at rest."
+      },
+      {
+        "name": "press-hover",
+        "value": "0 4px 12px -2px rgb(0 0 0 / 0.28)",
+        "purpose": "Press button on hover, with a 1px lift."
+      },
+      {
+        "name": "selected-lift",
+        "value": "0 1px 2px rgb(17 29 39 / 0.08)",
+        "purpose": "Active nav item and pressed Day/Night segment."
+      },
+      {
+        "name": "focus-ring-input",
+        "value": "0 0 0 3px color-mix(in oklab, var(--ls-met) 22%, transparent)",
+        "purpose": "Focused input."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Press lift and the observation sweep."
+      },
+      {
+        "name": "duration-state",
+        "value": "160ms",
+        "purpose": "Color, border and shadow state transitions."
+      },
+      {
+        "name": "observation-sweep",
+        "value": "1100ms, 150ms delay, once",
+        "purpose": "One light sweep across the observation row on load; removed under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "wp-admin-mobile",
+        "value": "782px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Press Button",
+      "kind": "button",
+      "refersTo": "button-press",
+      "description": "The one filled control per surface.",
+      "html": "<a href=\"#\" class=\"ds-press\">Set up the identity <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a>",
+      "css": ".ds-press{font-family:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:inline-flex;align-items:center;gap:.5rem;min-height:2.5rem;padding:0 1.1rem;border-radius:4px;background:#111d27;color:#fff;font-size:14px;font-weight:650;text-decoration:none;white-space:nowrap;box-shadow:0 1px 2px rgb(0 0 0/.18);transition:transform 160ms cubic-bezier(.16,1,.3,1),box-shadow 160ms}.ds-press:hover{transform:translateY(-1px);box-shadow:0 4px 12px -2px rgb(0 0 0/.28)}.ds-press:active{transform:none;box-shadow:0 1px 2px rgb(0 0 0/.18)}.ds-press:focus-visible{outline:2px solid #0b5378;outline-offset:2px}"
+    },
+    {
+      "name": "Rule Button",
+      "kind": "button",
+      "refersTo": "button-rule",
+      "description": "Secondary action: ruled, not filled.",
+      "html": "<a href=\"#\" class=\"ds-rule-btn\">Write it</a>",
+      "css": ".ds-rule-btn{font-family:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:inline-flex;align-items:center;gap:.45rem;min-height:2.25rem;padding:0 .85rem;border:1px solid #a3aeac;border-radius:4px;color:#111d27;background:transparent;font-size:14px;font-weight:600;text-decoration:none;transition:border-color 160ms}.ds-rule-btn:hover{border-color:#111d27}.ds-rule-btn:focus-visible{outline:2px solid #0b5378;outline-offset:2px}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Settings field on sheet with a strong rule.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Organization name\">",
+      "css": ".ds-input{font-family:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;width:100%;max-width:30rem;min-height:2.5rem;padding:.5rem .75rem;border:1px solid #a3aeac;border-radius:4px;background:#fff;color:#111d27;font-size:14px;transition:border-color 160ms,box-shadow 160ms}.ds-input::placeholder{color:#5f6c78}.ds-input:hover{border-color:#5f6c78}.ds-input:focus{outline:none;border-color:#0b5378;box-shadow:0 0 0 3px color-mix(in oklab,#0b5378 22%,transparent)}"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item-active",
+      "description": "Sidebar views; active item on sheet with a blue icon.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" class=\"ds-nav-item is-active\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\"/></svg>Overview</a><a href=\"#\" class=\"ds-nav-item\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 6h16M4 12h16M4 18h16\"/></svg>Settings</a></nav>",
+      "css": ".ds-nav{font-family:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;flex-direction:column;gap:2px;width:15rem;padding:12px;background:#e6eae9}.ds-nav-item{display:flex;align-items:center;gap:.625rem;padding:8px 12px;border-radius:4px;color:#44525f;font-size:14px;font-weight:500;text-decoration:none}.ds-nav-item svg{color:#5f6c78}.ds-nav-item:hover{background:rgb(255 255 255/.6);color:#111d27}.ds-nav-item.is-active{background:#fff;color:#111d27;font-weight:600;box-shadow:0 1px 2px rgb(17 29 39/.08)}.ds-nav-item.is-active svg{color:#0b5378}.ds-nav-item:focus-visible{outline:2px solid #0b5378;outline-offset:2px}"
+    },
+    {
+      "name": "Condition Field",
+      "kind": "custom",
+      "refersTo": "condition-field-yellow",
+      "description": "The one condition sentence on a flat field in its warning color, with the warning scale.",
+      "html": "<section class=\"ds-field\"><div><h1>Mostly fine, with room to do better.</h1><p>Search engines do not know who runs the site, and 2 more below.</p><a href=\"#\" class=\"ds-field-press\">Set up the identity <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></div><ol class=\"ds-scale\"><li><span style=\"background:#c41f38\"></span>Red warning</li><li><span style=\"background:#e5711a\"></span>Orange warning</li><li class=\"is-current\"><span style=\"background:#f1c02b\"><i></i></span>Yellow warning</li><li><span style=\"background:#1d774a\"></span>No warnings</li></ol></section>",
+      "css": ".ds-field{font-family:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:grid;grid-template-columns:1fr auto;gap:2rem;padding:40px;border-radius:6px;background:#f1c02b;color:#111d27}.ds-field h1{margin:0;font-size:44px;line-height:1.08;font-weight:800;letter-spacing:-.025em}.ds-field p{margin:1rem 0 0;font-size:16px;line-height:1.625}.ds-field-press{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.5rem;min-height:2.5rem;padding:0 1.1rem;border-radius:4px;background:#111d27;color:#fff;font-weight:650;font-size:14px;text-decoration:none;box-shadow:0 1px 2px rgb(0 0 0/.18);transition:transform 160ms cubic-bezier(.16,1,.3,1),box-shadow 160ms}.ds-field-press:hover{transform:translateY(-1px);box-shadow:0 4px 12px -2px rgb(0 0 0/.28)}.ds-scale{align-self:end;list-style:none;margin:0;padding:0;font-size:13px;width:11rem}.ds-scale li{display:flex;align-items:center;gap:.625rem;margin-top:6px;opacity:.7}.ds-scale li.is-current{opacity:1;font-weight:700}.ds-scale span{display:grid;place-items:center;width:16px;height:16px;border-radius:2px;box-shadow:0 0 0 1px rgb(0 0 0/.15)}.ds-scale i{width:6px;height:6px;border-radius:50%;background:#111d27}"
+    },
+    {
+      "name": "Observation Row",
+      "kind": "custom",
+      "refersTo": "observation-cell",
+      "description": "Ruled strip of checks, each with a state bar; one light sweep on load.",
+      "html": "<ol class=\"ds-obs\"><li><b style=\"background:#111d27\"></b><p>Indexing</p><strong>Allowed</strong></li><li><b style=\"background:#111d27\"></b><p>Permalinks</p><strong>Readable</strong></li><li><b style=\"background:#f1c02b\"></b><p>Identity</p><strong>Missing</strong></li><li><b style=\"background:#d2d9d7\"></b><p>IndexNow</p><strong class=\"off\">Off</strong></li></ol>",
+      "css": ".ds-obs{font-family:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;position:relative;overflow:hidden;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;list-style:none;margin:0;padding:0;border:1px solid #d2d9d7;border-radius:6px;background:#d2d9d7}.ds-obs::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgb(255 255 255/.7) 45%,transparent 60%);transform:translateX(-100%);animation:ds-sweep 1100ms cubic-bezier(.16,1,.3,1) 150ms 1 both;pointer-events:none}@keyframes ds-sweep{to{transform:translateX(100%)}}@media (prefers-reduced-motion:reduce){.ds-obs::after{display:none}}.ds-obs li{background:#fff;padding:0 16px 14px}.ds-obs b{display:block;height:4px;margin:0 -16px 12px}.ds-obs p{margin:0;font-size:12px;font-weight:600;color:#44525f}.ds-obs strong{display:block;margin-top:2px;font-size:14px;font-weight:600;color:#111d27}.ds-obs strong.off{color:#5f6c78}"
+    },
+    {
+      "name": "Warning Row",
+      "kind": "custom",
+      "refersTo": "button-rule",
+      "description": "A warning in force: level square, title, named level, ruled action.",
+      "html": "<div class=\"ds-warn\"><span class=\"ds-warn-sq\"></span><div><h3>The homepage description is taken from the page text</h3><p><b>Yellow warning.</b> A sentence written for search results works better.</p></div><a href=\"#\" class=\"ds-warn-btn\">Write it</a></div>",
+      "css": ".ds-warn{font-family:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.75rem 1rem;align-items:start;padding:20px 0;border-bottom:1px solid #d2d9d7;color:#111d27}.ds-warn-sq{margin-top:6px;width:12px;height:12px;border-radius:1px;background:#f1c02b;box-shadow:0 0 0 1px rgb(0 0 0/.1)}.ds-warn h3{margin:0;font-size:16px;line-height:1.375;font-weight:600}.ds-warn p{margin:4px 0 0;font-size:14px;color:#44525f}.ds-warn p b{color:#111d27}.ds-warn-btn{display:inline-flex;align-items:center;min-height:2.25rem;padding:0 .85rem;border:1px solid #a3aeac;border-radius:4px;color:#111d27;font-weight:600;font-size:14px;text-decoration:none}.ds-warn-btn:hover{border-color:#111d27}"
+    },
+    {
+      "name": "Readings",
+      "kind": "custom",
+      "refersTo": "observation-cell",
+      "description": "Divided rows: label and note, tabular number right.",
+      "html": "<dl class=\"ds-read\"><div><dt>Pages published</dt><dd class=\"n\">107</dd><dd class=\"note\">posts, pages and products</dd></div><div><dt>Custom titles</dt><dd class=\"n\">0</dd><dd class=\"note\">the rest use the page title</dd></div></dl>",
+      "css": ".ds-read{font-family:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:0;width:20rem;border-top:1px solid #a3aeac;color:#111d27}.ds-read div{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:1rem;padding:14px 0;border-bottom:1px solid #d2d9d7}.ds-read dt{font-size:14px;font-weight:500}.ds-read dd{margin:0}.ds-read .n{grid-row:span 2;text-align:right;font-size:22px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}.ds-read .note{font-size:12px;color:#5f6c78}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Weather Bulletin",
+    "overview": "The site gets a weather bulletin, not a dashboard. Each view opens with one plain condition sentence set on a flat, full-width field painted in its warning color, then the warnings in force, a row of observations, then the readings. The warning levels follow the European weather-warning scale (none, yellow, orange, red), which people read without knowing anything about SEO. Everything around the field is cool bulletin paper, ink and 1px rules, so the warning color is the only saturated thing on the screen and always means something.\n\nDensity is that of a printed service bulletin: sheets divided by hairline rules, not cards floating on a grey ground. Numbers are tabular. There is one filled control per surface, an ink \"press\" button, and every other action is ruled. Motion is a single event: one sweep of light across the observation row when the page loads, meaning \"these were just checked\".\n\nThe screen lives inside wp-admin and must not leak into it: no global reset, a reset scoped to `#lean-seo-app`, utilities marked important so unlayered wp-admin rules cannot override them. Two editions exist, Day (default) and Night (deep service blue, never neutral black), switched from the sidebar.",
+    "keyCharacteristics": [
+      "One condition sentence on a flat warning-colored field per view.",
+      "European warning scale as the only saturated color.",
+      "Cool paper, ink, service blue for links; 1px rules; small squares as markers.",
+      "One filled ink control per surface.",
+      "Tabular numerals everywhere numbers appear.",
+      "A single load-time light sweep across the observation row."
+    ],
+    "rules": [
+      {
+        "name": "The Only Saturation Rule",
+        "body": "The four warning levels are the only saturated colors. Service blue is for interaction only; nothing is decorative color.",
+        "section": "colors"
+      },
+      {
+        "name": "The Field Keeps Its Colors Rule",
+        "body": "On a warning field, the press button stays field-ink on white and text uses the level's own on-* color in both editions.",
+        "section": "colors"
+      },
+      {
+        "name": "The Night Edition Rule",
+        "body": "Night is deep service blue (night-paper), never neutral black; its surfaces are the same roles re-valued, not a separate palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "Every number (counts, readings, dates, pagination) is set with tabular numerals; tables inherit them by default.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Labels are sentence case with no letter-spacing; the bulletin speaks in plain words, not caps.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Field Rule",
+        "body": "Warning fields, observation cells, tables and sheets carry no shadow; a surface is set apart by its tone or a 1px rule.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do open every view with its condition: one plain sentence on a level-colored field, or a plain status line.",
+      "Do map every state to the four-step warning scale and name it in words (\"Yellow warning\") next to the color.",
+      "Do keep one filled press button per surface; every other action is a rule button or a service-blue link.",
+      "Do divide content with 1px rules and use a strong rule under section titles.",
+      "Do set every number with tabular numerals.",
+      "Do keep all styling scoped to `#lean-seo-app` and the screen class; nothing may restyle the rest of wp-admin."
+    ],
+    "donts": [
+      "Don't introduce a saturated color outside the warning scale, or use service blue as a fill.",
+      "Don't build KPI card grids or shadowed cards; the observation row is a ruled strip, readings are divided rows.",
+      "Don't add a second filled button to a surface, or recolor the press button on a warning field by edition.",
+      "Don't add motion beyond the single observation sweep and 160ms state transitions; honor reduced motion.",
+      "Don't use neutral black for Night, or load fonts or icons from a remote service."
+    ]
+  }
+}

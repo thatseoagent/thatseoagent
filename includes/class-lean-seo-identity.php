@@ -107,34 +107,30 @@ class Lean_SEO_Identity {
     }
 
     /**
-     * Register settings, sections, and fields.
+     * Register the settings sections and fields.
+     *
+     * The option itself is registered by Lean_SEO_Settings.
      *
      * Hooked on admin_init from Lean_SEO::init_hooks().
      */
     public static function register() {
-        register_setting( 'lean_seo_settings', self::OPTION_KEY, array(
-            'type'              => 'array',
-            'sanitize_callback' => array( __CLASS__, 'sanitize' ),
-            'default'           => array(),
-        ) );
-
         add_settings_section(
             'lean_seo_identity_section',
-            __( 'Site Identity', 'lean-seo' ),
+            __( 'Who the site is', 'lean-seo' ),
             function () {
-                echo '<p>' . esc_html__( 'Tell search engines who this site represents. These values populate Open Graph meta tags and JSON-LD schema (Person or Organization).', 'lean-seo' ) . '</p>';
+                echo '<p>' . esc_html__( 'Tell search engines whether the site belongs to a person or an organization, and how to recognize it: name, logo and social profiles.', 'lean-seo' ) . '</p>';
             },
             'lean_seo_settings'
         );
 
         $fields = array(
-            'type'                => array( 'label' => __( 'Identity Type', 'lean-seo' ),       'cb' => 'render_type_field' ),
-            'name'                => array( 'label' => __( 'Name', 'lean-seo' ),                'cb' => 'render_text_field' ),
-            'description'         => array( 'label' => __( 'Description / Bio', 'lean-seo' ),  'cb' => 'render_textarea_field' ),
-            'logo_id'             => array( 'label' => __( 'Logo / Photo', 'lean-seo' ),       'cb' => 'render_media_field' ),
-            'default_og_image_id' => array( 'label' => __( 'Default OG Image', 'lean-seo' ),   'cb' => 'render_media_field' ),
-            'twitter_handle'      => array( 'label' => __( 'Twitter @handle', 'lean-seo' ),    'cb' => 'render_text_field' ),
-            'social'              => array( 'label' => __( 'Social Profiles', 'lean-seo' ),    'cb' => 'render_social_field' ),
+            'type'                => array( 'label' => __( 'The site belongs to', 'lean-seo' ),      'cb' => 'render_type_field' ),
+            'name'                => array( 'label' => __( 'Name', 'lean-seo' ),                     'cb' => 'render_text_field' ),
+            'description'         => array( 'label' => __( 'Short description', 'lean-seo' ),        'cb' => 'render_textarea_field' ),
+            'logo_id'             => array( 'label' => __( 'Logo or photo', 'lean-seo' ),            'cb' => 'render_media_field' ),
+            'default_og_image_id' => array( 'label' => __( 'Default sharing image', 'lean-seo' ),    'cb' => 'render_media_field' ),
+            'twitter_handle'      => array( 'label' => __( 'X (Twitter) username', 'lean-seo' ),     'cb' => 'render_text_field' ),
+            'social'              => array( 'label' => __( 'Social profiles', 'lean-seo' ),          'cb' => 'render_social_field' ),
         );
 
         foreach ( $fields as $key => $config ) {
@@ -153,19 +149,22 @@ class Lean_SEO_Identity {
      * Render the identity type radio (Person | Organization).
      */
     public static function render_type_field( $args ) {
-        $settings = self::get_settings();
-        $value    = $settings['type'];
+        // Not get_settings()['type']: its default is 'person', and an
+        // unconfigured site is an Organization. Pre-selecting "Person" meant
+        // that saving the page for any other reason switched the site's
+        // schema to a Person.
+        $value = self::primary_entity();
         ?>
         <fieldset>
             <label style="margin-right: 20px;">
                 <input type="radio" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[type]" value="person" <?php checked( $value, 'person' ); ?>>
-                <?php esc_html_e( 'Person', 'lean-seo' ); ?>
+                <?php esc_html_e( 'A person', 'lean-seo' ); ?>
             </label>
             <label>
                 <input type="radio" name="<?php echo esc_attr( self::OPTION_KEY ); ?>[type]" value="organization" <?php checked( $value, 'organization' ); ?>>
-                <?php esc_html_e( 'Organization', 'lean-seo' ); ?>
+                <?php esc_html_e( 'An organization or business', 'lean-seo' ); ?>
             </label>
-            <p class="description"><?php esc_html_e( 'Determines whether the site outputs Person or Organization schema.', 'lean-seo' ); ?></p>
+            <p class="description"><?php esc_html_e( 'Search engines describe the site as one or the other.', 'lean-seo' ); ?></p>
         </fieldset>
         <?php
     }
@@ -183,7 +182,7 @@ class Lean_SEO_Identity {
 
         if ( 'twitter_handle' === $key ) {
             $placeholder = __( '@username', 'lean-seo' );
-            $description = __( 'Used as twitter:site on social cards. The leading @ is optional.', 'lean-seo' );
+            $description = __( 'Shown on link previews on X. The @ is optional.', 'lean-seo' );
         } elseif ( 'name' === $key ) {
             $placeholder = get_bloginfo( 'name' );
             $description = __( 'The name of the person or organization this site represents.', 'lean-seo' );
@@ -216,7 +215,7 @@ class Lean_SEO_Identity {
             rows="3"
             class="large-text"
         ><?php echo esc_textarea( $value ); ?></textarea>
-        <p class="description"><?php esc_html_e( 'Short bio or organization description used in schema output.', 'lean-seo' ); ?></p>
+        <p class="description"><?php esc_html_e( 'One or two sentences about who you are and what you do.', 'lean-seo' ); ?></p>
         <?php
     }
 
@@ -232,9 +231,9 @@ class Lean_SEO_Identity {
 
         $description = '';
         if ( 'logo_id' === $key ) {
-            $description = __( 'Used in Person/Organization schema output. Separate from the theme Site Logo.', 'lean-seo' );
+            $description = __( "Shown to search engines next to the site's name. Separate from the theme's logo.", 'lean-seo' );
         } elseif ( 'default_og_image_id' === $key ) {
-            $description = __( 'Fallback Open Graph image for posts without a featured image.', 'lean-seo' );
+            $description = __( 'Used when a page without an image of its own is shared on social media.', 'lean-seo' );
         }
         ?>
         <div class="lean-seo-media-field" data-key="<?php echo esc_attr( $key ); ?>">
@@ -283,7 +282,7 @@ class Lean_SEO_Identity {
                 >
             <?php endforeach; ?>
         </div>
-        <p class="description"><?php esc_html_e( 'Emitted as sameAs links in schema so search engines can link your site to these profiles.', 'lean-seo' ); ?></p>
+        <p class="description"><?php esc_html_e( 'Lets search engines connect the site with these profiles.', 'lean-seo' ); ?></p>
         <?php
     }
 

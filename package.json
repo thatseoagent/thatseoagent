@@ -1,0 +1,18 @@
+{
+  "name": "lean-seo",
+  "private": true,
+  "description": "Build tooling for the Lean SEO admin screen. The compiled CSS is committed; installing the plugin needs no Node.",
+  "license": "GPL-2.0-or-later",
+  "scripts": {
+    "build:css": "tailwindcss -i assets/src/admin.css -o assets/build/admin.css --minify",
+    "watch:css": "tailwindcss -i assets/src/admin.css -o assets/build/admin.css --watch",
+    "vendor:alpine": "mkdir -p assets/vendor && cp node_modules/alpinejs/dist/cdn.min.js assets/vendor/alpine.min.js",
+    "build": "pnpm run vendor:alpine && pnpm run build:css"
+  },
+  "devDependencies": {
+    "@fontsource-variable/public-sans": "^5.3.0",
+    "@tailwindcss/cli": "^4.3.3",
+    "alpinejs": "3.17.4",
+    "tailwindcss": "^4.3.3"
+  }
+}
