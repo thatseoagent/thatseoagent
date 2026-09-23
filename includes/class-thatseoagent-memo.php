@@ -70,6 +70,16 @@ class ThatSeoAgent_Memo {
     }
 
     /**
+     * Forget one group, for a value about to be read again.
+     *
+     * @since 2.7.0
+     * @param string $group The group given to remember().
+     */
+    public static function forget( $group ) {
+        unset( self::$values[ $group ] );
+    }
+
+    /**
      * Forget everything.
      *
      * @since 1.20.0

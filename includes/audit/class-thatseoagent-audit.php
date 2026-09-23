@@ -2,10 +2,13 @@
 /**
  * SEO audit of a post.
  *
- * The checks behind the `audit-post-seo` and `scan-seo-issues` abilities.
- * They lived inside ThatSeoAgent_Abilities until 1.16.0; the abilities, WP-CLI
- * and the admin now share this one implementation, so a score cannot differ
- * depending on who asked.
+ * The checks behind the `audit-post-seo` and `scan-seo-issues` abilities and
+ * the screen's content check. They lived inside ThatSeoAgent_Abilities until
+ * 1.16.0; since 2.7.0 a check of a set of posts is the same whoever asks —
+ * prepare(), post() for each, among() — whether it runs in one go (scan())
+ * or a few posts per request (ThatSeoAgent_Audit_Run), so a score cannot
+ * differ depending on who asked. One post alone is checked without reading
+ * the whole site, and says what that leaves unmeasured.
  *
  * Since 2.3.0 the checks follow the rules That SEO Agent's MCP server applies
  * (docs/google-search-central-conformance.md in that repository): the plugin
@@ -77,6 +80,13 @@ class ThatSeoAgent_Audit {
         'warning' => 5,
         'info'    => 0,
     );
+
+    /**
+     * The finding for a generated description two or more posts share.
+     *
+     * @since 2.7.0
+     */
+    const SHARED_DESCRIPTION = 'duplicate_generated_description';
 
     /**
      * Audit one post.
@@ -237,10 +247,37 @@ class ThatSeoAgent_Audit {
             );
         }
 
-        // Links between the site's pages, from the whole site's graph.
-        $graph = ThatSeoAgent_Links::graph();
+        // Links between the site's pages, from the whole site's graph. One
+        // post is never worth reading the whole site for: a check of a set
+        // of posts builds the graph first (see check()), and without one
+        // these are not measured.
+        $graph        = ThatSeoAgent_Links::cached();
+        $needs_links  = ThatSeoAgent_Links::needs_links( $post ) && ! ThatSeoAgent_Indexing::is_post_noindex( $post );
 
-        if ( ThatSeoAgent_Links::needs_links( $post ) && empty( $graph['inbound'][ $post->ID ] ) && empty( $graph['navigation'][ $post->ID ] ) && ! ThatSeoAgent_Indexing::is_post_noindex( $post ) ) {
+        if ( null === $graph ) {
+            $graph = array(
+                'inbound'    => array(),
+                'navigation' => array(),
+                'broken'     => array(),
+                'unchecked'  => array(),
+            );
+
+            $not_measured[] = array(
+                'type'    => 'broken_links',
+                'message' => __( 'Links to the site\'s own pages: not checked, the site\'s links have not been read in the last hour. Checking a whole content type reads them.', 'thatseoagent' ),
+            );
+
+            if ( $needs_links ) {
+                $not_measured[] = array(
+                    'type'    => 'orphan',
+                    'message' => __( 'Whether any page links here: not checked, the site\'s links have not been read in the last hour. Checking a whole content type reads them.', 'thatseoagent' ),
+                );
+            }
+
+            $needs_links = false;
+        }
+
+        if ( $needs_links && empty( $graph['inbound'][ $post->ID ] ) && empty( $graph['navigation'][ $post->ID ] ) ) {
             $issues[] = self::issue(
                 'orphan',
                 'info',
@@ -316,6 +353,16 @@ class ThatSeoAgent_Audit {
         // against Google's product structured data.
         foreach ( ThatSeoAgent_Product::validate( $post ) as $issue ) {
             $issues[] = $issue + array( 'source' => 'google' );
+        }
+
+        // A generated description can only be compared with the others'
+        // once they have been generated too: among() does it for a set of
+        // posts, and takes this away.
+        if ( '' === $custom['description'] && $desc_length > 0 ) {
+            $not_measured[] = array(
+                'type'    => self::SHARED_DESCRIPTION,
+                'message' => __( 'Whether another page generates the same description: compared only when a whole content type is checked.', 'thatseoagent' ),
+            );
         }
 
         return array(
@@ -556,7 +603,13 @@ class ThatSeoAgent_Audit {
     /**
      * Audit many posts, worst first.
      *
+     * The same check as the screen's, in one go: the site's links read
+     * fresh first, and the findings that need every post applied among the
+     * posts it read.
+     *
      * @since 1.16.0 Moved from ThatSeoAgent_Abilities::scan_seo_issues().
+     * @since 2.7.0 Reads the links fresh and compares generated
+     *              descriptions, as the screen's check does.
      * @param int    $limit      Maximum posts to return.
      * @param int    $min_issues Minimum issues for a post to be listed.
      * @param string $post_type  Post type to scan.
@@ -570,6 +623,8 @@ class ThatSeoAgent_Audit {
             $limit = 50;
         }
 
+        self::prepare();
+
         // Posts are fetched in batches so a large site never loads every
         // post_content into memory at once. Scanning stops as soon as $limit
         // matching posts are found, or once the scan cap is reached.
@@ -577,9 +632,10 @@ class ThatSeoAgent_Audit {
         $max_scan   = max( 500, $limit * 20 );
         $scanned    = 0;
         $offset     = 0;
-        $results    = array();
+        $matching   = 0;
+        $audits     = array();
 
-        while ( $scanned < $max_scan && count( $results ) < $limit ) {
+        while ( $scanned < $max_scan && $matching < $limit ) {
             $posts = get_posts( array(
                 'post_type'              => $post_type,
                 'post_status'            => 'publish',
@@ -600,28 +656,40 @@ class ThatSeoAgent_Audit {
 
             foreach ( $posts as $post ) {
                 $scanned++;
-                $audit = self::post( $post );
+                $audit    = self::post( $post );
+                $audits[] = $audit;
 
                 // Each audit renders the post; the memoised copies are only
                 // useful within one post, and would otherwise pile up for the
                 // whole scan.
                 ThatSeoAgent_Memo::forget_post( $post );
 
+                // Findings among posts only add, so a post counted here
+                // stays counted.
                 if ( count( $audit['issues'] ) >= $min_issues ) {
-                    $results[] = array(
-                        'post_id'     => $audit['post_id'],
-                        'title'       => $audit['title'],
-                        'url'         => $audit['url'],
-                        'score'       => $audit['score'],
-                        'issue_count' => count( $audit['issues'] ),
-                        'top_issues'  => array_slice( array_column( $audit['issues'], 'type' ), 0, 3 ),
-                    );
+                    $matching++;
                 }
 
-                if ( count( $results ) >= $limit || $scanned >= $max_scan ) {
+                if ( $matching >= $limit || $scanned >= $max_scan ) {
                     break;
                 }
             }
+        }
+
+        $results = array();
+        foreach ( self::among( $audits ) as $audit ) {
+            if ( count( $audit['issues'] ) < $min_issues || count( $results ) >= $limit ) {
+                continue;
+            }
+
+            $results[] = array(
+                'post_id'     => $audit['post_id'],
+                'title'       => $audit['title'],
+                'url'         => $audit['url'],
+                'score'       => $audit['score'],
+                'issue_count' => count( $audit['issues'] ),
+                'top_issues'  => array_slice( array_column( $audit['issues'], 'type' ), 0, 3 ),
+            );
         }
 
         // Sort by score ascending (worst first)
@@ -630,5 +698,99 @@ class ThatSeoAgent_Audit {
         } );
 
         return $results;
+    }
+
+    /**
+     * Get ready to check a set of posts: read how the site's pages link to
+     * each other fresh, so every post in the set is measured against the
+     * same graph.
+     *
+     * @since 2.7.0
+     */
+    public static function prepare() {
+        ThatSeoAgent_Links::purge();
+        ThatSeoAgent_Memo::forget( 'link_graph' );
+        ThatSeoAgent_Links::graph();
+    }
+
+    /**
+     * Apply the findings that need a whole set of posts: the generated
+     * descriptions two or more of them share.
+     *
+     * Written descriptions are compared across the site while each post is
+     * audited; a generated one only exists once its post has been read, so
+     * they are compared here, among the posts just checked. Each shared one
+     * is a warning, like a shared written description.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Audit_Run.
+     * @param array<int, array> $audits Output of post(), or any array with
+     *                                  its post_id, seo, issues,
+     *                                  not_measured, stats and score.
+     * @return array<int, array> The same, in the same order.
+     */
+    public static function among( array $audits ) {
+        $groups = array();
+        foreach ( $audits as $index => $audit ) {
+            $key = $audit['seo']['description_written'] ? '' : ThatSeoAgent_Duplicates::key( $audit['seo']['description'] );
+            if ( '' !== $key ) {
+                $groups[ $key ][] = $index;
+            }
+
+            // Compared now, whatever the outcome.
+            $audits[ $index ]['not_measured'] = array_values( array_filter(
+                $audit['not_measured'],
+                function ( $item ) {
+                    return self::SHARED_DESCRIPTION !== $item['type'];
+                }
+            ) );
+        }
+
+        foreach ( $groups as $indexes ) {
+            if ( count( $indexes ) < 2 ) {
+                continue;
+            }
+
+            foreach ( $indexes as $index ) {
+                $others = array();
+                foreach ( $indexes as $other ) {
+                    if ( $other !== $index ) {
+                        $others[] = $audits[ $other ]['post_id'];
+                    }
+                }
+
+                $audits[ $index ]['issues'][] = self::issue(
+                    self::SHARED_DESCRIPTION,
+                    'warning',
+                    'google',
+                    sprintf(
+                        /* translators: 1: number of other pages, 2: their titles. */
+                        _n( 'Its generated description is the same as that of %1$d other page (%2$s): write one of its own', 'Its generated description is the same as that of %1$d other pages (%2$s): write one of its own', count( $others ), 'thatseoagent' ),
+                        count( $others ),
+                        self::twin_names( $others )
+                    )
+                );
+                $audits[ $index ]['score'] = self::score( $audits[ $index ]['issues'], $audits[ $index ]['stats']['images_without_alt'] );
+            }
+        }
+
+        return $audits;
+    }
+
+    /**
+     * The warning level a score is painted with.
+     *
+     * @since 2.7.0 Moved from the screen's script.
+     * @param int $score Out of 100.
+     * @return string 'clear', 'yellow', 'orange' or 'red'.
+     */
+    public static function level_for_score( $score ) {
+        if ( $score >= 80 ) {
+            return 'clear';
+        }
+        if ( $score >= 60 ) {
+            return 'yellow';
+        }
+
+        return $score >= 40 ? 'orange' : 'red';
     }
 }

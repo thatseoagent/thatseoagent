@@ -153,7 +153,7 @@ $cells = 24;
                     <li class="grid grid-cols-[3rem_minmax(0,1fr)] gap-x-4 py-4">
                         <div class="text-right">
                             <span class="inline-flex items-center gap-1.5">
-                                <span class="size-2.5 ring-1 ring-black/10" :class="scoreClass(row.score)" aria-hidden="true"></span>
+                                <span class="size-2.5 ring-1 ring-black/10" :class="levelClass(row.level)" aria-hidden="true"></span>
                                 <span class="text-[17px] leading-none font-bold text-ink tabular-nums" x-text="row.score"></span>
                             </span>
                             <span class="sr-only"><?php esc_html_e( 'out of 100', 'thatseoagent' ); ?></span>

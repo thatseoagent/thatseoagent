@@ -576,8 +576,9 @@
 					return this.finished ? new Date( this.finished * 1000 ).toLocaleString() : '';
 				},
 
-				scoreClass: function ( score ) {
-					var level = score >= 80 ? 'clear' : ( score >= 60 ? 'yellow' : ( score >= 40 ? 'orange' : 'red' ) );
+				// Each row carries the level its score is painted with
+				// (ThatSeoAgent_Audit::level_for_score()).
+				levelClass: function ( level ) {
 					return classesFor( SQUARE_CLASSES, level );
 				},
 

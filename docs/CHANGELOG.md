@@ -40,8 +40,24 @@
   headline. Adding a check is that method and one line in the bulletin's
   list. `ThatSeoAgent_Bulletin::facts()` and `compose()` are gone; the
   bulletin reads the same as before.
+- **One content check, whoever runs it.** The screen's check and the
+  `scan-seo-issues` ability are the same check — the site's links read
+  fresh first, each post audited, then the findings that need every post —
+  in batches on the screen and in one go for the ability
+  (`ThatSeoAgent_Audit::prepare()`, `post()`, `among()`).
+  `ThatSeoAgent_Audit_Run` only keeps the queue and the last result.
+- **`audit-post-seo` never reads the whole site for one post.** Without
+  the site's links read in the last hour, orphan pages and broken links are
+  listed as not measured instead of fetching the homepage and up to 40
+  addresses; whether another page generates the same description is listed
+  as not measured too, since only a whole content type can tell.
+- **The score's colours come from the server**: each row of the content
+  check carries its level (`ThatSeoAgent_Audit::level_for_score()`).
 
 ### Fixed
+- **`scan-seo-issues` scored differently from the screen's content check**:
+  it never flagged generated descriptions two pages share, and it measured
+  links against a graph up to an hour old.
 - **The blog's posts page** no longer takes the homepage's title and
   description, and its own SEO fields now reach its `<title>` and meta
   description; without a description of its own it says the tagline, as
