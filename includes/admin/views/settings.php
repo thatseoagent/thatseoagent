@@ -118,7 +118,7 @@ foreach ( array_keys( $sections ) as $index => $id ) {
                     class="size-2 shrink-0 rounded-full"
                     x-cloak
                     x-show="'idle' !== status"
-                    :class="{ 'bg-level-yellow': 'dirty' === status, 'bg-met': 'saving' === status, 'bg-level-clear': 'saved' === status, 'bg-level-red': 'error' === status }"
+                    :class="{ 'bg-level-yellow': 'dirty' === status, 'bg-rule-strong': 'saving' === status, 'bg-level-clear': 'saved' === status, 'bg-level-red': 'error' === status }"
                     aria-hidden="true"
                 ></span>
                 <span

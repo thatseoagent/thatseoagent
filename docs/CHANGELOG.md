@@ -16,6 +16,8 @@
   warning.
 
 ### Changed
+- **`pnpm run dev` watches the screen's views and rebuilds its CSS**
+  (Tailwind with `--watch=always`, so it keeps running in the background).
 - **A post publishes one title and one description, wherever it is
   read.** `ThatSeoAgent_Description::for_post()` is the description the
   head, the JSON-LD, the Product markup, the Markdown version, llms.txt and
@@ -135,6 +137,12 @@
   noindex`, as the HTML's robots meta does (the `thatseoagent_noindex`
   filter included), and neither it nor the `.md` URL sends a canonical,
   which the HTML leaves out too.
+- **Nothing that is fine is painted red.** The content check's progress
+  bar used the brand's red accent, and an observation in order a black bar:
+  both are green now. The settings' "saving" dot is grey, the Markdown
+  check's dot follows its verdict (red, yellow, green or grey), and a
+  robots.txt answering a 4xx is yellow, a 5xx red, as the bulletin rates
+  them.
 - **The blog's posts page** no longer takes the homepage's title and
   description, and its own SEO fields now reach its `<title>` and meta
   description; without a description of its own it says the tagline, as

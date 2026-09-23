@@ -417,7 +417,8 @@ class ThatSeoAgent_App {
      */
     public static function state_bar( $state ) {
         $bars = array(
-            'ok'     => 'bg-ink',
+            // Fine is green: red, and the brand's red accent, mean something is wrong.
+            'ok'     => 'bg-level-clear',
             'off'    => 'bg-rule',
             'yellow' => 'bg-level-yellow',
             'orange' => 'bg-level-orange',

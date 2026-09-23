@@ -112,7 +112,8 @@ class ThatSeoAgent {
     }
 
     /**
-     * Flush rewrite rules once after activation or a version bump.
+     * Flush rewrite rules, and drop the published files' caches, once after
+     * activation or a version bump.
      *
      * Runs at init priority 21 — after register_sitemap_routes() — so the
      * flushed rule set actually contains the sitemap routes.
@@ -131,6 +132,13 @@ class ThatSeoAgent {
         }
 
         flush_rewrite_rules();
+
+        // A new version can change what the published files say: llms.txt,
+        // llms-full.txt and the catalog feed are rebuilt on their next
+        // request, not a day later when their copies expire. (The Markdown
+        // cache has the version in its keys.)
+        ThatSeoAgent_Llms::purge();
+        ThatSeoAgent_Catalog_Feed::purge();
 
         // Autoloaded on purpose: this runs on every init, and a
         // non-autoloaded option costs one query per request forever to read a

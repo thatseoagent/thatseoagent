@@ -118,7 +118,7 @@ if ( $physical ) {
 
     <div class="mt-6 max-w-[44rem] border border-rule bg-sheet px-5 py-4" x-cloak x-show="result" aria-live="polite">
         <p class="flex items-center gap-2.5">
-            <span class="size-2.5 rounded-full" :class="result && 'works' === result.verdict ? 'bg-level-clear' : 'bg-rule-strong'" aria-hidden="true"></span>
+            <span class="size-2.5 rounded-full" :class="levelClass( result )" aria-hidden="true"></span>
             <span class="text-[16px] font-semibold text-ink" x-text="result ? result.headline : ''"></span>
         </p>
         <p class="mt-1 text-ink-2" x-text="result ? result.detail : ''"></p>

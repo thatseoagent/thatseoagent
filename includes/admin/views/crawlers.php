@@ -73,7 +73,7 @@ foreach ( $diagnosis['bots'] as $token => $bot ) {
 
 <section class="mt-8 max-w-[44rem] border border-rule bg-sheet px-5 py-4" x-cloak x-show="null !== robots && 200 !== robots" aria-live="polite">
     <p class="flex items-center gap-2 text-[15px] font-bold text-ink">
-        <span class="size-2.5 shrink-0 bg-level-orange ring-1 ring-black/10" aria-hidden="true"></span>
+        <span class="size-2.5 shrink-0 ring-1 ring-black/10" :class="robots >= 500 ? 'bg-level-red' : 'bg-level-yellow'" aria-hidden="true"></span>
         <span x-text="<?php echo esc_attr( wp_json_encode( __( 'robots.txt answers with status %d', 'thatseoagent' ) ) ); ?>.replace('%d', robots || '—')"></span>
     </p>
     <p class="mt-1 text-[14px] text-ink-2"><?php esc_html_e( 'Crawlers only read the rules when robots.txt answers 200. With a 404 or any other 4xx they assume there are none and read everything; with a 5xx most stay away. The file itself looks fine, so the server, a theme router or a security layer is changing the status.', 'thatseoagent' ); ?></p>

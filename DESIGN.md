@@ -137,11 +137,11 @@ The screen lives inside wp-admin and must not leak into it: no global reset, a r
 ## Colors
 
 ### Accent
-- **Deep Ōtan Red** (met, press): links (underlined), focus outlines, the checked radio and checkbox, the active nav icon, the press fill (with a paper label, 5.0:1), progress. **Red Gravy** (press-hover) on hover. In Night it becomes the vivid Ōtan Red `#ff4e20`, which has the contrast there.
+- **Deep Ōtan Red** (met, press): links (underlined), focus outlines, the checked radio and checkbox, the active nav icon, the press fill (with a paper label, 5.0:1). Never a state: red reads as something wrong, so nothing that is fine, finished or in progress is painted with it. **Red Gravy** (press-hover) on hover. In Night it becomes the vivid Ōtan Red `#ff4e20`, which has the contrast there.
 - **Ōtan Red** (brand-mark): the logo square only, fixed in both editions.
 
 ### Warning Scale
-The brand's status tones, darkened for paper: clear `#1e7a3e`, yellow `#9a7200`, orange `#b45309` (the brand has no orange; this one sits between its warning and danger), red `#c0362b`. They mark squares, bars and dots; see the Named Level Rule for where the name is written. Yellow is 4.0:1 on paper, enough for a mark (3:1) but not for text, so no text is set in a level color.
+The brand's status tones, darkened for paper: clear `#1e7a3e`, yellow `#9a7200`, orange `#b45309` (the brand has no orange; this one sits between its warning and danger), red `#c0362b`. They mark squares, bars and dots; see the Named Level Rule for where the name is written. Fine is clear green: an observation in order, a finished or filling progress bar, a check that passed. Something under way and not yet good or bad (saving) is neutral rule grey. Yellow is 4.0:1 on paper, enough for a mark (3:1) but not for text, so no text is set in a level color.
 
 ### Neutral
 - **Paper** (paper): the page ground, also behind wp-admin's body on this screen.

@@ -37,7 +37,7 @@
 	// Every class a state can paint with, so a binding can turn the old one
 	// off: Alpine's object form removes the classes whose value is false.
 	var BAR_CLASSES = {
-		ok: 'bg-ink',
+		ok: 'bg-level-clear',
 		off: 'bg-rule',
 		yellow: 'bg-level-yellow',
 		orange: 'bg-level-orange',
@@ -723,6 +723,20 @@
 						self.busy = false;
 						self.checking = false;
 					} );
+				},
+
+				// The verdict's colour, as the bulletin rates it: a browser
+				// served Markdown is red, agents served HTML yellow, a check
+				// that got no answer grey.
+				levelClass: function ( result ) {
+					var level = {
+						works: 'bg-level-clear',
+						cloudflare_markdown: 'bg-level-clear',
+						html_to_agents: 'bg-level-yellow',
+						markdown_to_browsers: 'bg-level-red',
+					}[ result ? result.verdict : '' ];
+
+					return level || 'bg-rule-strong';
 				},
 
 				describe: function ( response ) {

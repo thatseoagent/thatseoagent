@@ -107,7 +107,7 @@ $cells = 24;
             </div>
             <div class="mt-2 flex gap-0.5" aria-hidden="true">
                 <?php for ( $i = 0; $i < $cells; $i++ ) : ?>
-                    <span class="h-1.5 flex-1 bg-rule" :class="{ 'bg-met': <?php echo (int) $i; ?> < Math.round( percent * <?php echo (int) $cells; ?> / 100 ), 'bg-rule': <?php echo (int) $i; ?> >= Math.round( percent * <?php echo (int) $cells; ?> / 100 ) }"></span>
+                    <span class="h-1.5 flex-1 bg-rule" :class="{ 'bg-level-clear': <?php echo (int) $i; ?> < Math.round( percent * <?php echo (int) $cells; ?> / 100 ), 'bg-rule': <?php echo (int) $i; ?> >= Math.round( percent * <?php echo (int) $cells; ?> / 100 ) }"></span>
                 <?php endfor; ?>
             </div>
         </div>
