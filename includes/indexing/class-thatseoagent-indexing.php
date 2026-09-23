@@ -162,4 +162,59 @@ class ThatSeoAgent_Indexing {
             ),
         );
     }
+
+    /**
+     * This module's part of the bulletin: whether search engines are let
+     * in, and whether the site's addresses leave room for the sitemap and
+     * llms.txt.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $observations = array();
+        $warnings     = array();
+
+        $public         = (bool) get_option( 'blog_public' );
+        $observations[] = ThatSeoAgent_Bulletin::observation( 'indexing', __( 'Indexing', 'thatseoagent' ), $public ? 'ok' : 'red', $public ? __( 'Allowed', 'thatseoagent' ) : __( 'Blocked', 'thatseoagent' ) );
+        if ( ! $public ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'red',
+                __( 'Search engines are asked to stay away', 'thatseoagent' ),
+                __( '"Discourage search engines from indexing this site" is ticked, so the site will not appear in search results.', 'thatseoagent' ),
+                __( 'Open Reading settings', 'thatseoagent' ),
+                'reading'
+            );
+        }
+
+        $structure = (string) get_option( 'permalink_structure' );
+        $pretty    = '' !== $structure;
+        $named     = false !== strpos( $structure, '%postname%' );
+        if ( ! $pretty ) {
+            $observations[] = ThatSeoAgent_Bulletin::observation( 'permalinks', __( 'Permalinks', 'thatseoagent' ), 'red', __( 'Plain', 'thatseoagent' ) );
+            $warnings[]     = ThatSeoAgent_Bulletin::warning(
+                'red',
+                __( 'Sitemaps and llms.txt are offline', 'thatseoagent' ),
+                __( 'Plain permalinks (?p=123) leave no address for the sitemap, llms.txt or the Markdown pages.', 'thatseoagent' ),
+                __( 'Choose a permalink structure', 'thatseoagent' ),
+                'permalinks'
+            );
+        } elseif ( ! $named ) {
+            $observations[] = ThatSeoAgent_Bulletin::observation( 'permalinks', __( 'Permalinks', 'thatseoagent' ), 'yellow', __( 'Numbers', 'thatseoagent' ) );
+            $warnings[]     = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                __( 'Post addresses do not say what the post is about', 'thatseoagent' ),
+                __( 'The permalink structure has no %postname%, so addresses are numbers and dates. On a site that has been online a while, changing it moves every post\'s address: do it only with redirects from the old ones.', 'thatseoagent' ),
+                __( 'Open Permalink settings', 'thatseoagent' ),
+                'permalinks'
+            );
+        } else {
+            $observations[] = ThatSeoAgent_Bulletin::observation( 'permalinks', __( 'Permalinks', 'thatseoagent' ), 'ok', __( 'Readable', 'thatseoagent' ) );
+        }
+
+        return array(
+            'observations' => $observations,
+            'warnings'     => $warnings,
+        );
+    }
 }

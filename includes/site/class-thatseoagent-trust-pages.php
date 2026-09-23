@@ -202,4 +202,53 @@ class ThatSeoAgent_Trust_Pages {
             'privacy' => __( 'Privacy policy', 'thatseoagent' ),
         );
     }
+
+    /**
+     * This module's part of the bulletin: which trust pages the site has.
+     *
+     * Not a ranking factor: Google asks whether visitors can tell who is
+     * behind a site, and these are where they look.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $trust    = self::found();
+        $missing  = array_keys( array_filter( $trust, function ( $url ) {
+            return '' === $url;
+        } ) );
+        $warnings = array();
+
+        if ( $missing ) {
+            $labels = self::labels();
+            $names  = array_map(
+                function ( $kind ) use ( $labels ) {
+                    return $labels[ $kind ];
+                },
+                $missing
+            );
+
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                /* translators: %s: page names joined as a list, e.g. "About and Contact". */
+                sprintf( __( 'No page found for %s', 'thatseoagent' ), wp_sprintf_l( '%l', $names ) ),
+                __( 'Visitors look for who runs a site, how to reach it and what it does with their data; search engines and AI assistants read the same pages. Google asks whether that is clear, though it is not a ranking factor.', 'thatseoagent' ),
+                in_array( 'privacy', $missing, true ) ? __( 'Choose the privacy policy page', 'thatseoagent' ) : __( 'Create a page', 'thatseoagent' ),
+                in_array( 'privacy', $missing, true ) ? 'privacy' : 'new_page'
+            );
+        }
+
+        return array(
+            'observations' => array(
+                ThatSeoAgent_Bulletin::observation(
+                    'trust',
+                    __( 'Trust pages', 'thatseoagent' ),
+                    $missing ? 'yellow' : 'ok',
+                    /* translators: 1: pages found, 2: pages looked for. */
+                    sprintf( __( '%1$d of %2$d', 'thatseoagent' ), count( $trust ) - count( $missing ), count( $trust ) )
+                ),
+            ),
+            'warnings'     => $warnings,
+        );
+    }
 }

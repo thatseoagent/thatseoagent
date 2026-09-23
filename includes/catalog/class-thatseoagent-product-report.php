@@ -256,4 +256,62 @@ class ThatSeoAgent_Product_Report {
 
         return isset( $labels[ $severity ] ) ? $labels[ $severity ] : $severity;
     }
+
+    /**
+     * This module's part of the bulletin: how complete the catalog is. A
+     * site without one is not doing anything wrong, so it is an
+     * observation, never a warning.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        if ( empty( ThatSeoAgent_Product::post_types() ) ) {
+            return array(
+                'observations' => array(
+                    ThatSeoAgent_Bulletin::observation( 'products', __( 'Products', 'thatseoagent' ), 'off', __( 'No catalog', 'thatseoagent' ) ),
+                ),
+                'warnings'     => array(),
+            );
+        }
+
+        $summary  = self::summary();
+        $state    = $summary['error'] ? 'orange' : ( $summary['warning'] ? 'yellow' : 'ok' );
+        $warnings = array();
+
+        if ( $summary['error'] ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'orange',
+                /* translators: %d: number of products. */
+                sprintf( _n( '%d product is not marked up as a product', '%d products are not marked up as products', $summary['error'], 'thatseoagent' ), $summary['error'] ),
+                __( 'Without a title there is no Product markup at all.', 'thatseoagent' ),
+                __( 'See the products', 'thatseoagent' ),
+                'products'
+            );
+        }
+
+        if ( $summary['warning'] ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                /* translators: %d: number of products. */
+                sprintf( _n( '%d product has gaps in its details', '%d products have gaps in their details', $summary['warning'], 'thatseoagent' ), $summary['warning'] ),
+                __( 'Missing specifications, images or brand make the product harder to find and to compare.', 'thatseoagent' ),
+                __( 'See the products', 'thatseoagent' ),
+                'products'
+            );
+        }
+
+        return array(
+            'observations' => array(
+                ThatSeoAgent_Bulletin::observation(
+                    'products',
+                    __( 'Products', 'thatseoagent' ),
+                    $state,
+                    /* translators: 1: complete products, 2: all products. */
+                    sprintf( __( '%1$d of %2$d complete', 'thatseoagent' ), $summary['ok'] + $summary['info'], $summary['total'] )
+                ),
+            ),
+            'warnings'     => $warnings,
+        );
+    }
 }

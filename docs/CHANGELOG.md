@@ -32,6 +32,14 @@
   publish instead of the value last saved.
 - **Pages that share a title** are compared by the search title each
   publishes, filters included.
+- **Each bulletin check lives in the module it checks.** Indexing, Compat,
+  Identity, Homepage, Trust_Pages, New_Types, Default_Author,
+  Sample_Content, Links, Product_Report, Crawler_Access and IndexNow each
+  answer `bulletin()` with their observations and warnings;
+  `ThatSeoAgent_Bulletin` gathers them, ranks the warnings and words the
+  headline. Adding a check is that method and one line in the bulletin's
+  list. `ThatSeoAgent_Bulletin::facts()` and `compose()` are gone; the
+  bulletin reads the same as before.
 
 ### Fixed
 - **The blog's posts page** no longer takes the homepage's title and

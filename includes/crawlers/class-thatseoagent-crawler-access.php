@@ -244,4 +244,76 @@ class ThatSeoAgent_Crawler_Access {
     private static function user_agent( $token ) {
         return 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; ' . $token . '/1.0; +https://wordpress.org/) ThatSeoAgent-access-check';
     }
+
+    /**
+     * This module's part of the bulletin: which AI crawlers the served
+     * robots.txt lets in. Blocking training is a choice, never a warning;
+     * blocking the crawlers that put the site in answers is.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $crawlers = self::summary();
+        $warnings = array();
+
+        if ( $crawlers['search_blocked'] ) {
+            $state = 'orange';
+            $value = __( 'Search blocked', 'thatseoagent' );
+        } elseif ( $crawlers['inactive'] && $crawlers['physical'] ) {
+            $state = 'yellow';
+            $value = __( 'Rules not served', 'thatseoagent' );
+        } elseif ( '' !== $crawlers['other_editor'] ) {
+            $state = 'yellow';
+            $value = __( 'Two sets of rules', 'thatseoagent' );
+        } elseif ( $crawlers['training_blocked'] ) {
+            $state = 'ok';
+            $value = __( 'Training blocked', 'thatseoagent' );
+        } elseif ( $crawlers['blocked'] ) {
+            $state = 'ok';
+            $value = __( 'Some blocked', 'thatseoagent' );
+        } else {
+            $state = 'ok';
+            $value = __( 'Open', 'thatseoagent' );
+        }
+
+        if ( $crawlers['search_blocked'] ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'orange',
+                /* translators: 1: blocked crawlers, 2: all search crawlers. */
+                sprintf( _n( 'robots.txt keeps %1$d of %2$d search crawlers out', 'robots.txt keeps %1$d of %2$d search crawlers out', $crawlers['search_blocked'], 'thatseoagent' ), $crawlers['search_blocked'], $crawlers['search'] ),
+                __( 'AI assistants and search engines that cannot read the site cannot quote it or link to it in their answers.', 'thatseoagent' ),
+                __( 'See who is blocked', 'thatseoagent' ),
+                'crawlers'
+            );
+        }
+
+        if ( $crawlers['inactive'] && $crawlers['physical'] ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                __( 'Your AI crawler rules are not being served', 'thatseoagent' ),
+                __( 'A robots.txt file in the site root replaces the one WordPress builds, so the rules chosen here never reach the crawlers.', 'thatseoagent' ),
+                __( 'See the rules to copy', 'thatseoagent' ),
+                'crawlers'
+            );
+        }
+
+        if ( '' !== $crawlers['other_editor'] ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                /* translators: %s: plugin name. */
+                sprintf( __( '%s also writes crawler rules into robots.txt', 'thatseoagent' ), $crawlers['other_editor'] ),
+                __( 'Two plugins editing the same file can contradict each other. Keep the rules in one of them.', 'thatseoagent' ),
+                __( 'Open Plugins', 'thatseoagent' ),
+                'plugins'
+            );
+        }
+
+        return array(
+            'observations' => array(
+                ThatSeoAgent_Bulletin::observation( 'crawlers', __( 'AI crawlers', 'thatseoagent' ), $state, $value ),
+            ),
+            'warnings'     => $warnings,
+        );
+    }
 }

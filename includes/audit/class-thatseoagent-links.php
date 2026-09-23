@@ -473,4 +473,35 @@ class ThatSeoAgent_Links {
 
         return $statuses;
     }
+
+    /**
+     * This module's part of the bulletin: navigation that leads nowhere,
+     * known once a content check (or an agent's audit) has read the site's
+     * links. Only a graph already built: the bulletin never requests pages.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $links    = self::cached();
+        $warnings = array();
+
+        if ( $links && ! empty( $links['navigation_broken'] ) ) {
+            $count      = count( $links['navigation_broken'] );
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                /* translators: %d: number of links. */
+                sprintf( _n( 'The site\'s navigation links to %d page that does not exist', 'The site\'s navigation links to %d pages that do not exist', $count, 'thatseoagent' ), $count ),
+                /* translators: %s: the addresses, comma-separated. */
+                sprintf( __( 'The menus, header or footer point to %s, which answer "not found". Visitors who click get an error page; fix the links in the theme or the menus, or create the pages.', 'thatseoagent' ), implode( ', ', array_slice( $links['navigation_broken'], 0, 4 ) ) . ( $count > 4 ? ', …' : '' ) ),
+                __( 'See the content check', 'thatseoagent' ),
+                'audit'
+            );
+        }
+
+        return array(
+            'observations' => array(),
+            'warnings'     => $warnings,
+        );
+    }
 }

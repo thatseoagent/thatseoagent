@@ -99,4 +99,34 @@ class ThatSeoAgent_Sample_Content {
             )
         );
     }
+
+    /**
+     * This module's part of the bulletin: the sample post and page, while
+     * still published.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $sample   = self::published();
+        $warnings = array();
+
+        if ( $sample ) {
+            $titles     = wp_list_pluck( $sample, 'title' );
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                /* translators: %s: the titles, e.g. "Hello world! and Sample Page". */
+                sprintf( _n( 'WordPress\'s sample content is still published: %s', 'WordPress\'s sample content is still published: %s', count( $sample ), 'thatseoagent' ), wp_sprintf_l( '%l', $titles ) ),
+                __( 'Search engines index it like any page, and it is in the sitemap: a placeholder shown as part of the site. Delete it, or replace it with something of your own.', 'thatseoagent' ),
+                1 === count( $sample ) ? __( 'Edit it', 'thatseoagent' ) : __( 'See the posts', 'thatseoagent' ),
+                1 === count( $sample ) ? 'edit_post' : 'posts',
+                1 === count( $sample ) ? $sample[0]['id'] : 0
+            );
+        }
+
+        return array(
+            'observations' => array(),
+            'warnings'     => $warnings,
+        );
+    }
 }

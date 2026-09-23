@@ -130,4 +130,34 @@ class ThatSeoAgent_Compat {
             )
         );
     }
+
+    /**
+     * This module's part of the bulletin: whether another SEO plugin is
+     * active, and ThatSeoAgent is stepping aside.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $other    = self::other_seo_plugin();
+        $warnings = array();
+
+        if ( '' !== $other ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'orange',
+                /* translators: %s: name of the other SEO plugin. */
+                sprintf( __( '%s is active, so ThatSeoAgent is standing aside', 'thatseoagent' ), $other ),
+                __( 'Two SEO plugins would print every tag twice. Import its data with wp thatseoagent import, then deactivate one of them.', 'thatseoagent' ),
+                __( 'Open Plugins', 'thatseoagent' ),
+                'plugins'
+            );
+        }
+
+        return array(
+            'observations' => array(
+                ThatSeoAgent_Bulletin::observation( 'plugins', __( 'SEO plugins', 'thatseoagent' ), '' === $other ? 'ok' : 'orange', '' === $other ? __( 'Only this one', 'thatseoagent' ) : $other ),
+            ),
+            'warnings'     => $warnings,
+        );
+    }
 }

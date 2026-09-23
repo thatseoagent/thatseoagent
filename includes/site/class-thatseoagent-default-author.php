@@ -209,4 +209,33 @@ class ThatSeoAgent_Default_Author {
 
         return $clean;
     }
+
+    /**
+     * This module's part of the bulletin: articles credited to nobody, for
+     * which the site stands in as the author. Only while no default author
+     * is set: with one, those posts do name someone.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $unattributed = self::is_set() ? 0 : self::unattributed_count();
+        $warnings     = array();
+
+        if ( $unattributed ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                /* translators: %d: number of posts. */
+                sprintf( _n( '%d post has no author', '%d posts have no author', $unattributed, 'thatseoagent' ), $unattributed ),
+                __( 'They are credited to the site itself. Google asks for a byline where one is expected: assign each post its author — whose profile can carry a job title and profiles elsewhere — or set a default author in the settings.', 'thatseoagent' ),
+                __( 'See the posts', 'thatseoagent' ),
+                'posts'
+            );
+        }
+
+        return array(
+            'observations' => array(),
+            'warnings'     => $warnings,
+        );
+    }
 }

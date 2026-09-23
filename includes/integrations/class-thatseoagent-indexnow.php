@@ -329,4 +329,22 @@ class ThatSeoAgent_IndexNow {
 			sprintf( __( 'IndexNow API returned %d', 'thatseoagent' ), $code )
 		);
 	}
+
+	/**
+	 * This module's part of the bulletin: whether IndexNow is on. Optional,
+	 * so an observation and never a warning.
+	 *
+	 * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+	 * @return array{observations: array, warnings: array}
+	 */
+	public static function bulletin() {
+		$on = '' !== self::get_api_key();
+
+		return array(
+			'observations' => array(
+				ThatSeoAgent_Bulletin::observation( 'indexnow', __( 'IndexNow', 'thatseoagent' ), $on ? 'ok' : 'off', $on ? __( 'On', 'thatseoagent' ) : __( 'Off', 'thatseoagent' ) ),
+			),
+			'warnings'     => array(),
+		);
+	}
 }

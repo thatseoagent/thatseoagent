@@ -450,4 +450,33 @@ JS;
 
         wp_add_inline_script( 'jquery-core', $script );
     }
+
+    /**
+     * This module's part of the bulletin: whether search engines can tell
+     * who runs the site.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $identity = self::is_recognizable();
+        $warnings = array();
+
+        if ( ! $identity ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                __( 'Search engines do not know who runs the site', 'thatseoagent' ),
+                __( 'Say whether the site is a person or an organization, and add its logo and social profiles.', 'thatseoagent' ),
+                __( 'Set up the identity', 'thatseoagent' ),
+                'identity'
+            );
+        }
+
+        return array(
+            'observations' => array(
+                ThatSeoAgent_Bulletin::observation( 'identity', __( 'Identity', 'thatseoagent' ), $identity ? 'ok' : 'yellow', $identity ? __( 'Set', 'thatseoagent' ) : __( 'Missing', 'thatseoagent' ) ),
+            ),
+            'warnings'     => $warnings,
+        );
+    }
 }

@@ -133,4 +133,34 @@ class ThatSeoAgent_New_Types {
         check_admin_referer( self::NONCE );
         self::mark_reviewed();
     }
+
+    /**
+     * This module's part of the bulletin: public content types nobody has
+     * looked at. They are published, and only the site owner knows whether
+     * they list products.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $new_types = self::unreviewed();
+        $warnings  = array();
+
+        if ( $new_types ) {
+            $names      = wp_list_pluck( $new_types, 'label' );
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                /* translators: %s: content type names, e.g. "Machines and Parts". */
+                sprintf( _n( 'A new content type is being published: %s', 'New content types are being published: %s', count( $new_types ), 'thatseoagent' ), wp_sprintf_l( '%l', $names ) ),
+                __( 'Its pages are already in the sitemap and have SEO fields. If they list products — machines, parts, models — mark it as a product catalog so each one is described as a product.', 'thatseoagent' ),
+                __( 'Review it', 'thatseoagent' ),
+                'review_types'
+            );
+        }
+
+        return array(
+            'observations' => array(),
+            'warnings'     => $warnings,
+        );
+    }
 }

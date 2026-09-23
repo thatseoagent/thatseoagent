@@ -267,4 +267,46 @@ class ThatSeoAgent_Homepage {
 
         return trim( $output );
     }
+
+    /**
+     * This module's part of the bulletin: how search results describe the
+     * homepage.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $described = self::has_description();
+        $warnings  = array();
+
+        // WordPress's default tagline, which stands in for a homepage
+        // description that was never written.
+        if ( ! $described && self::has_default_tagline() ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                __( 'Search results describe the site with WordPress\'s default tagline', 'thatseoagent' ),
+                /* translators: %s: the tagline. */
+                sprintf( __( '"%s" is what the homepage says about the site, in search results and in llms.txt. Write a tagline of your own, or a homepage description.', 'thatseoagent' ), get_bloginfo( 'description' ) ),
+                __( 'Open General settings', 'thatseoagent' ),
+                'general'
+            );
+        }
+
+        if ( ! $described ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                __( 'The homepage description is taken from the page text', 'thatseoagent' ),
+                __( 'It is the first thing people read about the site in search results; a sentence written for them works better.', 'thatseoagent' ),
+                __( 'Write it', 'thatseoagent' ),
+                'homepage'
+            );
+        }
+
+        return array(
+            'observations' => array(
+                ThatSeoAgent_Bulletin::observation( 'homepage', __( 'Homepage', 'thatseoagent' ), $described ? 'ok' : 'yellow', $described ? __( 'Described', 'thatseoagent' ) : __( 'Automatic', 'thatseoagent' ) ),
+            ),
+            'warnings'     => $warnings,
+        );
+    }
 }
