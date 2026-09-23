@@ -10,7 +10,7 @@ colors:
   ink: "#1c1815"
   ink-2: "#5f564e"
   ink-3: "#736a5f"
-  met: "#c4331a"
+  met: "#1c1815"
   press: "#1c1815"
   press-hover: "#3a332d"
   on-press: "#f8f5f1"
@@ -28,7 +28,7 @@ colors:
   night-ink: "#f4efe7"
   night-ink-2: "#a0968a"
   night-ink-3: "#8b8175"
-  night-met: "#ff4e20"
+  night-met: "#f4efe7"
   night-press: "#f4efe7"
   night-press-hover: "#ddd5ca"
   night-on-press: "#15110e"
@@ -131,14 +131,15 @@ The screen lives inside wp-admin and must not leak into it: no global reset, a r
 **Key Characteristics:**
 - One condition sentence per view, in a white cell, beside the warning scale.
 - Warm paper, white cells, hairline rules; square corners; no shadow anywhere.
-- Deep Ōtan Red as the only accent: links, focus, the active mark, the one filled control.
+- Deep Ōtan Red in the logo only. The brand puts it on links, focus, the active mark and the one filled control; here those are ink, because on a screen of warnings red reads as one more thing wrong (since 2.7.0).
 - The warning scale in the brand's status tones; the level's name in the sidebar and the scale, for screen readers elsewhere.
 - Space Mono, uppercase and letter-spaced, for every label, count and number.
 
 ## Colors
 
 ### Accent
-- **Deep Ōtan Red** (met): links (underlined), focus outlines, the checked radio and checkbox, and the logo. Never a state: red reads as something wrong, so nothing that is fine, finished or in progress is painted with it. In Night it becomes the vivid Ōtan Red `#ff4e20`, which has the contrast there.
+- **Deep Ōtan Red** is the logo's alone (`#ff4e20`, drawn in the mark itself). Never a state: red reads as something wrong, so nothing that is fine, finished or in progress is painted with it.
+- **Met** (links, told apart by their underline; focus outlines; the checked radio and checkbox; the caret and the text selection) is ink, the night ink in Night.
 - **Press** (the one filled control) and the active nav icon are ink, not red: a red button beside a warning reads as one more thing wrong. Paper label on ink; a lighter ink on hover. In Night, the night ink with an espresso label.
 - **Ōtan Red** (brand-mark): the logo square only, fixed in both editions.
 

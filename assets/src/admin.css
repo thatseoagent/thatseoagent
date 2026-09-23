@@ -100,7 +100,7 @@
  *   paper   the page ground          sheet   cells, tables and forms
  *   column  the sidebar, insets      rule    1px dividers
  *   ink     text                     press   the one filled control, in ink
- *   met     links and focus: Deep Ōtan Red
+ *   met     links, focus and checked controls, in ink
  *   level-* the warning scale, each with its own text color (on-*)
  */
 @theme inline {
@@ -147,7 +147,9 @@
     --tsa-ink: #1c1815;
     --tsa-ink-2: #5f564e;
     --tsa-ink-3: #736a5f;
-    --tsa-met: #c4331a;
+    /* Ink as well: links are told apart by their underline, and the brand's
+       red is left to the logo. */
+    --tsa-met: #1c1815;
     /* Ink, not the brand's red: a red button beside a warning reads as
        one more thing wrong. The red stays in the logo. */
     --tsa-press: #1c1815;
@@ -177,7 +179,7 @@
     --tsa-ink: #f4efe7;
     --tsa-ink-2: #a0968a;
     --tsa-ink-3: #8b8175;
-    --tsa-met: #ff4e20;
+    --tsa-met: #f4efe7;
     --tsa-press: #f4efe7;
     --tsa-press-hover: #ddd5ca;
     --tsa-on-press: #15110e;
@@ -325,8 +327,8 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* Links in running text and tables: the lamp, underlined, as on the MCP
-   server's page; the underline thickens on hover. */
+/* Links in running text and tables: ink, told apart by the underline, which
+   thickens on hover. */
 #thatseoagent-app .tsa-link {
     color: var(--tsa-met);
     font-weight: 500;
