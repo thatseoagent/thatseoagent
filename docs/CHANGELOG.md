@@ -59,6 +59,19 @@
   named**: `named()` (the primary term, unless it is the default category),
   `path()` and `label()` ("Grúas > Articuladas"), used by the breadcrumb
   trail, article:section and the Product markup.
+- **`ThatSeoAgent_Image` answers for every image a post publishes**: `own()`
+  (its featured, gallery or content image), `all()` (featured and gallery,
+  for the Product markup), `of()` and `object()`, the one ImageObject
+  builder behind the primary image, the Product markup and the logos. An
+  ImageObject now carries the image's alt text as `caption` wherever it
+  has one.
+- **Only image files with an absolute address are published** as og:image,
+  the primary image, the Product markup's images and the logos; a PDF set
+  as a featured image is left out everywhere, not only in the Product
+  markup.
+- **og:pin:media is the post's own image**, featured, gallery or in the
+  content, as the primary image is; before, a post without a featured
+  image had none.
 - **The score's colours come from the server**: each row of the content
   check carries its level (`ThatSeoAgent_Audit::level_for_score()`).
 
@@ -80,6 +93,12 @@
 - **`seo_title` in the Markdown version's frontmatter**, the SEO field as
   written and most often empty. `title` is the post's name, `description`
   the one the page publishes.
+- **`featured_image` and `featured_image_alt` in the Markdown version's
+  frontmatter**, now `image` and `image_alt`: the post's own image, the one
+  its markup names, featured or not.
+- **`ThatSeoAgent_Identity_Applier::filter_default_image()`**: the default
+  sharing image was already read before the `thatseoagent_default_image`
+  filter runs.
 - **`ThatSeoAgent_Homepage_Applier`** and
   **`ThatSeoAgent_Duplicates::effective_title()`**: the title and the
   description read the homepage settings themselves, and

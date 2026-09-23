@@ -307,19 +307,9 @@ class ThatSeoAgent_Schema {
         );
 
         // Add logo if available
-        $custom_logo_id = get_theme_mod('custom_logo');
-        if ($custom_logo_id) {
-            $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
-            $logo_meta = wp_get_attachment_metadata($custom_logo_id);
-            $logo_schema = array(
-                '@type' => 'ImageObject',
-                'url' => $logo_url,
-            );
-            if ($logo_meta && isset($logo_meta['width'], $logo_meta['height'])) {
-                $logo_schema['width'] = $logo_meta['width'];
-                $logo_schema['height'] = $logo_meta['height'];
-            }
-            $schema['logo'] = $logo_schema;
+        $logo = ThatSeoAgent_Image::of((int) get_theme_mod('custom_logo'));
+        if ($logo) {
+            $schema['logo'] = ThatSeoAgent_Image::object($logo);
         }
 
         /**
@@ -464,25 +454,9 @@ class ThatSeoAgent_Schema {
      * @return array|null
      */
     private static function post_image($post) {
-        $image = ThatSeoAgent_Image::for_post($post, 'schema');
+        $image = ThatSeoAgent_Image::own($post, 'schema');
 
-        if (! $image || in_array($image['source'], array('default', 'logo'), true)) {
-            return null;
-        }
-
-        $node = array(
-            '@type' => 'ImageObject',
-            'url'   => $image['url'],
-        );
-        if ($image['width'] && $image['height']) {
-            $node['width']  = $image['width'];
-            $node['height'] = $image['height'];
-        }
-        if ('' !== $image['alt']) {
-            $node['caption'] = $image['alt'];
-        }
-
-        return $node;
+        return $image ? ThatSeoAgent_Image::object($image) : null;
     }
 
     /**

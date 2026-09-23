@@ -21,7 +21,6 @@ class ThatSeoAgent_Identity_Applier {
      */
     public static function register() {
         add_filter( 'thatseoagent_twitter_handle',        array( __CLASS__, 'filter_twitter_handle' ) );
-        add_filter( 'thatseoagent_default_image',         array( __CLASS__, 'filter_default_image' ) );
         add_filter( 'thatseoagent_person_schema',         array( __CLASS__, 'filter_person_schema' ) );
         add_filter( 'thatseoagent_organization_schema',   array( __CLASS__, 'filter_organization_schema' ) );
         add_filter( 'thatseoagent_primary_entity',        array( __CLASS__, 'filter_primary_entity' ) );
@@ -53,24 +52,6 @@ class ThatSeoAgent_Identity_Applier {
         }
         $settings = ThatSeoAgent_Identity::get_settings();
         return $settings['twitter_handle'];
-    }
-
-    /**
-     * Feed the default OG image into the filter.
-     *
-     * @param string $url Existing URL.
-     * @return string
-     */
-    public static function filter_default_image( $url ) {
-        if ( $url ) {
-            return $url;
-        }
-        $settings = ThatSeoAgent_Identity::get_settings();
-        if ( ! $settings['default_og_image_id'] ) {
-            return $url;
-        }
-        $attachment_url = wp_get_attachment_image_url( $settings['default_og_image_id'], 'full' );
-        return $attachment_url ? $attachment_url : $url;
     }
 
     /**
@@ -107,21 +88,9 @@ class ThatSeoAgent_Identity_Applier {
             $node['description'] = $settings['description'];
         }
 
-        if ( $settings['logo_id'] ) {
-            $logo_url = wp_get_attachment_image_url( $settings['logo_id'], 'full' );
-            if ( $logo_url ) {
-                $meta = wp_get_attachment_metadata( $settings['logo_id'] );
-                $image = array(
-                    '@type' => 'ImageObject',
-                    '@id'   => home_url( '/#personimage' ),
-                    'url'   => $logo_url,
-                );
-                if ( $meta && isset( $meta['width'], $meta['height'] ) ) {
-                    $image['width']  = (int) $meta['width'];
-                    $image['height'] = (int) $meta['height'];
-                }
-                $node['image'] = $image;
-            }
+        $logo = ThatSeoAgent_Image::of( $settings['logo_id'] );
+        if ( $logo ) {
+            $node['image'] = ThatSeoAgent_Image::object( $logo, home_url( '/#personimage' ) );
         }
 
         $same_as = self::build_same_as( $settings );
@@ -160,20 +129,9 @@ class ThatSeoAgent_Identity_Applier {
 
         // Logo from identity settings takes precedence when set (otherwise
         // ThatSeoAgent_Schema::get_organization_schema already uses custom_logo).
-        if ( $settings['logo_id'] ) {
-            $logo_url = wp_get_attachment_image_url( $settings['logo_id'], 'full' );
-            if ( $logo_url ) {
-                $meta = wp_get_attachment_metadata( $settings['logo_id'] );
-                $logo = array(
-                    '@type' => 'ImageObject',
-                    'url'   => $logo_url,
-                );
-                if ( $meta && isset( $meta['width'], $meta['height'] ) ) {
-                    $logo['width']  = (int) $meta['width'];
-                    $logo['height'] = (int) $meta['height'];
-                }
-                $schema['logo'] = $logo;
-            }
+        $logo = ThatSeoAgent_Image::of( $settings['logo_id'] );
+        if ( $logo ) {
+            $schema['logo'] = ThatSeoAgent_Image::object( $logo );
         }
 
         $same_as = self::build_same_as( $settings );

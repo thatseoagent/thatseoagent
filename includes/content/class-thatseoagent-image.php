@@ -3,7 +3,10 @@
  * The image a page is represented by.
  *
  * The single answer to "which image stands for this post?", read by the
- * Open Graph and Twitter tags and by the schema's primary image. Before
+ * Open Graph, Twitter and Pinterest tags, the schema's primary image and the
+ * Markdown version; and, since 2.7.0, to "which images does this post
+ * have?" (the Product markup's) and "how is an image said in the schema?"
+ * (every ImageObject, logos included). Before
  * 2.4.0 it was the featured image or, failing that, the theme's logo — a
  * small, often transparent picture that previews badly — and the images in
  * the post were never looked at. The chain, first found wins:
@@ -15,6 +18,9 @@
  *     5. the theme's logo
  *
  * Listings, which have no image of their own, start at 4.
+ *
+ * Only images count: an attachment that is not an image file, or whose
+ * address is not absolute, is left out wherever it would be used.
  *
  * For sharing, the largest size that weighs 2 MB or less is chosen:
  * Facebook, WhatsApp and LinkedIn drop heavier images, and the post then
@@ -62,6 +68,22 @@ class ThatSeoAgent_Image {
      * @return array{id: int, url: string, width: int, height: int, type: string, alt: string, source: string}|null
      */
     public static function for_post( WP_Post $post, $purpose = 'share' ) {
+        $image = self::own( $post, $purpose );
+
+        return $image ? $image : self::site_image( $purpose );
+    }
+
+    /**
+     * The image of a post's own — featured, gallery or in the content —
+     * without the site's image or logo to fall back on: the one the
+     * schema's primary image, Pinterest and the Markdown version show.
+     *
+     * @since 2.7.0
+     * @param WP_Post $post    Post.
+     * @param string  $purpose 'share' or 'schema'.
+     * @return array{id: int, url: string, width: int, height: int, type: string, alt: string, source: string}|null
+     */
+    public static function own( WP_Post $post, $purpose = 'schema' ) {
         $found = ThatSeoAgent_Memo::remember(
             'image_source',
             $post->ID,
@@ -70,14 +92,81 @@ class ThatSeoAgent_Image {
             }
         );
 
-        if ( $found ) {
-            $image = self::describe( $found['id'], $found['url'], $purpose, $found['source'] );
+        return $found ? self::describe( $found['id'], $found['url'], $purpose, $found['source'] ) : null;
+    }
+
+    /**
+     * Every image a post has for its structured data: the featured image
+     * and a catalog entry's gallery, in that order, each once.
+     *
+     * @since 2.7.0 Moved from ThatSeoAgent_Product.
+     * @param WP_Post $post Post.
+     * @return array{images: array<int, array>, invalid: int} `invalid`
+     *         counts the attachments left out: not images, or with no
+     *         absolute address.
+     */
+    public static function all( WP_Post $post ) {
+        $featured = (int) get_post_thumbnail_id( $post );
+        $ids      = array_unique( array_filter( array_merge( array( $featured ), ThatSeoAgent_Product::gallery_ids( $post ) ) ) );
+
+        $images  = array();
+        $invalid = 0;
+
+        foreach ( $ids as $id ) {
+            $image = self::describe( (int) $id, '', 'schema', $featured === (int) $id ? 'featured' : 'gallery' );
             if ( $image ) {
-                return $image;
+                $images[] = $image;
+            } else {
+                $invalid++;
             }
         }
 
-        return self::site_image( $purpose );
+        return array(
+            'images'  => $images,
+            'invalid' => $invalid,
+        );
+    }
+
+    /**
+     * One attachment, described for a purpose.
+     *
+     * @since 2.7.0
+     * @param int    $id      Attachment ID.
+     * @param string $purpose 'share' or 'schema'.
+     * @return array{id: int, url: string, width: int, height: int, type: string, alt: string, source: string}|null
+     */
+    public static function of( $id, $purpose = 'schema' ) {
+        return (int) $id ? self::describe( (int) $id, '', $purpose, 'attachment' ) : null;
+    }
+
+    /**
+     * An image as a schema.org ImageObject: its address, its size when
+     * known, and its alt text as the caption.
+     *
+     * @since 2.7.0 Replaces the five that built their own.
+     * @param array  $image As for_post(), own(), all() or of() describe it.
+     * @param string $id    The node's @id, or ''.
+     * @return array
+     */
+    public static function object( array $image, $id = '' ) {
+        $node = array( '@type' => 'ImageObject' );
+
+        if ( '' !== $id ) {
+            $node['@id'] = $id;
+        }
+
+        $node['url'] = $image['url'];
+
+        if ( $image['width'] && $image['height'] ) {
+            $node['width']  = $image['width'];
+            $node['height'] = $image['height'];
+        }
+
+        if ( '' !== $image['alt'] ) {
+            $node['caption'] = $image['alt'];
+        }
+
+        return $node;
     }
 
     /**
@@ -199,7 +288,7 @@ class ThatSeoAgent_Image {
      */
     private static function describe( $id, $url, $purpose, $source ) {
         if ( ! $id ) {
-            return '' !== $url ? array(
+            return preg_match( '#^https?://#i', $url ) ? array(
                 'id'     => 0,
                 'url'    => $url,
                 'width'  => 0,
@@ -221,8 +310,11 @@ class ThatSeoAgent_Image {
          */
         $size = 'schema' === $purpose ? (string) apply_filters( 'thatseoagent_schema_image_size', 'full' ) : self::share_size( $id );
 
-        $src = wp_get_attachment_image_src( $id, $size );
-        if ( ! $src ) {
+        // An image file with an absolute address, or nothing: a PDF set as
+        // the featured image, or a relative URL, is no image to anyone.
+        $type = (string) get_post_mime_type( $id );
+        $src  = 0 === strpos( $type, 'image/' ) ? wp_get_attachment_image_src( $id, $size ) : false;
+        if ( ! $src || ! preg_match( '#^https?://#i', (string) $src[0] ) ) {
             return null;
         }
 
@@ -231,7 +323,7 @@ class ThatSeoAgent_Image {
             'url'    => (string) $src[0],
             'width'  => (int) $src[1],
             'height' => (int) $src[2],
-            'type'   => (string) get_post_mime_type( $id ),
+            'type'   => $type,
             'alt'    => trim( (string) get_post_meta( $id, '_wp_attachment_image_alt', true ) ),
             'source' => $source,
         );

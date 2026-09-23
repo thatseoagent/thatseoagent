@@ -481,7 +481,7 @@ class ThatSeoAgent_Product {
             $issues[] = self::issue( 'product_description_missing', 'warning', __( 'No description: add an excerpt, content or a meta description.', 'thatseoagent' ) );
         }
 
-        $images = self::images( $post, $map['gallery_meta_key'], $issues );
+        $images = self::images( $post, $issues );
         if ( $images ) {
             $node['image'] = 1 === count( $images ) ? $images[0] : $images;
         }
@@ -584,21 +584,11 @@ class ThatSeoAgent_Product {
      * @param array   $issues      Issues, appended to by reference.
      * @return array<int, array>
      */
-    private static function images( WP_Post $post, $gallery_key, array &$issues ) {
+    private static function images( WP_Post $post, array &$issues ) {
         $featured_id = (int) get_post_thumbnail_id( $post );
-        $gallery_ids = '' !== $gallery_key ? self::attachment_ids( get_post_meta( $post->ID, $gallery_key, true ) ) : array();
-
-        $images  = array();
-        $invalid = 0;
-
-        foreach ( array_unique( array_filter( array_merge( array( $featured_id ), $gallery_ids ) ) ) as $image_id ) {
-            $image = self::image_object( $image_id );
-            if ( $image ) {
-                $images[] = $image;
-            } else {
-                $invalid++;
-            }
-        }
+        $all         = ThatSeoAgent_Image::all( $post );
+        $images      = array_map( array( 'ThatSeoAgent_Image', 'object' ), $all['images'] );
+        $invalid     = $all['invalid'];
 
         if ( ! $featured_id ) {
             $issues[] = self::issue( 'product_image_missing', $images ? 'info' : 'warning', __( 'No featured image. Google recommends an image for every product.', 'thatseoagent' ) );
@@ -649,40 +639,6 @@ class ThatSeoAgent_Product {
         }
 
         return array_values( array_filter( array_map( 'absint', $raw ) ) );
-    }
-
-    /**
-     * One attachment as an ImageObject, or null when it is not a usable image.
-     *
-     * @since 1.16.0
-     * @param int $image_id Attachment ID.
-     * @return array|null
-     */
-    private static function image_object( $image_id ) {
-        if ( ! wp_attachment_is_image( $image_id ) ) {
-            return null;
-        }
-
-        /** This filter is documented in includes/class-thatseoagent-schema.php */
-        $size = apply_filters( 'thatseoagent_schema_image_size', 'full' );
-        $src  = wp_get_attachment_image_src( $image_id, $size );
-        $url  = $src ? (string) $src[0] : '';
-
-        if ( ! preg_match( '#^https?://#i', $url ) ) {
-            return null;
-        }
-
-        $image = array(
-            '@type' => 'ImageObject',
-            'url'   => $url,
-        );
-
-        if ( ! empty( $src[1] ) && ! empty( $src[2] ) ) {
-            $image['width']  = (int) $src[1];
-            $image['height'] = (int) $src[2];
-        }
-
-        return $image;
     }
 
     /**

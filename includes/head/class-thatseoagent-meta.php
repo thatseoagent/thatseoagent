@@ -407,19 +407,19 @@ class ThatSeoAgent_Meta {
     }
 
     /**
-     * Get full-resolution featured image for Pinterest.
+     * The image Pinterest pins: the post's own, at the schema's size.
      *
-     * Pinterest renders at high DPI so we use 'full' size instead of 'large'.
-     * Falls back to null when no featured image exists.
+     * Pinterest renders at high DPI, so 'full' by default rather than the
+     * lighter one shared elsewhere; never the site's image or logo.
      *
-     * @return string|null Full-resolution image URL or null.
+     * @since 2.7.0 The post's own image, not only the featured one.
+     * @return string|null Image URL or null.
      */
     public static function get_pinterest_image() {
-        if (is_singular() && has_post_thumbnail()) {
-            return get_the_post_thumbnail_url(get_the_ID(), 'full');
-        }
+        $post  = is_singular() ? get_queried_object() : null;
+        $image = $post instanceof WP_Post ? ThatSeoAgent_Image::own($post, 'schema') : null;
 
-        return null;
+        return $image ? $image['url'] : null;
     }
 
     /**

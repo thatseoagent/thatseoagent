@@ -142,17 +142,13 @@ class ThatSeoAgent_Markdown {
             }
         }
 
-        if ( has_post_thumbnail( $post->ID ) ) {
-            $thumbnail_id = get_post_thumbnail_id( $post->ID );
-            $image_url    = wp_get_attachment_url( $thumbnail_id );
+        // The post's own image, as the page's markup names it.
+        $image = ThatSeoAgent_Image::own( $post, 'schema' );
+        if ( $image ) {
+            $fields['image'] = $image['url'];
 
-            if ( $image_url ) {
-                $fields['featured_image'] = $image_url;
-
-                $alt_text = get_post_meta( $thumbnail_id, '_wp_attachment_image_alt', true );
-                if ( ! empty( $alt_text ) ) {
-                    $fields['featured_image_alt'] = $alt_text;
-                }
+            if ( '' !== $image['alt'] ) {
+                $fields['image_alt'] = $image['alt'];
             }
         }
 

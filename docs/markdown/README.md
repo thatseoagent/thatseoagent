@@ -27,8 +27,8 @@ categories:
   - "News"
 tags:
   - "wordpress"
-featured_image: "https://example.com/wp-content/uploads/image.jpg"
-featured_image_alt: "Alt text"
+image: "https://example.com/wp-content/uploads/image.jpg"
+image_alt: "Alt text"
 ---
 
 The post's content, as Markdown…
