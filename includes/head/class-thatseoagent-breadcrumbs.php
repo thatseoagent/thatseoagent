@@ -75,57 +75,42 @@ class ThatSeoAgent_Breadcrumbs {
     }
 
     /**
+     * The trail of a post's own page: its archive, its primary category or
+     * parent pages, and the post. The one the schema and the visible
+     * breadcrumbs give while the page is served, from anywhere.
+     *
+     * @since 2.7.0
+     * @param WP_Post $post Post.
+     * @return array<int, array{name: string, url: string}> Empty when the
+     *         page has no trail beyond the homepage.
+     */
+    public static function for_post( WP_Post $post ) {
+        return ThatSeoAgent_Memo::remember(
+            'breadcrumbs_post',
+            $post->ID,
+            function () use ( $post ) {
+                return self::finish( self::post_crumbs( $post ), $post );
+            }
+        );
+    }
+
+    /**
      * The trail behind trail(), without memoisation.
      *
      * @since 2.4.0
+     * @since 2.7.0 A single page's is for_post()'s.
      * @return array<int, array{name: string, url: string}>
      */
     private static function build() {
-        $crumbs = array(
-            array(
-                'name' => self::home_label(),
-                'url'  => home_url( '/' ),
-            ),
-        );
-
         if ( is_singular() ) {
             $post = get_queried_object();
-            if ( ! $post instanceof WP_Post ) {
-                return array();
-            }
 
-            $archive = self::post_type_archive_crumb( $post->post_type );
-            if ( $archive ) {
-                $crumbs[] = $archive;
-            }
+            return $post instanceof WP_Post ? self::for_post( $post ) : array();
+        }
 
-            if ( ! is_post_type_hierarchical( $post->post_type ) ) {
-                // The primary category and the ones above it.
-                foreach ( ThatSeoAgent_Primary_Term::path( $post ) as $term ) {
-                    $link = get_term_link( $term );
-                    if ( ! is_wp_error( $link ) ) {
-                        $crumbs[] = array(
-                            'name' => $term->name,
-                            'url'  => $link,
-                        );
-                    }
-                }
-            } else {
-                foreach ( array_reverse( get_post_ancestors( $post ) ) as $ancestor_id ) {
-                    $crumbs[] = array(
-                        'name' => get_the_title( $ancestor_id ),
-                        'url'  => (string) get_permalink( $ancestor_id ),
-                    );
-                }
-            }
+        $crumbs = array( self::home_crumb() );
 
-            if ( ! is_front_page() ) {
-                $crumbs[] = array(
-                    'name' => get_the_title( $post ),
-                    'url'  => '',
-                );
-            }
-        } elseif ( is_post_type_archive() ) {
+        if ( is_post_type_archive() ) {
             $crumbs[] = array(
                 'name' => post_type_archive_title( '', false ),
                 'url'  => '',
@@ -176,6 +161,77 @@ class ThatSeoAgent_Breadcrumbs {
             );
         }
 
+
+        return self::finish( $crumbs, null );
+    }
+
+    /**
+     * The crumbs of a post's page, before the filter.
+     *
+     * @since 2.7.0 Split from build().
+     * @param WP_Post $post Post.
+     * @return array<int, array{name: string, url: string}>
+     */
+    private static function post_crumbs( WP_Post $post ) {
+        $crumbs = array( self::home_crumb() );
+
+        $archive = self::post_type_archive_crumb( $post->post_type );
+        if ( $archive ) {
+            $crumbs[] = $archive;
+        }
+
+        if ( ! is_post_type_hierarchical( $post->post_type ) ) {
+            // The primary category and the ones above it.
+            foreach ( ThatSeoAgent_Primary_Term::path( $post ) as $term ) {
+                $link = get_term_link( $term );
+                if ( ! is_wp_error( $link ) ) {
+                    $crumbs[] = array(
+                        'name' => $term->name,
+                        'url'  => $link,
+                    );
+                }
+            }
+        } else {
+            foreach ( array_reverse( get_post_ancestors( $post ) ) as $ancestor_id ) {
+                $crumbs[] = array(
+                    'name' => get_the_title( $ancestor_id ),
+                    'url'  => (string) get_permalink( $ancestor_id ),
+                );
+            }
+        }
+
+        if ( ! ThatSeoAgent_Homepage::is_front_page( $post ) ) {
+            $crumbs[] = array(
+                'name' => get_the_title( $post ),
+                'url'  => '',
+            );
+        }
+
+        return $crumbs;
+    }
+
+    /**
+     * The first crumb.
+     *
+     * @since 2.7.0
+     * @return array{name: string, url: string}
+     */
+    private static function home_crumb() {
+        return array(
+            'name' => self::home_label(),
+            'url'  => home_url( '/' ),
+        );
+    }
+
+    /**
+     * Names as plain text, the filter, and no trail of a lone "Home".
+     *
+     * @since 2.7.0 Split from build().
+     * @param array        $crumbs Trail, homepage first.
+     * @param WP_Post|null $post   The post whose page it is, null on a listing.
+     * @return array<int, array{name: string, url: string}>
+     */
+    private static function finish( array $crumbs, $post ) {
         foreach ( $crumbs as $index => $crumb ) {
             $crumbs[ $index ]['name'] = trim( html_entity_decode( wp_strip_all_tags( (string) $crumb['name'] ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
         }
@@ -185,9 +241,11 @@ class ThatSeoAgent_Breadcrumbs {
          * breadcrumbs alike.
          *
          * @since 2.4.0
+         * @since 2.7.0 $post.
          * @param array<int, array{name: string, url: string}> $crumbs Trail, homepage first.
+         * @param WP_Post|null                                 $post   The post whose page it is, null on a listing.
          */
-        $crumbs = (array) apply_filters( 'thatseoagent_breadcrumb_trail', $crumbs );
+        $crumbs = (array) apply_filters( 'thatseoagent_breadcrumb_trail', $crumbs, $post );
 
         // A lone "Home" is not a trail.
         return count( $crumbs ) < 2 ? array() : array_values( $crumbs );

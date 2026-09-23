@@ -219,16 +219,18 @@ Context is one of `home`, `single`, `archive`, `taxonomy`, `search`, `author`, `
 
 **Schema**
 
+A post's graph is `ThatSeoAgent_Schema::for_post( $post )`, the same inside its page's request and outside it — the `get-post-seo` ability returns it — so the filters that receive the post should branch on it rather than on conditional tags like `is_singular()`.
+
 | Filter | Purpose |
 |--------|---------|
 | `thatseoagent_primary_entity` | `'person'` or `'organization'` — decides the publisher |
 | `thatseoagent_website_schema` | WebSite node |
 | `thatseoagent_organization_schema` | Organization node |
 | `thatseoagent_person_schema` | Person node |
-| `thatseoagent_webpage_schema` | WebPage node |
-| `thatseoagent_breadcrumb_schema` | BreadcrumbList node |
-| `thatseoagent_breadcrumb_trail` | The breadcrumb trail, for the schema and the visible breadcrumbs |
-| `thatseoagent_schema_graph` | The complete `@graph` before output |
+| `thatseoagent_webpage_schema` | WebPage node (receives the post) |
+| `thatseoagent_breadcrumb_schema` | BreadcrumbList node (receives the post, `null` on a listing) |
+| `thatseoagent_breadcrumb_trail` | The breadcrumb trail, for the schema and the visible breadcrumbs (receives the post, `null` on a listing) |
+| `thatseoagent_schema_graph` | The complete `@graph` before output (receives the post, `null` on any other view) |
 | `thatseoagent_faq_schema_enabled` | Disable FAQ schema per post |
 | `thatseoagent_faq_pairs` | The extracted Q&A pairs |
 | `thatseoagent_faq_numbered_enabled` | Opt in to numbered-heading FAQs (off) |

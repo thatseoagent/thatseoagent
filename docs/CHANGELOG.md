@@ -110,6 +110,16 @@
   (`thatseoagent_md_{plugin}_{version}_{post_id}`), so an update that
   changes what the Markdown says is served at once, not after the copies
   cached before it expire.
+- **A post's JSON-LD graph can be built from anywhere**:
+  `ThatSeoAgent_Schema::for_post( $post )` returns the graph its page's head
+  prints, node for node, without a front-end request, and
+  `ThatSeoAgent_Breadcrumbs::for_post( $post )` its breadcrumb trail. The
+  head prints what they return. `thatseoagent_webpage_schema`,
+  `thatseoagent_breadcrumb_schema`, `thatseoagent_breadcrumb_trail` and
+  `thatseoagent_schema_graph` receive the post (`null` on a listing).
+- **The `get-post-seo` and `update-post-seo` abilities return the post's
+  JSON-LD** in `schema`, so an agent sees the markup without requesting
+  the page; empty while another SEO plugin is active.
 - **The score's colours come from the server**: each row of the content
   check carries its level (`ThatSeoAgent_Audit::level_for_score()`).
 

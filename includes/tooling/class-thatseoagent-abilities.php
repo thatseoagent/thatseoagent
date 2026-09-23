@@ -92,6 +92,11 @@ class ThatSeoAgent_Abilities {
                                 'description' => array( 'type' => 'string' ),
                             ),
                         ),
+                        'schema'      => array(
+                            'type'        => 'array',
+                            'description' => __( 'The JSON-LD @graph the post\'s page publishes, node by node, as its head prints it. Empty while another SEO plugin is active and ThatSeoAgent prints nothing.', 'thatseoagent' ),
+                            'items'       => array( 'type' => 'object' ),
+                        ),
                     ),
                 ),
             )
@@ -361,6 +366,11 @@ class ThatSeoAgent_Abilities {
                                 'description' => array( 'type' => 'string' ),
                             ),
                         ),
+                        'schema'      => array(
+                            'type'        => 'array',
+                            'description' => __( 'The JSON-LD @graph the post\'s page publishes, node by node, as its head prints it. Empty while another SEO plugin is active and ThatSeoAgent prints nothing.', 'thatseoagent' ),
+                            'items'       => array( 'type' => 'object' ),
+                        ),
                     ),
                 ),
             )
@@ -444,6 +454,8 @@ class ThatSeoAgent_Abilities {
                 'title'       => $custom_title ? $custom_title : '',
                 'description' => $custom_description ? $custom_description : '',
             ),
+            // What the page's head prints, without requesting the page.
+            'schema'      => ThatSeoAgent_Compat::outputs_enabled() ? ThatSeoAgent_Schema::for_post( $post ) : array(),
         );
     }
 

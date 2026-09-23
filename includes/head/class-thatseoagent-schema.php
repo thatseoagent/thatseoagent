@@ -22,13 +22,106 @@ class ThatSeoAgent_Schema {
     }
 
     /**
-     * Output JSON-LD schema
+     * Print the current view's JSON-LD.
+     *
+     * The adapter between the request and the graph: it works out what the
+     * view is, asks for its graph and prints it. A single page's graph is
+     * for_post()'s, the same wherever it is asked for.
+     *
+     * @since 1.0.0
+     * @since 2.7.0 A single page's graph from for_post().
      */
     public static function output() {
-        $schema = array();
+        $post = is_singular() ? get_queried_object() : null;
 
-        // Website schema (always)
-        $schema[] = self::get_website_schema();
+        if ($post instanceof WP_Post) {
+            $graph = self::for_post($post);
+        } elseif (is_author()) {
+            $graph = self::listing_graph('ProfilePage');
+        } elseif (self::is_listing()) {
+            $graph = self::listing_graph('CollectionPage');
+        } else {
+            $graph = self::finish(self::site_nodes(), null);
+        }
+
+        $output = array(
+            '@context' => 'https://schema.org',
+            '@graph' => $graph
+        );
+
+        echo '<script type="application/ld+json">' . "\n";
+        // JSON_HEX_TAG escapes < and > so content containing "</script>"
+        // cannot break out of the JSON-LD block.
+        echo wp_json_encode($output, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+        echo "\n</script>\n";
+    }
+
+    /**
+     * The JSON-LD graph of a post's own page, as its head prints it, from
+     * anywhere: the site's nodes, the WebPage, the Product or the Article
+     * with its author and FAQ, and the BreadcrumbList.
+     *
+     * @since 2.7.0 From output().
+     * @param WP_Post $post Post.
+     * @return array<int, array> The @graph's nodes.
+     */
+    public static function for_post(WP_Post $post) {
+        $graph = self::site_nodes();
+
+        // Built first: the WebPage node points at it.
+        $breadcrumb = self::get_breadcrumb_schema(ThatSeoAgent_Breadcrumbs::for_post($post), get_permalink($post), $post);
+
+        // A catalog entry is a Product, and the page is about it. Not an
+        // Article as well, even when its post type is listed as one: a
+        // page has one main entity.
+        $product = ThatSeoAgent_Product::schema($post);
+
+        $graph[] = self::get_webpage_schema($post, $product ? $product['@id'] : '', $breadcrumb);
+
+        if ($product) {
+            $graph[] = $product;
+        }
+
+        if (! $product && in_array($post->post_type, self::article_post_types(), true)) {
+            $graph[] = self::get_article_schema($post);
+            $graph[] = self::get_author_person_schema((int) $post->post_author);
+            $graph[] = self::get_faq_schema($post);
+        }
+
+        $graph[] = $breadcrumb;
+
+        return self::finish($graph, $post);
+    }
+
+    /**
+     * The graph of a listing: an archive, the blog, or an author's page.
+     *
+     * @since 2.7.0 From output().
+     * @param string $type 'CollectionPage' or 'ProfilePage'.
+     * @return array<int, array>
+     */
+    private static function listing_graph($type) {
+        $graph      = self::site_nodes();
+        $url        = self::current_url();
+        $breadcrumb = self::get_breadcrumb_schema(ThatSeoAgent_Breadcrumbs::trail(), $url, null);
+        $person     = 'ProfilePage' === $type ? self::get_author_person_schema(get_queried_object_id()) : null;
+
+        $graph[] = self::get_listing_page_schema($type, $breadcrumb, $person ? $person['@id'] : '');
+        $graph[] = $person;
+        $graph[] = $breadcrumb;
+
+        return self::finish($graph, null);
+    }
+
+    /**
+     * The nodes every page carries: the WebSite, and the Organization or
+     * the Person that publishes it.
+     *
+     * @since 2.7.0 From output().
+     * @return array<int, array|null>
+     */
+    private static function site_nodes() {
+        $nodes = array(self::get_website_schema());
 
         // Person schema — only present when the site is configured (or a
         // filter opts in) as representing an individual.
@@ -40,63 +133,26 @@ class ThatSeoAgent_Schema {
         $person_is_primary = ('person' === self::get_primary_entity()) && ! empty($person_schema);
 
         if (! $person_is_primary) {
-            $schema[] = self::get_organization_schema();
+            $nodes[] = self::get_organization_schema();
         }
 
         if ($person_schema) {
-            $schema[] = $person_schema;
+            $nodes[] = $person_schema;
         }
 
-        // Page-level nodes for any singular view. Before 1.10.0 only 'post'
-        // and 'page' were handled, so every custom post type reached search
-        // engines with no WebPage and no BreadcrumbList at all.
-        if (is_singular()) {
-            // Built first: the WebPage node points at it.
-            $breadcrumb = self::get_breadcrumb_schema();
+        return $nodes;
+    }
 
-            // A catalog entry is a Product, and the page is about it. Not an
-            // Article as well, even when its post type is listed as one: a
-            // page has one main entity.
-            $product = ThatSeoAgent_Product::schema(get_post());
-
-            $schema[] = self::get_webpage_schema($product ? $product['@id'] : '', $breadcrumb);
-
-            if ($product) {
-                $schema[] = $product;
-            }
-
-            if (! $product && is_singular(self::article_post_types())) {
-                $schema[] = self::get_article_schema();
-
-                $author_schema = self::get_author_person_schema((int) get_post()->post_author);
-                if ($author_schema) {
-                    $schema[] = $author_schema;
-                }
-
-                $faq_schema = self::get_faq_schema();
-                if ($faq_schema) {
-                    $schema[] = $faq_schema;
-                }
-            }
-
-            $schema[] = $breadcrumb;
-        } elseif (is_author()) {
-            $breadcrumb = self::get_breadcrumb_schema();
-            $person     = self::get_author_person_schema(get_queried_object_id());
-
-            $schema[] = self::get_listing_page_schema('ProfilePage', $breadcrumb, $person ? $person['@id'] : '');
-            $schema[] = $person;
-            $schema[] = $breadcrumb;
-        } elseif (self::is_listing()) {
-            $breadcrumb = self::get_breadcrumb_schema();
-
-            $schema[] = self::get_listing_page_schema('CollectionPage', $breadcrumb);
-            $schema[] = $breadcrumb;
-        }
-
-        // Filter empty values
-        $schema = array_filter($schema);
-
+    /**
+     * The graph as it is published: empty nodes out, the filter, and no
+     * reference left pointing at nothing.
+     *
+     * @since 2.7.0 From output().
+     * @param array        $graph Nodes, some maybe null.
+     * @param WP_Post|null $post  The post whose page it is, null otherwise.
+     * @return array<int, array>
+     */
+    private static function finish(array $graph, $post) {
         /**
          * Filter the complete JSON-LD @graph before output.
          *
@@ -105,25 +161,16 @@ class ThatSeoAgent_Schema {
          * graph this filter receives contains each node's final shape.
          *
          * @since 1.5.0
-         * @param array $graph Array of schema node arrays.
+         * @since 2.7.0 $post, as the graph of a post can be built outside its
+         *              page's request.
+         * @param array        $graph Array of schema node arrays.
+         * @param WP_Post|null $post  The post whose page it is, null on any other view.
          */
-        $schema = apply_filters('thatseoagent_schema_graph', $schema);
+        $graph = apply_filters('thatseoagent_schema_graph', array_filter($graph), $post);
 
         // After the filter, so a node removed there takes its references
         // with it.
-        $schema = self::without_dangling_references(array_values(array_filter((array) $schema)));
-
-        // Output
-        $output = array(
-            '@context' => 'https://schema.org',
-            '@graph' => $schema
-        );
-
-        echo '<script type="application/ld+json">' . "\n";
-        // JSON_HEX_TAG escapes < and > so content containing "</script>"
-        // cannot break out of the JSON-LD block.
-        echo wp_json_encode($output, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
-        echo "\n</script>\n";
+        return self::without_dangling_references(array_values(array_filter((array) $graph)));
     }
 
     /**
@@ -377,22 +424,26 @@ class ThatSeoAgent_Schema {
 
     /**
      * Article schema for posts
+     *
+     * @since 2.7.0 For a given post.
+     * @param WP_Post $post Post.
+     * @return array
      */
-    private static function get_article_schema() {
-        $post = get_post();
-        
+    private static function get_article_schema($post) {
+        $url = get_permalink($post);
+
         $schema = array(
             '@type' => 'Article',
-            '@id' => get_permalink() . '#article',
-            'isPartOf' => array('@id' => get_permalink() . '#webpage'),
-            'headline' => get_the_title(),
-            'datePublished' => get_the_date('c'),
-            'dateModified' => get_the_modified_date('c'),
-            'mainEntityOfPage' => array('@id' => get_permalink() . '#webpage'),
+            '@id' => $url . '#article',
+            'isPartOf' => array('@id' => $url . '#webpage'),
+            'headline' => get_the_title($post),
+            'datePublished' => get_the_date('c', $post),
+            'dateModified' => get_the_modified_date('c', $post),
+            'mainEntityOfPage' => array('@id' => $url . '#webpage'),
             'wordCount' => ThatSeoAgent_Content::word_count($post),
             'inLanguage' => self::get_language(),
             'publisher' => array('@id' => self::get_publisher_id()),
-            'author' => self::get_author_schema(),
+            'author' => self::get_author_schema($post),
         );
 
         // The post's own image: the featured one, else the first in its
@@ -404,7 +455,7 @@ class ThatSeoAgent_Schema {
         }
 
         // Add description
-        $description = ThatSeoAgent_Meta::get_description();
+        $description = ThatSeoAgent_Description::for_post($post);
         if ($description) {
             $schema['description'] = $description;
         }
@@ -417,10 +468,12 @@ class ThatSeoAgent_Schema {
      * the trust pages the site has, WebPage for the rest.
      *
      * @since 2.6.0
+     * @since 2.7.0 For a given post.
+     * @param WP_Post $post Post.
      * @return string
      */
-    private static function webpage_type() {
-        $kind = ThatSeoAgent_Trust_Pages::kind_of(get_queried_object_id());
+    private static function webpage_type($post) {
+        $kind = ThatSeoAgent_Trust_Pages::kind_of($post->ID);
 
         return array(
             'about'   => 'AboutPage',
@@ -467,24 +520,28 @@ class ThatSeoAgent_Schema {
      *
      * @since 1.16.0 Accepts the page's main entity and breadcrumb, and adds
      *              the description and primary image.
+     * @since 2.7.0 For a given post.
+     * @param WP_Post    $post           Post.
      * @param string     $main_entity_id @id of the node the page is about, or ''.
      * @param array|null $breadcrumb     BreadcrumbList node, if any.
      */
-    private static function get_webpage_schema($main_entity_id = '', $breadcrumb = null) {
+    private static function get_webpage_schema($post, $main_entity_id = '', $breadcrumb = null) {
+        $url = get_permalink($post);
+
         $schema = array(
             // The about and contact pages say what they are: AboutPage and
             // ContactPage are the WebPage subtypes schema.org has for them.
-            '@type' => self::webpage_type(),
-            '@id' => get_permalink() . '#webpage',
-            'url' => get_permalink(),
-            'name' => get_the_title(),
+            '@type' => self::webpage_type($post),
+            '@id' => $url . '#webpage',
+            'url' => $url,
+            'name' => get_the_title($post),
             'isPartOf' => array('@id' => home_url('/#website')),
             'inLanguage' => self::get_language(),
-            'datePublished' => get_the_date('c'),
-            'dateModified' => get_the_modified_date('c'),
+            'datePublished' => get_the_date('c', $post),
+            'dateModified' => get_the_modified_date('c', $post),
         );
 
-        $description = ThatSeoAgent_Meta::get_description();
+        $description = ThatSeoAgent_Description::for_post($post);
         if ($description) {
             $schema['description'] = $description;
         }
@@ -493,10 +550,9 @@ class ThatSeoAgent_Schema {
             $schema['breadcrumb'] = array('@id' => $breadcrumb['@id']);
         }
 
-        $post  = get_post();
-        $image = $post ? self::post_image($post) : null;
+        $image = self::post_image($post);
         if ($image) {
-            $schema['primaryImageOfPage'] = array_merge(array('@id' => get_permalink() . '#primaryimage'), $image);
+            $schema['primaryImageOfPage'] = array_merge(array('@id' => $url . '#primaryimage'), $image);
         }
 
         if ($main_entity_id) {
@@ -507,9 +563,11 @@ class ThatSeoAgent_Schema {
          * Filter the WebPage schema node.
          *
          * @since 1.5.0
-         * @param array $schema WebPage schema array.
+         * @since 2.7.0 $post.
+         * @param array   $schema WebPage schema array.
+         * @param WP_Post $post   The post whose page it is.
          */
-        return apply_filters('thatseoagent_webpage_schema', $schema);
+        return apply_filters('thatseoagent_webpage_schema', $schema, $post);
     }
 
     /**
@@ -523,10 +581,13 @@ class ThatSeoAgent_Schema {
      *              archives and author archives.
      * @since 2.4.0 From ThatSeoAgent_Breadcrumbs, and dropped when a crumb
      *              is broken.
+     * @since 2.7.0 From a given trail, for a given page.
+     * @param array        $crumbs The trail.
+     * @param string       $url    The page's URL.
+     * @param WP_Post|null $post   The post whose page it is, null on a listing.
+     * @return array|null
      */
-    private static function get_breadcrumb_schema() {
-        $crumbs = ThatSeoAgent_Breadcrumbs::trail();
-
+    private static function get_breadcrumb_schema(array $crumbs, $url, $post) {
         // A trail with a gap — a crumb with no name, or one before the last
         // with no link — is dropped whole rather than published broken; so
         // is a lone "Home", which says nothing. The WebPage then points at
@@ -555,7 +616,7 @@ class ThatSeoAgent_Schema {
 
         $schema = array(
             '@type' => 'BreadcrumbList',
-            '@id' => self::current_url() . '#breadcrumb',
+            '@id' => $url . '#breadcrumb',
             'itemListElement' => $items
         );
 
@@ -563,9 +624,11 @@ class ThatSeoAgent_Schema {
          * Filter the BreadcrumbList schema node.
          *
          * @since 1.5.0
-         * @param array $schema Breadcrumb schema array.
+         * @since 2.7.0 $post.
+         * @param array        $schema Breadcrumb schema array.
+         * @param WP_Post|null $post   The post whose page it is, null on a listing.
          */
-        return apply_filters('thatseoagent_breadcrumb_schema', $schema);
+        return apply_filters('thatseoagent_breadcrumb_schema', $schema, $post);
     }
 
     /**
@@ -589,10 +652,6 @@ class ThatSeoAgent_Schema {
      * @return string
      */
     private static function current_url() {
-        if (is_singular()) {
-            return get_permalink();
-        }
-
         $canonical = ThatSeoAgent_Meta::get_canonical();
 
         return $canonical ? $canonical : home_url('/');
@@ -737,16 +796,16 @@ class ThatSeoAgent_Schema {
      * publisher defaults from options.
      *
      * @since 1.3.0
+     * @since 2.7.0 For a given post.
+     * @param WP_Post $post Post.
      * @return array Schema.org Person or Organization array.
      */
-    private static function get_author_schema() {
-        // get_the_author() reads the $authordata global, which is only set
-        // once the loop has run — wp_head fires before that, so resolve the
-        // author from the post object instead.
-        $post      = get_post();
-        $author_id = $post ? (int) $post->post_author : 0;
+    private static function get_author_schema( $post ) {
+        // From the post object, not get_the_author(): that reads the
+        // $authordata global, only set once the loop has run.
+        $author_id = (int) $post->post_author;
 
-        if ( $post && ! ThatSeoAgent_Default_Author::is_unattributed( $post ) ) {
+        if ( ! ThatSeoAgent_Default_Author::is_unattributed( $post ) ) {
             $author_name = get_the_author_meta( 'display_name', $author_id );
 
             // The Person node itself sits in the graph, where the author's
@@ -780,14 +839,11 @@ class ThatSeoAgent_Schema {
      *
      * @since 1.1.0
      * @since 1.9.0 Extraction moved to ThatSeoAgent_FAQ.
+     * @since 2.7.0 For a given post.
+     * @param WP_Post $post Post.
      * @return array|null FAQPage schema array or null.
      */
-    private static function get_faq_schema() {
-        $post = get_post();
-        if ( ! $post ) {
-            return null;
-        }
-
+    private static function get_faq_schema( $post ) {
         /**
          * Filter to disable FAQ schema for specific posts.
          *
@@ -826,7 +882,7 @@ class ThatSeoAgent_Schema {
 
         return array(
             '@type'      => 'FAQPage',
-            '@id'        => get_permalink() . '#faq',
+            '@id'        => get_permalink( $post ) . '#faq',
             'mainEntity' => $entities,
         );
     }
