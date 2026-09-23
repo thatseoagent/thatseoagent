@@ -57,6 +57,7 @@ class ThatSeoAgent_Settings {
             'ThatSeoAgent_Product',
             'ThatSeoAgent_Llms',
             'ThatSeoAgent_IndexNow',
+            'ThatSeoAgent_AI_Crawlers',
         );
     }
 

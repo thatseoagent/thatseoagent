@@ -107,7 +107,7 @@ class ThatSeoAgent_Llms {
      * @since 1.16.0
      */
     public static function register_routes() {
-        add_rewrite_rule( '^llms\.txt$', 'index.php?lean_llms=1', 'top' );
+        add_rewrite_rule( '^llms\.txt$', 'index.php?thatseoagent_llms=1', 'top' );
     }
 
     /**
@@ -118,7 +118,7 @@ class ThatSeoAgent_Llms {
      * @return array
      */
     public static function query_vars( $vars ) {
-        $vars[] = 'lean_llms';
+        $vars[] = 'thatseoagent_llms';
         return $vars;
     }
 
@@ -132,7 +132,7 @@ class ThatSeoAgent_Llms {
      * @param WP $wp Current WordPress environment.
      */
     public static function handle_request( $wp ) {
-        if ( empty( $wp->query_vars['lean_llms'] ) ) {
+        if ( empty( $wp->query_vars['thatseoagent_llms'] ) ) {
             return;
         }
 

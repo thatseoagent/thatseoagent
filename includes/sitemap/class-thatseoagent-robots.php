@@ -29,12 +29,14 @@ class ThatSeoAgent_Robots {
     }
 
     /**
-     * Point the Sitemap: directive at ThatSeoAgent's index.
+     * Point the Sitemap: directive at ThatSeoAgent's index, and add the
+     * AI crawlers the site owner blocks.
      *
      * @since 1.0.0
      * @param string $output robots.txt as built so far.
-     * @param bool   $public Whether the site is public. Unused: the sitemap
-     *                       is listed either way, as core does.
+     * @param bool   $public Whether the site is public. The sitemap is
+     *                       listed either way, as core does; crawler
+     *                       rules only on a public site.
      * @return string
      */
     public static function filter( $output, $public ) {
@@ -61,8 +63,12 @@ class ThatSeoAgent_Robots {
 
         $output = implode( "\n", $kept );
 
-        // Trim and add our sitemap
+        // The AI crawlers the site owner blocks, then our sitemap.
         $output = trim( $output );
+        $crawlers = ThatSeoAgent_AI_Crawlers::robots_block( (bool) $public );
+        if ( '' !== $crawlers ) {
+            $output .= ( $output ? "\n\n" : '' ) . $crawlers;
+        }
         if ( $output ) {
             $output .= "\n\n";
         }

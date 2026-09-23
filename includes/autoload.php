@@ -11,6 +11,7 @@
  *     sitemap/       XML sitemaps and robots.txt
  *     markdown/      the Markdown version of each post, and llms.txt
  *     audit/         the SEO audit and the batched content check
+ *     crawlers/      AI crawlers: the rules and who can read the site
  *     bulletin/      the site's state: the bulletin and the readings
  *     admin/         the ThatSeoAgent screen, the meta box, the bulk action
  *     rest/          the screen's REST controllers (thatseoagent/v1)
@@ -74,6 +75,10 @@ spl_autoload_register(
         'ThatSeoAgent_Bulletin'          => 'bulletin/class-thatseoagent-bulletin.php',
         'ThatSeoAgent_Readings'          => 'bulletin/class-thatseoagent-readings.php',
 
+        'ThatSeoAgent_AI_Crawlers'       => 'crawlers/class-thatseoagent-ai-crawlers.php',
+        'ThatSeoAgent_Crawler_Access'    => 'crawlers/class-thatseoagent-crawler-access.php',
+        'ThatSeoAgent_Robots_Parser'     => 'crawlers/class-thatseoagent-robots-parser.php',
+
         'ThatSeoAgent_App'               => 'admin/class-thatseoagent-app.php',
         'ThatSeoAgent_Bulk_Descriptions' => 'admin/class-thatseoagent-bulk-descriptions.php',
         'ThatSeoAgent_Icons'             => 'admin/class-thatseoagent-icons.php',
@@ -82,6 +87,7 @@ spl_autoload_register(
         'ThatSeoAgent_REST_Audit'        => 'rest/class-thatseoagent-rest-audit.php',
         'ThatSeoAgent_REST_Bulletin'     => 'rest/class-thatseoagent-rest-bulletin.php',
         'ThatSeoAgent_REST_Controller'   => 'rest/class-thatseoagent-rest-controller.php',
+        'ThatSeoAgent_REST_Crawlers'     => 'rest/class-thatseoagent-rest-crawlers.php',
         'ThatSeoAgent_REST_Llms'         => 'rest/class-thatseoagent-rest-llms.php',
         'ThatSeoAgent_REST_Preferences'  => 'rest/class-thatseoagent-rest-preferences.php',
         'ThatSeoAgent_REST'              => 'rest/class-thatseoagent-rest.php',

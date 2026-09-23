@@ -71,7 +71,7 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
 
 <section class="mt-3" aria-labelledby="thatseoagent-observations">
     <h2 id="thatseoagent-observations" class="sr-only"><?php esc_html_e( 'Observations', 'thatseoagent' ); ?></h2>
-    <ol class="tsa-sweep grid grid-cols-2 gap-px overflow-hidden rounded-(--radius-sheet) border border-rule bg-rule sm:grid-cols-4 lg:grid-cols-7">
+    <ol class="tsa-sweep grid grid-cols-2 gap-px overflow-hidden rounded-(--radius-sheet) border border-rule bg-rule sm:grid-cols-4 xl:grid-cols-8">
         <?php foreach ( $bulletin['observations'] as $observation ) : ?>
             <?php
             $state = $observation['state'];
@@ -83,7 +83,7 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
                 'red'    => $levels['red']['name'],
             )[ $state ];
             ?>
-            <li class="bg-sheet px-4 pt-0 pb-3.5 last:col-span-2 lg:last:col-span-1">
+            <li class="bg-sheet px-4 pt-0 pb-3.5">
                 <span class="-mx-4 mb-3 block h-1 <?php echo esc_attr( ThatSeoAgent_App::state_bar( $state ) ); ?>" aria-hidden="true"></span>
                 <p class="text-[12px] font-semibold text-ink-2"><?php echo esc_html( $observation['label'] ); ?></p>
                 <p class="mt-0.5 truncate text-[14px] font-semibold <?php echo 'off' === $state ? 'text-ink-3' : 'text-ink'; ?>" title="<?php echo esc_attr( $observation['value'] ); ?>"><?php echo esc_html( $observation['value'] ); ?></p>

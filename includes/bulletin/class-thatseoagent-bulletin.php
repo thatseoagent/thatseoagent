@@ -114,7 +114,7 @@ class ThatSeoAgent_Bulletin {
      * owns it.
      *
      * @since 1.20.0
-     * @return array{indexing: bool, permalinks: bool, other_plugin: string, identity: bool, homepage: bool, catalog: array|null, indexnow: bool, now: int}
+     * @return array{indexing: bool, permalinks: bool, other_plugin: string, identity: bool, homepage: bool, catalog: array|null, crawlers: array, indexnow: bool, now: int}
      */
     public static function facts() {
         return array(
@@ -124,6 +124,7 @@ class ThatSeoAgent_Bulletin {
             'identity'     => ThatSeoAgent_Identity::is_recognizable(),
             'homepage'     => ThatSeoAgent_Homepage::has_description(),
             'catalog'      => empty( ThatSeoAgent_Product::post_types() ) ? null : ThatSeoAgent_Product_Report::summary(),
+            'crawlers'     => ThatSeoAgent_Crawler_Access::summary(),
             'indexnow'     => '' !== ThatSeoAgent_IndexNow::get_api_key(),
             'now'          => time(),
         );
@@ -140,6 +141,7 @@ class ThatSeoAgent_Bulletin {
      * @param array $facts As returned by facts(). `catalog` is null when
      *                     the site has no catalog, else the product
      *                     summary (error, warning, info, ok, total).
+     *                     `crawlers` is ThatSeoAgent_Crawler_Access::summary().
      * @return array{level: string, headline: string, summary: string, action: array|null, warnings: array, observations: array, observed: int}
      */
     public static function compose( array $facts ) {
@@ -250,6 +252,62 @@ class ThatSeoAgent_Bulletin {
             }
         }
 
+        // AI crawlers. Blocking training is a choice, never a warning;
+        // blocking the crawlers that put the site in answers is.
+        $crawlers = $facts['crawlers'];
+        if ( $crawlers['search_blocked'] ) {
+            $state = 'orange';
+            $value = __( 'Search blocked', 'thatseoagent' );
+        } elseif ( $crawlers['inactive'] && $crawlers['physical'] ) {
+            $state = 'yellow';
+            $value = __( 'Rules not served', 'thatseoagent' );
+        } elseif ( '' !== $crawlers['other_editor'] ) {
+            $state = 'yellow';
+            $value = __( 'Two sets of rules', 'thatseoagent' );
+        } elseif ( $crawlers['training_blocked'] ) {
+            $state = 'ok';
+            $value = __( 'Training blocked', 'thatseoagent' );
+        } elseif ( $crawlers['blocked'] ) {
+            $state = 'ok';
+            $value = __( 'Some blocked', 'thatseoagent' );
+        } else {
+            $state = 'ok';
+            $value = __( 'Open', 'thatseoagent' );
+        }
+        $observations[] = self::observation( 'crawlers', __( 'AI crawlers', 'thatseoagent' ), $state, $value );
+
+        if ( $crawlers['search_blocked'] ) {
+            $warnings[] = self::warning(
+                'orange',
+                /* translators: 1: blocked crawlers, 2: all search crawlers. */
+                sprintf( _n( 'robots.txt keeps %1$d of %2$d search crawlers out', 'robots.txt keeps %1$d of %2$d search crawlers out', $crawlers['search_blocked'], 'thatseoagent' ), $crawlers['search_blocked'], $crawlers['search'] ),
+                __( 'AI assistants and search engines that cannot read the site cannot quote it or link to it in their answers.', 'thatseoagent' ),
+                __( 'See who is blocked', 'thatseoagent' ),
+                'crawlers'
+            );
+        }
+
+        if ( $crawlers['inactive'] && $crawlers['physical'] ) {
+            $warnings[] = self::warning(
+                'yellow',
+                __( 'Your AI crawler rules are not being served', 'thatseoagent' ),
+                __( 'A robots.txt file in the site root replaces the one WordPress builds, so the rules chosen here never reach the crawlers.', 'thatseoagent' ),
+                __( 'See the rules to copy', 'thatseoagent' ),
+                'crawlers'
+            );
+        }
+
+        if ( '' !== $crawlers['other_editor'] ) {
+            $warnings[] = self::warning(
+                'yellow',
+                /* translators: %s: plugin name. */
+                sprintf( __( '%s also writes crawler rules into robots.txt', 'thatseoagent' ), $crawlers['other_editor'] ),
+                __( 'Two plugins editing the same file can contradict each other. Keep the rules in one of them.', 'thatseoagent' ),
+                __( 'Open Plugins', 'thatseoagent' ),
+                'plugins'
+            );
+        }
+
         // IndexNow.
         $indexnow       = $facts['indexnow'];
         $observations[] = self::observation( 'indexnow', __( 'IndexNow', 'thatseoagent' ), $indexnow ? 'ok' : 'off', $indexnow ? __( 'On', 'thatseoagent' ) : __( 'Off', 'thatseoagent' ) );
@@ -320,7 +378,8 @@ class ThatSeoAgent_Bulletin {
      * @param string $detail      Why it matters.
      * @param string $label       Action label.
      * @param string $destination Where it is fixed: 'reading', 'permalinks',
-     *                            'plugins', 'identity', 'homepage' or 'products'.
+     *                            'plugins', 'identity', 'homepage', 'products'
+     *                            or 'crawlers'.
      * @return array{level: string, title: string, detail: string, action: array{label: string, destination: string}}
      */
     private static function warning( $level, $title, $detail, $label, $destination ) {

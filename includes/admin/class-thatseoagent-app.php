@@ -97,6 +97,12 @@ class ThatSeoAgent_App {
                 'subtitle' => __( 'Titles, descriptions, headings, links and images, page by page.', 'thatseoagent' ),
                 'icon'     => 'audit',
             ),
+            'crawlers'  => array(
+                'label'    => __( 'AI crawlers', 'thatseoagent' ),
+                'title'    => __( 'AI crawlers', 'thatseoagent' ),
+                'subtitle' => __( 'Which AI crawlers can read the site right now, and why.', 'thatseoagent' ),
+                'icon'     => 'bot',
+            ),
             'llms'      => array(
                 'label'    => __( 'AI index', 'thatseoagent' ),
                 'title'    => __( 'AI index', 'thatseoagent' ),
@@ -247,6 +253,13 @@ class ThatSeoAgent_App {
                 'offline'       => __( 'The site could not be reached. Check your connection and try again.', 'thatseoagent' ),
                 'regenerated'   => __( 'llms.txt was rebuilt.', 'thatseoagent' ),
                 'regenFailed'   => __( 'llms.txt could not be rebuilt.', 'thatseoagent' ),
+                'probeDone'     => __( 'Access checked.', 'thatseoagent' ),
+                'probeFailed'   => __( 'The access check could not run.', 'thatseoagent' ),
+                'probeNoAnswer' => __( 'No answer: the site did not respond to this crawler', 'thatseoagent' ),
+                /* translators: %d: HTTP status code. */
+                'probeReached'  => __( 'Reached the site (%d)', 'thatseoagent' ),
+                /* translators: %d: HTTP status code. */
+                'probeTurnedAway' => __( 'Turned away by the server (%d)', 'thatseoagent' ),
             ),
         );
     }
@@ -367,6 +380,8 @@ class ThatSeoAgent_App {
                 return self::url( 'settings' ) . '#thatseoagent_homepage_section';
             case 'products':
                 return self::url( 'products' );
+            case 'crawlers':
+                return self::url( 'crawlers' );
         }
 
         return self::url();

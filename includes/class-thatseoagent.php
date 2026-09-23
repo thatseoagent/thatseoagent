@@ -75,6 +75,7 @@ class ThatSeoAgent {
             ThatSeoAgent_Identity::register();
             ThatSeoAgent_Homepage::register();
             ThatSeoAgent_Product_Settings::register();
+            ThatSeoAgent_AI_Crawlers::register();
             ThatSeoAgent_Llms::register_settings();
         }
 

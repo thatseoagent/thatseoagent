@@ -5,8 +5,8 @@
  * Two SEO plugins printing into the same `<head>` produce two titles, two
  * descriptions, two canonicals and two JSON-LD graphs that disagree with each
  * other. Search engines pick one — not necessarily the one the site owner
- * maintains. Rather than negotiate node by node which plugin owns what, Lean
- * SEO steps aside entirely while another SEO plugin is active: no head output,
+ * maintains. Rather than negotiate node by node which plugin owns what,
+ * ThatSeoAgent steps aside entirely while another SEO plugin is active: no head output,
  * no sitemaps, no robots.txt changes. The Markdown endpoint keeps working, as
  * no other plugin serves those URLs.
  *

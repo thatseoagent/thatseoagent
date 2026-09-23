@@ -1,5 +1,36 @@
 # Changelog
 
+## [2.1.0] - 2026-09-23
+
+### Added
+- **AI crawlers** (`admin.php?page=thatseoagent&view=crawlers`): for 16 AI
+  crawlers and the three search engine crawlers, whether the served
+  robots.txt lets them read the site and which rule decides it, read as
+  crawlers do (RFC 9309: most specific group, longest match, `*` and `$`).
+  **Check access now** requests the homepage as each crawler, all at once,
+  to catch a firewall or CDN turning it away, and checks that robots.txt
+  itself answers 200 — crawlers ignore a robots.txt served with a 404,
+  however right its contents (`POST /thatseoagent/v1/crawlers/probe`).
+- **Rules per group** in Settings → AI crawlers: allow or block search and
+  answers, visits asked for by a person, and training, with exceptions per
+  crawler (option `thatseoagent_ai_crawlers`). Blocking adds a single
+  `Disallow: /` group to the virtual robots.txt; allowing adds nothing, so
+  allowed crawlers keep following the `*` rules. Nothing is written by
+  default or on a site that discourages search engines. With a physical
+  robots.txt the screen gives the lines to paste.
+- **An AI crawlers observation** in the bulletin, with an orange warning
+  when robots.txt keeps search crawlers out and yellow ones when a physical
+  robots.txt ignores the chosen rules or another plugin (AEO God Mode) also
+  writes crawler rules. Blocking training never raises one.
+- Filter `thatseoagent_ai_crawlers` to add or regroup crawlers.
+
+### Changed
+- WordPress's own `/wp-sitemap.xml` is switched off while ThatSeoAgent
+  serves its sitemaps.
+- Internal query vars finish the rename: `thatseoagent_sitemap`,
+  `thatseoagent_cpt`, `thatseoagent_llms`, `thatseoagent_markdown`.
+- The observation row wraps to four columns until the screen fits eight.
+
 ## [2.0.0] - 2026-09-23
 
 Lean SEO is now **ThatSeoAgent**, by Angel Cruz. Credits to the original

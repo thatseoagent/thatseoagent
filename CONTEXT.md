@@ -23,7 +23,7 @@ What the overview shows beside the bulletin without judging it: how many posts c
 _Avoid_: stats, metrics, KPIs
 
 **Observation**:
-One fact checked about the site (indexing allowed, permalinks, other SEO plugins, identity, homepage description, product catalog, IndexNow), with its value in a word or two.
+One fact checked about the site (indexing allowed, permalinks, other SEO plugins, identity, homepage description, product catalog, AI crawlers, IndexNow), with its value in a word or two.
 _Avoid_: check, metric, test
 
 **Stepping aside**:
@@ -47,6 +47,24 @@ _Avoid_: export, API, feed
 **AI index**:
 The site's llms.txt: a list of its pages, each linking to its Markdown version where there is one.
 _Avoid_: llms file, AI sitemap
+
+### Who reads the site
+
+**AI crawler**:
+A program an AI company sends to read web pages, known by the name it gives in robots.txt (GPTBot, ClaudeBot…). Google's, Bing's and Apple's search crawlers are not AI crawlers here: they are never blocked from this plugin.
+_Avoid_: bot, spider, agent
+
+**Crawler group**:
+What an AI crawler reads the site for: search and answers, a visit a person asked for, or training. The site owner allows or blocks a whole group, with exceptions crawler by crawler.
+_Avoid_: category, type
+
+**Crawler access**:
+Whether an AI crawler may read the site according to the robots.txt the site serves, whatever the site owner chose; the two can differ when a physical robots.txt or another plugin decides.
+_Avoid_: permission, status
+
+**Access check**:
+Requesting the homepage as each AI crawler, on demand, to see whether the server lets it through.
+_Avoid_: probe, test, scan
 
 ### Who the site is
 

@@ -27,6 +27,7 @@ $order = array(
     'thatseoagent_products_section',
     'thatseoagent_schema_section',
     'thatseoagent_llms_section',
+    'thatseoagent_crawlers_section',
     'thatseoagent_indexnow_section',
 );
 uksort(

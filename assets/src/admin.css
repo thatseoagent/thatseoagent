@@ -30,6 +30,7 @@
 @import "tailwindcss/utilities.css" layer(utilities) important source(none);
 
 @source "../../includes/admin";
+@source "../../includes/crawlers";
 @source "../admin/app.js";
 
 @font-face {

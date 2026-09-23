@@ -52,7 +52,7 @@ class ThatSeoAgent_Markdown_Endpoint {
      * @since 1.14.0
      */
     public static function register_routes() {
-        add_rewrite_rule( self::RULE, 'index.php?lean_markdown=$matches[1]', 'top' );
+        add_rewrite_rule( self::RULE, 'index.php?thatseoagent_markdown=$matches[1]', 'top' );
     }
 
     /**
@@ -63,7 +63,7 @@ class ThatSeoAgent_Markdown_Endpoint {
      * @return array
      */
     public static function query_vars( $vars ) {
-        $vars[] = 'lean_markdown';
+        $vars[] = 'thatseoagent_markdown';
         return $vars;
     }
 
@@ -164,11 +164,11 @@ class ThatSeoAgent_Markdown_Endpoint {
      * @param WP $wp Current WordPress environment.
      */
     public static function handle_request( $wp ) {
-        if ( empty( $wp->query_vars['lean_markdown'] ) ) {
+        if ( empty( $wp->query_vars['thatseoagent_markdown'] ) ) {
             return;
         }
 
-        $post = self::find_post( (string) $wp->query_vars['lean_markdown'] );
+        $post = self::find_post( (string) $wp->query_vars['thatseoagent_markdown'] );
 
         if ( ! $post ) {
             self::send_error( 404, __( 'Post not found.', 'thatseoagent' ) );

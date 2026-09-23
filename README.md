@@ -36,6 +36,7 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 - **IndexNow** — notify Bing/Yandex on publish (opt-in: no key, no requests)
 - **Markdown for AI agents** — any post or page at its URL plus `.md`, with YAML frontmatter, announced by a `rel="alternate"` link
 - **llms.txt** — a generated index of the site linking to the Markdown versions
+- **AI crawlers** — see which AI crawlers can read the site and why, check each one against the live server, and block them by group or one by one in robots.txt
 - **WP-CLI** — generate missing meta descriptions, import from other SEO plugins, validate product schema
 - **Bulk action** — "Generate meta description" on the posts list
 
@@ -50,7 +51,7 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 | `/sitemap-tags.xml` | Tags |
 | `/sitemap-{cpt}.xml` | Each public custom post type (paginates) |
 
-`sitemap_index.xml` redirects to the index for Yoast compatibility, and the plugin rewrites the `Sitemap:` directive in `robots.txt`.
+`sitemap_index.xml` redirects to the index for Yoast compatibility, and the plugin rewrites the `Sitemap:` directive in `robots.txt`. WordPress's own `/wp-sitemap.xml` is switched off while these are served, so search engines see one set.
 
 ## Markdown for AI agents
 
@@ -91,9 +92,19 @@ Values are validated and dropped rather than output half-formed. **ThatSeoAgent 
 
 `/llms.txt` lists the posts served as Markdown and the product catalogs, each linking to its `.md` version where there is one, with its description. It is a [proposed convention](https://llmstxt.org), not a standard or a ranking factor. Regenerated when a post or the site identity changes; switch it off in the settings. A physical `llms.txt` in the site root takes precedence.
 
+## AI crawlers
+
+**ThatSeoAgent → AI crawlers** reads the robots.txt the site actually serves — the physical file in the site root if there is one, else the one WordPress builds with every plugin's edits — and shows, for each known crawler, whether it may read the site and which rule decides it. **Check access now** requests the homepage as each crawler, to catch a firewall, CDN or security plugin turning it away; it only runs when clicked.
+
+The crawlers are grouped by what they do: search and answers (OAI-SearchBot, Claude-SearchBot, PerplexityBot, DuckAssistBot), visits asked for by a person (ChatGPT-User, Claude-User, Perplexity-User, Meta-ExternalFetcher) and training (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, Meta-ExternalAgent, Amazonbot, CCBot, Bytespider). Googlebot, Bingbot and Applebot are shown but never blocked from here.
+
+In **Settings → AI crawlers**, allow or block each group, with exceptions crawler by crawler. Blocking adds one group with `Disallow: /` to the virtual robots.txt; allowing writes nothing, because a crawler named in its own group stops following the site's `*` rules. Nothing is written until something is blocked, or while the site discourages search engines. With a physical robots.txt the rules cannot be served, and the screen gives the lines to paste instead.
+
+The bulletin warns when robots.txt keeps search crawlers out, when a physical file ignores the chosen rules, or when another plugin writes crawler rules too. Blocking training is a choice, never a warning.
+
 ## Privacy
 
-The plugin sends no data anywhere **unless you configure an IndexNow API key**. With a key set, publishing or updating a post queues a background request to `https://api.indexnow.org/indexnow` containing your site host, the key, and the URL of the post. Clearing the key stops all outbound requests. The plugin also serves the `{key}.txt` verification file IndexNow requires.
+The plugin sends no data anywhere **unless you configure an IndexNow API key**. (The AI crawler access check only requests the site's own homepage.) With a key set, publishing or updating a post queues a background request to `https://api.indexnow.org/indexnow` containing your site host, the key, and the URL of the post. Clearing the key stops all outbound requests. The plugin also serves the `{key}.txt` verification file IndexNow requires.
 
 ## Architecture
 
@@ -118,7 +129,10 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Product_Report` | How complete the catalog is: summary and per-product report |
 | | `ThatSeoAgent_Product_Settings` | The catalog's settings section and field mapping |
 | `sitemap/` | `ThatSeoAgent_Sitemap` | Sitemap routes and rendering (returns XML strings) |
-| | `ThatSeoAgent_Robots` | The `Sitemap:` directive in robots.txt |
+| | `ThatSeoAgent_Robots` | The `Sitemap:` directive and the blocked AI crawlers in robots.txt |
+| `crawlers/` | `ThatSeoAgent_AI_Crawlers` | The known AI crawlers, the site owner's choices and the lines they add to robots.txt |
+| | `ThatSeoAgent_Crawler_Access` | Who can read the site: the served robots.txt read per crawler, and the on-demand access check |
+| | `ThatSeoAgent_Robots_Parser` | Reads robots.txt as a crawler does (RFC 9309) |
 | `markdown/` | `ThatSeoAgent_Markdown` | A post as Markdown with YAML frontmatter |
 | | `ThatSeoAgent_Markdown_Endpoint` | The `.md` URLs and the `rel="alternate"` link |
 | | `ThatSeoAgent_Markdown_Cache` | Per-post Markdown cache and its invalidation |
@@ -189,7 +203,7 @@ Both FAQ opt-ins are off by default: they synthesise questions that do not appea
 
 **Other SEO plugins and llms.txt**
 
-`thatseoagent_other_seo_plugin` (return `''` to keep ThatSeoAgent's output on) · `thatseoagent_llms_txt_post_types` · `thatseoagent_llms_txt_limit` · `thatseoagent_llms_txt`
+`thatseoagent_other_seo_plugin` (return `''` to keep ThatSeoAgent's output on) · `thatseoagent_ai_crawlers` (the known crawlers and their groups) · `thatseoagent_llms_txt_post_types` · `thatseoagent_llms_txt_limit` · `thatseoagent_llms_txt`
 
 **Markdown**
 

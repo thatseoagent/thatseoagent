@@ -44,7 +44,7 @@ class ThatSeoAgent_REST {
      * @since 1.18.0
      */
     public static function register_routes() {
-        foreach ( array( 'ThatSeoAgent_REST_Bulletin', 'ThatSeoAgent_REST_Preferences', 'ThatSeoAgent_REST_Audit', 'ThatSeoAgent_REST_Llms' ) as $class ) {
+        foreach ( array( 'ThatSeoAgent_REST_Bulletin', 'ThatSeoAgent_REST_Preferences', 'ThatSeoAgent_REST_Audit', 'ThatSeoAgent_REST_Llms', 'ThatSeoAgent_REST_Crawlers' ) as $class ) {
             ( new $class() )->register_routes();
         }
     }

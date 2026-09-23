@@ -40,6 +40,9 @@ class ThatSeoAgent_Sitemap {
         add_filter('query_vars', array(__CLASS__, 'query_vars'));
         add_action('template_redirect', array(__CLASS__, 'handle_request'));
         add_filter('redirect_canonical', array(__CLASS__, 'disable_redirect'), 10, 2);
+
+        // Core's /wp-sitemap.xml would be a second, competing set.
+        add_filter('wp_sitemaps_enabled', '__return_false');
     }
 
     /**
@@ -50,9 +53,9 @@ class ThatSeoAgent_Sitemap {
      * @return array
      */
     public static function query_vars($vars) {
-        $vars[] = 'lean_sitemap';
+        $vars[] = 'thatseoagent_sitemap';
         $vars[] = 'sitemap_page';
-        $vars[] = 'lean_cpt';
+        $vars[] = 'thatseoagent_cpt';
         return $vars;
     }
 
@@ -78,20 +81,20 @@ class ThatSeoAgent_Sitemap {
      * Register rewrite rules
      */
     public static function register_routes() {
-        add_rewrite_rule('^sitemap\.xml$', 'index.php?lean_sitemap=index', 'top');
+        add_rewrite_rule('^sitemap\.xml$', 'index.php?thatseoagent_sitemap=index', 'top');
         // Legacy Yoast sitemap URL redirect for backwards compatibility
-        add_rewrite_rule('^sitemap_index\.xml$', 'index.php?lean_sitemap=index', 'top');
-        add_rewrite_rule('^sitemap-posts\.xml$', 'index.php?lean_sitemap=posts', 'top');
-        add_rewrite_rule('^sitemap-posts-([0-9]+)\.xml$', 'index.php?lean_sitemap=posts&sitemap_page=$matches[1]', 'top');
-        add_rewrite_rule('^sitemap-pages\.xml$', 'index.php?lean_sitemap=pages', 'top');
-        add_rewrite_rule('^sitemap-pages-([0-9]+)\.xml$', 'index.php?lean_sitemap=pages&sitemap_page=$matches[1]', 'top');
-        add_rewrite_rule('^sitemap-categories\.xml$', 'index.php?lean_sitemap=categories', 'top');
-        add_rewrite_rule('^sitemap-tags\.xml$', 'index.php?lean_sitemap=tags', 'top');
+        add_rewrite_rule('^sitemap_index\.xml$', 'index.php?thatseoagent_sitemap=index', 'top');
+        add_rewrite_rule('^sitemap-posts\.xml$', 'index.php?thatseoagent_sitemap=posts', 'top');
+        add_rewrite_rule('^sitemap-posts-([0-9]+)\.xml$', 'index.php?thatseoagent_sitemap=posts&sitemap_page=$matches[1]', 'top');
+        add_rewrite_rule('^sitemap-pages\.xml$', 'index.php?thatseoagent_sitemap=pages', 'top');
+        add_rewrite_rule('^sitemap-pages-([0-9]+)\.xml$', 'index.php?thatseoagent_sitemap=pages&sitemap_page=$matches[1]', 'top');
+        add_rewrite_rule('^sitemap-categories\.xml$', 'index.php?thatseoagent_sitemap=categories', 'top');
+        add_rewrite_rule('^sitemap-tags\.xml$', 'index.php?thatseoagent_sitemap=tags', 'top');
 
         // Custom post type sitemaps
         foreach (self::get_cpts() as $cpt) {
-            add_rewrite_rule('^sitemap-' . $cpt . '\.xml$', 'index.php?lean_sitemap=cpt&lean_cpt=' . $cpt, 'top');
-            add_rewrite_rule('^sitemap-' . $cpt . '-([0-9]+)\.xml$', 'index.php?lean_sitemap=cpt&lean_cpt=' . $cpt . '&sitemap_page=$matches[1]', 'top');
+            add_rewrite_rule('^sitemap-' . $cpt . '\.xml$', 'index.php?thatseoagent_sitemap=cpt&thatseoagent_cpt=' . $cpt, 'top');
+            add_rewrite_rule('^sitemap-' . $cpt . '-([0-9]+)\.xml$', 'index.php?thatseoagent_sitemap=cpt&thatseoagent_cpt=' . $cpt . '&sitemap_page=$matches[1]', 'top');
         }
     }
 
@@ -102,14 +105,14 @@ class ThatSeoAgent_Sitemap {
      * query vars, prints what render() returns, and exits.
      */
     public static function handle_request() {
-        $sitemap = get_query_var('lean_sitemap');
+        $sitemap = get_query_var('thatseoagent_sitemap');
         if (!$sitemap) {
             return;
         }
 
         $xml = self::render($sitemap, array(
             'page'      => self::get_page_number(),
-            'post_type' => get_query_var('lean_cpt'),
+            'post_type' => get_query_var('thatseoagent_cpt'),
         ));
 
         if ('' === $xml) {

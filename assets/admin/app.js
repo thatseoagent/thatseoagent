@@ -512,5 +512,43 @@
 				},
 			};
 		} );
+
+		/*
+		 * AI crawlers: request the homepage as each crawler, on demand.
+		 */
+		Alpine.data( 'tsaCrawlers', function () {
+			return {
+				results: null,
+				robots: null,
+				busy: false,
+
+				probe: function () {
+					var self = this;
+
+					this.busy = true;
+
+					return api( { path: '/thatseoagent/v1/crawlers/probe', method: 'POST' } ).then( function ( result ) {
+						self.results = result.bots;
+						self.robots = result.robots;
+						Alpine.store( 'toast' ).show( t( 'probeDone' ), 'ok' );
+					} ).catch( function ( error ) {
+						Alpine.store( 'toast' ).show( t( 'probeFailed' ) + ' ' + errorText( error ), 'error' );
+					} ).then( function () {
+						self.busy = false;
+					} );
+				},
+
+				describe: function ( token ) {
+					var result = this.results && this.results[ token ];
+					if ( ! result ) {
+						return '';
+					}
+					if ( ! result.status ) {
+						return t( 'probeNoAnswer' );
+					}
+					return ( result.reached ? t( 'probeReached' ) : t( 'probeTurnedAway' ) ).replace( '%d', result.status );
+				},
+			};
+		} );
 	} );
 }() );
