@@ -260,6 +260,18 @@ class ThatSeoAgent_App {
                 'probeReached'  => __( 'Reached the site (%d)', 'thatseoagent' ),
                 /* translators: %d: HTTP status code. */
                 'probeTurnedAway' => __( 'Turned away by the server (%d)', 'thatseoagent' ),
+                'mdChecked'       => __( 'Markdown checked.', 'thatseoagent' ),
+                'mdCheckFailed'   => __( 'The Markdown check could not run.', 'thatseoagent' ),
+                'mdNoAnswer'      => __( 'no answer', 'thatseoagent' ),
+                'mdRuleAdded'     => __( 'The rule is at the top of .htaccess.', 'thatseoagent' ),
+                'mdRuleRemoved'   => __( 'The rule was removed from .htaccess.', 'thatseoagent' ),
+                'mdRuleFailed'    => __( '.htaccess was not changed.', 'thatseoagent' ),
+                'mdRuleNotApache' => __( 'This server does not read .htaccess rewrite rules, so the rule would do nothing here.', 'thatseoagent' ),
+                'mdRuleMissing'   => __( 'Not in .htaccess. Without a page cache it changes nothing; add it before installing one, and it keeps requests asking for Markdown away from the cached copies.', 'thatseoagent' ),
+                'mdRuleNotWritable' => __( 'WordPress cannot write to the file: paste the lines at its very top by hand.', 'thatseoagent' ),
+                /* translators: %s: page cache plugin name. */
+                'mdRuleBelow'     => __( 'In .htaccess, but below the rules of %s, which run first: write it again to move it to the top.', 'thatseoagent' ),
+                'mdRuleOk'        => __( 'At the top of .htaccess: requests asking for Markdown reach WordPress before any page cache served from this file.', 'thatseoagent' ),
             ),
         );
     }
@@ -382,6 +394,12 @@ class ThatSeoAgent_App {
                 return self::url( 'products' );
             case 'crawlers':
                 return self::url( 'crawlers' );
+            case 'privacy':
+                return admin_url( 'options-privacy.php' );
+            case 'new_page':
+                return admin_url( 'post-new.php?post_type=page' );
+            case 'audit':
+                return self::url( 'audit' );
         }
 
         return self::url();

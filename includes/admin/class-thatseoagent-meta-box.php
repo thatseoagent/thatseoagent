@@ -1,7 +1,7 @@
 <?php
 /**
  * The SEO meta box in the post editor: title and description fields with a
- * search result preview.
+ * search result preview, and whether search engines may index the post.
  *
  * Values go through ThatSeoAgent_Post_Seo, which owns the fields; this module is
  * the editor's form for them.
@@ -93,33 +93,47 @@ class ThatSeoAgent_Meta_Box {
         <div class="thatseoagent-field">
             <label for="thatseoagent_title">
                 <?php esc_html_e( 'SEO Title', 'thatseoagent' ); ?>
-                <span class="thatseoagent-counter" id="title-counter">0/60</span>
+                <span class="thatseoagent-counter" id="title-counter" data-limit="<?php echo (int) ThatSeoAgent_Audit::TITLE_MAY_TRUNCATE; ?>">0/<?php echo (int) ThatSeoAgent_Audit::TITLE_MAY_TRUNCATE; ?></span>
             </label>
             <input 
                 type="text" 
                 id="thatseoagent_title" 
                 name="thatseoagent_title" 
                 value="<?php echo esc_attr($seo_title); ?>" 
-                maxlength="70"
                 placeholder="<?php echo esc_attr($post->post_title); ?>"
             >
-            <p class="description"><?php esc_html_e( 'Leave blank to use the post title. Recommended: 50-60 characters.', 'thatseoagent' ); ?></p>
+            <p class="description"><?php esc_html_e( 'Leave blank to use the post title. Search results trim titles to the width of the screen; past the counter it may be cut.', 'thatseoagent' ); ?></p>
         </div>
 
         <div class="thatseoagent-field">
             <label for="thatseoagent_description">
                 <?php esc_html_e( 'Meta Description', 'thatseoagent' ); ?>
-                <span class="thatseoagent-counter" id="desc-counter">0/160</span>
+                <span class="thatseoagent-counter" id="desc-counter" data-limit="<?php echo (int) ThatSeoAgent_Audit::DESCRIPTION_MAY_TRUNCATE; ?>">0/<?php echo (int) ThatSeoAgent_Audit::DESCRIPTION_MAY_TRUNCATE; ?></span>
             </label>
             <textarea 
                 id="thatseoagent_description" 
                 name="thatseoagent_description" 
                 rows="3" 
-                maxlength="160"
                 placeholder="<?php esc_attr_e( 'Leave blank to auto-generate from content...', 'thatseoagent' ); ?>"
                 data-thatseoagent-generated="<?php echo esc_attr( ThatSeoAgent_Description::for_post( $post ) ); ?>"
             ><?php echo esc_textarea($seo_desc); ?></textarea>
-            <p class="description"><?php esc_html_e( 'Recommended: 150-160 characters. This appears in search results.', 'thatseoagent' ); ?></p>
+            <p class="description"><?php esc_html_e( 'The sentence under the title in search results. Google sets no limit, but past the counter it may be cut.', 'thatseoagent' ); ?></p>
+        </div>
+
+        <div class="thatseoagent-field">
+            <?php // Unticked boxes submit nothing; the hidden field makes that "no" rather than "leave as it was". ?>
+            <input type="hidden" name="thatseoagent_noindex" value="">
+            <label for="thatseoagent_noindex">
+                <input
+                    type="checkbox"
+                    id="thatseoagent_noindex"
+                    name="thatseoagent_noindex"
+                    value="1"
+                    <?php checked( '1', $seo['noindex'] ); ?>
+                >
+                <?php esc_html_e( 'Keep out of search results', 'thatseoagent' ); ?>
+            </label>
+            <p class="description"><?php esc_html_e( 'Adds noindex to the page and leaves it out of the sitemap and llms.txt. The page stays public for anyone with the link.', 'thatseoagent' ); ?></p>
         </div>
 
         <div class="thatseoagent-preview">
@@ -154,7 +168,7 @@ class ThatSeoAgent_Meta_Box {
         // Only fields actually present in the submission are touched; a
         // field absent from the form is left as it was.
         $submitted = array();
-        foreach (array('title', 'description') as $field) {
+        foreach (array('title', 'description', 'noindex') as $field) {
             if (isset($_POST['thatseoagent_' . $field])) {
                 // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Passed on raw by design: ThatSeoAgent_Post_Seo::save_from_request() unslashes and sanitizes, and it must receive the still-slashed value to do so correctly. Sanitizing here would double-process it.
                 $submitted[$field] = $_POST['thatseoagent_' . $field];

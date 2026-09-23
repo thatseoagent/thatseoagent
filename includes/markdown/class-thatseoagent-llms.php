@@ -74,6 +74,9 @@ class ThatSeoAgent_Llms {
 
         add_action( 'save_post', array( __CLASS__, 'purge' ) );
         add_action( 'deleted_post', array( __CLASS__, 'purge' ) );
+        foreach ( array( 'added_post_meta', 'updated_post_meta', 'deleted_post_meta' ) as $hook ) {
+            add_action( $hook, array( __CLASS__, 'purge_for_meta' ), 10, 3 );
+        }
         foreach ( array( 'blogname', 'blogdescription', 'thatseoagent_identity', 'thatseoagent_products', self::OPTION_KEY ) as $option ) {
             add_action( 'update_option_' . $option, array( __CLASS__, 'purge' ) );
         }
@@ -170,6 +173,27 @@ class ThatSeoAgent_Llms {
      */
     public static function purge() {
         delete_transient( self::CACHE_KEY );
+
+        // llms-full.txt lists the same pages, and their content.
+        ThatSeoAgent_Llms_Full::purge();
+    }
+
+    /**
+     * Drop the cached file when a post's SEO fields change.
+     *
+     * The REST API and the abilities write the fields after save_post has
+     * fired, and the file lists each post's description and leaves out the
+     * posts kept out of search.
+     *
+     * @since 2.2.0
+     * @param int|int[] $meta_id   Meta ID, or IDs when deleted.
+     * @param int       $object_id Post ID.
+     * @param string    $meta_key  Meta key.
+     */
+    public static function purge_for_meta( $meta_id, $object_id, $meta_key ) {
+        if ( in_array( $meta_key, ThatSeoAgent_Post_Seo::keys(), true ) ) {
+            self::purge();
+        }
     }
 
     /**
@@ -233,15 +257,7 @@ class ThatSeoAgent_Llms {
             $lines[] = '';
         }
 
-        /**
-         * Maximum entries listed per post type.
-         *
-         * Pages come in menu order, everything else newest first.
-         *
-         * @since 1.16.0
-         * @param int $limit Default 100.
-         */
-        $limit = max( 1, (int) apply_filters( 'thatseoagent_llms_txt_limit', 100 ) );
+        $limit = self::limit();
 
         foreach ( self::post_types() as $post_type ) {
             $entries = self::entries( $post_type, $limit );
@@ -259,6 +275,7 @@ class ThatSeoAgent_Llms {
         if ( ThatSeoAgent_Compat::outputs_enabled() ) {
             $lines[] = '## Optional';
             $lines[] = '';
+            $lines[] = sprintf( '- [%s](%s): %s', __( 'Full text', 'thatseoagent' ), ThatSeoAgent_Llms_Full::url(), __( 'every page above with a Markdown version, in one file', 'thatseoagent' ) );
             $lines[] = sprintf( '- [%s](%s)', __( 'Sitemap', 'thatseoagent' ), home_url( '/sitemap.xml' ) );
             $lines[] = '';
         }
@@ -281,26 +298,9 @@ class ThatSeoAgent_Llms {
      * @return array<int, string>
      */
     private static function entries( $post_type, $limit ) {
-        $hierarchical = is_post_type_hierarchical( $post_type );
-
-        $posts = get_posts(
-            array(
-                'post_type'      => $post_type,
-                'post_status'    => 'publish',
-                'has_password'   => false,
-                // The blog index page has no content of its own; its posts are
-                // listed under their own heading.
-                'post__not_in'   => array_filter( array( (int) get_option( 'page_for_posts' ) ) ),
-                'posts_per_page' => $limit,
-                'orderby'        => $hierarchical ? array( 'menu_order' => 'ASC', 'title' => 'ASC' ) : 'date',
-                'order'          => 'DESC',
-                'no_found_rows'  => true,
-            )
-        );
-
         $entries = array();
 
-        foreach ( $posts as $post ) {
+        foreach ( self::posts( $post_type, $limit ) as $post ) {
             $markdown = ThatSeoAgent_Markdown_Endpoint::url_for( $post );
             $url      = $markdown ? $markdown : get_permalink( $post );
             $title    = self::line( get_the_title( $post ) );
@@ -318,6 +318,58 @@ class ThatSeoAgent_Llms {
         }
 
         return $entries;
+    }
+
+    /**
+     * Maximum entries per post type.
+     *
+     * @since 2.3.0 Split from build().
+     * @return int
+     */
+    public static function limit() {
+        /**
+         * Maximum entries listed per post type, in llms.txt and llms-full.txt.
+         *
+         * Pages come in menu order, everything else newest first.
+         *
+         * @since 1.16.0
+         * @param int $limit Default 100.
+         */
+        return max( 1, (int) apply_filters( 'thatseoagent_llms_txt_limit', 100 ) );
+    }
+
+    /**
+     * The posts of one type the file lists, in its order.
+     *
+     * Pages in menu order, everything else newest first. llms-full.txt reads
+     * the same list, so the two files never disagree about what the site
+     * offers.
+     *
+     * @since 2.3.0 Split from entries().
+     * @param string $post_type Post type.
+     * @param int    $limit     Maximum posts.
+     * @return array<int, WP_Post>
+     */
+    public static function posts( $post_type, $limit ) {
+        $hierarchical = is_post_type_hierarchical( $post_type );
+
+        return get_posts(
+            array_merge(
+                array(
+                    'post_type'      => $post_type,
+                    'post_status'    => 'publish',
+                    // The blog index page has no content of its own; its posts are
+                    // listed under their own heading.
+                    'post__not_in'   => array_filter( array( (int) get_option( 'page_for_posts' ) ) ),
+                    'posts_per_page' => $limit,
+                    'orderby'        => $hierarchical ? array( 'menu_order' => 'ASC', 'title' => 'ASC' ) : 'date',
+                    'order'          => 'DESC',
+                    'no_found_rows'  => true,
+                ),
+                // No password-protected posts, and none kept out of search.
+                ThatSeoAgent_Indexing::listed_query_args()
+            )
+        );
     }
 
     /**

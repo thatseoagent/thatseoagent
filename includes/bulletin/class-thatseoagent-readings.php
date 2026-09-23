@@ -17,16 +17,19 @@ class ThatSeoAgent_Readings {
 
     /**
      * How much of the site has its own SEO fields: published posts, and how
-     * many carry a written description and title; catalog entries.
+     * many carry a written description and title, or are kept out of search;
+     * catalog entries.
      *
      * @since 1.17.0 As ThatSeoAgent_App::stats().
-     * @return array{published: int, descriptions: int, titles: int, products: int}
+     * @since 2.2.0 noindex.
+     * @return array{published: int, descriptions: int, titles: int, noindex: int, products: int}
      */
     public static function counts() {
         $stats = array(
             'published'    => 0,
             'descriptions' => 0,
             'titles'       => 0,
+            'noindex'      => 0,
             'products'     => 0,
         );
 
@@ -38,6 +41,7 @@ class ThatSeoAgent_Readings {
             $stats['published']    += $published;
             $stats['descriptions'] += $published - ThatSeoAgent_Post_Seo::count_missing( $post_type, 'description' );
             $stats['titles']       += $published - ThatSeoAgent_Post_Seo::count_missing( $post_type, 'title' );
+            $stats['noindex']      += $published - ThatSeoAgent_Post_Seo::count_missing( $post_type, 'noindex' );
 
             if ( in_array( $post_type, $product_types, true ) ) {
                 $stats['products'] += $published;
@@ -70,6 +74,12 @@ class ThatSeoAgent_Readings {
             array(
                 'label'  => __( 'llms.txt', 'thatseoagent' ),
                 'url'    => home_url( '/llms.txt' ),
+                'active' => $outputs && $permalink && ThatSeoAgent_Llms::is_enabled(),
+                'note'   => $outputs ? ( ThatSeoAgent_Llms::is_enabled() ? '' : __( 'Switched off in the settings', 'thatseoagent' ) ) : $off,
+            ),
+            array(
+                'label'  => __( 'llms-full.txt', 'thatseoagent' ),
+                'url'    => ThatSeoAgent_Llms_Full::url(),
                 'active' => $outputs && $permalink && ThatSeoAgent_Llms::is_enabled(),
                 'note'   => $outputs ? ( ThatSeoAgent_Llms::is_enabled() ? '' : __( 'Switched off in the settings', 'thatseoagent' ) ) : $off,
             ),

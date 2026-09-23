@@ -1,9 +1,16 @@
 <?php
 /**
- * Serve posts as Markdown at their URL plus `.md`.
+ * Serve posts as Markdown at their URL plus `.md`, and at their own URL to
+ * whoever asks for Markdown.
  *
  *     https://example.com/my-post     → HTML, for people
  *     https://example.com/my-post.md  → Markdown, for AI agents
+ *     https://example.com/my-post     → Markdown too, with Accept: text/markdown
+ *
+ * The third is HTTP content negotiation (RFC 9110 §12.5.1): the same URL, the
+ * representation the client prefers. Agents that know only the page's URL
+ * get the Markdown without having to know the `.md` convention. Browsers
+ * never list text/markdown in Accept, so people keep getting the HTML.
  *
  * The path is resolved with url_to_postid(), i.e. through the site's own
  * rewrite rules, so it works with any permalink structure — dates,
@@ -40,6 +47,10 @@ class ThatSeoAgent_Markdown_Endpoint {
         add_action( 'init', array( __CLASS__, 'register_routes' ), 20 );
         add_filter( 'query_vars', array( __CLASS__, 'query_vars' ) );
         add_action( 'parse_request', array( __CLASS__, 'handle_request' ) );
+
+        // After redirect_canonical() at 10: a non-canonical URL is sent to
+        // the canonical one first, whatever representation was asked for.
+        add_action( 'template_redirect', array( __CLASS__, 'negotiate' ), 11 );
 
         // Printed even while another SEO plugin is active: no other plugin
         // serves these URLs.
@@ -179,7 +190,130 @@ class ThatSeoAgent_Markdown_Endpoint {
         }
 
         self::send_not_modified_if_fresh( $post );
+        self::send( self::markdown( $post ), $post );
+    }
 
+    /**
+     * Answer a post's own URL with its Markdown when the client prefers it,
+     * and announce the Markdown version when it does not.
+     *
+     * Every response of a post that has a Markdown version says
+     * `Vary: Accept`, the HTML one included: without it, a cache between
+     * the site and its readers may store one representation and hand it to
+     * clients that asked for the other. The HTML one also carries a `Link`
+     * header pointing at the `.md` URL.
+     *
+     * @since 2.3.0
+     */
+    public static function negotiate() {
+        if ( ! is_singular() ) {
+            return;
+        }
+
+        $post = get_queried_object();
+        if ( ! $post instanceof WP_Post || ! in_array( $post->post_type, self::post_types(), true ) || post_password_required( $post ) ) {
+            return;
+        }
+
+        /**
+         * Filter whether a post's URL answers Accept: text/markdown with its
+         * Markdown version.
+         *
+         * The `.md` URL keeps working either way.
+         *
+         * @since 2.3.0
+         * @param bool    $enabled Default true.
+         * @param WP_Post $post    Requested post.
+         */
+        if ( apply_filters( 'thatseoagent_markdown_negotiation', true, $post ) ) {
+            header( 'Vary: Accept', false );
+
+            $accept = isset( $_SERVER['HTTP_ACCEPT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT'] ) ) : '';
+            if ( self::prefers_markdown( $accept ) ) {
+                // Page caches key on the URL alone: a cached Markdown response
+                // would be served to the next browser. Most honor this constant.
+                if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+                    define( 'DONOTCACHEPAGE', true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- The constant page cache plugins read; a prefixed one would mean nothing to them.
+                }
+
+                self::send_not_modified_if_fresh( $post );
+                self::send( self::markdown( $post ), $post, true );
+            }
+        }
+
+        self::send_alternate_header( $post );
+    }
+
+    /**
+     * Announce the Markdown version in the HTML response's headers.
+     *
+     * The HTTP form of the `<link rel="alternate">` in the page's head
+     * (RFC 8288): a client that reads only the headers — a HEAD request, an
+     * agent that stops at the first bytes — learns there is a Markdown
+     * version without parsing HTML. Same filter as the tag, so turning one
+     * off turns off both.
+     *
+     * @since 2.3.0
+     * @param WP_Post $post Requested post.
+     */
+    private static function send_alternate_header( WP_Post $post ) {
+        /** This filter is documented in output_alternate_link(). */
+        if ( ! apply_filters( 'thatseoagent_markdown_alternate_link', true, $post ) ) {
+            return;
+        }
+
+        $url = self::url_for( $post );
+        if ( '' !== $url ) {
+            header( 'Link: <' . esc_url_raw( $url ) . '>; rel="alternate"; type="text/markdown"', false );
+        }
+    }
+
+    /**
+     * Whether an Accept header prefers Markdown to HTML.
+     *
+     * Markdown wins when text/markdown (or text/x-markdown) is acceptable
+     * and weighs at least as much as text/html. Wildcards never select it:
+     * a generic client accepting any type means "anything", and the HTML
+     * page is what that client has always received.
+     *
+     * @since 2.3.0
+     * @param string $accept Accept header.
+     * @return bool
+     */
+    public static function prefers_markdown( $accept ) {
+        $markdown = 0.0;
+        $html     = 0.0;
+
+        foreach ( explode( ',', strtolower( (string) $accept ) ) as $range ) {
+            $parts = array_map( 'trim', explode( ';', $range ) );
+            $type  = array_shift( $parts );
+            $q     = 1.0;
+
+            foreach ( $parts as $param ) {
+                if ( 0 === strpos( $param, 'q=' ) ) {
+                    $q = max( 0.0, min( 1.0, (float) substr( $param, 2 ) ) );
+                }
+            }
+
+            if ( in_array( $type, array( 'text/markdown', 'text/x-markdown' ), true ) ) {
+                $markdown = max( $markdown, $q );
+            } elseif ( in_array( $type, array( 'text/html', 'application/xhtml+xml' ), true ) ) {
+                $html = max( $html, $q );
+            }
+        }
+
+        return $markdown > 0 && $markdown >= $html;
+    }
+
+    /**
+     * A post's Markdown, frontmatter included, from the cache or built and
+     * cached.
+     *
+     * @since 2.3.0 Split from handle_request().
+     * @param WP_Post $post Post object.
+     * @return string
+     */
+    public static function markdown( WP_Post $post ) {
         $markdown = ThatSeoAgent_Markdown_Cache::get( $post );
 
         if ( null === $markdown ) {
@@ -187,7 +321,7 @@ class ThatSeoAgent_Markdown_Endpoint {
             ThatSeoAgent_Markdown_Cache::set( $post, $markdown );
         }
 
-        self::send( $markdown, $post );
+        return $markdown;
     }
 
     /**
@@ -247,15 +381,29 @@ class ThatSeoAgent_Markdown_Endpoint {
      * Send the Markdown and end the request.
      *
      * @since 1.14.0
-     * @param string  $markdown Markdown.
-     * @param WP_Post $post     Post object.
+     * @since 2.3.0 $negotiated.
+     * @param string  $markdown   Markdown.
+     * @param WP_Post $post       Post object.
+     * @param bool    $negotiated Whether it answers the post's own URL.
      */
-    private static function send( $markdown, WP_Post $post ) {
+    private static function send( $markdown, WP_Post $post, $negotiated = false ) {
         status_header( 200 );
         header( 'Content-Type: text/markdown; charset=utf-8' );
 
-        // The HTML page is the one to index; this is a copy of it.
-        header( 'X-Robots-Tag: noindex' );
+        if ( $negotiated ) {
+            // The post's own URL, which search engines index as HTML: no
+            // noindex here. Content-Location names the URL of this
+            // representation (RFC 9110 §8.7), and no shared cache keeps it.
+            header( 'Cache-Control: private, no-cache' );
+            $location = self::url_for( $post );
+            if ( '' !== $location ) {
+                header( 'Content-Location: ' . esc_url_raw( $location ) );
+            }
+        } else {
+            // The HTML page is the one to index; this is a copy of it.
+            header( 'X-Robots-Tag: noindex' );
+        }
+
         header( 'Link: <' . esc_url_raw( get_permalink( $post ) ) . '>; rel="canonical"' );
 
         header( 'Last-Modified: ' . get_post_modified_time( 'D, d M Y H:i:s', true, $post ) . ' GMT' );

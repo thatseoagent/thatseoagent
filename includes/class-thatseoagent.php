@@ -46,7 +46,7 @@ class ThatSeoAgent {
      * Each module registers its own hooks; this list is the only place that
      * decides which run, and when. The order matters where two modules share
      * a hook and priority: the Markdown alternate link, then the meta tags,
-     * then the canonical, all at wp_head priority 1.
+     * then the canonical, then rel="prev"/"next", all at wp_head priority 1.
      *
      * @since 1.19.0 Modules register their own hooks; the forwarders that
      *              stood in for them here are gone.
@@ -62,6 +62,8 @@ class ThatSeoAgent {
         ThatSeoAgent_Product_Report::register();
         ThatSeoAgent_Identity_Applier::register();
         ThatSeoAgent_Homepage_Applier::register();
+        ThatSeoAgent_Links::register();
+        ThatSeoAgent_Author_Profile::register();
 
         add_action('init', array($this, 'maybe_flush_rewrite_rules'), 21);
 
@@ -86,13 +88,18 @@ class ThatSeoAgent {
         }
 
         ThatSeoAgent_Title::register();
+        ThatSeoAgent_Indexing::register();
+        ThatSeoAgent_Attachment_Redirect::register();
         ThatSeoAgent_Meta::register();
+        ThatSeoAgent_Pagination::register();
         ThatSeoAgent_Schema::register();
         ThatSeoAgent_Sitemap::register();
         ThatSeoAgent_Robots::register();
 
-        // llms.txt — Yoast, Rank Math and AIOSEO generate one of their own.
+        // llms.txt — Yoast, Rank Math and AIOSEO generate one of their own —
+        // and llms-full.txt, which goes with it.
         ThatSeoAgent_Llms::register();
+        ThatSeoAgent_Llms_Full::register();
     }
 
     /**

@@ -10,6 +10,8 @@
  * @package ThatSeoAgent
  * @since 1.17.0
  * @since 1.18.0 Runs the check.
+ * @since 2.3.0 The checks follow That SEO Agent's MCP: each finding says whether
+ *              Google, accessibility or our own judgement asks for it.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,15 +33,23 @@ $initial_type = isset( $post_types['post'] ) && $post_types['post']['count'] ? '
 $initial      = array(
     'postType' => $initial_type,
     'last'     => '' !== $initial_type ? ThatSeoAgent_Audit_Run::last( $initial_type ) : null,
+    // Google's findings go unmarked: they are the baseline.
+    'sources'  => array(
+        'accessibility' => __( 'accessibility (WCAG 2.2)', 'thatseoagent' ),
+        'heuristic'     => __( 'our own judgement, costs no points', 'thatseoagent' ),
+    ),
 );
 
 $checks = array(
-    array( __( 'Title length', 'thatseoagent' ), __( 'Under 30 characters says too little; over 60 gets cut off in search results.', 'thatseoagent' ) ),
-    array( __( 'Description length', 'thatseoagent' ), __( 'Under 100 characters says too little; over 160 gets cut off.', 'thatseoagent' ) ),
-    array( __( 'Amount of text', 'thatseoagent' ), __( 'Pages under 300 words give search engines little to go on.', 'thatseoagent' ) ),
-    array( __( 'Headings', 'thatseoagent' ), __( 'Long pages without subheadings are hard to scan, for people and for search engines.', 'thatseoagent' ) ),
-    array( __( 'Links to other pages', 'thatseoagent' ), __( 'Pages that link nowhere else on the site are dead ends.', 'thatseoagent' ) ),
+    array( __( 'Title and description', 'thatseoagent' ), __( 'Flagged only when they may be cut off in results: over 70 and 165 characters. Google sets no minimum and no limit; the width of the screen decides.', 'thatseoagent' ) ),
+    array( __( 'Titles and descriptions of their own', 'thatseoagent' ), __( 'Two pages with the same title or description look the same in results. Titles and written descriptions are compared across the site; generated ones, among the pages of each check.', 'thatseoagent' ) ),
+    array( __( 'A description to show', 'thatseoagent' ), __( 'When there is neither a written description nor text to generate one from, search engines pick a snippet themselves.', 'thatseoagent' ) ),
+    array( __( 'Links search engines can follow', 'thatseoagent' ), __( 'Google follows an <a> with an href. A click handler, or an href on a span or a div, is invisible to it.', 'thatseoagent' ) ),
     array( __( 'Image descriptions', 'thatseoagent' ), __( 'Images need alt text, except decorative ones, which are marked empty on purpose.', 'thatseoagent' ) ),
+    array( __( 'Headings', 'thatseoagent' ), __( 'An H1 inside the content, or a skipped level, leaves a gap in the outline screen readers navigate by. Google does not mind the order.', 'thatseoagent' ) ),
+    array( __( 'Links to other pages', 'thatseoagent' ), __( 'Our own judgement: a page that links nowhere else on the site is a dead end. It costs no points.', 'thatseoagent' ) ),
+    array( __( 'Links that lead somewhere', 'thatseoagent' ), __( 'Our own judgement, costing no points: pages nothing links to — not the menus, the header or footer, or another page — and links to addresses of the site that answer "not found". Read from the whole site when the check starts.', 'thatseoagent' ) ),
+    array( __( 'Kept out of search', 'thatseoagent' ), __( 'Pages marked noindex are listed, so none is hidden by accident.', 'thatseoagent' ) ),
     array( __( 'Product details', 'thatseoagent' ), __( 'For products: what their product description to search engines is missing.', 'thatseoagent' ) ),
 );
 
@@ -155,7 +165,12 @@ $cells = 24;
                             </p>
                             <ul class="mt-1 space-y-0.5 text-[13px] text-ink-2" x-show="row.issues.length">
                                 <template x-for="( issue, index ) in row.issues" :key="index">
-                                    <li x-text="issue.message"></li>
+                                    <li><span x-text="issue.message"></span><span class="text-ink-3" x-show="sources[ issue.source ]" x-text="' · ' + sources[ issue.source ]"></span></li>
+                                </template>
+                            </ul>
+                            <ul class="mt-1 space-y-0.5 text-[13px] text-ink-3" x-show="row.not_measured && row.not_measured.length">
+                                <template x-for="( note, index ) in ( row.not_measured || [] )" :key="index">
+                                    <li x-text="note"></li>
                                 </template>
                             </ul>
                             <p class="mt-1 text-[13px] text-ink-3" x-show="! row.issues.length"><?php esc_html_e( 'Nothing to improve.', 'thatseoagent' ); ?></p>
@@ -175,6 +190,7 @@ $cells = 24;
                     </div>
                 <?php endforeach; ?>
             </dl>
+            <p class="mt-3 text-[13px] text-ink-3"><?php esc_html_e( 'Not checked: how many words a page has. Google says length alone does not matter for ranking. The score counts only what Google or accessibility guidelines ask for.', 'thatseoagent' ); ?></p>
         </section>
     </div>
 </div>

@@ -6,6 +6,7 @@
  *
  *     content/       what a post says: content, description, FAQ, SEO fields
  *     head/          what <head> prints: meta tags, title, JSON-LD
+ *     indexing/      what search engines may index: robots, pagination, attachment pages
  *     site/          who the site is: identity, homepage, default author
  *     catalog/       product catalogs and how complete they are
  *     sitemap/       XML sitemaps and robots.txt
@@ -46,16 +47,23 @@ spl_autoload_register(
         'ThatSeoAgent_FAQ_Section'       => 'content/class-thatseoagent-faq-section.php',
         'ThatSeoAgent_FAQ'               => 'content/class-thatseoagent-faq.php',
         'ThatSeoAgent_Post_Seo'          => 'content/class-thatseoagent-post-seo.php',
+        'ThatSeoAgent_Structure'         => 'content/class-thatseoagent-structure.php',
 
         'ThatSeoAgent_Meta'              => 'head/class-thatseoagent-meta.php',
         'ThatSeoAgent_Schema'            => 'head/class-thatseoagent-schema.php',
         'ThatSeoAgent_Title'             => 'head/class-thatseoagent-title.php',
 
+        'ThatSeoAgent_Attachment_Redirect' => 'indexing/class-thatseoagent-attachment-redirect.php',
+        'ThatSeoAgent_Indexing'          => 'indexing/class-thatseoagent-indexing.php',
+        'ThatSeoAgent_Pagination'        => 'indexing/class-thatseoagent-pagination.php',
+
+        'ThatSeoAgent_Author_Profile'    => 'site/class-thatseoagent-author-profile.php',
         'ThatSeoAgent_Default_Author'    => 'site/class-thatseoagent-default-author.php',
         'ThatSeoAgent_Homepage_Applier'  => 'site/class-thatseoagent-homepage-applier.php',
         'ThatSeoAgent_Homepage'          => 'site/class-thatseoagent-homepage.php',
         'ThatSeoAgent_Identity_Applier'  => 'site/class-thatseoagent-identity-applier.php',
         'ThatSeoAgent_Identity'          => 'site/class-thatseoagent-identity.php',
+        'ThatSeoAgent_Trust_Pages'       => 'site/class-thatseoagent-trust-pages.php',
 
         'ThatSeoAgent_Product_Report'    => 'catalog/class-thatseoagent-product-report.php',
         'ThatSeoAgent_Product_Settings'  => 'catalog/class-thatseoagent-product-settings.php',
@@ -65,12 +73,17 @@ spl_autoload_register(
         'ThatSeoAgent_Sitemap'           => 'sitemap/class-thatseoagent-sitemap.php',
 
         'ThatSeoAgent_Llms'              => 'markdown/class-thatseoagent-llms.php',
+        'ThatSeoAgent_Llms_Full'         => 'markdown/class-thatseoagent-llms-full.php',
         'ThatSeoAgent_Markdown_Cache'    => 'markdown/class-thatseoagent-markdown-cache.php',
+        'ThatSeoAgent_Markdown_Check'    => 'markdown/class-thatseoagent-markdown-check.php',
+        'ThatSeoAgent_Markdown_Htaccess' => 'markdown/class-thatseoagent-markdown-htaccess.php',
         'ThatSeoAgent_Markdown_Endpoint' => 'markdown/class-thatseoagent-markdown-endpoint.php',
         'ThatSeoAgent_Markdown'          => 'markdown/class-thatseoagent-markdown.php',
 
         'ThatSeoAgent_Audit_Run'         => 'audit/class-thatseoagent-audit-run.php',
         'ThatSeoAgent_Audit'             => 'audit/class-thatseoagent-audit.php',
+        'ThatSeoAgent_Duplicates'        => 'audit/class-thatseoagent-duplicates.php',
+        'ThatSeoAgent_Links'             => 'audit/class-thatseoagent-links.php',
 
         'ThatSeoAgent_Bulletin'          => 'bulletin/class-thatseoagent-bulletin.php',
         'ThatSeoAgent_Readings'          => 'bulletin/class-thatseoagent-readings.php',
@@ -89,6 +102,7 @@ spl_autoload_register(
         'ThatSeoAgent_REST_Controller'   => 'rest/class-thatseoagent-rest-controller.php',
         'ThatSeoAgent_REST_Crawlers'     => 'rest/class-thatseoagent-rest-crawlers.php',
         'ThatSeoAgent_REST_Llms'         => 'rest/class-thatseoagent-rest-llms.php',
+        'ThatSeoAgent_REST_Markdown'     => 'rest/class-thatseoagent-rest-markdown.php',
         'ThatSeoAgent_REST_Preferences'  => 'rest/class-thatseoagent-rest-preferences.php',
         'ThatSeoAgent_REST'              => 'rest/class-thatseoagent-rest.php',
 

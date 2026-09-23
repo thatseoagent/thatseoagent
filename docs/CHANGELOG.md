@@ -1,5 +1,168 @@
 # Changelog
 
+## [2.3.0] - 2026-09-23
+
+The content check follows the rules of That SEO Agent's MCP server
+(`docs/google-search-central-conformance.md` in that repository), so the
+plugin and the MCP no longer tell the same site different things. The rule
+they share: nothing Google does not ask for is reported as a problem.
+
+### Changed
+- **Each finding says where it comes from** (`source`): Google Search
+  Central, accessibility guidelines (WCAG 2.2), or our own judgement. Only
+  the first two lower the score; our own judgement is marked on the screen
+  and costs nothing.
+- **Titles and descriptions**: no minimums. Past 70 and 165 characters they
+  are reported as "may be cut", not as too long — results trim by screen
+  width, and Google sets no limit on descriptions. A post with no
+  description at all, written or generated, is a warning.
+- **Checks that could not run are listed apart** (`not_measured`) instead of
+  failing: a post with almost no text in the editor, whose page is built by
+  the theme, a page builder or custom fields, is not told it has no links.
+  The blog's posts page is not checked, since its content is never shown.
+- **The meta box and the homepage settings** use the same figures: the
+  counters turn red past 70 and 165 characters, the description is no longer
+  cut at 160 and the title at 70, and the hints no longer ask for 50–60 and
+  150–160 characters.
+
+### Added
+- **Titles and descriptions two pages share**, which Google asks to be
+  distinct: titles as they show in results (the SEO title, or the post title
+  with the site name) and written descriptions are compared across every
+  searchable page of the site in one query; generated descriptions, among
+  the pages of each content check when it ends — the last step now sends the
+  whole list as stored. Pages kept out of search or behind a password do not
+  count. `seo` in the `audit-post-seo` ability gives the title and
+  description the page shows (`ThatSeoAgent_Duplicates`).
+- **Orphan pages and broken links** (`ThatSeoAgent_Links`), as our own
+  judgement in the content check: pages nothing on the site links to, and
+  links to addresses of the site that answer 404 or 410. The site's links
+  are read from every searchable page's content, the menus and Navigation
+  blocks, and the homepage as the server renders it — the header and footer
+  a theme hard-codes included. Addresses the site does not recognize are
+  asked for with a HEAD request, 40 at most per build; the rest are listed
+  as not measured. Built when a check starts or an agent audits a page, and
+  kept an hour or until a post or menu changes. Only pages and content types
+  without listings can be orphans.
+- **A bulletin warning when the site's navigation links to pages that do
+  not exist**, once the links have been read.
+- **Links search engines cannot follow**: an `<a>` that navigates with a
+  click handler or a router attribute, an `href` on a span, div, li or
+  button. Google follows `<a href>` only.
+- **Headings**, as accessibility: an H1 inside the content, and a level
+  skipped between two headings of the content. Google does not rank on
+  either.
+- **Kept out of search**: posts marked noindex are listed, so none is hidden
+  by accident.
+- `uncrawlable_links` in the audit's stats; `source` and `not_measured` in
+  the `audit-post-seo` ability.
+- **`structure` in the `audit-post-seo` ability**: how the post is built, as
+  facts with no verdict — headings in order, lists, tables, quotes, Details
+  blocks, code blocks, figures and percentages, paragraphs and words, the
+  first 150 words, the dates, the declared language and the Markdown URL —
+  for an agent reviewing the site to judge (`ThatSeoAgent_Structure`). No
+  "citability" score: no AI provider publishes how it chooses what to cite.
+- **Content negotiation for the Markdown version**: a post's own URL answers
+  `Accept: text/markdown` with the same Markdown as its `.md` URL, with
+  `Content-Location` pointing there and no `noindex`. Browsers and wildcard
+  `Accept` headers keep getting the HTML. Every response of a post with a
+  Markdown version says `Vary: Accept`; the Markdown one defines
+  `DONOTCACHEPAGE` and is `Cache-Control: private`, so page caches keyed on
+  the URL do not serve it to browsers. Filter
+  `thatseoagent_markdown_negotiation`.
+- **Link headers** on HTML pages: `rel="alternate"; type="text/markdown"`
+  pointing at the post's `.md` URL (same filter as the `<link>` tag,
+  `thatseoagent_markdown_alternate_link`), and `rel="sitemap"` pointing at
+  `/sitemap.xml` on every page while ThatSeoAgent serves the sitemaps
+  (filter `thatseoagent_sitemap_link_header`). Not on feeds, robots.txt,
+  the sitemaps or the Markdown responses.
+- **llms-full.txt**: the full text of the pages llms.txt lists that have a
+  Markdown version, in its order — title, URL and Markdown of each, without
+  the frontmatter — so an agent reads the site in one request. Built from
+  the per-post Markdown cache, cached until a post or the site identity
+  changes, and served and switched off with llms.txt, which now links to it
+  under `## Optional`. Stops before 2 MB between two pages and says how many
+  did not fit (filter `thatseoagent_llms_full_max_bytes`; the file itself,
+  `thatseoagent_llms_full_txt`). Listed in "What the site publishes".
+- **Author profile** (`ThatSeoAgent_Author_Profile`): a job title and
+  "Profiles elsewhere" (one address per line) in the user profile screen,
+  for people who can publish. They become `jobTitle` and `sameAs` on the
+  author's Person node, next to the profile's website. Addresses on the site
+  itself, and lines that are not addresses, are left out. User meta
+  `_thatseoagent_job_title` and `_thatseoagent_profiles`, in the REST API
+  for people who may edit the user; deleted with the plugin.
+- **Trust pages** in the bulletin: an observation of how many of the about,
+  contact and privacy pages the site has, and one yellow warning naming the
+  missing ones, leading to Settings → Privacy when the privacy page is among
+  them and to a new page otherwise. Found from inside the site: the privacy
+  page WordPress has assigned, a published page whose slug names it in the
+  languages That SEO Agent's MCP reads (the same lists; filter
+  `thatseoagent_trust_page_slugs`), or a menu link to one — a `mailto:`
+  counts as contact. Not called a ranking factor: Google asks whether
+  visitors can tell who is behind a site.
+- The observation row is three columns wide, nine on wide screens, so the
+  nine observations leave no cell on its own.
+- **Markdown check** (AI index → Markdown for agents): asks one post from
+  outside, first as an agent and then as a browser, and says what each got.
+  When a cache answered, it names the layer from the response headers
+  (Cloudflare, LiteSpeed, Varnish, an Nginx cache, a page cache plugin) and
+  what to change there. On demand only (`POST /thatseoagent/v1/markdown/check`).
+- **An .htaccess rule for page caches**, on Apache: written at the top of the
+  file when asked (`POST /thatseoagent/v1/markdown/htaccess`), it sends
+  requests asking for Markdown to WordPress with `[END]`, before a cache
+  plugin can serve its stored HTML. The screen says when another plugin's
+  block has since been written above it. Removed with `DELETE` on the same
+  route, and when the plugin is deleted.
+
+### Removed
+- **Word count as a finding** ("thin" under 300 words, "short" under 800):
+  Google says length alone does not matter for ranking. The count is still
+  in the stats.
+- **"No H2 headings" and "No images"**, which no Google guideline asks for.
+- **"No internal links" as a cost**: still reported, as our own judgement.
+
+## [2.2.0] - 2026-09-23
+
+What search engines may index, answered in one place
+(`ThatSeoAgent_Indexing`) and read by the robots meta, the canonical, the
+sitemaps, llms.txt and IndexNow.
+
+### Added
+- **Robots meta**, through core's `wp_robots` filter so it merges with what
+  WordPress and other plugins set. Indexable pages get
+  `max-snippet:-1, max-video-preview:-1, max-image-preview:large`; search
+  results, the 404 page, private posts and `?replytocom=` links get
+  `noindex, follow`. Filter `thatseoagent_noindex`.
+- **Keep out of search results**, a box in the SEO meta box (post meta
+  `_thatseoagent_noindex`, in the REST API): `noindex` on the page, and the
+  post leaves the sitemaps and llms.txt. The `get-post-seo` and
+  `update-post-seo` abilities read and write it as `noindex`, and
+  `wp thatseoagent import` brings it over from Yoast SEO, Rank Math and
+  All in One SEO.
+- **`rel="prev"` and `rel="next"`** on paginated listings and on posts split
+  with `<!--nextpage-->`. Filter `thatseoagent_adjacent_links`.
+- **Attachment pages redirect to their file** (301), as WordPress does on
+  sites installed since 6.4. Filter `thatseoagent_redirect_attachment_pages`.
+- A **Kept out of search** reading on the dashboard.
+
+### Changed
+- **Each page of a paginated listing is its own canonical.** Page 2 of a
+  category declared page 1 as its canonical, telling search engines it was
+  a duplicate and hiding the older posts it links to. Posts split with
+  `<!--nextpage-->` use core's `wp_get_canonical_url()`, which counts the
+  page. Date archives get a canonical too.
+- **No canonical on a page kept out of search**: the two directives
+  contradict each other.
+- **og:url is the canonical** on every view. On listings it was the
+  requested URL, query string included (`?utm_source=`).
+- **Sitemaps leave out password-protected posts and posts kept out of
+  search**, and the index only announces chunks that have URLs in them.
+- **llms.txt leaves out posts kept out of search**, and is rebuilt when a
+  post's SEO fields change through the REST API or an ability, which write
+  them after `save_post` has fired.
+- **IndexNow** skips posts kept out of search, checked when the queued
+  submission runs.
+
 ## [2.1.0] - 2026-09-23
 
 ### Added

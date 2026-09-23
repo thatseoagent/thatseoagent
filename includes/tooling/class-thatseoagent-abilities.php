@@ -81,6 +81,10 @@ class ThatSeoAgent_Abilities {
                         'title'       => array( 'type' => 'string' ),
                         'description' => array( 'type' => 'string' ),
                         'canonical'   => array( 'type' => 'string' ),
+                        'noindex'     => array(
+                            'type'        => 'boolean',
+                            'description' => __( 'Whether the post is kept out of search results, the sitemap and llms.txt.', 'thatseoagent' ),
+                        ),
                         'custom'      => array(
                             'type'       => 'object',
                             'properties' => array(
@@ -97,7 +101,7 @@ class ThatSeoAgent_Abilities {
             'thatseoagent/audit-post-seo',
             array(
                 'label'               => __( 'Audit Post SEO', 'thatseoagent' ),
-                'description'         => __( 'Analyzes a post for SEO issues and returns recommendations.', 'thatseoagent' ),
+                'description'         => __( 'Analyzes a post for SEO issues and returns recommendations. Only what Google or accessibility guidelines ask for lowers the score; findings of our own judgement are marked as such. Also returns the post\'s structure as facts — outline, lists, tables, figures, opening — for you to judge: no AI provider publishes how it chooses what to cite, so the plugin scores none of it. Read markdown_url for the full content.', 'thatseoagent' ),
                 'category'            => 'site',
                 'execute_callback'    => array( __CLASS__, 'audit_post_seo' ),
                 'permission_callback' => array( __CLASS__, 'can_edit_post' ),
@@ -125,6 +129,15 @@ class ThatSeoAgent_Abilities {
                         'post_id'      => array( 'type' => 'integer' ),
                         'title'        => array( 'type' => 'string' ),
                         'url'          => array( 'type' => 'string' ),
+                        'seo'          => array(
+                            'type'        => 'object',
+                            'description' => __( 'The title and description the page shows in search results, and whether the description was written or generated from the content.', 'thatseoagent' ),
+                            'properties'  => array(
+                                'title'               => array( 'type' => 'string' ),
+                                'description'         => array( 'type' => 'string' ),
+                                'description_written' => array( 'type' => 'boolean' ),
+                            ),
+                        ),
                         'score'        => array( 'type' => 'integer' ),
                         'issues'       => array( 
                             'type'  => 'array',
@@ -133,8 +146,24 @@ class ThatSeoAgent_Abilities {
                                 'properties' => array(
                                     'type'     => array( 'type' => 'string' ),
                                     'severity' => array( 'type' => 'string' ),
+                                    'source'   => array(
+                                        'type'        => 'string',
+                                        'enum'        => array( 'google', 'accessibility', 'heuristic' ),
+                                        'description' => __( 'Who asks for it: Google Search Central, accessibility guidelines (WCAG 2.2), or our own judgement, which never lowers the score.', 'thatseoagent' ),
+                                    ),
                                     'message'  => array( 'type' => 'string' ),
                                     'value'    => array( 'type' => 'string' ),
+                                ),
+                            ),
+                        ),
+                        'not_measured' => array(
+                            'type'        => 'array',
+                            'description' => __( 'Checks that could not run on this post, and why. A check that could not run is not a check that passed or failed.', 'thatseoagent' ),
+                            'items'       => array(
+                                'type'       => 'object',
+                                'properties' => array(
+                                    'type'    => array( 'type' => 'string' ),
+                                    'message' => array( 'type' => 'string' ),
                                 ),
                             ),
                         ),
@@ -148,9 +177,69 @@ class ThatSeoAgent_Abilities {
                                 'h2_count'           => array( 'type' => 'integer' ),
                                 'internal_links'     => array( 'type' => 'integer' ),
                                 'external_links'     => array( 'type' => 'integer' ),
+                                'uncrawlable_links'  => array( 'type' => 'integer' ),
                                 'images'             => array( 'type' => 'integer' ),
                                 'images_without_alt' => array( 'type' => 'integer' ),
                                 'images_decorative'  => array( 'type' => 'integer' ),
+                            ),
+                        ),
+                        'structure'    => array(
+                            'type'        => 'object',
+                            'description' => __( 'How the post is built, as facts with no verdict attached.', 'thatseoagent' ),
+                            'properties'  => array(
+                                'declared_language' => array(
+                                    'type'        => 'string',
+                                    'description' => __( 'The language the site declares in <html lang>, from Settings → General. Not detected from the text, which may be written in another.', 'thatseoagent' ),
+                                ),
+                                'published'    => array( 'type' => 'string' ),
+                                'modified'     => array( 'type' => 'string' ),
+                                'markdown_url' => array(
+                                    'type'        => 'string',
+                                    'description' => __( 'The post as Markdown, to read its full content. Empty when it has no Markdown version.', 'thatseoagent' ),
+                                ),
+                                'words'        => array( 'type' => 'integer' ),
+                                'paragraphs'   => array( 'type' => 'integer' ),
+                                'headings'     => array(
+                                    'type'        => 'array',
+                                    'description' => __( 'The content\'s headings in order, up to 60. The page title the theme prints is not among them.', 'thatseoagent' ),
+                                    'items'       => array(
+                                        'type'       => 'object',
+                                        'properties' => array(
+                                            'level' => array( 'type' => 'integer' ),
+                                            'text'  => array( 'type' => 'string' ),
+                                        ),
+                                    ),
+                                ),
+                                'lists'        => array(
+                                    'type'       => 'object',
+                                    'properties' => array(
+                                        'unordered' => array( 'type' => 'integer' ),
+                                        'ordered'   => array( 'type' => 'integer' ),
+                                        'items'     => array( 'type' => 'integer' ),
+                                    ),
+                                ),
+                                'tables'       => array(
+                                    'type'       => 'object',
+                                    'properties' => array(
+                                        'count' => array( 'type' => 'integer' ),
+                                        'rows'  => array( 'type' => 'integer' ),
+                                    ),
+                                ),
+                                'blockquotes'  => array( 'type' => 'integer' ),
+                                'details'      => array(
+                                    'type'        => 'integer',
+                                    'description' => __( 'Details blocks: collapsible question-and-answer sections.', 'thatseoagent' ),
+                                ),
+                                'code_blocks'  => array( 'type' => 'integer' ),
+                                'numbers'      => array(
+                                    'type'        => 'integer',
+                                    'description' => __( 'Figures in the text: every run of digits, years and prices included.', 'thatseoagent' ),
+                                ),
+                                'percentages'  => array( 'type' => 'integer' ),
+                                'opening'      => array(
+                                    'type'        => 'string',
+                                    'description' => __( 'The first 150 words of the text, as a reader meets them.', 'thatseoagent' ),
+                                ),
                             ),
                         ),
                     ),
@@ -247,6 +336,10 @@ class ThatSeoAgent_Abilities {
                             'type'        => 'string',
                             'description' => __( 'Custom meta description. Empty string clears the value.', 'thatseoagent' ),
                         ),
+                        'noindex' => array(
+                            'type'        => 'boolean',
+                            'description' => __( 'True keeps the post out of search results, the sitemap and llms.txt; false lets search engines index it again.', 'thatseoagent' ),
+                        ),
                     ),
                     'required'   => array( 'post_id' ),
                 ),
@@ -257,6 +350,10 @@ class ThatSeoAgent_Abilities {
                         'title'       => array( 'type' => 'string' ),
                         'description' => array( 'type' => 'string' ),
                         'canonical'   => array( 'type' => 'string' ),
+                        'noindex'     => array(
+                            'type'        => 'boolean',
+                            'description' => __( 'Whether the post is kept out of search results, the sitemap and llms.txt.', 'thatseoagent' ),
+                        ),
                         'custom'      => array(
                             'type'       => 'object',
                             'properties' => array(
@@ -342,6 +439,7 @@ class ThatSeoAgent_Abilities {
             'title'       => $title,
             'description' => $description,
             'canonical'   => get_permalink( $post ),
+            'noindex'     => ThatSeoAgent_Indexing::is_post_noindex( $post ),
             'custom'      => array(
                 'title'       => $custom_title ? $custom_title : '',
                 'description' => $custom_description ? $custom_description : '',
@@ -373,6 +471,10 @@ class ThatSeoAgent_Abilities {
             }
         }
 
+        if ( array_key_exists( 'noindex', $input ) ) {
+            $values['noindex'] = $input['noindex'] ? '1' : '';
+        }
+
         ThatSeoAgent_Post_Seo::save( $post, $values );
 
         return self::get_post_seo( array( 'post_id' => $post_id ) );
@@ -395,7 +497,14 @@ class ThatSeoAgent_Abilities {
             return new WP_Error( 'thatseoagent_invalid_post_id', __( 'No post exists with that ID.', 'thatseoagent' ) );
         }
 
-        return ThatSeoAgent_Audit::post( $post );
+        $audit = ThatSeoAgent_Audit::post( $post );
+
+        // Facts for the agent to judge; the plugin draws no conclusion
+        // from them. Not part of the content check on the screen, where
+        // nobody reads them.
+        $audit['structure'] = ThatSeoAgent_Structure::of( $post );
+
+        return $audit;
     }
 
     /**

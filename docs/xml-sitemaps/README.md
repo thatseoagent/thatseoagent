@@ -41,22 +41,20 @@ add_action('thatseoagent_sitemap_index', function() {
 
 ### Exclude Content from Sitemaps
 
-Filter posts/pages from sitemaps:
+A sitemap lists what search engines should index, so it leaves out:
+
+- posts marked **Keep out of search results** in the SEO meta box (`_thatseoagent_noindex`), which also get `noindex`;
+- password-protected posts, whose content nobody can read;
+- private and draft posts, which are not published;
+- attachment pages, which redirect to their file.
+
+To keep a post out of the sitemap, mark it in the meta box, with the `thatseoagent/update-post-seo` ability (`"noindex": true`), or in code:
 
 ```php
-add_filter('wp_sitemap_posts_query_args', function($args) {
-    // Exclude posts from category ID 5
-    $args['tax_query'] = array(
-        array(
-            'taxonomy' => 'category',
-            'field'    => 'term_id',
-            'terms'    => 5,
-            'operator' => 'NOT IN',
-        ),
-    );
-    return $args;
-});
+ThatSeoAgent_Post_Seo::save( $post_id, array( 'noindex' => true ) );
 ```
+
+The same posts are left out of llms.txt.
 
 ## Usage
 
@@ -75,6 +73,16 @@ For sites with many posts, the posts sitemap is automatically paginated:
 - 1000 posts per sitemap page
 - URLs follow pattern: `/sitemap-posts-{page}.xml`
 
+### Link header
+
+Every page announces the sitemap in its response headers, for clients that read headers rather than robots.txt:
+
+```
+Link: <https://example.com/sitemap.xml>; rel="sitemap"; type="application/xml"
+```
+
+`sitemap` is not a registered link relation, so search engines keep finding the sitemap through robots.txt; the header is for agents that look for it there. Not sent on feeds, robots.txt or the sitemaps themselves, nor while another SEO plugin is active. Turn it off with `add_filter( 'thatseoagent_sitemap_link_header', '__return_false' );`.
+
 ### robots.txt Integration
 
 The plugin automatically adds the main sitemap URL to `robots.txt`:
@@ -88,7 +96,7 @@ Sitemap: https://example.com/sitemap.xml
 - Uses WordPress rewrite API for clean URLs
 - Outputs proper XML headers and content-type
 - Includes last modification dates for posts/pages
-- Excludes posts with 'noindex' meta robots (if set by other plugins)
+- Excludes posts kept out of search and password-protected posts; the index only announces chunks that have URLs
 - Performance optimized with `no_found_rows` and cache disabling
 
 ## Sitemap Structure

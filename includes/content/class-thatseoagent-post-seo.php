@@ -2,8 +2,9 @@
 /**
  * Per-post SEO fields: storage, sanitization and slashing.
  *
- * The owner of `_thatseoagent_title` and `_thatseoagent_description`. Before 1.9.0
- * the two key strings appeared in six files — including a hand-written SQL
+ * The owner of `_thatseoagent_title`, `_thatseoagent_description` and
+ * `_thatseoagent_noindex`. Before 1.9.0 the first two key strings appeared
+ * in six files — including a hand-written SQL
  * join in the WP-CLI command and a hard-coded list in uninstall.php — and
  * each writer decided its own sanitizer and its own slashing.
  *
@@ -38,10 +39,18 @@ class ThatSeoAgent_Post_Seo {
     const DESCRIPTION_KEY = '_thatseoagent_description';
 
     /**
+     * Meta key marking a post as kept out of search indexes: '1', or absent.
+     *
+     * @since 2.2.0
+     */
+    const NOINDEX_KEY = '_thatseoagent_noindex';
+
+    /**
      * The fields, their storage keys and their sanitizers.
      *
      * @since 1.9.0
-     * @return array<string, array{key: string, sanitize: string}>
+     * @since 2.2.0 The noindex field.
+     * @return array<string, array{key: string, sanitize: callable}>
      */
     public static function fields() {
         return array(
@@ -53,7 +62,26 @@ class ThatSeoAgent_Post_Seo {
                 'key'      => self::DESCRIPTION_KEY,
                 'sanitize' => 'sanitize_textarea_field',
             ),
+            'noindex'     => array(
+                'key'      => self::NOINDEX_KEY,
+                'sanitize' => array( __CLASS__, 'sanitize_flag' ),
+            ),
         );
+    }
+
+    /**
+     * A yes/no field as stored: '1' for yes, '' for no.
+     *
+     * The empty string makes save() delete the key, so only posts marked yes
+     * carry it. Accepts what each writer sends: a checkbox's '1', a boolean
+     * from an ability, 'true' or 'on'.
+     *
+     * @since 2.2.0
+     * @param mixed $value Submitted value.
+     * @return string
+     */
+    public static function sanitize_flag( $value ) {
+        return in_array( strtolower( trim( (string) $value ) ), array( '1', 'true', 'on', 'yes' ), true ) ? '1' : '';
     }
 
     /**
@@ -73,7 +101,7 @@ class ThatSeoAgent_Post_Seo {
      *
      * @since 1.9.0
      * @param WP_Post|int $post  Post or ID.
-     * @param string      $field 'title' or 'description'.
+     * @param string      $field 'title', 'description' or 'noindex'.
      * @return string Empty string when unset or unknown.
      */
     public static function get( $post, $field ) {

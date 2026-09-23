@@ -71,7 +71,7 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
 
 <section class="mt-3" aria-labelledby="thatseoagent-observations">
     <h2 id="thatseoagent-observations" class="sr-only"><?php esc_html_e( 'Observations', 'thatseoagent' ); ?></h2>
-    <ol class="tsa-sweep grid grid-cols-2 gap-px overflow-hidden rounded-(--radius-sheet) border border-rule bg-rule sm:grid-cols-4 xl:grid-cols-8">
+    <ol class="tsa-sweep grid grid-cols-3 gap-px overflow-hidden rounded-(--radius-sheet) border border-rule bg-rule xl:grid-cols-9">
         <?php foreach ( $bulletin['observations'] as $observation ) : ?>
             <?php
             $state = $observation['state'];
@@ -150,6 +150,11 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
                 __( 'Custom titles', 'thatseoagent' ),
                 number_format_i18n( $stats['titles'] ),
                 __( 'the rest use the page title and the site name', 'thatseoagent' ),
+            ),
+            array(
+                __( 'Kept out of search', 'thatseoagent' ),
+                number_format_i18n( $stats['noindex'] ),
+                __( 'marked noindex in their SEO fields', 'thatseoagent' ),
             ),
             array(
                 __( 'Products marked up', 'thatseoagent' ),

@@ -3,7 +3,10 @@
  */
 
 jQuery( function ( $ ) {
-	function updateCounter( input, counter, max ) {
+	// The limit is where the text may be cut in search results, not a
+	// maximum: Google trims by screen width and sets none.
+	function updateCounter( input, counter ) {
+		var max = parseInt( $( counter ).attr( 'data-limit' ), 10 );
 		var len = $( input ).val().length;
 		$( counter ).text( len + '/' + max );
 		$( counter ).toggleClass( 'warning', len > max );
@@ -21,12 +24,12 @@ jQuery( function ( $ ) {
 	}
 
 	$( '#thatseoagent_title' ).on( 'input', function () {
-		updateCounter( this, '#title-counter', 60 );
+		updateCounter( this, '#title-counter' );
 		updatePreview();
 	} ).trigger( 'input' );
 
 	$( '#thatseoagent_description' ).on( 'input', function () {
-		updateCounter( this, '#desc-counter', 160 );
+		updateCounter( this, '#desc-counter' );
 		updatePreview();
 	} ).trigger( 'input' );
 } );

@@ -3,8 +3,8 @@
  * Uninstall routine for ThatSeoAgent.
  *
  * Runs only when the user deletes the plugin from the Plugins screen.
- * Removes every option and post meta key the plugin created, and nothing
- * else.
+ * Removes every option and post meta key the plugin created, and its
+ * block in .htaccess, and nothing else.
  *
  * @package ThatSeoAgent
  * @since 1.8.0
@@ -45,8 +45,13 @@ function thatseoagent_uninstall_site() {
 
     wp_unschedule_hook( ThatSeoAgent_IndexNow::CRON_HOOK );
     delete_transient( ThatSeoAgent_Llms::CACHE_KEY );
+    delete_transient( ThatSeoAgent_Llms_Full::CACHE_KEY );
+    delete_transient( ThatSeoAgent_Links::CACHE_KEY );
     delete_transient( ThatSeoAgent_Product_Report::SUMMARY_KEY );
     delete_metadata( 'user', 0, ThatSeoAgent_App::THEME_META, '', true );
+    foreach ( ThatSeoAgent_Author_Profile::keys() as $meta_key ) {
+        delete_metadata( 'user', 0, $meta_key, '', true );
+    }
 }
 
 /**
@@ -59,6 +64,10 @@ function thatseoagent_uninstall_site() {
  * @return void
  */
 function thatseoagent_uninstall_all_sites() {
+    // One .htaccess for the whole install. Only the plugin's own block goes;
+    // a file WordPress cannot write is left as it is.
+    ThatSeoAgent_Markdown_Htaccess::remove();
+
     if ( ! is_multisite() ) {
         thatseoagent_uninstall_site();
         return;

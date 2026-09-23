@@ -139,7 +139,7 @@ class ThatSeoAgent_Homepage {
             placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>"
         >
         <p class="description">
-            <?php esc_html_e( 'Aim for 50–60 characters. Leave blank to use the site name.', 'thatseoagent' ); ?>
+            <?php esc_html_e( 'Leave blank to use the site name. Search results trim titles to the width of the screen; past about 70 characters it may be cut.', 'thatseoagent' ); ?>
         </p>
         <?php
     }
@@ -160,7 +160,7 @@ class ThatSeoAgent_Homepage {
             placeholder="<?php echo esc_attr( get_bloginfo( 'description' ) ); ?>"
         ><?php echo esc_textarea( $value ); ?></textarea>
         <p class="description">
-            <?php esc_html_e( 'Aim for 150–160 characters: the sentence people read under the title in search results and link previews.', 'thatseoagent' ); ?>
+            <?php esc_html_e( 'The sentence people read under the title in search results and link previews. Google sets no limit, but past about 165 characters it may be cut.', 'thatseoagent' ); ?>
         </p>
         <?php
     }

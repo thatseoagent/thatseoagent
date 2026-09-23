@@ -114,7 +114,8 @@ class ThatSeoAgent_Bulletin {
      * owns it.
      *
      * @since 1.20.0
-     * @return array{indexing: bool, permalinks: bool, other_plugin: string, identity: bool, homepage: bool, catalog: array|null, crawlers: array, indexnow: bool, now: int}
+     * @since 2.3.0 trust_pages, links.
+     * @return array{indexing: bool, permalinks: bool, other_plugin: string, identity: bool, homepage: bool, trust_pages: array, links: array|null, catalog: array|null, crawlers: array, indexnow: bool, now: int}
      */
     public static function facts() {
         return array(
@@ -123,6 +124,9 @@ class ThatSeoAgent_Bulletin {
             'other_plugin' => ThatSeoAgent_Compat::other_seo_plugin(),
             'identity'     => ThatSeoAgent_Identity::is_recognizable(),
             'homepage'     => ThatSeoAgent_Homepage::has_description(),
+            'trust_pages'  => ThatSeoAgent_Trust_Pages::found(),
+            // Only a graph already built: the bulletin never requests pages.
+            'links'        => ThatSeoAgent_Links::cached(),
             'catalog'      => empty( ThatSeoAgent_Product::post_types() ) ? null : ThatSeoAgent_Product_Report::summary(),
             'crawlers'     => ThatSeoAgent_Crawler_Access::summary(),
             'indexnow'     => '' !== ThatSeoAgent_IndexNow::get_api_key(),
@@ -211,6 +215,55 @@ class ThatSeoAgent_Bulletin {
                 __( 'It is the first thing people read about the site in search results; a sentence written for them works better.', 'thatseoagent' ),
                 __( 'Write it', 'thatseoagent' ),
                 'homepage'
+            );
+        }
+
+        // The pages that say who runs the site. Not a ranking factor: Google
+        // asks whether visitors can tell who is behind a site, and these are
+        // where they look.
+        $trust   = $facts['trust_pages'];
+        $missing = array_keys( array_filter( $trust, function ( $url ) {
+            return '' === $url;
+        } ) );
+        $observations[] = self::observation(
+            'trust',
+            __( 'Trust pages', 'thatseoagent' ),
+            $missing ? 'yellow' : 'ok',
+            /* translators: 1: pages found, 2: pages looked for. */
+            sprintf( __( '%1$d of %2$d', 'thatseoagent' ), count( $trust ) - count( $missing ), count( $trust ) )
+        );
+        if ( $missing ) {
+            $labels = ThatSeoAgent_Trust_Pages::labels();
+            $names  = array_map(
+                function ( $kind ) use ( $labels ) {
+                    return $labels[ $kind ];
+                },
+                $missing
+            );
+
+            $warnings[] = self::warning(
+                'yellow',
+                /* translators: %s: page names joined as a list, e.g. "About and Contact". */
+                sprintf( __( 'No page found for %s', 'thatseoagent' ), wp_sprintf_l( '%l', $names ) ),
+                __( 'Visitors look for who runs a site, how to reach it and what it does with their data; search engines and AI assistants read the same pages. Google asks whether that is clear, though it is not a ranking factor.', 'thatseoagent' ),
+                in_array( 'privacy', $missing, true ) ? __( 'Choose the privacy policy page', 'thatseoagent' ) : __( 'Create a page', 'thatseoagent' ),
+                in_array( 'privacy', $missing, true ) ? 'privacy' : 'new_page'
+            );
+        }
+
+        // Navigation that leads nowhere, known once a content check (or an
+        // agent's audit) has read the site's links.
+        $links = isset( $facts['links'] ) ? $facts['links'] : null;
+        if ( $links && ! empty( $links['navigation_broken'] ) ) {
+            $count      = count( $links['navigation_broken'] );
+            $warnings[] = self::warning(
+                'yellow',
+                /* translators: %d: number of links. */
+                sprintf( _n( 'The site\'s navigation links to %d page that does not exist', 'The site\'s navigation links to %d pages that do not exist', $count, 'thatseoagent' ), $count ),
+                /* translators: %s: the addresses, comma-separated. */
+                sprintf( __( 'The menus, header or footer point to %s, which answer "not found". Visitors who click get an error page; fix the links in the theme or the menus, or create the pages.', 'thatseoagent' ), implode( ', ', array_slice( $links['navigation_broken'], 0, 4 ) ) . ( $count > 4 ? ', …' : '' ) ),
+                __( 'See the content check', 'thatseoagent' ),
+                'audit'
             );
         }
 
@@ -378,8 +431,8 @@ class ThatSeoAgent_Bulletin {
      * @param string $detail      Why it matters.
      * @param string $label       Action label.
      * @param string $destination Where it is fixed: 'reading', 'permalinks',
-     *                            'plugins', 'identity', 'homepage', 'products'
-     *                            or 'crawlers'.
+     *                            'plugins', 'identity', 'homepage', 'products',
+     *                            'crawlers', 'privacy', 'new_page' or 'audit'.
      * @return array{level: string, title: string, detail: string, action: array{label: string, destination: string}}
      */
     private static function warning( $level, $title, $detail, $label, $destination ) {

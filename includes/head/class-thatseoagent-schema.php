@@ -708,12 +708,22 @@ class ThatSeoAgent_Schema {
             $schema['description'] = wp_strip_all_tags($user->description);
         }
 
-        // The profile's website field: often a personal site or a social
-        // profile, which is what sameAs is for. The site's own URL adds
-        // nothing.
+        $job_title = ThatSeoAgent_Author_Profile::job_title($user->ID);
+        if ('' !== $job_title) {
+            $schema['jobTitle'] = $job_title;
+        }
+
+        // The profile's website field — often a personal site or a social
+        // profile, which is what sameAs is for — and the profiles elsewhere
+        // the author listed. The site's own URL adds nothing.
+        $same_as = ThatSeoAgent_Author_Profile::profiles($user->ID);
         $website = $user->user_url ? esc_url_raw($user->user_url) : '';
         if ($website && untrailingslashit($website) !== untrailingslashit(home_url('/'))) {
-            $schema['sameAs'] = array($website);
+            array_unshift($same_as, $website);
+        }
+        $same_as = array_values(array_unique(array_map('untrailingslashit', $same_as)));
+        if ($same_as) {
+            $schema['sameAs'] = $same_as;
         }
 
         /**

@@ -23,7 +23,7 @@ What the overview shows beside the bulletin without judging it: how many posts c
 _Avoid_: stats, metrics, KPIs
 
 **Observation**:
-One fact checked about the site (indexing allowed, permalinks, other SEO plugins, identity, homepage description, product catalog, AI crawlers, IndexNow), with its value in a word or two.
+One fact checked about the site (indexing allowed, permalinks, other SEO plugins, identity, homepage description, trust pages, product catalog, AI crawlers, IndexNow), with its value in a word or two.
 _Avoid_: check, metric, test
 
 **Stepping aside**:
@@ -33,19 +33,27 @@ _Avoid_: conflict mode, disabled, compatibility mode
 ### What a post says
 
 **SEO fields**:
-A post's own title and description for search results, written by a person. Either may be empty.
+A post's own title and description for search results, written by a person, and whether it is kept out of search. Any may be empty.
 _Avoid_: meta, SEO settings, overrides
+
+**Kept out of search**:
+A page search engines are told not to index (`noindex`): search results, the 404 page, private posts, and posts whose SEO fields say so. It prints no canonical and is listed in no sitemap and not in the AI index; it stays public to anyone with the link.
+_Avoid_: hidden, blocked, deindexed
 
 **Generated description**:
 The description a post gets from its own content when its SEO fields have none. What the page publishes and what the editor preview shows are the same generated description.
 _Avoid_: auto description, excerpt, fallback
 
 **Markdown version**:
-A post's content as Markdown with a frontmatter, published at the post's URL plus `.md`, for AI agents.
+A post's content as Markdown with a frontmatter, published at the post's URL plus `.md`, and at the post's own URL to a client that asks for Markdown, for AI agents.
 _Avoid_: export, API, feed
 
+**Markdown check**:
+Asking one post from outside, on demand, first for its Markdown version and then as a browser, to see whether a cache between WordPress and its visitors undoes the negotiation.
+_Avoid_: probe, test, scan
+
 **AI index**:
-The site's llms.txt: a list of its pages, each linking to its Markdown version where there is one.
+The site's llms.txt: a list of its pages, each linking to its Markdown version where there is one; and llms-full.txt, the same pages' full text in one file.
 _Avoid_: llms file, AI sitemap
 
 ### Who reads the site
@@ -72,9 +80,17 @@ _Avoid_: probe, test, scan
 Whether the site belongs to a person or an organization, and how to recognize it: name, description, logo, social profiles.
 _Avoid_: publisher, brand, organization settings
 
+**Author profile**:
+What a post's author is beyond a name, entered in their WordPress profile: a job title and their profiles on other sites. It becomes the author's `jobTitle` and `sameAs` in the markup.
+_Avoid_: bio, author box
+
 **Default author**:
 Who is credited on posts that have no author assigned. When unset, the site identity is.
 _Avoid_: fallback author, publisher
+
+**Trust pages**:
+The pages that say who runs the site, how to reach it and what it does with visitors' data: about, contact and privacy policy. Found by the privacy page WordPress has assigned, a published page whose address names it, or a menu link to one.
+_Avoid_: legal pages, E-E-A-T pages
 
 ### Product catalogs
 
@@ -101,8 +117,24 @@ _Avoid_: level
 ### Checking content
 
 **Content check**:
-A check of every published post of one content type, a few at a time, giving each a score out of 100 and the reasons. The last finished check of each content type is kept.
+A check of every published post of one content type, a few at a time, giving each a score out of 100 and the reasons. It applies the same rules as That SEO Agent's MCP server, so the two never tell a site different things. The last finished check of each content type is kept.
 _Avoid_: scan, crawl, SEO audit
+
+**Finding source**:
+Who asks for what a finding reports: Google Search Central, accessibility guidelines (WCAG 2.2), or our own judgement. Only the first two lower the score; our own judgement is marked as such and costs nothing.
+_Avoid_: category, rule type
+
+**Not measured**:
+A check that could not run on a post — its text is not in the editor, or the page never shows its content — listed apart from the findings. It neither passes nor fails.
+_Avoid_: skipped, failed, n/a
+
+**Orphan page**:
+A page no other part of the site links to: not the menus, not the header or footer the theme prints, not another page's text. Only pages and content types without listings can be one; posts and catalog entries always appear in an archive or a category.
+_Avoid_: unlinked, isolated
+
+**Broken link**:
+A link to an address of the site that answers "not found" (404 or 410) when asked.
+_Avoid_: dead link, 404 link
 
 ### The screen
 

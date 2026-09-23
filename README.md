@@ -25,18 +25,21 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 ## Features
 
 - **Meta tags** — title, description, Open Graph, Twitter Cards, article metadata
-- **XML sitemaps** — auto-generated and paginated at 1000 URLs per file
-- **Schema/JSON-LD** — WebSite, Organization *or* Person, Article with its author as a Person, WebPage, CollectionPage, ProfilePage, BreadcrumbList, FAQPage (from question headings and Details blocks)
+- **XML sitemaps** — auto-generated and paginated at 1000 URLs per file, without the posts kept out of search or protected by a password
+- **Robots meta** — `noindex` on search results, 404 pages and private posts, largest image and text previews everywhere else, through core's `wp_robots`
+- **Schema/JSON-LD** — WebSite, Organization *or* Person, Article with its author as a Person (with a job title and profiles elsewhere, from two fields the plugin adds to the user profile), WebPage, CollectionPage, ProfilePage, BreadcrumbList, FAQPage (from question headings and Details blocks)
 - **Admin screen** — a site bulletin: whether the site is fine in one sentence, on the color of its warning level, the warnings in force and what to do about each; plus the product report, llms.txt and settings
 - **Product catalogs** — mark a custom post type as a catalog and map its brand, category, specifications and gallery; each entry becomes a validated schema.org Product
-- **Canonical URLs** — replaces core's `rel_canonical`
-- **Per-post SEO** — title/description meta box with live search preview, exposed to the REST API
+- **Canonical URLs** — replaces core's `rel_canonical`; each page of a paginated listing or post is its own canonical, with `rel="prev"`/`rel="next"`
+- **Per-post SEO** — title/description meta box with live search preview, and a "Keep out of search results" box (`noindex`), exposed to the REST API
+- **Attachment pages** — redirected to their file, as WordPress does on sites installed since 6.4
 - **Site identity** — declare whether the site represents a Person or an Organization
 - **Homepage SEO** — custom title/description with `%%sitename%%`, `%%tagline%%`, `%%sep%%`
 - **IndexNow** — notify Bing/Yandex on publish (opt-in: no key, no requests)
-- **Markdown for AI agents** — any post or page at its URL plus `.md`, with YAML frontmatter, announced by a `rel="alternate"` link
-- **llms.txt** — a generated index of the site linking to the Markdown versions
+- **Markdown for AI agents** — any post or page at its URL plus `.md`, with YAML frontmatter, announced by a `rel="alternate"` link in the head and in a `Link` header; the page's own URL answers `Accept: text/markdown` with it too
+- **llms.txt** — a generated index of the site linking to the Markdown versions, and `llms-full.txt` with their full text in one file
 - **AI crawlers** — see which AI crawlers can read the site and why, check each one against the live server, and block them by group or one by one in robots.txt
+- **Content check** — every page of a content type, a few at a time, against the same rules as That SEO Agent's MCP server: nothing Google does not ask for is reported as a problem, each finding says whether Google, accessibility guidelines or our own judgement asks for it, and a check that cannot run says so
 - **WP-CLI** — generate missing meta descriptions, import from other SEO plugins, validate product schema
 - **Bulk action** — "Generate meta description" on the posts list
 
@@ -53,6 +56,8 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 
 `sitemap_index.xml` redirects to the index for Yoast compatibility, and the plugin rewrites the `Sitemap:` directive in `robots.txt`. WordPress's own `/wp-sitemap.xml` is switched off while these are served, so search engines see one set.
 
+A sitemap asks for its URLs to be indexed, so it lists no post marked **Keep out of search results**, no password-protected post and no attachment page. llms.txt leaves out the same posts.
+
 ## Markdown for AI agents
 
 Append `.md` to the URL of any published post or page:
@@ -62,6 +67,16 @@ curl https://example.com/my-post.md
 curl https://example.com/about/team.md        # hierarchical pages
 curl https://example.com/2026/02/my-post.md   # any permalink structure
 ```
+
+Or ask the page's own URL for Markdown, as HTTP content negotiation does:
+
+```bash
+curl -H 'Accept: text/markdown' https://example.com/my-post
+```
+
+Browsers never ask for it, so people keep getting the HTML. Both responses say `Vary: Accept`, and the Markdown one tells page caches not to store it.
+
+A cache that answers before WordPress — a page cache plugin, a CDN — would still hand agents the stored HTML. **AI index → Markdown for agents** checks this from outside on demand and says which layer answered and what to change; on Apache it can write a rule at the top of `.htaccess` that sends requests asking for Markdown to WordPress before any page cache plugin serves them.
 
 An agent fetching the HTML pays for the navigation, sidebar, footer and scripts; the Markdown is only the content, typically 80–99% fewer tokens. The frontmatter carries the title, dates, author, permalink, excerpt, the same description the meta tags use, categories, tags and featured image.
 
@@ -92,6 +107,8 @@ Values are validated and dropped rather than output half-formed. **ThatSeoAgent 
 
 `/llms.txt` lists the posts served as Markdown and the product catalogs, each linking to its `.md` version where there is one, with its description. It is a [proposed convention](https://llmstxt.org), not a standard or a ranking factor. Regenerated when a post or the site identity changes; switch it off in the settings. A physical `llms.txt` in the site root takes precedence.
 
+`/llms-full.txt` carries the content of those pages instead of links: each page with a Markdown version, in the same order, as its title, its URL and its Markdown, so an agent reads the site in one request. It is served and switched off with llms.txt, which links to it under `## Optional`, and stops before 2 MB (filter `thatseoagent_llms_full_max_bytes`), ending with how many pages did not fit. A physical `llms-full.txt` takes precedence.
+
 ## AI crawlers
 
 **ThatSeoAgent → AI crawlers** reads the robots.txt the site actually serves — the physical file in the site root if there is one, else the one WordPress builds with every plugin's edits — and shows, for each known crawler, whether it may read the site and which rule decides it. **Check access now** requests the homepage as each crawler, to catch a firewall, CDN or security plugin turning it away; it only runs when clicked.
@@ -119,12 +136,17 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Description` | The single answer to "what description does this post get?" |
 | | `ThatSeoAgent_FAQ`, `ThatSeoAgent_FAQ_Section` | Reads content into sections; FAQ extraction |
 | | `ThatSeoAgent_Post_Seo` | Per-post SEO fields: which post types get them, storage, sanitization and slashing |
+| | `ThatSeoAgent_Structure` | How a post is built, as facts for an agent to judge |
 | `head/` | `ThatSeoAgent_Meta` | `<head>` meta tags and canonical |
 | | `ThatSeoAgent_Title` | The document `<title>`: overrides and separator |
 | | `ThatSeoAgent_Schema` | JSON-LD graph |
+| `indexing/` | `ThatSeoAgent_Indexing` | The single answer to "may search engines index this?": robots meta, and what the sitemaps and llms.txt may list |
+| | `ThatSeoAgent_Pagination` | Paginated listings and posts: page numbers, their URLs, `rel="prev"`/`rel="next"` |
+| | `ThatSeoAgent_Attachment_Redirect` | Attachment pages lead to their file |
 | `site/` | `ThatSeoAgent_Identity`, `ThatSeoAgent_Identity_Applier` | Who the site is: settings, and the filters that feed them to meta tags and schema |
 | | `ThatSeoAgent_Homepage`, `ThatSeoAgent_Homepage_Applier` | Homepage title and description: settings, and their filters |
 | | `ThatSeoAgent_Default_Author` | The author credited on posts without one |
+| | `ThatSeoAgent_Author_Profile` | An author's job title and profiles elsewhere, in the user profile |
 | `catalog/` | `ThatSeoAgent_Product` | Product catalogs: mapping, detection, Product node, validation |
 | | `ThatSeoAgent_Product_Report` | How complete the catalog is: summary and per-product report |
 | | `ThatSeoAgent_Product_Settings` | The catalog's settings section and field mapping |
@@ -136,9 +158,14 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | `markdown/` | `ThatSeoAgent_Markdown` | A post as Markdown with YAML frontmatter |
 | | `ThatSeoAgent_Markdown_Endpoint` | The `.md` URLs and the `rel="alternate"` link |
 | | `ThatSeoAgent_Markdown_Cache` | Per-post Markdown cache and its invalidation |
+| | `ThatSeoAgent_Markdown_Check` | Whether agents asking for Markdown get it: the on-demand check from outside |
+| | `ThatSeoAgent_Markdown_Htaccess` | The .htaccess rule that keeps page caches away from Markdown requests |
 | | `ThatSeoAgent_Llms` | llms.txt |
+| | `ThatSeoAgent_Llms_Full` | llms-full.txt: the full text of the pages llms.txt lists |
 | `audit/` | `ThatSeoAgent_Audit` | The SEO audit of a post, and site scans |
 | | `ThatSeoAgent_Audit_Run` | The batched content check and its last results |
+| | `ThatSeoAgent_Duplicates` | Pages that share a title or a description |
+| | `ThatSeoAgent_Links` | How the pages link to each other: orphan pages and broken links |
 | `bulletin/` | `ThatSeoAgent_Bulletin` | The site's bulletin: facts asked of each module, rules that turn them into warnings |
 | | `ThatSeoAgent_Readings` | What the dashboard shows beside it: SEO field counts, the public files served |
 | `admin/` | `ThatSeoAgent_App` | The ThatSeoAgent screen: navigation, views, where each action leads, level colors, styles, scripts |
@@ -254,11 +281,13 @@ Registered on `wp_abilities_api_init`:
 |---------|-------------|------------|
 | `thatseoagent/get-sitemap-urls` | Every sitemap URL the site publishes | `manage_options` |
 | `thatseoagent/get-post-seo` | SEO data for a post | `edit_post` |
-| `thatseoagent/update-post-seo` | Update title/description | `edit_post` |
-| `thatseoagent/audit-post-seo` | Audit one post, 0–100 score | `edit_post` |
+| `thatseoagent/update-post-seo` | Update title, description and noindex | `edit_post` |
+| `thatseoagent/audit-post-seo` | Audit one post, 0–100 score, and its structure as facts | `edit_post` |
 | `thatseoagent/scan-seo-issues` | Scan many posts of a type, worst first | `manage_options` |
 
-The audit checks title and description length, word count, heading structure, internal/external links, image count and alt coverage — telling missing alt text from the empty alt of decorative images — and, on catalog entries, their Product markup.
+The audit applies the content check's rules: titles and descriptions that may be cut or that another page shares, a missing description, links search engines cannot follow, alt text — telling missing alt from the empty alt of decorative images — headings as accessibility, internal links, orphan pages and broken links as our own judgement, and, on catalog entries, their Product markup. Each finding carries its `source`, and checks that could not run come back in `not_measured`.
+
+It also returns `structure`: how the post is built, as facts with no verdict — its headings in order, lists, tables, quotes, question-and-answer blocks, figures and percentages, paragraph and word counts, its first 150 words, its dates and the URL of its Markdown version. Nobody publishes how AI assistants choose what to cite, so the plugin scores none of it; an agent reviewing the site reads these facts, and the Markdown, and draws its own conclusions.
 
 Every option is also registered with `show_in_rest`, so administrators can read and update them at `/wp/v2/settings`.
 

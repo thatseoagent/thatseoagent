@@ -69,13 +69,18 @@ add_action('save_post', function($post_id) {
 
 1. **SEO Title** (optional)
    - Defaults to post/page title
-   - Recommended: 50-60 characters
+   - The counter turns red past 70 characters, where search results may cut it; they trim titles to the width of the screen, and Google publishes no limit
    - Appears in browser tab and search results
 
 2. **Meta Description** (optional)
    - Defaults to excerpt or auto-generated from content
-   - Recommended: 150-160 characters
+   - The counter turns red past 165 characters, where it may be cut; Google sets no limit, and the field does not cut the text
    - Appears in search result snippets
+
+3. **Keep out of search results** (optional)
+   - Adds `noindex, follow` to the page and prints no canonical
+   - Leaves the post out of the sitemaps and llms.txt
+   - The page stays public for anyone with the link
 
 ### Live Preview
 
@@ -90,6 +95,7 @@ The meta box includes a live preview that shows:
 Data is saved as post meta:
 - `_thatseoagent_title` - Custom SEO title
 - `_thatseoagent_description` - Custom meta description
+- `_thatseoagent_noindex` - `1` when the post is kept out of search
 
 Empty fields are automatically cleaned up (meta deleted).
 
@@ -124,7 +130,7 @@ The admin interface integrates with the meta output system:
 
 ## Best Practices
 
-- **Titles**: Keep under 60 characters to avoid truncation
-- **Descriptions**: Aim for 150-160 characters for optimal snippets
+- **Titles**: Distinct for each page and descriptive; past about 70 characters they may be cut
+- **Descriptions**: Unique and relevant rather than long; past about 165 characters they may be cut
 - **Preview**: Always check the live preview before publishing
 - **Testing**: Use tools like Google Search Console to test appearance

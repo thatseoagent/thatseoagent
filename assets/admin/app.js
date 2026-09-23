@@ -337,6 +337,8 @@
 
 			return {
 				postType: initial.postType || '',
+				// Labels for findings that are not Google's: source => label.
+				sources: initial.sources || {},
 				status: initial.last ? 'done' : 'idle', // idle | running | done | error
 				token: '',
 				total: initial.last ? initial.last.total : 0,
@@ -413,6 +415,11 @@
 						Array.prototype.push.apply( self.rows, progress.rows );
 
 						if ( 'done' === progress.status ) {
+							// The list as stored, with the findings only the
+							// whole run could make.
+							if ( progress.all ) {
+								self.rows = progress.all;
+							}
 							self.status = 'done';
 							self.finished = Math.floor( Date.now() / 1000 );
 							return null;
@@ -509,6 +516,84 @@
 					} ).then( function () {
 						self.busy = false;
 					} );
+				},
+			};
+		} );
+
+		/*
+		 * Markdown for agents: the on-demand check, and the .htaccess rule
+		 * that keeps page caches out of the way.
+		 */
+		Alpine.data( 'tsaMarkdown', function ( initial ) {
+			initial = initial || {};
+
+			return {
+				result: null,
+				htaccess: initial.htaccess || {},
+				checking: false,
+				busy: false,
+
+				check: function () {
+					var self = this;
+
+					this.busy = true;
+					this.checking = true;
+
+					return api( { path: '/thatseoagent/v1/markdown/check', method: 'POST' } ).then( function ( result ) {
+						self.result = result;
+						self.htaccess = result.htaccess;
+						Alpine.store( 'toast' ).show( t( 'mdChecked' ), 'ok' );
+					} ).catch( function ( error ) {
+						Alpine.store( 'toast' ).show( t( 'mdCheckFailed' ) + ' ' + errorText( error ), 'error' );
+					} ).then( function () {
+						self.busy = false;
+						self.checking = false;
+					} );
+				},
+
+				install: function () {
+					return this.write( 'POST', t( 'mdRuleAdded' ) );
+				},
+
+				remove: function () {
+					return this.write( 'DELETE', t( 'mdRuleRemoved' ) );
+				},
+
+				write: function ( method, done ) {
+					var self = this;
+
+					this.busy = true;
+
+					return api( { path: '/thatseoagent/v1/markdown/htaccess', method: method } ).then( function ( status ) {
+						self.htaccess = status;
+						Alpine.store( 'toast' ).show( done, 'ok' );
+					} ).catch( function ( error ) {
+						Alpine.store( 'toast' ).show( t( 'mdRuleFailed' ) + ' ' + errorText( error ), 'error' );
+					} ).then( function () {
+						self.busy = false;
+					} );
+				},
+
+				describe: function ( response ) {
+					if ( ! response || ! response.status ) {
+						return t( 'mdNoAnswer' );
+					}
+					var type = ( response.type || '' ).split( ';' )[ 0 ] || '—';
+					return type + ' (' + response.status + ')' + ( response.vary ? ', Vary: Accept' : '' );
+				},
+
+				htaccessText: function () {
+					var h = this.htaccess || {};
+					if ( ! h.applies ) {
+						return t( 'mdRuleNotApache' );
+					}
+					if ( ! h.present ) {
+						return t( 'mdRuleMissing' ) + ( h.writable ? '' : ' ' + t( 'mdRuleNotWritable' ) );
+					}
+					if ( h.below ) {
+						return t( 'mdRuleBelow' ).replace( '%s', h.below );
+					}
+					return t( 'mdRuleOk' );
 				},
 			};
 		} );

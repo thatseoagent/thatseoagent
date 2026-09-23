@@ -39,6 +39,7 @@ class ThatSeoAgent_Sitemap {
         add_action('init', array(__CLASS__, 'register_routes'), 20);
         add_filter('query_vars', array(__CLASS__, 'query_vars'));
         add_action('template_redirect', array(__CLASS__, 'handle_request'));
+        add_action('template_redirect', array(__CLASS__, 'send_link_header'), 11);
         add_filter('redirect_canonical', array(__CLASS__, 'disable_redirect'), 10, 2);
 
         // Core's /wp-sitemap.xml would be a second, competing set.
@@ -124,6 +125,37 @@ class ThatSeoAgent_Sitemap {
 
         echo $xml; // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in render().
         exit;
+    }
+
+    /**
+     * Point at the sitemap from every page's headers.
+     *
+     * `Link: </sitemap.xml>; rel="sitemap"` lets a client that reads headers
+     * find the sitemap without fetching robots.txt. "sitemap" is not a
+     * registered link relation: search engines find the sitemap through
+     * robots.txt either way, and agents that look for it here get it.
+     *
+     * Only on pages: not on feeds, the sitemaps themselves, robots.txt or
+     * the REST API, which answer before template_redirect or are not pages.
+     *
+     * @since 2.3.0
+     */
+    public static function send_link_header() {
+        if (is_feed() || is_robots() || headers_sent()) {
+            return;
+        }
+
+        /**
+         * Filter whether pages announce the sitemap in a Link header.
+         *
+         * @since 2.3.0
+         * @param bool $enabled Default true.
+         */
+        if (!apply_filters('thatseoagent_sitemap_link_header', true)) {
+            return;
+        }
+
+        header('Link: <' . esc_url_raw(home_url('/sitemap.xml')) . '>; rel="sitemap"; type="application/xml"', false);
     }
 
     /**
@@ -217,8 +249,7 @@ class ThatSeoAgent_Sitemap {
 
         // Custom post types
         foreach (self::get_cpts() as $cpt) {
-            $counts = wp_count_posts($cpt);
-            if (!$counts || $counts->publish < 1) {
+            if (self::count_listed($cpt) < 1) {
                 continue;
             }
 
@@ -247,9 +278,7 @@ class ThatSeoAgent_Sitemap {
      * @return array<int, int|null>
      */
     private static function chunks_for($post_type) {
-        $counts = wp_count_posts($post_type);
-        $count  = $counts ? (int) $counts->publish : 0;
-        $needed = (int) ceil($count / self::PER_PAGE);
+        $needed = (int) ceil(self::count_listed($post_type) / self::PER_PAGE);
 
         if ($needed <= 1) {
             return array(null);
@@ -261,6 +290,46 @@ class ThatSeoAgent_Sitemap {
         }
 
         return $offsets;
+    }
+
+    /**
+     * How many posts of a type the sitemap lists.
+     *
+     * Not wp_count_posts(): that counts every published post, including the
+     * ones the sitemap leaves out, and the index would announce chunks
+     * that come out empty.
+     *
+     * @since 2.2.0
+     * @param string $post_type Post type.
+     * @return int
+     */
+    private static function count_listed($post_type) {
+        return ThatSeoAgent_Memo::remember('sitemap_count', $post_type, function () use ($post_type) {
+            $query = new WP_Query(self::listed_args(array(
+                'post_type'              => $post_type,
+                'post_status'            => 'publish',
+                'posts_per_page'         => 1,
+                'fields'                 => 'ids',
+                'update_post_meta_cache' => false,
+                'update_post_term_cache' => false,
+            )));
+
+            return (int) $query->found_posts;
+        });
+    }
+
+    /**
+     * A post query limited to what the sitemap may list.
+     *
+     * No password-protected posts, whose content nobody can read, and none
+     * kept out of search indexes: a sitemap asks for its URLs to be indexed.
+     *
+     * @since 2.2.0
+     * @param array $args Query arguments.
+     * @return array
+     */
+    private static function listed_args(array $args) {
+        return array_merge($args, ThatSeoAgent_Indexing::listed_query_args());
     }
 
     /**
@@ -318,7 +387,7 @@ class ThatSeoAgent_Sitemap {
      * @return string
      */
     private static function render_post_type($post_type, $page = 1) {
-        $posts = get_posts(array(
+        $posts = get_posts(self::listed_args(array(
             'post_type'              => $post_type,
             'post_status'            => 'publish',
             'posts_per_page'         => self::PER_PAGE,
@@ -328,7 +397,7 @@ class ThatSeoAgent_Sitemap {
             'no_found_rows'          => true,
             'update_post_meta_cache' => false,
             'update_post_term_cache' => false,
-        ));
+        )));
 
         $urls = array();
         foreach ($posts as $post) {
@@ -360,7 +429,7 @@ class ThatSeoAgent_Sitemap {
             $urls[] = array('loc' => home_url('/'), 'lastmod' => null);
         }
 
-        $pages = get_posts(array(
+        $pages = get_posts(self::listed_args(array(
             'post_type'              => 'page',
             'post_status'            => 'publish',
             'posts_per_page'         => self::PER_PAGE,
@@ -370,7 +439,7 @@ class ThatSeoAgent_Sitemap {
             'no_found_rows'          => true,
             'update_post_meta_cache' => false,
             'update_post_term_cache' => false,
-        ));
+        )));
 
         foreach ($pages as $p) {
             if ($front_page_id && $front_page_id === (int) $p->ID) {
@@ -444,7 +513,7 @@ class ThatSeoAgent_Sitemap {
      * Get latest modified date for a post type, optionally within a page range
      */
     private static function get_latest_modified_date($post_type = 'post', $limit = 1, $offset = 0) {
-        $posts = get_posts(array(
+        $posts = get_posts(self::listed_args(array(
             'post_type' => $post_type,
             'post_status' => 'publish',
             'posts_per_page' => $limit,
@@ -454,7 +523,7 @@ class ThatSeoAgent_Sitemap {
             'no_found_rows' => true,
             'update_post_meta_cache' => false,
             'update_post_term_cache' => false,
-        ));
+        )));
 
         if ($posts) {
             return get_the_modified_date('c', $posts[0]);

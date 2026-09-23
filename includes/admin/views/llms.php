@@ -1,9 +1,12 @@
 <?php
 /**
- * AI index: whether llms.txt is served, and what it says.
+ * AI index: whether llms.txt is served, and what it says; whether agents
+ * asking for Markdown get it, and the .htaccess rule that keeps page caches
+ * out of the way.
  *
  * @package ThatSeoAgent
  * @since 1.17.0
+ * @since 2.3.0 The Markdown check and the .htaccess rule.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,6 +28,7 @@ if ( ! is_string( $body ) ) {
 }
 
 $file     = ThatSeoAgent_Llms::describe( $body );
+$htaccess = ThatSeoAgent_Markdown_Htaccess::status();
 $entries  = $file['entries'];
 $sections = $file['sections'];
 
@@ -60,6 +64,11 @@ if ( $physical ) {
             <span x-text="busy ? <?php echo esc_attr( wp_json_encode( __( 'Rebuilding…', 'thatseoagent' ) ) ); ?> : <?php echo esc_attr( wp_json_encode( __( 'Rebuild now', 'thatseoagent' ) ) ); ?>"><?php esc_html_e( 'Rebuild now', 'thatseoagent' ); ?></span>
         </button>
         <?php if ( $live ) : ?>
+            <a href="<?php echo esc_url( ThatSeoAgent_Llms_Full::url() ); ?>" target="_blank" rel="noopener" class="tsa-rule-button">
+                <?php esc_html_e( 'Open llms-full.txt', 'thatseoagent' ); ?>
+                <?php ThatSeoAgent_Icons::the( 'external', 'size-4' ); ?>
+                <span class="sr-only"><?php esc_html_e( '(opens in a new tab)', 'thatseoagent' ); ?></span>
+            </a>
             <a href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener" class="tsa-press">
                 <?php esc_html_e( 'Open llms.txt', 'thatseoagent' ); ?>
                 <?php ThatSeoAgent_Icons::the( 'external', 'size-4' ); ?>
@@ -96,4 +105,47 @@ if ( $physical ) {
         <pre class="mt-4 max-h-[36rem] overflow-auto rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4 text-[12.5px] leading-relaxed whitespace-pre-wrap text-ink-2" x-text="body" :aria-busy="busy ? 'true' : 'false'" :class="{ 'opacity-50': busy }"><?php echo esc_html( $body ); ?></pre>
     </section>
 </div>
+
+<section class="mt-12" x-data="tsaMarkdown(<?php echo esc_attr( wp_json_encode( array( 'htaccess' => $htaccess ) ) ); ?>)" aria-labelledby="thatseoagent-markdown">
+    <div class="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule-strong pb-2.5">
+        <h2 id="thatseoagent-markdown" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Markdown for agents', 'thatseoagent' ); ?></h2>
+        <button type="button" class="tsa-press" x-cloak x-show.important="true" @click="check()" :disabled="busy" :aria-busy="busy ? 'true' : 'false'">
+            <?php ThatSeoAgent_Icons::the( 'refresh', 'size-4' ); ?>
+            <span x-text="checking ? <?php echo esc_attr( wp_json_encode( __( 'Checking…', 'thatseoagent' ) ) ); ?> : <?php echo esc_attr( wp_json_encode( __( 'Check now', 'thatseoagent' ) ) ); ?>"><?php esc_html_e( 'Check now', 'thatseoagent' ); ?></span>
+        </button>
+    </div>
+    <p class="mt-3 max-w-[44rem] text-ink-2"><?php esc_html_e( 'Each post answers an agent that asks for Markdown with its Markdown version, at its own address. A cache in front of WordPress can undo that without WordPress knowing, so the check asks one of your posts from outside: first as an agent, then as a browser.', 'thatseoagent' ); ?></p>
+
+    <div class="mt-6 max-w-[44rem] rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4" x-cloak x-show="result" aria-live="polite">
+        <p class="flex items-center gap-2.5">
+            <span class="size-2.5 rounded-full" :class="result && 'works' === result.verdict ? 'bg-level-clear' : 'bg-rule-strong'" aria-hidden="true"></span>
+            <span class="text-[16px] font-semibold text-ink" x-text="result ? result.headline : ''"></span>
+        </p>
+        <p class="mt-1 text-ink-2" x-text="result ? result.detail : ''"></p>
+        <dl class="mt-3 divide-y divide-rule border-y border-rule text-[13px]" x-show="result && result.url">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 py-2">
+                <dt class="text-ink-2"><?php esc_html_e( 'An agent asking for Markdown got', 'thatseoagent' ); ?></dt>
+                <dd class="font-mono text-ink" x-text="result ? describe( result.agent ) : ''"></dd>
+            </div>
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 py-2">
+                <dt class="text-ink-2"><?php esc_html_e( 'A browser got', 'thatseoagent' ); ?></dt>
+                <dd class="font-mono text-ink" x-text="result ? describe( result.browser ) : ''"></dd>
+            </div>
+        </dl>
+        <p class="mt-2 truncate font-mono text-[12px] text-ink-3" x-text="result ? result.url : ''"></p>
+        <p class="mt-3 font-semibold text-ink" x-show="result && result.advice" x-text="result ? result.advice : ''"></p>
+    </div>
+
+    <?php if ( $htaccess['applies'] || $htaccess['present'] ) : ?>
+        <div class="mt-6 max-w-[44rem] rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4">
+            <h3 class="text-[15px] font-bold text-ink"><?php esc_html_e( 'Rule for page caches in .htaccess', 'thatseoagent' ); ?></h3>
+            <p class="mt-1 text-ink-2" x-text="htaccessText()"></p>
+            <pre class="mt-3 overflow-auto rounded-[4px] border border-rule bg-paper px-4 py-3 font-mono text-[12.5px] text-ink" x-text="htaccess.lines"><?php echo esc_html( $htaccess['lines'] ); ?></pre>
+            <div class="mt-3 flex flex-wrap gap-2" x-cloak x-show.important="htaccess.applies">
+                <button type="button" class="tsa-press" @click="install()" :disabled="busy" x-text="htaccess.present ? <?php echo esc_attr( wp_json_encode( __( 'Write it again at the top', 'thatseoagent' ) ) ); ?> : <?php echo esc_attr( wp_json_encode( __( 'Add the rule to .htaccess', 'thatseoagent' ) ) ); ?>"></button>
+                <button type="button" class="tsa-rule-button" x-show.important="htaccess.present" @click="remove()" :disabled="busy"><?php esc_html_e( 'Remove the rule', 'thatseoagent' ); ?></button>
+            </div>
+        </div>
+    <?php endif; ?>
+</section>
 </div>

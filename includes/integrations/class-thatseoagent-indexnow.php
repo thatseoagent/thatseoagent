@@ -279,7 +279,23 @@ class ThatSeoAgent_IndexNow {
 			return new \WP_Error( 'indexnow_no_key', __( 'IndexNow API key not configured.', 'thatseoagent' ) );
 		}
 
-		$host         = wp_parse_url( home_url(), PHP_URL_HOST );
+		// Checked here, when the queued submission runs, not when it was
+		// queued: the editor saves the SEO fields after save_post has fired.
+		// Asking a search engine to crawl a page that says noindex only
+		// spends its crawl on nothing.
+		$urls = array_filter(
+			$urls,
+			function ( $url ) {
+				$post_id = url_to_postid( $url );
+				return ! $post_id || ! ThatSeoAgent_Indexing::is_post_noindex( $post_id );
+			}
+		);
+
+		if ( ! $urls ) {
+			return true;
+		}
+
+		$host        = wp_parse_url( home_url(), PHP_URL_HOST );
 		$key_location = self::get_key_location( $key );
 
 		$data = array(

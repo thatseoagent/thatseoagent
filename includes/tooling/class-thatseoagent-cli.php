@@ -175,12 +175,13 @@ class ThatSeoAgent_CLI {
 	}
 
 	/**
-	 * Import titles, descriptions and site identity from another SEO plugin.
+	 * Import titles, descriptions, noindex and site identity from another SEO plugin.
 	 *
 	 * Reads the other plugin's data without changing it. Template variables
 	 * (%%title%%, %sitename%, #post_title, …) are resolved against each post;
 	 * a value with a variable that cannot be resolved is skipped, and so is a
-	 * title that equals what ThatSeoAgent outputs anyway.
+	 * title that equals what ThatSeoAgent outputs anyway. A post the other
+	 * plugin keeps out of search is kept out here too.
 	 *
 	 * ## OPTIONS
 	 *

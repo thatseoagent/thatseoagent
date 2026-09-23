@@ -2,8 +2,8 @@
 /**
  * Import SEO data from another SEO plugin.
  *
- * Reads what Yoast SEO, Rank Math or All in One SEO stored — per-post titles
- * and descriptions, and the site's identity — and writes it into ThatSeoAgent's
+ * Reads what Yoast SEO, Rank Math or All in One SEO stored — per-post titles,
+ * descriptions and noindex, and the site's identity — and writes it into ThatSeoAgent's
  * own fields. Read-only towards the source: nothing of the other plugin's data
  * is changed or deleted, so switching back loses nothing.
  *
@@ -31,7 +31,8 @@ class ThatSeoAgent_Importer {
      * Supported sources and where they keep per-post fields.
      *
      * @since 1.16.0
-     * @return array<string, array{label: string, title: string, description: string}>
+     * @since 2.2.0 The noindex meta key.
+     * @return array<string, array{label: string, title: string, description: string, noindex: string}>
      */
     public static function sources() {
         return array(
@@ -39,16 +40,20 @@ class ThatSeoAgent_Importer {
                 'label'       => 'Yoast SEO',
                 'title'       => '_yoast_wpseo_title',
                 'description' => '_yoast_wpseo_metadesc',
+                'noindex'     => '_yoast_wpseo_meta-robots-noindex',
             ),
             'rankmath' => array(
                 'label'       => 'Rank Math',
                 'title'       => 'rank_math_title',
                 'description' => 'rank_math_description',
+                'noindex'     => 'rank_math_robots',
             ),
             'aioseo'   => array(
                 'label'       => 'All in One SEO',
                 'title'       => '_aioseo_title',
                 'description' => '_aioseo_description',
+                // AIOSEO 4 keeps robots in its own table only.
+                'noindex'     => '',
             ),
         );
     }
@@ -70,17 +75,17 @@ class ThatSeoAgent_Importer {
         $fields = self::sources()[ $source ];
         $types  = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
 
-        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         // A one-off migration run from WP-CLI; the placeholders for the post
-        // type list are built above, one per type.
+        // type list are built above, one per type, and passed in one array.
         $ids = $wpdb->get_col(
             $wpdb->prepare(
                 "SELECT DISTINCT p.ID FROM {$wpdb->posts} p
                  INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID
-                 WHERE pm.meta_key IN (%s, %s) AND pm.meta_value <> ''
+                 WHERE pm.meta_key IN (%s, %s, %s) AND pm.meta_value <> ''
                    AND p.post_type IN ($types)
                    AND p.post_status NOT IN ('auto-draft', 'trash', 'inherit')",
-                array_merge( array( $fields['title'], $fields['description'] ), $post_types )
+                array_merge( array( $fields['title'], $fields['description'], $fields['noindex'] ), $post_types )
             )
         );
 
@@ -92,7 +97,7 @@ class ThatSeoAgent_Importer {
                     $wpdb->prepare(
                         "SELECT DISTINCT p.ID FROM {$wpdb->posts} p
                          INNER JOIN {$table} a ON a.post_id = p.ID
-                         WHERE ( a.title <> '' OR a.description <> '' )
+                         WHERE ( a.title <> '' OR a.description <> '' OR ( a.robots_default = 0 AND a.robots_noindex = 1 ) )
                            AND p.post_type IN ($types)
                            AND p.post_status NOT IN ('auto-draft', 'trash', 'inherit')",
                         $post_types
@@ -163,6 +168,17 @@ class ThatSeoAgent_Importer {
             $results[ $field ] = array( 'status' => 'imported', 'value' => $resolved );
         }
 
+        // A setting, not a template: only a post the other plugin keeps out
+        // of search is imported, and never one ThatSeoAgent lets in again.
+        if ( ! $raw['noindex'] ) {
+            $results['noindex'] = array( 'status' => 'empty', 'value' => '' );
+        } elseif ( '1' === ThatSeoAgent_Post_Seo::get( $post, 'noindex' ) ) {
+            $results['noindex'] = array( 'status' => 'exists', 'value' => 'noindex' );
+        } else {
+            $values['noindex']  = '1';
+            $results['noindex'] = array( 'status' => 'imported', 'value' => 'noindex' );
+        }
+
         if ( $values && ! $dry_run ) {
             ThatSeoAgent_Post_Seo::save( $post, $values );
         }
@@ -171,19 +187,29 @@ class ThatSeoAgent_Importer {
     }
 
     /**
-     * The stored title and description templates of a post.
+     * The stored title and description templates of a post, and whether
+     * the other plugin keeps it out of search.
      *
      * @since 1.16.0
+     * @since 2.2.0 noindex.
      * @param string  $source Source key.
      * @param WP_Post $post   Post.
-     * @return array{title: string, description: string}
+     * @return array{title: string, description: string, noindex: bool}
      */
     private static function raw_values( $source, WP_Post $post ) {
         $fields = self::sources()[ $source ];
         $values = array(
             'title'       => (string) get_post_meta( $post->ID, $fields['title'], true ),
             'description' => (string) get_post_meta( $post->ID, $fields['description'], true ),
+            'noindex'     => false,
         );
+
+        if ( 'yoast' === $source ) {
+            // '1' noindex, '2' index, '0' or absent: the post type's default.
+            $values['noindex'] = '1' === (string) get_post_meta( $post->ID, $fields['noindex'], true );
+        } elseif ( 'rankmath' === $source ) {
+            $values['noindex'] = in_array( 'noindex', (array) get_post_meta( $post->ID, $fields['noindex'], true ), true );
+        }
 
         if ( 'aioseo' === $source && self::aioseo_table() ) {
             global $wpdb;
@@ -191,7 +217,7 @@ class ThatSeoAgent_Importer {
 
             // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $row = $wpdb->get_row(
-                $wpdb->prepare( "SELECT title, description FROM {$table} WHERE post_id = %d", $post->ID ),
+                $wpdb->prepare( "SELECT title, description, robots_default, robots_noindex FROM {$table} WHERE post_id = %d", $post->ID ),
                 ARRAY_A
             );
             // phpcs:enable
@@ -202,6 +228,10 @@ class ThatSeoAgent_Importer {
                         $values[ $field ] = (string) $row[ $field ];
                     }
                 }
+
+                // The post's own robots only count once it stops following
+                // the defaults.
+                $values['noindex'] = empty( $row['robots_default'] ) && ! empty( $row['robots_noindex'] );
             }
         }
 

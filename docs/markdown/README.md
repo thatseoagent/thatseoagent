@@ -1,6 +1,6 @@
 # Markdown for AI Agents
 
-ThatSeoAgent serves every published post and page as Markdown at its URL plus `.md`.
+ThatSeoAgent serves every published post and page as Markdown at its URL plus `.md`, and at its own URL to any client that asks for Markdown in `Accept`.
 
 ## What It Does
 
@@ -55,6 +55,80 @@ The content comes from `ThatSeoAgent_Content::html()` and the description from `
 Errors are plain text: `404` when the path matches no enabled post, `403` when the visitor may not read it.
 
 The posts page (`page_for_posts`) has no content of its own and returns `404`. Plain permalinks (`?p=123`) have no rewrite rules, so `.md` URLs need pretty permalinks.
+
+## Announcing it
+
+The HTML page of every post with a Markdown version says so twice, once for clients that parse HTML and once for those that read only headers:
+
+```html
+<link rel="alternate" type="text/markdown" href="https://example.com/my-post.md">
+```
+
+```
+Link: <https://example.com/my-post.md>; rel="alternate"; type="text/markdown"
+```
+
+Both follow the `thatseoagent_markdown_alternate_link` filter: return false and neither is printed.
+
+## Content negotiation
+
+An agent that only knows the page's URL can ask for Markdown the HTTP way:
+
+```
+GET /my-post
+Accept: text/markdown
+
+HTTP/1.1 200 OK
+Content-Type: text/markdown; charset=utf-8
+Vary: Accept
+Cache-Control: private, no-cache
+Content-Location: https://example.com/my-post.md
+Link: <https://example.com/my-post>; rel="canonical"
+```
+
+The body is the same Markdown the `.md` URL serves, from the same cache, and `If-Modified-Since` is answered with `304` too.
+
+- **Who gets Markdown.** A client whose `Accept` lists `text/markdown` (or `text/x-markdown`) with a weight at least that of `text/html`. Browsers never list it, and a wildcard (`*/*`) alone never selects it, so people and generic clients keep getting the HTML.
+- **`Vary: Accept`** goes on both responses of every post with a Markdown version, so a cache that honors it keeps the two apart.
+- **Page caches** usually key on the URL alone and ignore `Vary`. The Markdown response defines `DONOTCACHEPAGE`, which WP Super Cache, W3 Total Cache, WP Rocket and most others honor, and sends `Cache-Control: private` so no shared cache stores it. A cache that answers before WordPress runs still serves its stored HTML to an agent asking for Markdown — see below.
+- **No `noindex`.** Unlike the `.md` URL, this is the page's own URL, which search engines index as HTML; `Content-Location` names the `.md` URL of this representation.
+- It runs on `template_redirect` after `redirect_canonical()`, so a non-canonical URL is redirected first. Password-protected posts are never negotiated.
+
+### Caches that answer before WordPress
+
+Whatever answers before WordPress — a page cache plugin serving from `.htaccess`, a CDN, a server cache — never lets the negotiation run. Two tools under **ThatSeoAgent → AI index → Markdown for agents**:
+
+**Check now** asks one of your posts from outside, first with `Accept: text/markdown` and then as a browser, and reports what each got (`POST /thatseoagent/v1/markdown/check`). The order matters: a cache that stored the agent's answer would hand it to the browser next. When the check fails, the response headers usually say which layer answered (Cloudflare, LiteSpeed, Varnish, an Nginx cache, a page cache plugin's signature), and the check says what to change there. It only runs when clicked.
+
+**The .htaccess rule**, on Apache, is written when you click **Add the rule to .htaccess**, never on its own:
+
+```apache
+# BEGIN ThatSeoAgent Markdown
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTP:Accept} text/(x-)?markdown [NC]
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteRule ^$ /index.php [END]
+RewriteCond %{HTTP:Accept} text/(x-)?markdown [NC]
+RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ /index.php [END]
+</IfModule>
+# END ThatSeoAgent Markdown
+```
+
+It sends every request asking for Markdown straight to WordPress, and `[END]` stops any later rule from rewriting it to a cached file. It does not rewrite to the `.md` URL, so a URL with no Markdown version still gets its HTML. Browsers, which never ask for Markdown, keep getting the cached pages. It needs Apache 2.4.
+
+Rewrite rules run top to bottom, so the block goes at the very top of the file, above the page cache plugin's. A cache plugin that later writes its own block above it (WP Rocket does, whenever its settings are saved) is reported on the screen: **Write it again at the top** moves the block back. Without a page cache the rule changes nothing. Deleting the plugin removes the block.
+
+Cloudflare does not cache HTML unless a rule tells it to ("Cache Everything"). If one does, add a Cache Rule that bypasses the cache for requests whose `Accept` header contains `text/markdown`, then run the check again to confirm it took.
+
+Turn negotiation off, keeping the `.md` URLs:
+
+```php
+add_filter( 'thatseoagent_markdown_negotiation', '__return_false' );
+```
 
 ## Search Engines
 

@@ -212,8 +212,17 @@ class ThatSeoAgent_Meta {
 
     /**
      * Output canonical URL
+     *
+     * @since 2.2.0 None on a page kept out of search indexes: a canonical
+     *              asks for the URL to be indexed, the noindex asks the
+     *              opposite, and search engines resolve the contradiction
+     *              their own way.
      */
     public static function output_canonical() {
+        if (ThatSeoAgent_Indexing::is_noindex()) {
+            return;
+        }
+
         $canonical = self::get_canonical();
         if ($canonical) {
             echo '<link rel="canonical" href="' . esc_url($canonical) . '">' . "\n";
@@ -368,23 +377,47 @@ class ThatSeoAgent_Meta {
     }
 
     /**
-     * Get current URL
+     * The URL og:url states: the canonical, else the requested URL.
+     *
+     * @since 2.2.0 The canonical first: the requested URL carried whatever
+     *              query string the visitor arrived with.
+     * @return string
      */
     public static function get_url() {
-        if (is_singular()) {
-            return get_permalink();
-        }
-        return home_url(add_query_arg(array()));
+        $canonical = self::get_canonical();
+
+        return $canonical ? $canonical : home_url(add_query_arg(array()));
     }
 
     /**
      * Get canonical URL
+     *
+     * The URL of the page being viewed, pagination included: page 2 of a
+     * listing, or of a post split with <!--nextpage-->, is its own canonical.
+     *
+     * @since 2.2.0 Pagination, and date archives.
+     * @return string|null
      */
     public static function get_canonical() {
         if (is_singular()) {
-            return get_permalink();
+            // Core's own answer: the permalink, plus the <!--nextpage--> page
+            // and the comment page, through the get_canonical_url filter.
+            $canonical = wp_get_canonical_url();
+            return $canonical ? $canonical : get_permalink();
         }
-        
+
+        $base = self::get_canonical_base();
+
+        return $base ? ThatSeoAgent_Pagination::listing_url($base, ThatSeoAgent_Pagination::current()) : null;
+    }
+
+    /**
+     * The canonical URL of the first page of the current listing.
+     *
+     * @since 2.2.0 Split from get_canonical().
+     * @return string|null Null on a view with no canonical of its own.
+     */
+    public static function get_canonical_base() {
         if (is_front_page()) {
             return home_url('/');
         }
@@ -407,13 +440,25 @@ class ThatSeoAgent_Meta {
             $link = get_term_link(get_queried_object());
             return is_wp_error($link) ? null : $link;
         }
-        
+
         if (is_search()) {
             return get_search_link();
         }
 
         if (is_author()) {
             return get_author_posts_url(get_queried_object_id());
+        }
+
+        if (is_day()) {
+            return get_day_link(get_query_var('year'), get_query_var('monthnum'), get_query_var('day'));
+        }
+
+        if (is_month()) {
+            return get_month_link(get_query_var('year'), get_query_var('monthnum'));
+        }
+
+        if (is_year()) {
+            return get_year_link(get_query_var('year'));
         }
 
         return null;
