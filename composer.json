@@ -1,8 +1,14 @@
 {
-    "name": "sarai-chinwag/lean-seo",
+    "name": "angelcruz/thatseoagent",
     "description": "Lightweight SEO without the bloat.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Angel Cruz",
+            "email": "angel.cruz@wallbit.io"
+        }
+    ],
     "require": {
         "php": ">=7.4",
         "league/html-to-markdown": "^5.1.2"
@@ -18,9 +24,9 @@
     "extra": {
         "strauss": {
             "target_directory": "vendor-prefixed",
-            "namespace_prefix": "Lean_SEO\\Dependencies\\",
-            "classmap_prefix": "Lean_SEO_Dependencies_",
-            "constant_prefix": "LEAN_SEO_DEPENDENCIES_",
+            "namespace_prefix": "ThatSeoAgent\\Dependencies\\",
+            "classmap_prefix": "ThatSeoAgent_Dependencies_",
+            "constant_prefix": "THATSEOAGENT_DEPENDENCIES_",
             "delete_vendor_packages": true,
             "exclude_from_copy": {
                 "file_patterns": [

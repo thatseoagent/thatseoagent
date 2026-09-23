@@ -1,10 +1,10 @@
 # Meta Tags
 
-Lean SEO automatically generates essential meta tags for SEO, social media sharing, and search engine crawling.
+ThatSeoAgent automatically generates essential meta tags for SEO, social media sharing, and search engine crawling.
 
 ## What It Does
 
-The `Lean_SEO_Meta` class handles output of:
+The `ThatSeoAgent_Meta` class handles output of:
 
 - HTML meta description
 - Open Graph tags (og:title, og:description, og:image, og:url, og:type, og:site_name)
@@ -13,7 +13,7 @@ The `Lean_SEO_Meta` class handles output of:
 
 ## Code Structure
 
-The meta tags are generated in `includes/head/class-lean-seo-meta.php`:
+The meta tags are generated in `includes/head/class-thatseoagent-meta.php`:
 
 - `output()` - Main method that echoes all meta tags
 - `get_description()` - Generates meta description from custom fields, excerpt, or content
@@ -25,10 +25,10 @@ The meta tags are generated in `includes/head/class-lean-seo-meta.php`:
 
 ### Custom Descriptions
 
-You can provide custom descriptions for specific pages using the `lean_seo_custom_description` filter:
+You can provide custom descriptions for specific pages using the `thatseoagent_custom_description` filter:
 
 ```php
-add_filter('lean_seo_custom_description', function($description) {
+add_filter('thatseoagent_custom_description', function($description) {
     if (is_page('contact')) {
         return 'Get in touch with us for custom web development services';
     }
@@ -41,7 +41,7 @@ add_filter('lean_seo_custom_description', function($description) {
 Set a default Open Graph image when no post thumbnail is available:
 
 ```php
-add_filter('lean_seo_default_image', function($url) {
+add_filter('thatseoagent_default_image', function($url) {
     return 'https://example.com/images/default-og-image.jpg';
 });
 ```

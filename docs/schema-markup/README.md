@@ -1,10 +1,10 @@
 # Schema Markup
 
-Lean SEO automatically generates JSON-LD structured data to help search engines better understand your content and potentially display rich snippets.
+ThatSeoAgent automatically generates JSON-LD structured data to help search engines better understand your content and potentially display rich snippets.
 
 ## What It Does
 
-The `Lean_SEO_Schema` class outputs Schema.org JSON-LD markup including:
+The `ThatSeoAgent_Schema` class outputs Schema.org JSON-LD markup including:
 
 - **WebSite**: Site-wide information with search action
 - **Organization**: Publisher information with logo
@@ -14,7 +14,7 @@ The `Lean_SEO_Schema` class outputs Schema.org JSON-LD markup including:
 
 ## Code Structure
 
-Located in `includes/head/class-lean-seo-schema.php`:
+Located in `includes/head/class-thatseoagent-schema.php`:
 
 - `output()` - Main method that combines and outputs all schema types
 - `get_website_schema()` - Creates WebSite schema with search functionality
@@ -41,7 +41,7 @@ add_action('wp_head', function() {
         );
         echo '<script type="application/ld+json">' . wp_json_encode($schema) . '</script>';
     }
-}, 3); // After Lean SEO's schema (priority 2)
+}, 3); // After ThatSeoAgent's schema (priority 2)
 ```
 
 ### Organization Details

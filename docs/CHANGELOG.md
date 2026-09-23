@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.0.0] - 2026-09-23
+
+Lean SEO is now **ThatSeoAgent**, by Angel Cruz. Credits to the original
+Lean SEO, by Sarai Chinwag for Extra Chill, are in the README and LICENSE.
+
+### Changed
+- **Every name**: the plugin folder and file (`thatseoagent/thatseoagent.php`),
+  the text domain (`thatseoagent`), classes (`ThatSeoAgent_*`), constants
+  (`THATSEOAGENT_*`), actions and filters (`thatseoagent_*`), options and
+  post meta (`thatseoagent_*`, `_thatseoagent_title`,
+  `_thatseoagent_description`), the admin page (`admin.php?page=thatseoagent`),
+  the REST namespace (`thatseoagent/v1`), the WP-CLI command
+  (`wp thatseoagent`) and the abilities (`thatseoagent/*`).
+- **No migration**: settings, SEO fields and caches stored by Lean SEO are
+  not read. See `docs/adr/0002`.
+- The original Lean SEO counts as another SEO plugin: with it active,
+  ThatSeoAgent steps aside instead of printing every tag twice.
+- A `LICENSE` file carries the GPL text, the original copyright and the
+  bundled components' licenses.
+
+### Removed
+- The redirects from the pre-1.17.0 admin URLs.
+- The fallback to the `sarai_chinwag_indexnow_key` theme option.
+
+## Before 2.0.0: Lean SEO
+
+The entries below are the history of Lean SEO, under its own names.
+
 ## [1.20.0] - 2026-09-23
 
 Internal reorganization. Every page, admin view, sitemap, llms.txt, Markdown

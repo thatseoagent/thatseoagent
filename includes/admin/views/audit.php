@@ -2,12 +2,12 @@
 /**
  * Content check.
  *
- * The check runs in batches over the REST API (lean-seo/v1/audit/runs),
- * driven by the lsAudit component: a few pages per request, so it finishes on
+ * The check runs in batches over the REST API (thatseoagent/v1/audit/runs),
+ * driven by the tsaAudit component: a few pages per request, so it finishes on
  * any hosting. The last finished check of each content type is kept and shown
  * on arrival.
  *
- * @package Lean_SEO
+ * @package ThatSeoAgent
  * @since 1.17.0
  * @since 1.18.0 Runs the check.
  */
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $post_types = array();
-foreach ( Lean_SEO_Post_Seo::post_types() as $post_type ) {
+foreach ( ThatSeoAgent_Post_Seo::post_types() as $post_type ) {
     $object = get_post_type_object( $post_type );
     if ( $object ) {
         $post_types[ $post_type ] = array(
@@ -30,41 +30,41 @@ foreach ( Lean_SEO_Post_Seo::post_types() as $post_type ) {
 $initial_type = isset( $post_types['post'] ) && $post_types['post']['count'] ? 'post' : (string) key( $post_types );
 $initial      = array(
     'postType' => $initial_type,
-    'last'     => '' !== $initial_type ? Lean_SEO_Audit_Run::last( $initial_type ) : null,
+    'last'     => '' !== $initial_type ? ThatSeoAgent_Audit_Run::last( $initial_type ) : null,
 );
 
 $checks = array(
-    array( __( 'Title length', 'lean-seo' ), __( 'Under 30 characters says too little; over 60 gets cut off in search results.', 'lean-seo' ) ),
-    array( __( 'Description length', 'lean-seo' ), __( 'Under 100 characters says too little; over 160 gets cut off.', 'lean-seo' ) ),
-    array( __( 'Amount of text', 'lean-seo' ), __( 'Pages under 300 words give search engines little to go on.', 'lean-seo' ) ),
-    array( __( 'Headings', 'lean-seo' ), __( 'Long pages without subheadings are hard to scan, for people and for search engines.', 'lean-seo' ) ),
-    array( __( 'Links to other pages', 'lean-seo' ), __( 'Pages that link nowhere else on the site are dead ends.', 'lean-seo' ) ),
-    array( __( 'Image descriptions', 'lean-seo' ), __( 'Images need alt text, except decorative ones, which are marked empty on purpose.', 'lean-seo' ) ),
-    array( __( 'Product details', 'lean-seo' ), __( 'For products: what their product description to search engines is missing.', 'lean-seo' ) ),
+    array( __( 'Title length', 'thatseoagent' ), __( 'Under 30 characters says too little; over 60 gets cut off in search results.', 'thatseoagent' ) ),
+    array( __( 'Description length', 'thatseoagent' ), __( 'Under 100 characters says too little; over 160 gets cut off.', 'thatseoagent' ) ),
+    array( __( 'Amount of text', 'thatseoagent' ), __( 'Pages under 300 words give search engines little to go on.', 'thatseoagent' ) ),
+    array( __( 'Headings', 'thatseoagent' ), __( 'Long pages without subheadings are hard to scan, for people and for search engines.', 'thatseoagent' ) ),
+    array( __( 'Links to other pages', 'thatseoagent' ), __( 'Pages that link nowhere else on the site are dead ends.', 'thatseoagent' ) ),
+    array( __( 'Image descriptions', 'thatseoagent' ), __( 'Images need alt text, except decorative ones, which are marked empty on purpose.', 'thatseoagent' ) ),
+    array( __( 'Product details', 'thatseoagent' ), __( 'For products: what their product description to search engines is missing.', 'thatseoagent' ) ),
 );
 
 $cells = 24;
 ?>
 
-<div x-data="lsAudit(<?php echo esc_attr( wp_json_encode( $initial ) ); ?>)">
+<div x-data="tsaAudit(<?php echo esc_attr( wp_json_encode( $initial ) ); ?>)">
 
     <noscript>
-        <p class="mb-6 rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4 text-ink-2"><?php esc_html_e( 'The content check needs JavaScript in the browser.', 'lean-seo' ); ?></p>
+        <p class="mb-6 rounded-(--radius-sheet) border border-rule bg-sheet px-5 py-4 text-ink-2"><?php esc_html_e( 'The content check needs JavaScript in the browser.', 'thatseoagent' ); ?></p>
     </noscript>
 
-    <section class="rounded-(--radius-sheet) border border-rule bg-sheet" aria-labelledby="lean-seo-run">
+    <section class="rounded-(--radius-sheet) border border-rule bg-sheet" aria-labelledby="thatseoagent-run">
         <div class="grid gap-6 px-6 py-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:px-7">
             <div>
-                <h2 id="lean-seo-run" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Check the content', 'lean-seo' ); ?></h2>
-                <p class="mt-1 max-w-[36rem] text-ink-2"><?php esc_html_e( 'Reads a few pages at a time, so it finishes on any hosting. Nothing is changed; you get a list of pages to improve, worst first.', 'lean-seo' ); ?></p>
+                <h2 id="thatseoagent-run" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Check the content', 'thatseoagent' ); ?></h2>
+                <p class="mt-1 max-w-[36rem] text-ink-2"><?php esc_html_e( 'Reads a few pages at a time, so it finishes on any hosting. Nothing is changed; you get a list of pages to improve, worst first.', 'thatseoagent' ); ?></p>
 
-                <label for="lean-seo-audit-type" class="mt-5 block text-[13px] font-semibold text-ink"><?php esc_html_e( 'What to check', 'lean-seo' ); ?></label>
-                <select id="lean-seo-audit-type" class="mt-1.5" x-model="postType" @change="switchType()" :disabled="'running' === status">
+                <label for="thatseoagent-audit-type" class="mt-5 block text-[13px] font-semibold text-ink"><?php esc_html_e( 'What to check', 'thatseoagent' ); ?></label>
+                <select id="thatseoagent-audit-type" class="mt-1.5" x-model="postType" @change="switchType()" :disabled="'running' === status">
                     <?php foreach ( $post_types as $name => $type ) : ?>
                         <option value="<?php echo esc_attr( $name ); ?>" <?php selected( $initial_type, $name ); ?>>
                             <?php
                             /* translators: 1: post type label, 2: number of published items. */
-                            echo esc_html( sprintf( __( '%1$s (%2$d)', 'lean-seo' ), $type['label'], $type['count'] ) );
+                            echo esc_html( sprintf( __( '%1$s (%2$d)', 'thatseoagent' ), $type['label'], $type['count'] ) );
                             ?>
                         </option>
                     <?php endforeach; ?>
@@ -72,12 +72,12 @@ $cells = 24;
             </div>
 
             <div class="flex gap-2 md:justify-end">
-                <button type="button" class="ls-press" x-show.important="'running' !== status" @click="start()" :disabled="loading">
-                    <?php Lean_SEO_Icons::the( 'refresh', 'size-4' ); ?>
-                    <span x-text="rows.length ? <?php echo esc_attr( wp_json_encode( __( 'Check again', 'lean-seo' ) ) ); ?> : <?php echo esc_attr( wp_json_encode( __( 'Start the check', 'lean-seo' ) ) ); ?>"><?php esc_html_e( 'Start the check', 'lean-seo' ); ?></span>
+                <button type="button" class="tsa-press" x-show.important="'running' !== status" @click="start()" :disabled="loading">
+                    <?php ThatSeoAgent_Icons::the( 'refresh', 'size-4' ); ?>
+                    <span x-text="rows.length ? <?php echo esc_attr( wp_json_encode( __( 'Check again', 'thatseoagent' ) ) ); ?> : <?php echo esc_attr( wp_json_encode( __( 'Start the check', 'thatseoagent' ) ) ); ?>"><?php esc_html_e( 'Start the check', 'thatseoagent' ); ?></span>
                 </button>
-                <button type="button" class="ls-rule-button" x-cloak x-show.important="'running' === status" @click="stop()">
-                    <?php esc_html_e( 'Stop', 'lean-seo' ); ?>
+                <button type="button" class="tsa-rule-button" x-cloak x-show.important="'running' === status" @click="stop()">
+                    <?php esc_html_e( 'Stop', 'thatseoagent' ); ?>
                 </button>
             </div>
         </div>
@@ -85,12 +85,12 @@ $cells = 24;
         <div class="border-t border-rule px-6 py-4 md:px-7">
             <div class="flex flex-wrap items-center justify-between gap-2 text-[13px]" role="status" aria-live="polite">
                 <span class="text-ink-2">
-                    <span x-show="'idle' === status"><?php esc_html_e( 'Not checked yet', 'lean-seo' ); ?></span>
-                    <span x-cloak x-show="'running' === status"><?php esc_html_e( 'Checking…', 'lean-seo' ); ?></span>
+                    <span x-show="'idle' === status"><?php esc_html_e( 'Not checked yet', 'thatseoagent' ); ?></span>
+                    <span x-cloak x-show="'running' === status"><?php esc_html_e( 'Checking…', 'thatseoagent' ); ?></span>
                     <span x-cloak x-show="'done' === status && finished">
-                        <?php esc_html_e( 'Last checked', 'lean-seo' ); ?> <span class="font-semibold text-ink" x-text="finishedText"></span>
+                        <?php esc_html_e( 'Last checked', 'thatseoagent' ); ?> <span class="font-semibold text-ink" x-text="finishedText"></span>
                     </span>
-                    <span x-cloak x-show="'done' === status && ! finished"><?php esc_html_e( 'Stopped before the end.', 'lean-seo' ); ?></span>
+                    <span x-cloak x-show="'done' === status && ! finished"><?php esc_html_e( 'Stopped before the end.', 'thatseoagent' ); ?></span>
                     <span x-cloak x-show="'error' === status" class="font-semibold text-level-red" x-text="error"></span>
                 </span>
                 <span class="text-ink-3 tabular-nums"><span x-text="checked">0</span> / <span x-text="total">0</span></span>
@@ -105,37 +105,37 @@ $cells = 24;
 
     <dl class="mt-8 grid grid-cols-3 divide-x divide-rule border-y border-rule" x-cloak x-show.important="rows.length">
         <div class="px-4 py-4 first:pl-0">
-            <dt class="text-[13px] text-ink-2"><?php esc_html_e( 'Pages checked', 'lean-seo' ); ?></dt>
+            <dt class="text-[13px] text-ink-2"><?php esc_html_e( 'Pages checked', 'thatseoagent' ); ?></dt>
             <dd class="mt-1 text-[22px] leading-none font-bold text-ink tabular-nums" x-text="rows.length"></dd>
         </div>
         <div class="px-4 py-4">
-            <dt class="text-[13px] text-ink-2"><?php esc_html_e( 'With something to improve', 'lean-seo' ); ?></dt>
+            <dt class="text-[13px] text-ink-2"><?php esc_html_e( 'With something to improve', 'thatseoagent' ); ?></dt>
             <dd class="mt-1 text-[22px] leading-none font-bold text-ink tabular-nums" x-text="withIssues"></dd>
         </div>
         <div class="px-4 py-4">
-            <dt class="text-[13px] text-ink-2"><?php esc_html_e( 'Average score', 'lean-seo' ); ?></dt>
+            <dt class="text-[13px] text-ink-2"><?php esc_html_e( 'Average score', 'thatseoagent' ); ?></dt>
             <dd class="mt-1 text-[22px] leading-none font-bold text-ink tabular-nums"><span x-text="average"></span><span class="text-[14px] font-medium text-ink-3"> / 100</span></dd>
         </div>
     </dl>
 
     <div class="mt-12 grid gap-x-12 gap-y-12 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <section aria-labelledby="lean-seo-results" class="min-w-0">
+        <section aria-labelledby="thatseoagent-results" class="min-w-0">
             <div class="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule-strong pb-2.5">
-                <h2 id="lean-seo-results" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Pages to improve', 'lean-seo' ); ?></h2>
-                <div class="flex rounded-[4px] border border-rule bg-paper p-0.5 text-[13px]" role="group" aria-label="<?php esc_attr_e( 'Show', 'lean-seo' ); ?>" x-cloak x-show.important="rows.length">
-                    <button type="button" class="rounded-[2px] px-2.5 py-1 font-medium" :class="'issues' === filter ? { 'bg-sheet': true, 'text-ink': true, 'font-semibold': true, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'font-semibold': false, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': false, 'text-ink-3': true, 'hover:text-ink': true }" :aria-pressed="'issues' === filter ? 'true' : 'false'" @click="filter = 'issues'"><?php esc_html_e( 'To improve', 'lean-seo' ); ?></button>
-                    <button type="button" class="rounded-[2px] px-2.5 py-1 font-medium" :class="'all' === filter ? { 'bg-sheet': true, 'text-ink': true, 'font-semibold': true, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'font-semibold': false, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': false, 'text-ink-3': true, 'hover:text-ink': true }" :aria-pressed="'all' === filter ? 'true' : 'false'" @click="filter = 'all'"><?php esc_html_e( 'All pages', 'lean-seo' ); ?></button>
+                <h2 id="thatseoagent-results" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Pages to improve', 'thatseoagent' ); ?></h2>
+                <div class="flex rounded-[4px] border border-rule bg-paper p-0.5 text-[13px]" role="group" aria-label="<?php esc_attr_e( 'Show', 'thatseoagent' ); ?>" x-cloak x-show.important="rows.length">
+                    <button type="button" class="rounded-[2px] px-2.5 py-1 font-medium" :class="'issues' === filter ? { 'bg-sheet': true, 'text-ink': true, 'font-semibold': true, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'font-semibold': false, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': false, 'text-ink-3': true, 'hover:text-ink': true }" :aria-pressed="'issues' === filter ? 'true' : 'false'" @click="filter = 'issues'"><?php esc_html_e( 'To improve', 'thatseoagent' ); ?></button>
+                    <button type="button" class="rounded-[2px] px-2.5 py-1 font-medium" :class="'all' === filter ? { 'bg-sheet': true, 'text-ink': true, 'font-semibold': true, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'font-semibold': false, 'shadow-[0_1px_3px_rgb(17_29_39/0.18)]': false, 'text-ink-3': true, 'hover:text-ink': true }" :aria-pressed="'all' === filter ? 'true' : 'false'" @click="filter = 'all'"><?php esc_html_e( 'All pages', 'thatseoagent' ); ?></button>
                 </div>
             </div>
 
             <div class="py-8" x-show="! rows.length && 'running' !== status">
-                <p class="text-[16px] font-semibold text-ink"><?php esc_html_e( 'The list appears here after the first check.', 'lean-seo' ); ?></p>
-                <p class="mt-1 max-w-[34rem] text-ink-2"><?php esc_html_e( 'Each page gets a score out of 100 and the reasons, with a link to edit it. AI assistants connected to the site can run the same check through the Abilities API.', 'lean-seo' ); ?></p>
+                <p class="text-[16px] font-semibold text-ink"><?php esc_html_e( 'The list appears here after the first check.', 'thatseoagent' ); ?></p>
+                <p class="mt-1 max-w-[34rem] text-ink-2"><?php esc_html_e( 'Each page gets a score out of 100 and the reasons, with a link to edit it. AI assistants connected to the site can run the same check through the Abilities API.', 'thatseoagent' ); ?></p>
             </div>
 
             <div class="py-8" x-cloak x-show="rows.length && ! visible.length && 'running' !== status">
-                <p class="text-[16px] font-semibold text-ink"><?php esc_html_e( 'Every page passed.', 'lean-seo' ); ?></p>
-                <p class="mt-1 text-ink-2"><?php esc_html_e( 'Nothing to improve in this content type.', 'lean-seo' ); ?></p>
+                <p class="text-[16px] font-semibold text-ink"><?php esc_html_e( 'Every page passed.', 'thatseoagent' ); ?></p>
+                <p class="mt-1 text-ink-2"><?php esc_html_e( 'Nothing to improve in this content type.', 'thatseoagent' ); ?></p>
             </div>
 
             <ol class="divide-y divide-rule" x-cloak x-show="visible.length">
@@ -146,27 +146,27 @@ $cells = 24;
                                 <span class="size-2.5 rounded-[1px] ring-1 ring-black/10" :class="scoreClass(row.score)" aria-hidden="true"></span>
                                 <span class="text-[17px] leading-none font-bold text-ink tabular-nums" x-text="row.score"></span>
                             </span>
-                            <span class="sr-only"><?php esc_html_e( 'out of 100', 'lean-seo' ); ?></span>
+                            <span class="sr-only"><?php esc_html_e( 'out of 100', 'thatseoagent' ); ?></span>
                         </div>
                         <div class="min-w-0">
                             <p class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
                                 <a :href="row.edit" class="font-semibold text-ink hover:text-met hover:underline" x-text="row.title"></a>
-                                <a :href="row.url" target="_blank" rel="noopener" class="text-[12px] text-ink-3 hover:text-met hover:underline"><?php esc_html_e( 'View page', 'lean-seo' ); ?><span class="sr-only"> <?php esc_html_e( '(opens in a new tab)', 'lean-seo' ); ?></span></a>
+                                <a :href="row.url" target="_blank" rel="noopener" class="text-[12px] text-ink-3 hover:text-met hover:underline"><?php esc_html_e( 'View page', 'thatseoagent' ); ?><span class="sr-only"> <?php esc_html_e( '(opens in a new tab)', 'thatseoagent' ); ?></span></a>
                             </p>
                             <ul class="mt-1 space-y-0.5 text-[13px] text-ink-2" x-show="row.issues.length">
                                 <template x-for="( issue, index ) in row.issues" :key="index">
                                     <li x-text="issue.message"></li>
                                 </template>
                             </ul>
-                            <p class="mt-1 text-[13px] text-ink-3" x-show="! row.issues.length"><?php esc_html_e( 'Nothing to improve.', 'lean-seo' ); ?></p>
+                            <p class="mt-1 text-[13px] text-ink-3" x-show="! row.issues.length"><?php esc_html_e( 'Nothing to improve.', 'thatseoagent' ); ?></p>
                         </div>
                     </li>
                 </template>
             </ol>
         </section>
 
-        <section aria-labelledby="lean-seo-checks">
-            <h2 id="lean-seo-checks" class="border-b border-rule-strong pb-2.5 text-[17px] font-bold text-ink"><?php esc_html_e( 'What is checked', 'lean-seo' ); ?></h2>
+        <section aria-labelledby="thatseoagent-checks">
+            <h2 id="thatseoagent-checks" class="border-b border-rule-strong pb-2.5 text-[17px] font-bold text-ink"><?php esc_html_e( 'What is checked', 'thatseoagent' ); ?></h2>
             <dl class="divide-y divide-rule">
                 <?php foreach ( $checks as $check ) : ?>
                     <div class="py-3">

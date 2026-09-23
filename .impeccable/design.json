@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-09-23T02:07:48.904730+00:00",
-  "title": "Design System: Lean SEO admin",
+  "title": "Design System: ThatSeoAgent admin",
   "extensions": {
     "colorMeta": {
       "paper": {
@@ -243,7 +243,7 @@
       },
       {
         "name": "focus-ring-input",
-        "value": "0 0 0 3px color-mix(in oklab, var(--ls-met) 22%, transparent)",
+        "value": "0 0 0 3px color-mix(in oklab, var(--tsa-met) 22%, transparent)",
         "purpose": "Focused input."
       }
     ],
@@ -351,7 +351,7 @@
   ],
   "narrative": {
     "northStar": "The Weather Bulletin",
-    "overview": "The site gets a weather bulletin, not a dashboard. Each view opens with one plain condition sentence set on a flat, full-width field painted in its warning color, then the warnings in force, a row of observations, then the readings. The warning levels follow the European weather-warning scale (none, yellow, orange, red), which people read without knowing anything about SEO. Everything around the field is cool bulletin paper, ink and 1px rules, so the warning color is the only saturated thing on the screen and always means something.\n\nDensity is that of a printed service bulletin: sheets divided by hairline rules, not cards floating on a grey ground. Numbers are tabular. There is one filled control per surface, an ink \"press\" button, and every other action is ruled. Motion is a single event: one sweep of light across the observation row when the page loads, meaning \"these were just checked\".\n\nThe screen lives inside wp-admin and must not leak into it: no global reset, a reset scoped to `#lean-seo-app`, utilities marked important so unlayered wp-admin rules cannot override them. Two editions exist, Day (default) and Night (deep service blue, never neutral black), switched from the sidebar.",
+    "overview": "The site gets a weather bulletin, not a dashboard. Each view opens with one plain condition sentence set on a flat, full-width field painted in its warning color, then the warnings in force, a row of observations, then the readings. The warning levels follow the European weather-warning scale (none, yellow, orange, red), which people read without knowing anything about SEO. Everything around the field is cool bulletin paper, ink and 1px rules, so the warning color is the only saturated thing on the screen and always means something.\n\nDensity is that of a printed service bulletin: sheets divided by hairline rules, not cards floating on a grey ground. Numbers are tabular. There is one filled control per surface, an ink \"press\" button, and every other action is ruled. Motion is a single event: one sweep of light across the observation row when the page loads, meaning \"these were just checked\".\n\nThe screen lives inside wp-admin and must not leak into it: no global reset, a reset scoped to `#thatseoagent-app`, utilities marked important so unlayered wp-admin rules cannot override them. Two editions exist, Day (default) and Night (deep service blue, never neutral black), switched from the sidebar.",
     "keyCharacteristics": [
       "One condition sentence on a flat warning-colored field per view.",
       "European warning scale as the only saturated color.",
@@ -398,7 +398,7 @@
       "Do keep one filled press button per surface; every other action is a rule button or a service-blue link.",
       "Do divide content with 1px rules and use a strong rule under section titles.",
       "Do set every number with tabular numerals.",
-      "Do keep all styling scoped to `#lean-seo-app` and the screen class; nothing may restyle the rest of wp-admin."
+      "Do keep all styling scoped to `#thatseoagent-app` and the screen class; nothing may restyle the rest of wp-admin."
     ],
     "donts": [
       "Don't introduce a saturated color outside the warning scale, or use service blue as a fill.",

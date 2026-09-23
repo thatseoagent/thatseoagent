@@ -1,8 +1,8 @@
 <?php
 /**
- * The Lean SEO screen: the bulletin column and the current view.
+ * The ThatSeoAgent screen: the bulletin column and the current view.
  *
- * @package Lean_SEO
+ * @package ThatSeoAgent
  * @since 1.17.0
  *
  * @var array<string, array> $views   Every view.
@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$theme    = Lean_SEO_App::theme();
-$bulletin = Lean_SEO_Bulletin::get();
-$levels   = Lean_SEO_Bulletin::levels();
-$level    = $levels[ $bulletin['level'] ] + Lean_SEO_App::level_classes( $bulletin['level'] );
+$theme    = ThatSeoAgent_App::theme();
+$bulletin = ThatSeoAgent_Bulletin::get();
+$levels   = ThatSeoAgent_Bulletin::levels();
+$level    = $levels[ $bulletin['level'] ] + ThatSeoAgent_App::level_classes( $bulletin['level'] );
 ?>
 <!--
 THESIS: The site gets a weather bulletin, not a dashboard: one plain condition on a field of its warning color, the warnings in force, the observations. It refuses the KPI-card grid and the grey settings form.
@@ -27,50 +27,50 @@ FIRST VIEWPORT: Bulletin line (site, time observed); full-width condition field 
 FORM: Weather Bulletin, candidate 6 of 7; seed 55b8c79d.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 -->
-<div id="lean-seo-app" class="flex flex-col md:flex-row">
+<div id="thatseoagent-app" class="flex flex-col md:flex-row">
 
     <aside class="flex shrink-0 flex-col border-b border-rule bg-column md:sticky md:top-(--wp-admin--admin-bar--height) md:h-[calc(100vh-var(--wp-admin--admin-bar--height))] md:w-60 md:border-r md:border-b-0">
 
         <div class="px-5 pt-6 pb-5">
-            <a href="<?php echo esc_url( Lean_SEO_App::url() ); ?>" class="block">
-                <span class="block text-[17px] leading-none font-extrabold tracking-[-0.01em] text-ink"><?php esc_html_e( 'Lean SEO', 'lean-seo' ); ?></span>
-                <span class="mt-1.5 block text-[12px] text-ink-3"><?php esc_html_e( 'Site bulletin', 'lean-seo' ); ?> · v<?php echo esc_html( LEAN_SEO_VERSION ); ?></span>
+            <a href="<?php echo esc_url( ThatSeoAgent_App::url() ); ?>" class="block">
+                <span class="block text-[17px] leading-none font-extrabold tracking-[-0.01em] text-ink"><?php esc_html_e( 'ThatSeoAgent', 'thatseoagent' ); ?></span>
+                <span class="mt-1.5 block text-[12px] text-ink-3"><?php esc_html_e( 'Site bulletin', 'thatseoagent' ); ?> · v<?php echo esc_html( THATSEOAGENT_VERSION ); ?></span>
             </a>
         </div>
 
-        <a href="<?php echo esc_url( Lean_SEO_App::url() ); ?>" class="mx-5 -mt-1 mb-1 flex items-center gap-3 md:hidden" x-data :aria-label="$store.bulletin.name + '. ' + $store.bulletin.headline" aria-label="<?php echo esc_attr( $level['name'] . '. ' . $bulletin['headline'] ); ?>">
+        <a href="<?php echo esc_url( ThatSeoAgent_App::url() ); ?>" class="mx-5 -mt-1 mb-1 flex items-center gap-3 md:hidden" x-data :aria-label="$store.bulletin.name + '. ' + $store.bulletin.headline" aria-label="<?php echo esc_attr( $level['name'] . '. ' . $bulletin['headline'] ); ?>">
             <span class="size-2.5 rounded-[1px] <?php echo esc_attr( $level['square'] ); ?>" :class="$store.bulletin.squareClass()" aria-hidden="true"></span>
             <span class="text-[13px] font-semibold text-ink" x-text="$store.bulletin.name"><?php echo esc_html( $level['name'] ); ?></span>
             <span class="flex w-24 gap-0.5" aria-hidden="true">
                 <?php foreach ( $bulletin['observations'] as $index => $observation ) : ?>
-                    <span class="h-1 flex-1 rounded-[1px] <?php echo esc_attr( Lean_SEO_App::state_bar( $observation['state'] ) ); ?>" :class="$store.bulletin.barClass(<?php echo (int) $index; ?>)"></span>
+                    <span class="h-1 flex-1 rounded-[1px] <?php echo esc_attr( ThatSeoAgent_App::state_bar( $observation['state'] ) ); ?>" :class="$store.bulletin.barClass(<?php echo (int) $index; ?>)"></span>
                 <?php endforeach; ?>
             </span>
         </a>
 
-        <a href="<?php echo esc_url( Lean_SEO_App::url() ); ?>" class="mx-3 hidden rounded-[4px] border border-rule bg-sheet px-3 py-3 hover:border-rule-strong md:block" x-data :aria-label="$store.bulletin.name + '. ' + $store.bulletin.headline" aria-label="<?php echo esc_attr( $level['name'] . '. ' . $bulletin['headline'] ); ?>">
+        <a href="<?php echo esc_url( ThatSeoAgent_App::url() ); ?>" class="mx-3 hidden rounded-[4px] border border-rule bg-sheet px-3 py-3 hover:border-rule-strong md:block" x-data :aria-label="$store.bulletin.name + '. ' + $store.bulletin.headline" aria-label="<?php echo esc_attr( $level['name'] . '. ' . $bulletin['headline'] ); ?>">
             <span class="flex items-center gap-2 text-[13px] font-semibold text-ink">
                 <span class="size-2.5 rounded-[1px] <?php echo esc_attr( $level['square'] ); ?>" :class="$store.bulletin.squareClass()" aria-hidden="true"></span>
                 <span x-text="$store.bulletin.name"><?php echo esc_html( $level['name'] ); ?></span>
             </span>
             <span class="mt-2.5 flex gap-0.5" aria-hidden="true">
                 <?php foreach ( $bulletin['observations'] as $index => $observation ) : ?>
-                    <span class="h-1 flex-1 rounded-[1px] <?php echo esc_attr( Lean_SEO_App::state_bar( $observation['state'] ) ); ?>" :class="$store.bulletin.barClass(<?php echo (int) $index; ?>)" :title="$store.bulletin.observations[<?php echo (int) $index; ?>].label + ': ' + $store.bulletin.observations[<?php echo (int) $index; ?>].value"></span>
+                    <span class="h-1 flex-1 rounded-[1px] <?php echo esc_attr( ThatSeoAgent_App::state_bar( $observation['state'] ) ); ?>" :class="$store.bulletin.barClass(<?php echo (int) $index; ?>)" :title="$store.bulletin.observations[<?php echo (int) $index; ?>].label + ': ' + $store.bulletin.observations[<?php echo (int) $index; ?>].value"></span>
                 <?php endforeach; ?>
             </span>
         </a>
 
-        <nav class="px-3 py-4" aria-label="<?php esc_attr_e( 'Lean SEO sections', 'lean-seo' ); ?>">
+        <nav class="px-3 py-4" aria-label="<?php esc_attr_e( 'ThatSeoAgent sections', 'thatseoagent' ); ?>">
             <ul class="flex flex-wrap gap-0.5 md:flex-col">
                 <?php foreach ( $views as $key => $item ) : ?>
                     <?php $active = $key === $current; ?>
                     <li>
                         <a
-                            href="<?php echo esc_url( Lean_SEO_App::url( $key ) ); ?>"
+                            href="<?php echo esc_url( ThatSeoAgent_App::url( $key ) ); ?>"
                             class="flex items-center gap-2.5 rounded-[4px] px-3 py-2 text-[14px] whitespace-nowrap <?php echo $active ? 'bg-sheet font-semibold text-ink shadow-[0_1px_2px_rgb(17_29_39/0.08)]' : 'font-medium text-ink-2 hover:bg-sheet/60 hover:text-ink'; ?>"
                             <?php echo $active ? 'aria-current="page"' : ''; ?>
                         >
-                            <?php Lean_SEO_Icons::the( $item['icon'], 'size-4 ' . ( $active ? 'text-met' : 'text-ink-3' ) ); ?>
+                            <?php ThatSeoAgent_Icons::the( $item['icon'], 'size-4 ' . ( $active ? 'text-met' : 'text-ink-3' ) ); ?>
                             <?php echo esc_html( $item['label'] ); ?>
                         </a>
                     </li>
@@ -79,12 +79,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </nav>
 
         <div class="mt-auto hidden px-5 pb-5 md:block">
-            <p class="mb-2 text-[12px] font-medium text-ink-3"><?php esc_html_e( 'Edition', 'lean-seo' ); ?></p>
-            <div class="grid grid-cols-2 rounded-[4px] border border-rule bg-paper p-0.5" role="group" aria-label="<?php esc_attr_e( 'Color theme', 'lean-seo' ); ?>" x-data="lsEdition">
+            <p class="mb-2 text-[12px] font-medium text-ink-3"><?php esc_html_e( 'Edition', 'thatseoagent' ); ?></p>
+            <div class="grid grid-cols-2 rounded-[4px] border border-rule bg-paper p-0.5" role="group" aria-label="<?php esc_attr_e( 'Color theme', 'thatseoagent' ); ?>" x-data="tsaEdition">
                 <?php
                 foreach ( array(
-                    'light' => array( __( 'Day', 'lean-seo' ), 'sun' ),
-                    'dark'  => array( __( 'Night', 'lean-seo' ), 'moon' ),
+                    'light' => array( __( 'Day', 'thatseoagent' ), 'sun' ),
+                    'dark'  => array( __( 'Night', 'thatseoagent' ), 'moon' ),
                 ) as $option => $meta ) :
                     $pressed = $option === $theme;
                     ?>
@@ -96,12 +96,12 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
                         :class="theme === '<?php echo esc_js( $option ); ?>' ? { 'bg-sheet': true, 'text-ink': true, 'shadow-[0_1px_2px_rgb(17_29_39/0.1)]': true, 'text-ink-3': false, 'hover:text-ink': false } : { 'bg-sheet': false, 'text-ink': false, 'shadow-[0_1px_2px_rgb(17_29_39/0.1)]': false, 'text-ink-3': true, 'hover:text-ink': true }"
                         class="flex items-center justify-center gap-1.5 rounded-[2px] py-1.5 text-[13px] font-medium <?php echo $pressed ? 'bg-sheet text-ink shadow-[0_1px_2px_rgb(17_29_39/0.1)]' : 'text-ink-3 hover:text-ink'; ?>"
                     >
-                        <?php Lean_SEO_Icons::the( $meta[1], 'size-3.5' ); ?>
+                        <?php ThatSeoAgent_Icons::the( $meta[1], 'size-3.5' ); ?>
                         <?php echo esc_html( $meta[0] ); ?>
                     </button>
                 <?php endforeach; ?>
             </div>
-            <p class="mt-4 text-[12px] leading-snug text-ink-3"><?php esc_html_e( 'Everything here is checked on this site. Nothing is sent anywhere.', 'lean-seo' ); ?></p>
+            <p class="mt-4 text-[12px] leading-snug text-ink-3"><?php esc_html_e( 'Everything here is checked on this site. Nothing is sent anywhere.', 'thatseoagent' ); ?></p>
         </div>
     </aside>
 
@@ -119,7 +119,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
             <?php // wp-admin's common.js moves the page's notices right after this element. ?>
             <hr class="wp-header-end hidden">
 
-            <?php Lean_SEO_App::template( $current ); ?>
+            <?php ThatSeoAgent_App::template( $current ); ?>
         </div>
     </main>
 
@@ -136,7 +136,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         <p class="flex-1" x-text="$store.toast.text"></p>
         <button type="button" class="-mr-1 grid size-6 place-items-center rounded-[2px] text-ink-3 hover:text-ink" @click="$store.toast.hide()">
             <span aria-hidden="true">&times;</span>
-            <span class="sr-only"><?php esc_html_e( 'Dismiss', 'lean-seo' ); ?></span>
+            <span class="sr-only"><?php esc_html_e( 'Dismiss', 'thatseoagent' ); ?></span>
         </button>
     </div>
 </div>

@@ -1,5 +1,5 @@
 /*
- * Lean SEO admin screen — "the site bulletin".
+ * ThatSeoAgent admin screen — "the site bulletin".
  *
  * Build: pnpm run build:css  →  assets/build/admin.css (committed).
  *
@@ -9,11 +9,11 @@
  * weather-warning scale (none, yellow, orange, red), which people read
  * without knowing anything about SEO.
  *
- * Loaded only on the Lean SEO screen, and written so it neither leaks into
+ * Loaded only on the ThatSeoAgent screen, and written so it neither leaks into
  * the rest of wp-admin nor gets overridden by it:
  *
  *   - No Preflight. Tailwind's reset is global and would restyle the admin
- *     menu, the toolbar and every notice; a reset scoped to #lean-seo-app
+ *     menu, the toolbar and every notice; a reset scoped to #thatseoagent-app
  *     stands in for it.
  *   - Utilities are `important`. wp-admin's stylesheets are unlayered, and an
  *     unlayered rule beats any layered rule however specific; `!important`
@@ -60,26 +60,26 @@
  *   level-* the warning scale, each with its own text color (on-*)
  */
 @theme inline {
-    --color-paper: var(--ls-paper);
-    --color-sheet: var(--ls-sheet);
-    --color-column: var(--ls-column);
-    --color-rule: var(--ls-rule);
-    --color-rule-strong: var(--ls-rule-strong);
-    --color-ink: var(--ls-ink);
-    --color-ink-2: var(--ls-ink-2);
-    --color-ink-3: var(--ls-ink-3);
-    --color-met: var(--ls-met);
-    --color-press: var(--ls-press);
-    --color-on-press: var(--ls-on-press);
+    --color-paper: var(--tsa-paper);
+    --color-sheet: var(--tsa-sheet);
+    --color-column: var(--tsa-column);
+    --color-rule: var(--tsa-rule);
+    --color-rule-strong: var(--tsa-rule-strong);
+    --color-ink: var(--tsa-ink);
+    --color-ink-2: var(--tsa-ink-2);
+    --color-ink-3: var(--tsa-ink-3);
+    --color-met: var(--tsa-met);
+    --color-press: var(--tsa-press);
+    --color-on-press: var(--tsa-on-press);
 
-    --color-level-clear: var(--ls-level-clear);
-    --color-level-yellow: var(--ls-level-yellow);
-    --color-level-orange: var(--ls-level-orange);
-    --color-level-red: var(--ls-level-red);
-    --color-on-clear: var(--ls-on-clear);
-    --color-on-yellow: var(--ls-on-yellow);
-    --color-on-orange: var(--ls-on-orange);
-    --color-on-red: var(--ls-on-red);
+    --color-level-clear: var(--tsa-level-clear);
+    --color-level-yellow: var(--tsa-level-yellow);
+    --color-level-orange: var(--tsa-level-orange);
+    --color-level-red: var(--tsa-level-red);
+    --color-on-clear: var(--tsa-on-clear);
+    --color-on-yellow: var(--tsa-on-yellow);
+    --color-on-orange: var(--tsa-on-orange);
+    --color-on-red: var(--tsa-on-red);
 
     --font-sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
@@ -90,100 +90,100 @@
 /* Themes -------------------------------------------------------------- */
 
 /* Office daylight on a laptop: the light bulletin is the default. */
-.lean-seo-screen {
-    --ls-paper: #f2f4f3;
-    --ls-sheet: #ffffff;
-    --ls-column: #e6eae9;
-    --ls-rule: #d2d9d7;
-    --ls-rule-strong: #a3aeac;
-    --ls-ink: #111d27;
-    --ls-ink-2: #44525f;
-    --ls-ink-3: #5f6c78;
-    --ls-met: #0b5378;
-    --ls-press: #111d27;
-    --ls-on-press: #ffffff;
+.thatseoagent-screen {
+    --tsa-paper: #f2f4f3;
+    --tsa-sheet: #ffffff;
+    --tsa-column: #e6eae9;
+    --tsa-rule: #d2d9d7;
+    --tsa-rule-strong: #a3aeac;
+    --tsa-ink: #111d27;
+    --tsa-ink-2: #44525f;
+    --tsa-ink-3: #5f6c78;
+    --tsa-met: #0b5378;
+    --tsa-press: #111d27;
+    --tsa-on-press: #ffffff;
 
-    --ls-level-clear: #1d774a;
-    --ls-level-yellow: #f1c02b;
-    --ls-level-orange: #e5711a;
-    --ls-level-red: #c41f38;
-    --ls-on-clear: #ffffff;
-    --ls-on-yellow: #111d27;
-    --ls-on-orange: #111d27;
-    --ls-on-red: #ffffff;
+    --tsa-level-clear: #1d774a;
+    --tsa-level-yellow: #f1c02b;
+    --tsa-level-orange: #e5711a;
+    --tsa-level-red: #c41f38;
+    --tsa-on-clear: #ffffff;
+    --tsa-on-yellow: #111d27;
+    --tsa-on-orange: #111d27;
+    --tsa-on-red: #ffffff;
 
     color-scheme: light;
 }
 
 /* The night edition: a deep service blue, never neutral black. */
-.lean-seo-screen.lean-seo-theme-dark {
-    --ls-paper: #0e1b24;
-    --ls-sheet: #13242f;
-    --ls-column: #0a151d;
-    --ls-rule: #223844;
-    --ls-rule-strong: #3a5664;
-    --ls-ink: #e4ebee;
-    --ls-ink-2: #a8b6bf;
-    --ls-ink-3: #8b9aa4;
-    --ls-met: #8ccaee;
-    --ls-press: #e4ebee;
-    --ls-on-press: #0e1b24;
+.thatseoagent-screen.thatseoagent-theme-dark {
+    --tsa-paper: #0e1b24;
+    --tsa-sheet: #13242f;
+    --tsa-column: #0a151d;
+    --tsa-rule: #223844;
+    --tsa-rule-strong: #3a5664;
+    --tsa-ink: #e4ebee;
+    --tsa-ink-2: #a8b6bf;
+    --tsa-ink-3: #8b9aa4;
+    --tsa-met: #8ccaee;
+    --tsa-press: #e4ebee;
+    --tsa-on-press: #0e1b24;
 
-    --ls-level-clear: #238a57;
+    --tsa-level-clear: #238a57;
 
     color-scheme: dark;
 }
 
 /* Alpine: anything that starts hidden stays hidden until Alpine runs. */
-#lean-seo-app [x-cloak] {
+#thatseoagent-app [x-cloak] {
     display: none !important;
 }
 
 /* wp-admin chrome around the app --------------------------------------- */
 
-.lean-seo-screen #wpcontent {
+.thatseoagent-screen #wpcontent {
     padding-left: 0;
 }
 
-.lean-seo-screen #wpbody,
-.lean-seo-screen #wpbody-content {
-    background: var(--ls-paper);
+.thatseoagent-screen #wpbody,
+.thatseoagent-screen #wpbody-content {
+    background: var(--tsa-paper);
     padding-bottom: 0;
 }
 
 /* The footer's credit line overlaps the full-height sidebar. */
-.lean-seo-screen #wpfooter {
+.thatseoagent-screen #wpfooter {
     display: none;
 }
 
 /* Scoped reset --------------------------------------------------------- */
 
-#lean-seo-app {
+#thatseoagent-app {
     min-height: calc(100vh - var(--wp-admin--admin-bar--height, 32px));
-    background: var(--ls-paper);
-    color: var(--ls-ink);
+    background: var(--tsa-paper);
+    color: var(--tsa-ink);
     font-family: var(--font-sans);
     font-size: 14px;
     line-height: 1.5;
     font-feature-settings: "kern", "liga";
     -webkit-font-smoothing: antialiased;
-    caret-color: var(--ls-met);
-    scrollbar-color: var(--ls-rule-strong) transparent;
+    caret-color: var(--tsa-met);
+    scrollbar-color: var(--tsa-rule-strong) transparent;
 }
 
-#lean-seo-app ::selection {
-    background: color-mix(in oklab, var(--ls-met) 22%, transparent);
-    color: var(--ls-ink);
+#thatseoagent-app ::selection {
+    background: color-mix(in oklab, var(--tsa-met) 22%, transparent);
+    color: var(--tsa-ink);
 }
 
-#lean-seo-app *,
-#lean-seo-app ::before,
-#lean-seo-app ::after {
+#thatseoagent-app *,
+#thatseoagent-app ::before,
+#thatseoagent-app ::after {
     box-sizing: border-box;
-    border: 0 solid var(--ls-rule);
+    border: 0 solid var(--tsa-rule);
 }
 
-#lean-seo-app :is(h1, h2, h3, h4, p, ul, ol, li, figure, pre, dl, dd, dt) {
+#thatseoagent-app :is(h1, h2, h3, h4, p, ul, ol, li, figure, pre, dl, dd, dt) {
     margin: 0;
     padding: 0;
     color: inherit;
@@ -192,19 +192,19 @@
     line-height: inherit;
 }
 
-#lean-seo-app :is(h1, h2, h3) {
+#thatseoagent-app :is(h1, h2, h3) {
     text-wrap: balance;
 }
 
-#lean-seo-app p {
+#thatseoagent-app p {
     text-wrap: pretty;
 }
 
-#lean-seo-app :is(ul, ol) {
+#thatseoagent-app :is(ul, ol) {
     list-style: none;
 }
 
-#lean-seo-app a {
+#thatseoagent-app a {
     color: inherit;
     text-decoration: none;
     text-underline-offset: 0.2em;
@@ -212,163 +212,163 @@
     transition: color 160ms, background-color 160ms, border-color 160ms, text-decoration-color 160ms;
 }
 
-#lean-seo-app :is(a, button, input, select, textarea, summary):focus {
+#thatseoagent-app :is(a, button, input, select, textarea, summary):focus {
     box-shadow: none;
     outline: none;
 }
 
-#lean-seo-app :is(a, button, input, select, textarea, summary):focus-visible {
-    outline: 2px solid var(--ls-met);
+#thatseoagent-app :is(a, button, input, select, textarea, summary):focus-visible {
+    outline: 2px solid var(--tsa-met);
     outline-offset: 2px;
     border-radius: 4px;
 }
 
-#lean-seo-app button {
+#thatseoagent-app button {
     font: inherit;
     color: inherit;
     background: none;
     cursor: pointer;
 }
 
-#lean-seo-app button:disabled {
+#thatseoagent-app button:disabled {
     cursor: not-allowed;
 }
 
-#lean-seo-app svg {
+#thatseoagent-app svg {
     flex-shrink: 0;
 }
 
-#lean-seo-app code,
-#lean-seo-app pre {
+#thatseoagent-app code,
+#thatseoagent-app pre {
     font-family: var(--font-mono);
     font-size: 0.86em;
 }
 
-#lean-seo-app code {
+#thatseoagent-app code {
     padding: 0.08em 0.35em;
     border-radius: 4px;
-    background: color-mix(in oklab, var(--ls-ink) 7%, transparent);
-    color: var(--ls-ink);
+    background: color-mix(in oklab, var(--tsa-ink) 7%, transparent);
+    color: var(--tsa-ink);
     overflow-wrap: anywhere;
 }
 
-#lean-seo-app table {
+#thatseoagent-app table {
     border-collapse: collapse;
     width: 100%;
     font-variant-numeric: tabular-nums;
 }
 
 /* Links in running text and tables: service blue, underline on hover. */
-#lean-seo-app .ls-link {
-    color: var(--ls-met);
+#thatseoagent-app .tsa-link {
+    color: var(--tsa-met);
     font-weight: 600;
 }
 
-#lean-seo-app .ls-link:hover {
+#thatseoagent-app .tsa-link:hover {
     text-decoration: underline;
 }
 
 /* The one filled control: ink on paper, or on a warning field. */
-#lean-seo-app .ls-press {
+#thatseoagent-app .tsa-press {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     min-height: 2.5rem;
     padding: 0 1.1rem;
     border-radius: 4px;
-    background: var(--ls-press);
-    color: var(--ls-on-press);
+    background: var(--tsa-press);
+    color: var(--tsa-on-press);
     font-weight: 650;
     white-space: nowrap;
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
     transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 160ms;
 }
 
-#lean-seo-app .ls-press:hover {
-    color: var(--ls-on-press);
+#thatseoagent-app .tsa-press:hover {
+    color: var(--tsa-on-press);
     box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.28);
     transform: translateY(-1px);
 }
 
-#lean-seo-app .ls-press:active {
+#thatseoagent-app .tsa-press:active {
     transform: translateY(0);
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
 }
 
 /* On a warning field the button keeps ink and white whatever the theme:
    the field's own colors do not change between editions. */
-#lean-seo-app .ls-field .ls-press {
+#thatseoagent-app .tsa-field .tsa-press {
     background: #111d27;
     color: #ffffff;
 }
 
 /* Secondary control: ruled, not filled. */
-#lean-seo-app .ls-rule-button {
+#thatseoagent-app .tsa-rule-button {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
     min-height: 2.25rem;
     padding: 0 0.85rem;
-    border: 1px solid var(--ls-rule-strong);
+    border: 1px solid var(--tsa-rule-strong);
     border-radius: 4px;
-    color: var(--ls-ink);
+    color: var(--tsa-ink);
     font-weight: 600;
     white-space: nowrap;
 }
 
-#lean-seo-app .ls-rule-button:hover {
-    border-color: var(--ls-ink);
+#thatseoagent-app .tsa-rule-button:hover {
+    border-color: var(--tsa-ink);
 }
 
 /* The observation row: one sweep of light when the page loads, meaning
    "these were just checked". Content is visible before and after. */
-#lean-seo-app .ls-sweep {
+#thatseoagent-app .tsa-sweep {
     position: relative;
     overflow: hidden;
 }
 
-#lean-seo-app .ls-sweep::after {
+#thatseoagent-app .tsa-sweep::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--ls-sheet) 70%, transparent) 45%, transparent 60%);
+    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--tsa-sheet) 70%, transparent) 45%, transparent 60%);
     transform: translateX(-100%);
-    animation: ls-sweep 1100ms cubic-bezier(0.16, 1, 0.3, 1) 150ms 1 both;
+    animation: tsa-sweep 1100ms cubic-bezier(0.16, 1, 0.3, 1) 150ms 1 both;
     pointer-events: none;
 }
 
-@keyframes ls-sweep {
+@keyframes tsa-sweep {
     to {
         transform: translateX(100%);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    #lean-seo-app .ls-sweep::after {
+    #thatseoagent-app .tsa-sweep::after {
         animation: none;
         display: none;
     }
 
-    #lean-seo-app *,
-    #lean-seo-app *::before {
+    #thatseoagent-app *,
+    #thatseoagent-app *::before {
         transition-duration: 0ms !important;
     }
 }
 
 /* wp-admin notices, which common.js moves under .wp-header-end ---------- */
 
-#lean-seo-app .notice {
+#thatseoagent-app .notice {
     position: relative;
     margin: 0 0 1.5rem;
     padding: 0.75rem 1rem 0.75rem 2.25rem;
-    border: 1px solid var(--ls-rule);
+    border: 1px solid var(--tsa-rule);
     border-radius: var(--radius-sheet);
-    background: var(--ls-sheet);
-    color: var(--ls-ink);
+    background: var(--tsa-sheet);
+    color: var(--tsa-ink);
     box-shadow: none;
 }
 
-#lean-seo-app .notice::before {
+#thatseoagent-app .notice::before {
     content: "";
     position: absolute;
     top: 1.05rem;
@@ -376,29 +376,29 @@
     width: 0.625rem;
     height: 0.625rem;
     border-radius: 1px;
-    background: var(--ls-met);
+    background: var(--tsa-met);
 }
 
-#lean-seo-app .notice p {
+#thatseoagent-app .notice p {
     margin: 0;
     padding: 0;
     font-size: 14px;
 }
 
-#lean-seo-app :is(.notice-success, .updated)::before {
-    background: var(--ls-level-clear);
+#thatseoagent-app :is(.notice-success, .updated)::before {
+    background: var(--tsa-level-clear);
 }
 
-#lean-seo-app .notice-warning::before {
-    background: var(--ls-level-orange);
+#thatseoagent-app .notice-warning::before {
+    background: var(--tsa-level-orange);
 }
 
-#lean-seo-app :is(.notice-error, .error)::before {
-    background: var(--ls-level-red);
+#thatseoagent-app :is(.notice-error, .error)::before {
+    background: var(--tsa-level-red);
 }
 
-#lean-seo-app .notice-dismiss::before {
-    color: var(--ls-ink-3);
+#thatseoagent-app .notice-dismiss::before {
+    color: var(--tsa-ink-3);
 }
 
 /* Forms --------------------------------------------------------------- */
@@ -409,17 +409,17 @@
  * until the view moves to the REST API.
  */
 
-#lean-seo-app :is(input[type="text"], input[type="url"], input[type="email"], input[type="number"], input[type="password"], input[type="search"], select, textarea) {
+#thatseoagent-app :is(input[type="text"], input[type="url"], input[type="email"], input[type="number"], input[type="password"], input[type="search"], select, textarea) {
     width: 100%;
     max-width: 30rem;
     min-height: 2.5rem;
     padding: 0.5rem 0.75rem;
-    border: 1px solid var(--ls-rule-strong);
+    border: 1px solid var(--tsa-rule-strong);
     border-radius: 4px;
     /* background-color, not background: wp-admin draws the select arrow as a
        background image. */
-    background-color: var(--ls-sheet);
-    color: var(--ls-ink);
+    background-color: var(--tsa-sheet);
+    color: var(--tsa-ink);
     font-family: inherit;
     font-size: 14px;
     line-height: 1.4;
@@ -427,33 +427,33 @@
     transition: border-color 160ms, box-shadow 160ms;
 }
 
-#lean-seo-app select {
+#thatseoagent-app select {
     padding-right: 2rem;
     background-position: right 0.6rem center;
 }
 
-#lean-seo-app :is(textarea.large-text, input.large-text) {
+#thatseoagent-app :is(textarea.large-text, input.large-text) {
     max-width: 44rem;
 }
 
-#lean-seo-app :is(input, select, textarea):hover {
-    border-color: var(--ls-ink-3);
+#thatseoagent-app :is(input, select, textarea):hover {
+    border-color: var(--tsa-ink-3);
 }
 
-#lean-seo-app :is(input, select, textarea):focus {
-    border-color: var(--ls-met);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--ls-met) 22%, transparent);
+#thatseoagent-app :is(input, select, textarea):focus {
+    border-color: var(--tsa-met);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--tsa-met) 22%, transparent);
     outline: none;
 }
 
-#lean-seo-app ::placeholder {
-    color: var(--ls-ink-3);
+#thatseoagent-app ::placeholder {
+    color: var(--tsa-ink-3);
     opacity: 1;
 }
 
 /* The browser's own controls, tinted: wp-admin draws its own with ::before,
    which does not survive the theme's colors. */
-#lean-seo-app :is(input[type="checkbox"], input[type="radio"]) {
+#thatseoagent-app :is(input[type="checkbox"], input[type="radio"]) {
     -webkit-appearance: auto;
     appearance: auto;
     width: 1rem;
@@ -465,86 +465,86 @@
     background: none;
     box-shadow: none;
     vertical-align: -0.15em;
-    accent-color: var(--ls-met);
+    accent-color: var(--tsa-met);
 }
 
-#lean-seo-app :is(input[type="checkbox"], input[type="radio"])::before {
+#thatseoagent-app :is(input[type="checkbox"], input[type="radio"])::before {
     content: none;
 }
 
-#lean-seo-app :is(input[type="checkbox"], input[type="radio"]):focus {
+#thatseoagent-app :is(input[type="checkbox"], input[type="radio"]):focus {
     box-shadow: none;
 }
 
-#lean-seo-app .ls-form .form-table {
+#thatseoagent-app .tsa-form .form-table {
     margin: 0;
 }
 
-#lean-seo-app .ls-form .form-table th {
+#thatseoagent-app .tsa-form .form-table th {
     width: 13rem;
     padding: 1.1rem 2rem 1.1rem 0;
-    color: var(--ls-ink);
+    color: var(--tsa-ink);
     font-size: 14px;
     font-weight: 600;
     line-height: 1.4;
     vertical-align: top;
 }
 
-#lean-seo-app .ls-form .form-table td {
+#thatseoagent-app .tsa-form .form-table td {
     padding: 0.85rem 0;
-    color: var(--ls-ink);
+    color: var(--tsa-ink);
     font-size: 14px;
     vertical-align: top;
 }
 
-#lean-seo-app .ls-form .form-table > tbody > tr + tr > :is(th, td) {
-    border-top: 1px solid var(--ls-rule);
+#thatseoagent-app .tsa-form .form-table > tbody > tr + tr > :is(th, td) {
+    border-top: 1px solid var(--tsa-rule);
 }
 
-#lean-seo-app .ls-form .form-table .form-table th {
+#thatseoagent-app .tsa-form .form-table .form-table th {
     width: 10rem;
     padding: 0.6rem 1.5rem 0.6rem 1.6rem;
     font-weight: 500;
-    color: var(--ls-ink-2);
+    color: var(--tsa-ink-2);
 }
 
-#lean-seo-app .ls-form .form-table .form-table td {
+#thatseoagent-app .tsa-form .form-table .form-table td {
     padding: 0.4rem 0;
 }
 
-#lean-seo-app .ls-form :is(p.description, .description) {
+#thatseoagent-app .tsa-form :is(p.description, .description) {
     margin-top: 0.4rem;
     max-width: 38rem;
-    color: var(--ls-ink-2);
+    color: var(--tsa-ink-2);
     font-size: 13px;
     line-height: 1.45;
 }
 
-#lean-seo-app .ls-form fieldset label {
-    color: var(--ls-ink);
+#thatseoagent-app .tsa-form fieldset label {
+    color: var(--tsa-ink);
 }
 
-#lean-seo-app .ls-form .lean-seo-product-type {
+#thatseoagent-app .tsa-form .thatseoagent-product-type {
     padding: 0.35rem 0;
 }
 
-#lean-seo-app .ls-form .lean-seo-product-type code {
+#thatseoagent-app .tsa-form .thatseoagent-product-type code {
     margin-left: 0.35rem;
 }
 
-#lean-seo-app .lean-seo-media-preview img {
-    border: 1px solid var(--ls-rule) !important;
+#thatseoagent-app .thatseoagent-media-preview img {
+    border: 1px solid var(--tsa-rule) !important;
     border-radius: 4px;
-    background: var(--ls-sheet) !important;
+    background: var(--tsa-sheet) !important;
 }
 
-#lean-seo-app :is(.button, .button-secondary) {
+#thatseoagent-app :is(.button, .button-secondary) {
     min-height: 2.25rem;
     padding: 0 0.85rem;
-    border: 1px solid var(--ls-rule-strong);
+    border: 1px solid var(--tsa-rule-strong);
     border-radius: 4px;
-    background: var(--ls-sheet);
-    color: var(--ls-ink);
+    background: var(--tsa-sheet);
+    color: var(--tsa-ink);
     font-family: inherit;
     font-size: 13px;
     font-weight: 600;
@@ -552,41 +552,41 @@
     box-shadow: none;
 }
 
-#lean-seo-app .button:hover {
-    border-color: var(--ls-ink);
-    background: var(--ls-sheet);
-    color: var(--ls-ink);
+#thatseoagent-app .button:hover {
+    border-color: var(--tsa-ink);
+    background: var(--tsa-sheet);
+    color: var(--tsa-ink);
 }
 
-#lean-seo-app .button-primary {
+#thatseoagent-app .button-primary {
     min-height: 2.5rem;
     padding: 0 1.25rem;
-    border-color: var(--ls-press);
-    background: var(--ls-press);
-    color: var(--ls-on-press);
+    border-color: var(--tsa-press);
+    background: var(--tsa-press);
+    color: var(--tsa-on-press);
     font-size: 14px;
     line-height: 2.4rem;
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
 }
 
-#lean-seo-app .button-primary:hover {
-    border-color: var(--ls-press);
-    background: var(--ls-press);
-    color: var(--ls-on-press);
+#thatseoagent-app .button-primary:hover {
+    border-color: var(--tsa-press);
+    background: var(--tsa-press);
+    color: var(--tsa-on-press);
     box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.28);
 }
 
 @media screen and (max-width: 782px) {
-    #lean-seo-app .ls-form .form-table th {
+    #thatseoagent-app .tsa-form .form-table th {
         width: auto;
         padding-bottom: 0.25rem;
     }
 
-    #lean-seo-app .ls-form .form-table > tbody > tr + tr > td {
+    #thatseoagent-app .tsa-form .form-table > tbody > tr + tr > td {
         border-top: 0;
     }
 
-    #lean-seo-app .ls-form .form-table .form-table th {
+    #thatseoagent-app .tsa-form .form-table .form-table th {
         padding-left: 0;
     }
 }

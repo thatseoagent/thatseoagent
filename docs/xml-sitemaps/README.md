@@ -1,10 +1,10 @@
 # XML Sitemaps
 
-Lean SEO automatically generates XML sitemaps for better search engine crawling and indexing.
+ThatSeoAgent automatically generates XML sitemaps for better search engine crawling and indexing.
 
 ## What It Does
 
-The `Lean_SEO_Sitemap` class creates XML sitemaps including:
+The `ThatSeoAgent_Sitemap` class creates XML sitemaps including:
 
 - **Index sitemap**: Main sitemap listing all sub-sitemaps
 - **Posts sitemap**: All published posts with modification dates
@@ -14,7 +14,7 @@ The `Lean_SEO_Sitemap` class creates XML sitemaps including:
 
 ## Code Structure
 
-Located in `includes/sitemap/class-lean-seo-sitemap.php`:
+Located in `includes/sitemap/class-thatseoagent-sitemap.php`:
 
 - `register_routes()` - Sets up rewrite rules for sitemap URLs
 - `handle_request()` - Processes sitemap requests and outputs XML
@@ -28,10 +28,10 @@ Located in `includes/sitemap/class-lean-seo-sitemap.php`:
 
 ### Custom Sitemaps
 
-Add custom sitemaps to the index using the `lean_seo_sitemap_index` action:
+Add custom sitemaps to the index using the `thatseoagent_sitemap_index` action:
 
 ```php
-add_action('lean_seo_sitemap_index', function() {
+add_action('thatseoagent_sitemap_index', function() {
     echo '  <sitemap>' . "\n";
     echo '    <loc>' . home_url('/sitemap-products.xml') . '</loc>' . "\n";
     echo '    <lastmod>' . date('c') . '</lastmod>' . "\n";

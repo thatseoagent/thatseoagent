@@ -1,8 +1,8 @@
-# Lean SEO Documentation
+# ThatSeoAgent Documentation
 
 ## Overview
 
-Lean SEO is a lightweight WordPress plugin that provides essential SEO functionality without the bloat of popular alternatives like Yoast SEO. It focuses on core SEO features: meta tags, Open Graph, Twitter Cards, XML sitemaps, Schema markup, and per-post SEO fields.
+ThatSeoAgent is a lightweight WordPress plugin that provides essential SEO functionality without the bloat of popular alternatives like Yoast SEO. It focuses on core SEO features: meta tags, Open Graph, Twitter Cards, XML sitemaps, Schema markup, and per-post SEO fields.
 
 The plugin is designed to be developer-friendly with clean, hookable code and no unnecessary features. It's built for performance and simplicity.
 
@@ -19,7 +19,7 @@ The plugin is designed to be developer-friendly with clean, hookable code and no
 ## Installation
 
 1. Download the plugin zip file
-2. Upload the `lean-seo` folder to your `/wp-content/plugins/` directory
+2. Upload the `thatseoagent` folder to your `/wp-content/plugins/` directory
 3. Activate the plugin through the WordPress admin 'Plugins' menu
 4. No additional configuration is required - the plugin works out of the box
 
@@ -47,7 +47,7 @@ This documentation is organized by feature area:
 
 ## Quick Start
 
-After installation, Lean SEO automatically handles:
+After installation, ThatSeoAgent automatically handles:
 
 1. **Meta Tags**: Added to `<head>` for all pages/posts
 2. **Sitemaps**: Available at `/sitemap.xml` (submit this to Google Search Console)
@@ -60,7 +60,6 @@ The plugin provides numerous hooks for customization. See the feature-specific d
 
 ## Support
 
-- Check the [GitHub repository](https://github.com/Sarai-Chinwag/lean-seo) for issues and updates
 - Review the code comments and inline documentation for implementation details
 
 ## License

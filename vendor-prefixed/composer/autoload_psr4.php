@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Lean_SEO\\Dependencies\\League\\HTMLToMarkdown\\' => array($vendorDir . '/league/html-to-markdown/src'),
+    'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\' => array($vendorDir . '/league/html-to-markdown/src'),
 );

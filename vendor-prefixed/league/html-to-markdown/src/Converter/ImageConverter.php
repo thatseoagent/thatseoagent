@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter;
+namespace ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter;
 
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\ElementInterface;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\ElementInterface;
 
 class ImageConverter implements ConverterInterface
 {

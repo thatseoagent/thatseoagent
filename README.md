@@ -1,4 +1,4 @@
-# Lean SEO
+# ThatSeoAgent
 
 Lightweight SEO for WordPress — no bloat, no upsells, just what you need.
 
@@ -14,13 +14,13 @@ Essential SEO without the weight: meta tags, Open Graph, Twitter Cards, XML site
 ## Installation
 
 ```bash
-cp -r lean-seo /path/to/wp-content/plugins/
-wp plugin activate lean-seo
+cp -r thatseoagent /path/to/wp-content/plugins/
+wp plugin activate thatseoagent
 ```
 
-Activate and it works; the defaults need no configuration. Settings — site identity, homepage, product catalogs, llms.txt, IndexNow — live in their own **Lean SEO** admin menu.
+Activate and it works; the defaults need no configuration. Settings — site identity, homepage, product catalogs, llms.txt, IndexNow — live in their own **ThatSeoAgent** admin menu.
 
-While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPress, The SEO Framework, Squirrly), Lean SEO outputs nothing in `<head>`, serves no sitemaps or llms.txt and leaves robots.txt alone, so the two never duplicate each other's tags. Import that plugin's data with `wp lean-seo import`, then deactivate it.
+While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPress, The SEO Framework, Squirrly), ThatSeoAgent outputs nothing in `<head>`, serves no sitemaps or llms.txt and leaves robots.txt alone, so the two never duplicate each other's tags. Import that plugin's data with `wp thatseoagent import`, then deactivate it.
 
 ## Features
 
@@ -73,7 +73,7 @@ See [docs/markdown](docs/markdown/) for the details.
 
 ## Product catalogs
 
-A catalog without WooCommerce — machinery, parts, a range of models — is usually a custom post type with its own taxonomies and meta. Under **Lean SEO → Settings → Product catalogs**, every active public post type is listed; tick the catalog and map its fields:
+A catalog without WooCommerce — machinery, parts, a range of models — is usually a custom post type with its own taxonomies and meta. Under **ThatSeoAgent → Settings → Product catalogs**, every active public post type is listed; tick the catalog and map its fields:
 
 | Field | Source | Schema |
 |-------|--------|--------|
@@ -85,7 +85,7 @@ A catalog without WooCommerce — machinery, parts, a range of models — is usu
 
 Taxonomies and meta keys are detected from the stored data and pre-selected by name. Name, description and featured image come from the post. Each entry is output as the page's `mainEntity`, instead of an Article.
 
-Values are validated and dropped rather than output half-formed. **Lean SEO → Products** lists what each product is missing, and `wp lean-seo validate-products` checks the whole catalog. Without a price no `offers` is output, so Google shows no product rich result — that needs offers, a review or a rating — but the markup still describes each product to search engines and AI assistants.
+Values are validated and dropped rather than output half-formed. **ThatSeoAgent → Products** lists what each product is missing, and `wp thatseoagent validate-products` checks the whole catalog. Without a price no `offers` is output, so Google shows no product rich result — that needs offers, a review or a rating — but the markup still describes each product to search engines and AI assistants.
 
 ## llms.txt
 
@@ -97,49 +97,49 @@ The plugin sends no data anywhere **unless you configure an IndexNow API key**. 
 
 ## Architecture
 
-One class per file under `includes/`, grouped by concept and loaded by `includes/autoload.php` (an explicit class map: add a line there for a new class). `Lean_SEO` is the composition root: it calls each module's `register()` and nothing else. `CONTEXT.md` defines the terms used below.
+One class per file under `includes/`, grouped by concept and loaded by `includes/autoload.php` (an explicit class map: add a line there for a new class). `ThatSeoAgent` is the composition root: it calls each module's `register()` and nothing else. `CONTEXT.md` defines the terms used below.
 
 | Folder | Module | Responsibility |
 |--------|--------|----------------|
-| `includes/` | `Lean_SEO` | Composition root: which modules run, and when |
-| | `Lean_SEO_Settings` | Gathers each module's option (`setting()`) and registers it, with a schema, for the form and the REST API |
-| | `Lean_SEO_Memo` | Every per-request cache: `forget_post()` after each post in a loop, `reset()` to read the site again |
-| `content/` | `Lean_SEO_Content` | The single answer to "what is this post's content?" |
-| | `Lean_SEO_Description` | The single answer to "what description does this post get?" |
-| | `Lean_SEO_FAQ`, `Lean_SEO_FAQ_Section` | Reads content into sections; FAQ extraction |
-| | `Lean_SEO_Post_Seo` | Per-post SEO fields: which post types get them, storage, sanitization and slashing |
-| `head/` | `Lean_SEO_Meta` | `<head>` meta tags and canonical |
-| | `Lean_SEO_Title` | The document `<title>`: overrides and separator |
-| | `Lean_SEO_Schema` | JSON-LD graph |
-| `site/` | `Lean_SEO_Identity`, `Lean_SEO_Identity_Applier` | Who the site is: settings, and the filters that feed them to meta tags and schema |
-| | `Lean_SEO_Homepage`, `Lean_SEO_Homepage_Applier` | Homepage title and description: settings, and their filters |
-| | `Lean_SEO_Default_Author` | The author credited on posts without one |
-| `catalog/` | `Lean_SEO_Product` | Product catalogs: mapping, detection, Product node, validation |
-| | `Lean_SEO_Product_Report` | How complete the catalog is: summary and per-product report |
-| | `Lean_SEO_Product_Settings` | The catalog's settings section and field mapping |
-| `sitemap/` | `Lean_SEO_Sitemap` | Sitemap routes and rendering (returns XML strings) |
-| | `Lean_SEO_Robots` | The `Sitemap:` directive in robots.txt |
-| `markdown/` | `Lean_SEO_Markdown` | A post as Markdown with YAML frontmatter |
-| | `Lean_SEO_Markdown_Endpoint` | The `.md` URLs and the `rel="alternate"` link |
-| | `Lean_SEO_Markdown_Cache` | Per-post Markdown cache and its invalidation |
-| | `Lean_SEO_Llms` | llms.txt |
-| `audit/` | `Lean_SEO_Audit` | The SEO audit of a post, and site scans |
-| | `Lean_SEO_Audit_Run` | The batched content check and its last results |
-| `bulletin/` | `Lean_SEO_Bulletin` | The site's bulletin: facts asked of each module, rules that turn them into warnings |
-| | `Lean_SEO_Readings` | What the dashboard shows beside it: SEO field counts, the public files served |
-| `admin/` | `Lean_SEO_App` | The Lean SEO screen: navigation, views, where each action leads, level colors, styles, scripts |
-| | `Lean_SEO_Icons` | The screen's inline SVG icons |
-| | `Lean_SEO_Meta_Box` | The SEO fields in the post editor |
-| | `Lean_SEO_Bulk_Descriptions` | The "Generate meta description" bulk action |
+| `includes/` | `ThatSeoAgent` | Composition root: which modules run, and when |
+| | `ThatSeoAgent_Settings` | Gathers each module's option (`setting()`) and registers it, with a schema, for the form and the REST API |
+| | `ThatSeoAgent_Memo` | Every per-request cache: `forget_post()` after each post in a loop, `reset()` to read the site again |
+| `content/` | `ThatSeoAgent_Content` | The single answer to "what is this post's content?" |
+| | `ThatSeoAgent_Description` | The single answer to "what description does this post get?" |
+| | `ThatSeoAgent_FAQ`, `ThatSeoAgent_FAQ_Section` | Reads content into sections; FAQ extraction |
+| | `ThatSeoAgent_Post_Seo` | Per-post SEO fields: which post types get them, storage, sanitization and slashing |
+| `head/` | `ThatSeoAgent_Meta` | `<head>` meta tags and canonical |
+| | `ThatSeoAgent_Title` | The document `<title>`: overrides and separator |
+| | `ThatSeoAgent_Schema` | JSON-LD graph |
+| `site/` | `ThatSeoAgent_Identity`, `ThatSeoAgent_Identity_Applier` | Who the site is: settings, and the filters that feed them to meta tags and schema |
+| | `ThatSeoAgent_Homepage`, `ThatSeoAgent_Homepage_Applier` | Homepage title and description: settings, and their filters |
+| | `ThatSeoAgent_Default_Author` | The author credited on posts without one |
+| `catalog/` | `ThatSeoAgent_Product` | Product catalogs: mapping, detection, Product node, validation |
+| | `ThatSeoAgent_Product_Report` | How complete the catalog is: summary and per-product report |
+| | `ThatSeoAgent_Product_Settings` | The catalog's settings section and field mapping |
+| `sitemap/` | `ThatSeoAgent_Sitemap` | Sitemap routes and rendering (returns XML strings) |
+| | `ThatSeoAgent_Robots` | The `Sitemap:` directive in robots.txt |
+| `markdown/` | `ThatSeoAgent_Markdown` | A post as Markdown with YAML frontmatter |
+| | `ThatSeoAgent_Markdown_Endpoint` | The `.md` URLs and the `rel="alternate"` link |
+| | `ThatSeoAgent_Markdown_Cache` | Per-post Markdown cache and its invalidation |
+| | `ThatSeoAgent_Llms` | llms.txt |
+| `audit/` | `ThatSeoAgent_Audit` | The SEO audit of a post, and site scans |
+| | `ThatSeoAgent_Audit_Run` | The batched content check and its last results |
+| `bulletin/` | `ThatSeoAgent_Bulletin` | The site's bulletin: facts asked of each module, rules that turn them into warnings |
+| | `ThatSeoAgent_Readings` | What the dashboard shows beside it: SEO field counts, the public files served |
+| `admin/` | `ThatSeoAgent_App` | The ThatSeoAgent screen: navigation, views, where each action leads, level colors, styles, scripts |
+| | `ThatSeoAgent_Icons` | The screen's inline SVG icons |
+| | `ThatSeoAgent_Meta_Box` | The SEO fields in the post editor |
+| | `ThatSeoAgent_Bulk_Descriptions` | The "Generate meta description" bulk action |
 | | `views/` | The screen's templates |
-| `rest/` | `Lean_SEO_REST` | Registers the screen's controllers (`lean-seo/v1`) |
-| | `Lean_SEO_REST_Controller` | Shared by every controller: namespace, permission, uncached responses |
-| | `Lean_SEO_REST_Bulletin`, `_Preferences`, `_Audit`, `_Llms` | One controller per resource |
-| `tooling/` | `Lean_SEO_CLI` | WP-CLI commands |
-| | `Lean_SEO_Abilities` | Abilities API registration |
-| | `Lean_SEO_Importer` | Import from Yoast SEO, Rank Math, All in One SEO |
-| `integrations/` | `Lean_SEO_Compat` | Stepping aside while another SEO plugin is active |
-| | `Lean_SEO_IndexNow` | IndexNow key, verification file and submission |
+| `rest/` | `ThatSeoAgent_REST` | Registers the screen's controllers (`thatseoagent/v1`) |
+| | `ThatSeoAgent_REST_Controller` | Shared by every controller: namespace, permission, uncached responses |
+| | `ThatSeoAgent_REST_Bulletin`, `_Preferences`, `_Audit`, `_Llms` | One controller per resource |
+| `tooling/` | `ThatSeoAgent_CLI` | WP-CLI commands |
+| | `ThatSeoAgent_Abilities` | Abilities API registration |
+| | `ThatSeoAgent_Importer` | Import from Yoast SEO, Rank Math, All in One SEO |
+| `integrations/` | `ThatSeoAgent_Compat` | Stepping aside while another SEO plugin is active |
+| | `ThatSeoAgent_IndexNow` | IndexNow key, verification file and submission |
 
 ## Filters
 
@@ -147,61 +147,61 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 
 | Filter | Purpose |
 |--------|---------|
-| `lean_seo_document_title` | Override the `<title>` entirely (receives context) |
-| `lean_seo_title` | The resolved SEO title |
-| `lean_seo_title_separator` | Title separator (default `\|`) |
-| `lean_seo_description` | The resolved description (receives context) |
-| `lean_seo_custom_description` | Legacy short-circuit, runs first |
-| `lean_seo_description_filler_patterns` | Intro-filler regexes skipped when generating |
+| `thatseoagent_document_title` | Override the `<title>` entirely (receives context) |
+| `thatseoagent_title` | The resolved SEO title |
+| `thatseoagent_title_separator` | Title separator (default `\|`) |
+| `thatseoagent_description` | The resolved description (receives context) |
+| `thatseoagent_custom_description` | Legacy short-circuit, runs first |
+| `thatseoagent_description_filler_patterns` | Intro-filler regexes skipped when generating |
 
 Context is one of `home`, `single`, `archive`, `taxonomy`, `search`, `author`, `date`, `404`, `other`.
 
 **Social**
 
-`lean_seo_og_title` · `lean_seo_og_site_name` · `lean_seo_og_locale` · `lean_seo_twitter_handle` · `lean_seo_default_image`
+`thatseoagent_og_title` · `thatseoagent_og_site_name` · `thatseoagent_og_locale` · `thatseoagent_twitter_handle` · `thatseoagent_default_image`
 
 **Schema**
 
 | Filter | Purpose |
 |--------|---------|
-| `lean_seo_primary_entity` | `'person'` or `'organization'` — decides the publisher |
-| `lean_seo_website_schema` | WebSite node |
-| `lean_seo_organization_schema` | Organization node |
-| `lean_seo_person_schema` | Person node |
-| `lean_seo_webpage_schema` | WebPage node |
-| `lean_seo_breadcrumb_schema` | BreadcrumbList node |
-| `lean_seo_schema_graph` | The complete `@graph` before output |
-| `lean_seo_faq_schema_enabled` | Disable FAQ schema per post |
-| `lean_seo_faq_pairs` | The extracted Q&A pairs |
-| `lean_seo_faq_numbered_enabled` | Opt in to numbered-heading FAQs (off) |
-| `lean_seo_faq_thematic_enabled` | Opt in to thematic FAQs (off) |
-| `lean_seo_author_schema` | Person node of a post author |
-| `lean_seo_listing_page_schema` | CollectionPage / ProfilePage node of an archive |
-| `lean_seo_product_post_types` | Post types marked up as products |
-| `lean_seo_product_schema` | Product node |
-| `lean_seo_product_properties` | Specifications before they become PropertyValues |
+| `thatseoagent_primary_entity` | `'person'` or `'organization'` — decides the publisher |
+| `thatseoagent_website_schema` | WebSite node |
+| `thatseoagent_organization_schema` | Organization node |
+| `thatseoagent_person_schema` | Person node |
+| `thatseoagent_webpage_schema` | WebPage node |
+| `thatseoagent_breadcrumb_schema` | BreadcrumbList node |
+| `thatseoagent_schema_graph` | The complete `@graph` before output |
+| `thatseoagent_faq_schema_enabled` | Disable FAQ schema per post |
+| `thatseoagent_faq_pairs` | The extracted Q&A pairs |
+| `thatseoagent_faq_numbered_enabled` | Opt in to numbered-heading FAQs (off) |
+| `thatseoagent_faq_thematic_enabled` | Opt in to thematic FAQs (off) |
+| `thatseoagent_author_schema` | Person node of a post author |
+| `thatseoagent_listing_page_schema` | CollectionPage / ProfilePage node of an archive |
+| `thatseoagent_product_post_types` | Post types marked up as products |
+| `thatseoagent_product_schema` | Product node |
+| `thatseoagent_product_properties` | Specifications before they become PropertyValues |
 
 Both FAQ opt-ins are off by default: they synthesise questions that do not appear on the page, which conflicts with Google's requirement that marked-up content be visible.
 
 **Sitemaps and admin**
 
-`lean_seo_sitemap_entries` (the index listing) · `lean_seo_meta_box_post_types` · action `lean_seo_sitemap_index`
+`thatseoagent_sitemap_entries` (the index listing) · `thatseoagent_meta_box_post_types` · action `thatseoagent_sitemap_index`
 
 **Other SEO plugins and llms.txt**
 
-`lean_seo_other_seo_plugin` (return `''` to keep Lean SEO's output on) · `lean_seo_llms_txt_post_types` · `lean_seo_llms_txt_limit` · `lean_seo_llms_txt`
+`thatseoagent_other_seo_plugin` (return `''` to keep ThatSeoAgent's output on) · `thatseoagent_llms_txt_post_types` · `thatseoagent_llms_txt_limit` · `thatseoagent_llms_txt`
 
 **Markdown**
 
 | Filter | Purpose |
 |--------|---------|
-| `lean_seo_markdown_post_types` | Post types served as Markdown (default `post`, `page`) |
-| `lean_seo_markdown_frontmatter` | The frontmatter fields |
-| `lean_seo_markdown_html` | The HTML converted to Markdown (page builders) |
-| `lean_seo_markdown_include_custom_fields` | Opt in to custom fields in the frontmatter (off) |
-| `lean_seo_markdown_custom_fields` | The custom fields included |
-| `lean_seo_markdown_cache_duration` | Cache lifetime in seconds (default one hour) |
-| `lean_seo_markdown_alternate_link` | Print the `rel="alternate"` link to the `.md` URL (default on) |
+| `thatseoagent_markdown_post_types` | Post types served as Markdown (default `post`, `page`) |
+| `thatseoagent_markdown_frontmatter` | The frontmatter fields |
+| `thatseoagent_markdown_html` | The HTML converted to Markdown (page builders) |
+| `thatseoagent_markdown_include_custom_fields` | Opt in to custom fields in the frontmatter (off) |
+| `thatseoagent_markdown_custom_fields` | The custom fields included |
+| `thatseoagent_markdown_cache_duration` | Cache lifetime in seconds (default one hour) |
+| `thatseoagent_markdown_alternate_link` | Print the `rel="alternate"` link to the `.md` URL (default on) |
 
 Custom fields are off by default: post meta not registered with `show_in_rest` is not public, and plugins routinely keep private data in it.
 
@@ -209,24 +209,24 @@ Custom fields are off by default: post meta not registered with `show_in_rest` i
 
 ```php
 // Custom description for a specific page
-add_filter( 'lean_seo_description', function ( $desc, $context ) {
+add_filter( 'thatseoagent_description', function ( $desc, $context ) {
     return is_page( 'special' ) ? 'Custom description' : $desc;
 }, 10, 2 );
 
 // SEO fields on a custom post type
-add_filter( 'lean_seo_meta_box_post_types', function ( $types ) {
+add_filter( 'thatseoagent_meta_box_post_types', function ( $types ) {
     $types[] = 'product';
     return $types;
 } );
 
 // Site-specific intro filler to skip when generating descriptions
-add_filter( 'lean_seo_description_filler_patterns', function ( $patterns ) {
+add_filter( 'thatseoagent_description_filler_patterns', function ( $patterns ) {
     $patterns[] = '/welcome to our blog/i';
     return $patterns;
 } );
 
 // Extra sitemaps in the index
-add_filter( 'lean_seo_sitemap_entries', function ( $entries ) {
+add_filter( 'thatseoagent_sitemap_entries', function ( $entries ) {
     $entries[] = array( 'loc' => home_url( '/custom.xml' ), 'lastmod' => null );
     return $entries;
 } );
@@ -238,11 +238,11 @@ Registered on `wp_abilities_api_init`:
 
 | Ability | Description | Capability |
 |---------|-------------|------------|
-| `lean-seo/get-sitemap-urls` | Every sitemap URL the site publishes | `manage_options` |
-| `lean-seo/get-post-seo` | SEO data for a post | `edit_post` |
-| `lean-seo/update-post-seo` | Update title/description | `edit_post` |
-| `lean-seo/audit-post-seo` | Audit one post, 0–100 score | `edit_post` |
-| `lean-seo/scan-seo-issues` | Scan many posts of a type, worst first | `manage_options` |
+| `thatseoagent/get-sitemap-urls` | Every sitemap URL the site publishes | `manage_options` |
+| `thatseoagent/get-post-seo` | SEO data for a post | `edit_post` |
+| `thatseoagent/update-post-seo` | Update title/description | `edit_post` |
+| `thatseoagent/audit-post-seo` | Audit one post, 0–100 score | `edit_post` |
+| `thatseoagent/scan-seo-issues` | Scan many posts of a type, worst first | `manage_options` |
 
 The audit checks title and description length, word count, heading structure, internal/external links, image count and alt coverage — telling missing alt text from the empty alt of decorative images — and, on catalog entries, their Product markup.
 
@@ -251,9 +251,9 @@ Every option is also registered with `show_in_rest`, so administrators can read 
 ## WP-CLI
 
 ```bash
-wp lean-seo generate-descriptions [--post-type=post] [--batch-size=50] [--limit=0] [--dry-run]
-wp lean-seo import --from=<yoast|rankmath|aioseo> [--post-type=<types>] [--identity] [--overwrite] [--dry-run]
-wp lean-seo validate-products [--post-type=<type>] [--all] [--format=<table|csv|json>]
+wp thatseoagent generate-descriptions [--post-type=post] [--batch-size=50] [--limit=0] [--dry-run]
+wp thatseoagent import --from=<yoast|rankmath|aioseo> [--post-type=<types>] [--identity] [--overwrite] [--dry-run]
+wp thatseoagent validate-products [--post-type=<type>] [--all] [--format=<table|csv|json>]
 ```
 
 - `generate-descriptions` writes a meta description for published posts that lack one, using the same rule the front end applies.
@@ -272,15 +272,15 @@ pnpm run build          # Alpine into assets/vendor, then the CSS
 pnpm run watch:css      # while editing templates
 ```
 
-The screen's components live in `assets/admin/app.js` and register on `alpine:init`. Every view is server-rendered first and keeps working without scripts; the components start from the state printed into the page (`window.leanSeo`), so nothing is fetched on load. Because Tailwind's utilities are `!important`, use `x-show.important` on elements that also carry a display utility.
+The screen's components live in `assets/admin/app.js` and register on `alpine:init`. Every view is server-rendered first and keeps working without scripts; the components start from the state printed into the page (`window.thatSeoAgent`), so nothing is fetched on load. Because Tailwind's utilities are `!important`, use `x-show.important` on elements that also carry a display utility.
 
-REST endpoints for the screen, all administrators-only, under `lean-seo/v1`: `GET /bulletin`, `POST /preferences`, `GET /audit`, `POST /audit/runs`, `POST|DELETE /audit/runs/{token}`, `POST /llms`. Settings are saved through core's `/wp/v2/settings`.
+REST endpoints for the screen, all administrators-only, under `thatseoagent/v1`: `GET /bulletin`, `POST /preferences`, `GET /audit`, `POST /audit/runs`, `POST|DELETE /audit/runs/{token}`, `POST /llms`. Settings are saved through core's `/wp/v2/settings`.
 
 Tailwind scans `includes/admin/` and `assets/admin/app.js` only, so the output holds just the classes they use. Colors are named by role (`bg-paper`, `bg-sheet`, `text-ink-2`, `border-rule`, `text-met`, `bg-level-yellow`…) and resolve to CSS variables that switch between the Day and Night editions. Public Sans is self-hosted from `assets/fonts/` (SIL Open Font License); `pnpm install` also pulls it from npm, should it need updating.
 
 ### Dependencies
 
-The HTML-to-Markdown library, `league/html-to-markdown`, ships in `vendor-prefixed/` with its namespace rewritten to `Lean_SEO\Dependencies\` by [Strauss](https://github.com/BrianHenryIE/strauss), so another plugin loading its own copy cannot conflict. `vendor-prefixed/` is committed; installing the plugin needs no Composer. To update the library:
+The HTML-to-Markdown library, `league/html-to-markdown`, ships in `vendor-prefixed/` with its namespace rewritten to `ThatSeoAgent\Dependencies\` by [Strauss](https://github.com/BrianHenryIE/strauss), so another plugin loading its own copy cannot conflict. `vendor-prefixed/` is committed; installing the plugin needs no Composer. To update the library:
 
 ```bash
 composer update league/html-to-markdown   # Strauss runs on post-update-cmd
@@ -289,10 +289,10 @@ git add vendor-prefixed/ composer.lock
 
 ## Translations
 
-Ships with Spanish (`es_ES`). To add a language, copy `languages/lean-seo.pot` and compile:
+Ships with Spanish (`es_ES`). To add a language, copy `languages/thatseoagent.pot` and compile:
 
 ```bash
-wp i18n make-mo languages/lean-seo-<locale>.po
+wp i18n make-mo languages/thatseoagent-<locale>.po
 ```
 
 ## Uninstalling
@@ -301,5 +301,13 @@ Deleting the plugin removes its options, its post meta and any queued IndexNow e
 
 ---
 
-**License:** GPL-2.0+
-**Author:** [Sarai Chinwag](https://saraichinwag.com) for [Extra Chill](https://extrachill.com)
+## Credits
+
+ThatSeoAgent began as a fork of [Lean SEO](https://github.com/Sarai-Chinwag/lean-seo) 1.9.0, by [Sarai Chinwag](https://saraichinwag.com) for [Extra Chill](https://extrachill.com), released under the GPL. It has since been rewritten and extended; the original copyright is kept in [LICENSE](LICENSE).
+
+Bundled: [Alpine.js](https://alpinejs.dev) (MIT), [league/html-to-markdown](https://github.com/thephpleague/html-to-markdown) (MIT), [Public Sans](https://public-sans.digital.gov) (SIL Open Font License), icons from [Lucide](https://lucide.dev) (ISC).
+
+---
+
+**License:** GPL-2.0-or-later
+**Author:** Angel Cruz

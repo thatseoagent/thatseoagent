@@ -7,7 +7,7 @@
  * because it prints each section as a bare <h2> and table with nothing to
  * hang the layout on.
  *
- * @package Lean_SEO
+ * @package ThatSeoAgent
  * @since 1.17.0
  */
 
@@ -17,17 +17,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $wp_settings_sections;
 
-$page     = Lean_SEO_Settings::GROUP;
+$page     = ThatSeoAgent_Settings::GROUP;
 $sections = isset( $wp_settings_sections[ $page ] ) ? (array) $wp_settings_sections[ $page ] : array();
 
 // Most-used first; anything registered by other code follows.
 $order = array(
-    'lean_seo_identity_section',
-    'lean_seo_homepage_section',
-    'lean_seo_products_section',
-    'lean_seo_schema_section',
-    'lean_seo_llms_section',
-    'lean_seo_indexnow_section',
+    'thatseoagent_identity_section',
+    'thatseoagent_homepage_section',
+    'thatseoagent_products_section',
+    'thatseoagent_schema_section',
+    'thatseoagent_llms_section',
+    'thatseoagent_indexnow_section',
 );
 uksort(
     $sections,
@@ -54,10 +54,10 @@ $current_rules = array();
 foreach ( array_keys( $sections ) as $index => $id ) {
     $id              = sanitize_html_class( $id );
     // Without scripts only; with them, the index follows the scroll
-    // (data-spy is set by the lsSettings component).
-    $current_rules[] = '#lean-seo-app .ls-settings:not([data-spy]):has(#' . $id . ':target) .ls-index a[href="#' . $id . '"]';
+    // (data-spy is set by the tsaSettings component).
+    $current_rules[] = '#thatseoagent-app .tsa-settings:not([data-spy]):has(#' . $id . ':target) .tsa-index a[href="#' . $id . '"]';
     if ( 0 === $index ) {
-        $current_rules[] = '#lean-seo-app .ls-settings:not([data-spy]):not(:has(section:target)) .ls-index a[href="#' . $id . '"]';
+        $current_rules[] = '#thatseoagent-app .tsa-settings:not([data-spy]):not(:has(section:target)) .tsa-index a[href="#' . $id . '"]';
     }
 }
 ?>
@@ -66,16 +66,16 @@ foreach ( array_keys( $sections ) as $index => $id ) {
    among important declarations an earlier layer wins over a later one. */
 @layer base {
 <?php echo implode( ",\n", $current_rules ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Selectors built from sanitized class-safe ids. ?> {
-    color: var(--ls-ink) !important;
+    color: var(--tsa-ink) !important;
     font-weight: 700 !important;
-    border-color: var(--ls-ink) !important;
+    border-color: var(--tsa-ink) !important;
 }
 }
 </style>
 
-<div class="ls-settings grid gap-x-12 gap-y-6 lg:grid-cols-[12rem_minmax(0,1fr)]" x-data="lsSettings">
-    <nav class="ls-index lg:sticky lg:top-[calc(var(--wp-admin--admin-bar--height)+1.75rem)] lg:self-start" aria-label="<?php esc_attr_e( 'Settings sections', 'lean-seo' ); ?>">
-        <p class="mb-2 hidden text-[12px] font-medium text-ink-3 lg:block"><?php esc_html_e( 'On this page', 'lean-seo' ); ?></p>
+<div class="tsa-settings grid gap-x-12 gap-y-6 lg:grid-cols-[12rem_minmax(0,1fr)]" x-data="tsaSettings">
+    <nav class="tsa-index lg:sticky lg:top-[calc(var(--wp-admin--admin-bar--height)+1.75rem)] lg:self-start" aria-label="<?php esc_attr_e( 'Settings sections', 'thatseoagent' ); ?>">
+        <p class="mb-2 hidden text-[12px] font-medium text-ink-3 lg:block"><?php esc_html_e( 'On this page', 'thatseoagent' ); ?></p>
         <ul class="flex flex-wrap gap-1.5 text-[14px] lg:flex-col lg:gap-0 lg:border-l lg:border-rule">
             <?php foreach ( $sections as $section ) : ?>
                 <li>
@@ -91,7 +91,7 @@ foreach ( array_keys( $sections ) as $index => $id ) {
         </ul>
     </nav>
 
-    <form method="post" action="options.php" class="ls-form min-w-0" x-ref="form" @submit.prevent="save()">
+    <form method="post" action="options.php" class="tsa-form min-w-0" x-ref="form" @submit.prevent="save()">
         <?php settings_fields( $page ); ?>
 
         <?php foreach ( $sections as $section ) : ?>
@@ -119,9 +119,9 @@ foreach ( array_keys( $sections ) as $index => $id ) {
                 ></span>
                 <span
                     :class="{ 'text-ink-3': 'idle' === status, 'text-ink': 'idle' !== status, 'font-semibold': 'error' === status || 'dirty' === status }"
-                    x-text="message || <?php echo esc_attr( wp_json_encode( __( 'Changes apply to the whole site as soon as they are saved.', 'lean-seo' ) ) ); ?>"
+                    x-text="message || <?php echo esc_attr( wp_json_encode( __( 'Changes apply to the whole site as soon as they are saved.', 'thatseoagent' ) ) ); ?>"
                     class="text-ink-3"
-                ><?php esc_html_e( 'Changes apply to the whole site as soon as they are saved.', 'lean-seo' ); ?></span>
+                ><?php esc_html_e( 'Changes apply to the whole site as soon as they are saved.', 'thatseoagent' ); ?></span>
             </p>
             <button
                 type="submit"
@@ -130,8 +130,8 @@ foreach ( array_keys( $sections ) as $index => $id ) {
                 :disabled="'saving' === status"
                 :aria-busy="'saving' === status ? 'true' : 'false'"
             >
-                <span x-show="'saving' !== status"><?php esc_html_e( 'Save settings', 'lean-seo' ); ?></span>
-                <span x-cloak x-show="'saving' === status"><?php esc_html_e( 'Saving…', 'lean-seo' ); ?></span>
+                <span x-show="'saving' !== status"><?php esc_html_e( 'Save settings', 'thatseoagent' ); ?></span>
+                <span x-cloak x-show="'saving' === status"><?php esc_html_e( 'Saving…', 'thatseoagent' ); ?></span>
             </button>
         </div>
     </form>

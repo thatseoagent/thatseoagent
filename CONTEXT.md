@@ -1,4 +1,4 @@
-# Lean SEO
+# ThatSeoAgent
 
 A WordPress SEO plugin that publishes what search engines and AI assistants read about a site, and tells the people running the site whether that is in good shape and what to do next.
 
@@ -27,7 +27,7 @@ One fact checked about the site (indexing allowed, permalinks, other SEO plugins
 _Avoid_: check, metric, test
 
 **Stepping aside**:
-What Lean SEO does while another SEO plugin is active: it prints nothing in the page head, serves no sitemaps or AI index, and leaves robots.txt alone.
+What ThatSeoAgent does while another SEO plugin is active: it prints nothing in the page head, serves no sitemaps or AI index, and leaves robots.txt alone.
 _Avoid_: conflict mode, disabled, compatibility mode
 
 ### What a post says
@@ -89,5 +89,5 @@ _Avoid_: scan, crawl, SEO audit
 ### The screen
 
 **Edition**:
-The Lean SEO screen's color scheme for one person: Day (the default) or Night.
+The ThatSeoAgent screen's color scheme for one person: Day (the default) or Night.
 _Avoid_: theme (that is the WordPress theme), dark mode

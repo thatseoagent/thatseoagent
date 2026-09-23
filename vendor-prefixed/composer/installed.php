@@ -1,7 +1,7 @@
 <?php return array (
   'root' => 
   array (
-    'name' => 'sarai-chinwag/lean-seo',
+    'name' => 'angelcruz/thatseoagent',
     'pretty_version' => 'dev-main',
     'version' => 'dev-main',
     'reference' => 'd0be33960bbb0b75f9c3ae251244759de4111da1',

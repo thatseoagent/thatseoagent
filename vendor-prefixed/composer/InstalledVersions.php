@@ -10,10 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Lean_SEO\Dependencies\Composer;
+namespace ThatSeoAgent\Dependencies\Composer;
 
-use Lean_SEO\Dependencies\Composer\Autoload\ClassLoader;
-use Lean_SEO\Dependencies\Composer\Semver\VersionParser;
+use ThatSeoAgent\Dependencies\Composer\Autoload\ClassLoader;
+use ThatSeoAgent\Dependencies\Composer\Semver\VersionParser;
 
 /**
  * This class is copied in every Composer installed project and available to all
@@ -121,7 +121,7 @@ class InstalledVersions
      *
      * e.g. If you want to know whether version 2.3+ of package foo/bar is installed, you would call:
      *
-     *   Lean_SEO\Dependencies\Composer\InstalledVersions::satisfies(new VersionParser, 'foo/bar', '^2.3')
+     *   ThatSeoAgent\Dependencies\Composer\InstalledVersions::satisfies(new VersionParser, 'foo/bar', '^2.3')
      *
      * @param  VersionParser $parser      Install composer/semver to have access to this class and functionality
      * @param  string        $packageName
@@ -347,7 +347,7 @@ class InstalledVersions
     private static function getInstalled()
     {
         if (null === self::$canGetVendors) {
-            self::$canGetVendors = method_exists('Lean_SEO\Dependencies\Composer\Autoload\ClassLoader', 'getRegisteredLoaders');
+            self::$canGetVendors = method_exists('ThatSeoAgent\Dependencies\Composer\Autoload\ClassLoader', 'getRegisteredLoaders');
         }
 
         $installed = array();

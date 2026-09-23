@@ -1,13 +1,12 @@
 <?php
 /**
- * Uninstall routine for Lean SEO.
+ * Uninstall routine for ThatSeoAgent.
  *
  * Runs only when the user deletes the plugin from the Plugins screen.
  * Removes every option and post meta key the plugin created, and nothing
- * else — in particular the legacy theme option `sarai_chinwag_indexnow_key`
- * is left alone because Lean SEO only ever read from it.
+ * else.
  *
- * @package Lean_SEO
+ * @package ThatSeoAgent
  * @since 1.8.0
  */
 
@@ -16,23 +15,23 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 }
 
 // Every name below is asked of the module that owns it — the settings from
-// Lean_SEO_Settings, the rest from their classes — instead of kept as a
+// ThatSeoAgent_Settings, the rest from their classes — instead of kept as a
 // copy that can fall out of step when something is added. The classes need
 // nothing but ABSPATH, and the autoloader nothing but its own directory.
 require_once plugin_dir_path( __FILE__ ) . 'includes/autoload.php';
 
 /**
- * Delete all Lean SEO data for the current site.
+ * Delete all ThatSeoAgent data for the current site.
  *
  * @return void
  */
-function lean_seo_uninstall_site() {
+function thatseoagent_uninstall_site() {
     $options = array_merge(
-        array_keys( Lean_SEO_Settings::definitions() ),
+        array_keys( ThatSeoAgent_Settings::definitions() ),
         array(
-            Lean_SEO_Audit_Run::RESULTS_OPTION,
-            Lean_SEO::REWRITE_VERSION_OPTION,
-            Lean_SEO_Markdown_Cache::VERSION_OPTION,
+            ThatSeoAgent_Audit_Run::RESULTS_OPTION,
+            ThatSeoAgent::REWRITE_VERSION_OPTION,
+            ThatSeoAgent_Markdown_Cache::VERSION_OPTION,
         )
     );
 
@@ -40,14 +39,14 @@ function lean_seo_uninstall_site() {
         delete_option( $option );
     }
 
-    foreach ( Lean_SEO_Post_Seo::keys() as $meta_key ) {
+    foreach ( ThatSeoAgent_Post_Seo::keys() as $meta_key ) {
         delete_post_meta_by_key( $meta_key );
     }
 
-    wp_unschedule_hook( Lean_SEO_IndexNow::CRON_HOOK );
-    delete_transient( Lean_SEO_Llms::CACHE_KEY );
-    delete_transient( Lean_SEO_Product_Report::SUMMARY_KEY );
-    delete_metadata( 'user', 0, Lean_SEO_App::THEME_META, '', true );
+    wp_unschedule_hook( ThatSeoAgent_IndexNow::CRON_HOOK );
+    delete_transient( ThatSeoAgent_Llms::CACHE_KEY );
+    delete_transient( ThatSeoAgent_Product_Report::SUMMARY_KEY );
+    delete_metadata( 'user', 0, ThatSeoAgent_App::THEME_META, '', true );
 }
 
 /**
@@ -59,9 +58,9 @@ function lean_seo_uninstall_site() {
  *
  * @return void
  */
-function lean_seo_uninstall_all_sites() {
+function thatseoagent_uninstall_all_sites() {
     if ( ! is_multisite() ) {
-        lean_seo_uninstall_site();
+        thatseoagent_uninstall_site();
         return;
     }
 
@@ -75,9 +74,9 @@ function lean_seo_uninstall_all_sites() {
 
     foreach ( $site_ids as $site_id ) {
         switch_to_blog( $site_id );
-        lean_seo_uninstall_site();
+        thatseoagent_uninstall_site();
         restore_current_blog();
     }
 }
 
-lean_seo_uninstall_all_sites();
+thatseoagent_uninstall_all_sites();

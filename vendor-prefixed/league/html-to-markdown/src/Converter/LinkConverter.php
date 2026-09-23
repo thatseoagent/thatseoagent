@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter;
+namespace ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter;
 
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Configuration;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\ConfigurationAwareInterface;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\ElementInterface;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Configuration;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\ConfigurationAwareInterface;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\ElementInterface;
 
 class LinkConverter implements ConverterInterface, ConfigurationAwareInterface
 {

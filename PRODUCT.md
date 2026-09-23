@@ -28,7 +28,7 @@ No upsells, no paid tier, no remote service, no external requests (IndexNow only
 
 - Lives inside wp-admin, next to the standard WordPress menu and toolbar; must not restyle or break the rest of the admin.
 - Used on laptops and desktops mostly; the admin also runs on tablets and phones.
-- Also operated from WP-CLI (`wp lean-seo …`) and the Abilities API by agents; the screen and those tools share the same data and checks.
+- Also operated from WP-CLI (`wp thatseoagent …`) and the Abilities API by agents; the screen and those tools share the same data and checks.
 - Settings are WordPress options exposed through `/wp/v2/settings`; interactivity is planned with Alpine.js over the REST API.
 
 ## Capabilities and Constraints
@@ -37,12 +37,12 @@ No upsells, no paid tier, no remote service, no external requests (IndexNow only
 - No web fonts or other assets from external hosts.
 - Source strings in English, translated through WordPress (`languages/`, Spanish shipped). Spanish strings run longer and must fit.
 - PHP 7.4+, WordPress 7.1+.
-- Open decision: the fork will get its own name, logo and voice; not decided yet. "Lean SEO" is the working name until then.
+- The product is named ThatSeoAgent (decided 2026-09-23); its logo and voice are still open.
 
 ## Brand Commitments
 
-- It is the agency's own fork; the original author is credited in the plugin header and README.
-- Name and logo are undecided; do not invent a final brand name.
+- It is the agency's own product, grown from a fork of Lean SEO; the original author is credited in the README and LICENSE.
+- The name is ThatSeoAgent; the logo is undecided, so do not invent one.
 
 ## Evidence on Hand
 

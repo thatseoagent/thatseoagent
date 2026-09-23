@@ -8,13 +8,13 @@ class ComposerAutoloaderInit0300bcfc6aad19f34e05505ca4d07bcd
 
     public static function loadClassLoader($class)
     {
-        if ('Lean_SEO\Dependencies\Composer\Autoload\ClassLoader' === $class) {
+        if ('ThatSeoAgent\Dependencies\Composer\Autoload\ClassLoader' === $class) {
             require __DIR__ . '/ClassLoader.php';
         }
     }
 
     /**
-     * @return \Lean_SEO\Dependencies\Composer\Autoload\ClassLoader
+     * @return \ThatSeoAgent\Dependencies\Composer\Autoload\ClassLoader
      */
     public static function getLoader()
     {
@@ -25,11 +25,11 @@ class ComposerAutoloaderInit0300bcfc6aad19f34e05505ca4d07bcd
         require __DIR__ . '/platform_check.php';
 
         spl_autoload_register(array('ComposerAutoloaderInit0300bcfc6aad19f34e05505ca4d07bcd', 'loadClassLoader'), true, true);
-        self::$loader = $loader = new \Lean_SEO\Dependencies\Composer\Autoload\ClassLoader(\dirname(__DIR__));
+        self::$loader = $loader = new \ThatSeoAgent\Dependencies\Composer\Autoload\ClassLoader(\dirname(__DIR__));
         spl_autoload_unregister(array('ComposerAutoloaderInit0300bcfc6aad19f34e05505ca4d07bcd', 'loadClassLoader'));
 
         require __DIR__ . '/autoload_static.php';
-        call_user_func(\Lean_SEO\Dependencies\Composer\Autoload\ComposerStaticInit0300bcfc6aad19f34e05505ca4d07bcd::getInitializer($loader));
+        call_user_func(\ThatSeoAgent\Dependencies\Composer\Autoload\ComposerStaticInit0300bcfc6aad19f34e05505ca4d07bcd::getInitializer($loader));
 
         $loader->setClassMapAuthoritative(true);
         $loader->register(true);

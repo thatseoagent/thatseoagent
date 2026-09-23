@@ -1,10 +1,10 @@
 # Admin Interface
 
-Lean SEO adds a user-friendly meta box to the post and page editors for customizing SEO settings.
+ThatSeoAgent adds a user-friendly meta box to the post and page editors for customizing SEO settings.
 
 ## What It Does
 
-The `Lean_SEO_Meta_Box` class provides:
+The `ThatSeoAgent_Meta_Box` class provides:
 
 - **SEO Meta Box**: Added to post and page editors
 - **Custom Title Field**: Override the default page title
@@ -15,13 +15,13 @@ The `Lean_SEO_Meta_Box` class provides:
 
 ## Code Structure
 
-Located in `includes/admin/class-lean-seo-meta-box.php`:
+Located in `includes/admin/class-thatseoagent-meta-box.php`:
 
 - `add()` - Registers the SEO meta box
 - `render()` - Outputs the HTML form with fields and preview
-- `save()` - Processes and saves the form data, through `Lean_SEO_Post_Seo`
+- `save()` - Processes and saves the form data, through `ThatSeoAgent_Post_Seo`
 
-The post types that get the fields are answered by `Lean_SEO_Post_Seo::post_types()`.
+The post types that get the fields are answered by `ThatSeoAgent_Post_Seo::post_types()`.
 
 ## Configuration Options
 
@@ -30,7 +30,7 @@ The post types that get the fields are answered by `Lean_SEO_Post_Seo::post_type
 By default, the meta box appears on 'post' and 'page' post types. Customize this with:
 
 ```php
-add_filter('lean_seo_meta_box_post_types', function($post_types) {
+add_filter('thatseoagent_meta_box_post_types', function($post_types) {
     // Add to custom post types
     $post_types[] = 'product';
     $post_types[] = 'portfolio';
@@ -53,14 +53,14 @@ add_action('save_post', function($post_id) {
         return;
     }
     
-    $title = get_post_meta($post_id, '_lean_seo_title', true);
+    $title = get_post_meta($post_id, '_thatseoagent_title', true);
     if (strlen($title) > 70) {
         // Handle validation error
         add_action('admin_notices', function() {
             echo '<div class="notice notice-error"><p>SEO title is too long!</p></div>';
         });
     }
-}, 11); // After Lean SEO saves (priority 10)
+}, 11); // After ThatSeoAgent saves (priority 10)
 ```
 
 ## Usage
@@ -88,8 +88,8 @@ The meta box includes a live preview that shows:
 ### Saving Data
 
 Data is saved as post meta:
-- `_lean_seo_title` - Custom SEO title
-- `_lean_seo_description` - Custom meta description
+- `_thatseoagent_title` - Custom SEO title
+- `_thatseoagent_description` - Custom meta description
 
 Empty fields are automatically cleaned up (meta deleted).
 
@@ -120,7 +120,7 @@ Custom CSS is included inline for:
 
 The admin interface integrates with the meta output system:
 - Custom titles override `document_title_parts`
-- Custom descriptions are used by `Lean_SEO_Meta::get_description()`
+- Custom descriptions are used by `ThatSeoAgent_Meta::get_description()`
 
 ## Best Practices
 

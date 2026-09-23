@@ -12,8 +12,8 @@
  *     markdown/      the Markdown version of each post, and llms.txt
  *     audit/         the SEO audit and the batched content check
  *     bulletin/      the site's state: the bulletin and the readings
- *     admin/         the Lean SEO screen, the meta box, the bulk action
- *     rest/          the screen's REST controllers (lean-seo/v1)
+ *     admin/         the ThatSeoAgent screen, the meta box, the bulk action
+ *     rest/          the screen's REST controllers (thatseoagent/v1)
  *     tooling/       WP-CLI, the Abilities API, the importer
  *     integrations/  other SEO plugins, IndexNow
  *
@@ -22,10 +22,10 @@
  * missing from the map fails loudly instead of being searched for on disk.
  * Adding a class means adding its line here.
  *
- * Uses __DIR__, not LEAN_SEO_PLUGIN_DIR: uninstall.php loads this file
+ * Uses __DIR__, not THATSEOAGENT_PLUGIN_DIR: uninstall.php loads this file
  * without the plugin's main file.
  *
- * @package Lean_SEO
+ * @package ThatSeoAgent
  * @since 1.19.0
  */
 
@@ -36,62 +36,62 @@ if ( ! defined( 'ABSPATH' ) ) {
 spl_autoload_register(
     function ( $class ) {
         static $map = array(
-        'Lean_SEO_Settings'          => 'class-lean-seo-settings.php',
-        'Lean_SEO_Memo'              => 'class-lean-seo-memo.php',
-        'Lean_SEO'                   => 'class-lean-seo.php',
+        'ThatSeoAgent_Settings'          => 'class-thatseoagent-settings.php',
+        'ThatSeoAgent_Memo'              => 'class-thatseoagent-memo.php',
+        'ThatSeoAgent'                   => 'class-thatseoagent.php',
 
-        'Lean_SEO_Content'           => 'content/class-lean-seo-content.php',
-        'Lean_SEO_Description'       => 'content/class-lean-seo-description.php',
-        'Lean_SEO_FAQ_Section'       => 'content/class-lean-seo-faq-section.php',
-        'Lean_SEO_FAQ'               => 'content/class-lean-seo-faq.php',
-        'Lean_SEO_Post_Seo'          => 'content/class-lean-seo-post-seo.php',
+        'ThatSeoAgent_Content'           => 'content/class-thatseoagent-content.php',
+        'ThatSeoAgent_Description'       => 'content/class-thatseoagent-description.php',
+        'ThatSeoAgent_FAQ_Section'       => 'content/class-thatseoagent-faq-section.php',
+        'ThatSeoAgent_FAQ'               => 'content/class-thatseoagent-faq.php',
+        'ThatSeoAgent_Post_Seo'          => 'content/class-thatseoagent-post-seo.php',
 
-        'Lean_SEO_Meta'              => 'head/class-lean-seo-meta.php',
-        'Lean_SEO_Schema'            => 'head/class-lean-seo-schema.php',
-        'Lean_SEO_Title'             => 'head/class-lean-seo-title.php',
+        'ThatSeoAgent_Meta'              => 'head/class-thatseoagent-meta.php',
+        'ThatSeoAgent_Schema'            => 'head/class-thatseoagent-schema.php',
+        'ThatSeoAgent_Title'             => 'head/class-thatseoagent-title.php',
 
-        'Lean_SEO_Default_Author'    => 'site/class-lean-seo-default-author.php',
-        'Lean_SEO_Homepage_Applier'  => 'site/class-lean-seo-homepage-applier.php',
-        'Lean_SEO_Homepage'          => 'site/class-lean-seo-homepage.php',
-        'Lean_SEO_Identity_Applier'  => 'site/class-lean-seo-identity-applier.php',
-        'Lean_SEO_Identity'          => 'site/class-lean-seo-identity.php',
+        'ThatSeoAgent_Default_Author'    => 'site/class-thatseoagent-default-author.php',
+        'ThatSeoAgent_Homepage_Applier'  => 'site/class-thatseoagent-homepage-applier.php',
+        'ThatSeoAgent_Homepage'          => 'site/class-thatseoagent-homepage.php',
+        'ThatSeoAgent_Identity_Applier'  => 'site/class-thatseoagent-identity-applier.php',
+        'ThatSeoAgent_Identity'          => 'site/class-thatseoagent-identity.php',
 
-        'Lean_SEO_Product_Report'    => 'catalog/class-lean-seo-product-report.php',
-        'Lean_SEO_Product_Settings'  => 'catalog/class-lean-seo-product-settings.php',
-        'Lean_SEO_Product'           => 'catalog/class-lean-seo-product.php',
+        'ThatSeoAgent_Product_Report'    => 'catalog/class-thatseoagent-product-report.php',
+        'ThatSeoAgent_Product_Settings'  => 'catalog/class-thatseoagent-product-settings.php',
+        'ThatSeoAgent_Product'           => 'catalog/class-thatseoagent-product.php',
 
-        'Lean_SEO_Robots'            => 'sitemap/class-lean-seo-robots.php',
-        'Lean_SEO_Sitemap'           => 'sitemap/class-lean-seo-sitemap.php',
+        'ThatSeoAgent_Robots'            => 'sitemap/class-thatseoagent-robots.php',
+        'ThatSeoAgent_Sitemap'           => 'sitemap/class-thatseoagent-sitemap.php',
 
-        'Lean_SEO_Llms'              => 'markdown/class-lean-seo-llms.php',
-        'Lean_SEO_Markdown_Cache'    => 'markdown/class-lean-seo-markdown-cache.php',
-        'Lean_SEO_Markdown_Endpoint' => 'markdown/class-lean-seo-markdown-endpoint.php',
-        'Lean_SEO_Markdown'          => 'markdown/class-lean-seo-markdown.php',
+        'ThatSeoAgent_Llms'              => 'markdown/class-thatseoagent-llms.php',
+        'ThatSeoAgent_Markdown_Cache'    => 'markdown/class-thatseoagent-markdown-cache.php',
+        'ThatSeoAgent_Markdown_Endpoint' => 'markdown/class-thatseoagent-markdown-endpoint.php',
+        'ThatSeoAgent_Markdown'          => 'markdown/class-thatseoagent-markdown.php',
 
-        'Lean_SEO_Audit_Run'         => 'audit/class-lean-seo-audit-run.php',
-        'Lean_SEO_Audit'             => 'audit/class-lean-seo-audit.php',
+        'ThatSeoAgent_Audit_Run'         => 'audit/class-thatseoagent-audit-run.php',
+        'ThatSeoAgent_Audit'             => 'audit/class-thatseoagent-audit.php',
 
-        'Lean_SEO_Bulletin'          => 'bulletin/class-lean-seo-bulletin.php',
-        'Lean_SEO_Readings'          => 'bulletin/class-lean-seo-readings.php',
+        'ThatSeoAgent_Bulletin'          => 'bulletin/class-thatseoagent-bulletin.php',
+        'ThatSeoAgent_Readings'          => 'bulletin/class-thatseoagent-readings.php',
 
-        'Lean_SEO_App'               => 'admin/class-lean-seo-app.php',
-        'Lean_SEO_Bulk_Descriptions' => 'admin/class-lean-seo-bulk-descriptions.php',
-        'Lean_SEO_Icons'             => 'admin/class-lean-seo-icons.php',
-        'Lean_SEO_Meta_Box'          => 'admin/class-lean-seo-meta-box.php',
+        'ThatSeoAgent_App'               => 'admin/class-thatseoagent-app.php',
+        'ThatSeoAgent_Bulk_Descriptions' => 'admin/class-thatseoagent-bulk-descriptions.php',
+        'ThatSeoAgent_Icons'             => 'admin/class-thatseoagent-icons.php',
+        'ThatSeoAgent_Meta_Box'          => 'admin/class-thatseoagent-meta-box.php',
 
-        'Lean_SEO_REST_Audit'        => 'rest/class-lean-seo-rest-audit.php',
-        'Lean_SEO_REST_Bulletin'     => 'rest/class-lean-seo-rest-bulletin.php',
-        'Lean_SEO_REST_Controller'   => 'rest/class-lean-seo-rest-controller.php',
-        'Lean_SEO_REST_Llms'         => 'rest/class-lean-seo-rest-llms.php',
-        'Lean_SEO_REST_Preferences'  => 'rest/class-lean-seo-rest-preferences.php',
-        'Lean_SEO_REST'              => 'rest/class-lean-seo-rest.php',
+        'ThatSeoAgent_REST_Audit'        => 'rest/class-thatseoagent-rest-audit.php',
+        'ThatSeoAgent_REST_Bulletin'     => 'rest/class-thatseoagent-rest-bulletin.php',
+        'ThatSeoAgent_REST_Controller'   => 'rest/class-thatseoagent-rest-controller.php',
+        'ThatSeoAgent_REST_Llms'         => 'rest/class-thatseoagent-rest-llms.php',
+        'ThatSeoAgent_REST_Preferences'  => 'rest/class-thatseoagent-rest-preferences.php',
+        'ThatSeoAgent_REST'              => 'rest/class-thatseoagent-rest.php',
 
-        'Lean_SEO_Abilities'         => 'tooling/class-lean-seo-abilities.php',
-        'Lean_SEO_CLI'               => 'tooling/class-lean-seo-cli.php',
-        'Lean_SEO_Importer'          => 'tooling/class-lean-seo-importer.php',
+        'ThatSeoAgent_Abilities'         => 'tooling/class-thatseoagent-abilities.php',
+        'ThatSeoAgent_CLI'               => 'tooling/class-thatseoagent-cli.php',
+        'ThatSeoAgent_Importer'          => 'tooling/class-thatseoagent-importer.php',
 
-        'Lean_SEO_Compat'            => 'integrations/class-lean-seo-compat.php',
-        'Lean_SEO_IndexNow'          => 'integrations/class-lean-seo-indexnow.php',
+        'ThatSeoAgent_Compat'            => 'integrations/class-thatseoagent-compat.php',
+        'ThatSeoAgent_IndexNow'          => 'integrations/class-thatseoagent-indexnow.php',
         );
 
         if ( isset( $map[ $class ] ) ) {

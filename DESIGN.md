@@ -1,5 +1,5 @@
 ---
-name: Lean SEO admin
+name: ThatSeoAgent admin
 description: The site's SEO state read as a weather bulletin inside wp-admin.
 colors:
   paper: "#f2f4f3"
@@ -139,7 +139,7 @@ components:
     padding: "8px 12px"
 ---
 
-# Design System: Lean SEO admin
+# Design System: ThatSeoAgent admin
 
 Scope: the plugin's wp-admin screen (Overview, Products, Content check, AI index, Settings). The plugin's front-end output has no visual design and is not covered.
 
@@ -151,7 +151,7 @@ The site gets a weather bulletin, not a dashboard. Each view opens with one plai
 
 Density is that of a printed service bulletin: sheets divided by hairline rules, not cards floating on a grey ground. Numbers are tabular. There is one filled control per surface, an ink "press" button, and every other action is ruled. Motion is a single event: one sweep of light across the observation row when the page loads, meaning "these were just checked".
 
-The screen lives inside wp-admin and must not leak into it: no global reset, a reset scoped to `#lean-seo-app`, utilities marked important so unlayered wp-admin rules cannot override them. Two editions exist, Day (default) and Night (deep service blue, never neutral black), switched from the sidebar.
+The screen lives inside wp-admin and must not leak into it: no global reset, a reset scoped to `#thatseoagent-app`, utilities marked important so unlayered wp-admin rules cannot override them. Two editions exist, Day (default) and Night (deep service blue, never neutral black), switched from the sidebar.
 
 **Key Characteristics:**
 - One condition sentence on a flat warning-colored field per view.
@@ -277,7 +277,7 @@ wp-admin notices are restyled as a sheet with a 1px rule border, 6px radius, and
 - **Do** keep one filled press button per surface; every other action is a rule button or a service-blue link.
 - **Do** divide content with 1px rules and use a strong rule under section titles.
 - **Do** set every number with tabular numerals.
-- **Do** keep all styling scoped to `#lean-seo-app` and the screen class; nothing may restyle the rest of wp-admin.
+- **Do** keep all styling scoped to `#thatseoagent-app` and the screen class; nothing may restyle the rest of wp-admin.
 
 ### Don't:
 - **Don't** introduce a saturated color outside the warning scale, or use service blue as a fill.

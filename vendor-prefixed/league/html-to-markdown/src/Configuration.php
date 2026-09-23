@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Lean_SEO\Dependencies\League\HTMLToMarkdown;
+namespace ThatSeoAgent\Dependencies\League\HTMLToMarkdown;
 
 class Configuration
 {

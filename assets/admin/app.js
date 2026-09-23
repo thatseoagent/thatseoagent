@@ -1,10 +1,10 @@
 /**
- * Lean SEO screen: the interactive layer.
+ * ThatSeoAgent screen: the interactive layer.
  *
  * Every view is server-rendered and works without this file; Alpine.js adds
  * saving without reloads, the batched content check, filters and the live
  * sidebar. Components start from the state the page was rendered with
- * (window.leanSeo, printed before this file), so nothing is fetched on load.
+ * (window.thatSeoAgent, printed before this file), so nothing is fetched on load.
  *
  * Load order: this file, then Alpine (assets/vendor/alpine.min.js), both
  * deferred. Everything registers on `alpine:init`, which Alpine fires before
@@ -15,7 +15,7 @@
 ( function () {
 	'use strict';
 
-	var data = window.leanSeo || {};
+	var data = window.thatSeoAgent || {};
 
 	function t( key ) {
 		return ( data.i18n && data.i18n[ key ] ) || key;
@@ -61,7 +61,7 @@
 
 	/**
 	 * Parse a form field name into its path:
-	 * "lean_seo_identity[social][twitter]" → ["lean_seo_identity", "social", "twitter"].
+	 * "thatseoagent_identity[social][twitter]" → ["thatseoagent_identity", "social", "twitter"].
 	 */
 	function namePath( name ) {
 		var match = /^([^[\]]+)((?:\[[^\]]*\])*)$/.exec( name );
@@ -102,7 +102,7 @@
 		Alpine.store( 'bulletin', Object.assign( {}, data.bulletin, {
 			refresh: function () {
 				var store = this;
-				return api( { path: '/lean-seo/v1/bulletin' } ).then( function ( bulletin ) {
+				return api( { path: '/thatseoagent/v1/bulletin' } ).then( function ( bulletin ) {
 					Object.assign( store, bulletin );
 				} ).catch( function () {
 					// The page still shows the last known state; nothing to undo.
@@ -145,7 +145,7 @@
 		/*
 		 * Day / Night. Applied at once; saved per user in the background.
 		 */
-		Alpine.data( 'lsEdition', function () {
+		Alpine.data( 'tsaEdition', function () {
 			return {
 				theme: data.theme || 'light',
 
@@ -159,7 +159,7 @@
 
 					this.apply( theme );
 
-					api( { path: '/lean-seo/v1/preferences', method: 'POST', data: { theme: theme } } ).catch( function () {
+					api( { path: '/thatseoagent/v1/preferences', method: 'POST', data: { theme: theme } } ).catch( function () {
 						self.apply( previous );
 						Alpine.store( 'toast' ).show( t( 'themeFailed' ), 'error' );
 					} );
@@ -167,8 +167,8 @@
 
 				apply: function ( theme ) {
 					this.theme = theme;
-					document.body.classList.toggle( 'lean-seo-theme-dark', 'dark' === theme );
-					document.body.classList.toggle( 'lean-seo-theme-light', 'light' === theme );
+					document.body.classList.toggle( 'thatseoagent-theme-dark', 'dark' === theme );
+					document.body.classList.toggle( 'thatseoagent-theme-light', 'light' === theme );
 				},
 			};
 		} );
@@ -178,7 +178,7 @@
 		 * options and sanitizers as the form's post to options.php, which
 		 * stays the fallback when scripts are off.
 		 */
-		Alpine.data( 'lsSettings', function () {
+		Alpine.data( 'tsaSettings', function () {
 			return {
 				status: 'idle', // idle | dirty | saving | saved | error
 				message: '',
@@ -305,13 +305,13 @@
 
 						// The IndexNow sanitizer keeps the old key instead of
 						// storing an invalid one; say so rather than pretend.
-						if ( undefined !== values.lean_seo_indexnow_key ) {
-							var sent = String( values.lean_seo_indexnow_key ).replace( /[^a-zA-Z0-9-]/g, '' );
-							if ( '' !== sent && saved.lean_seo_indexnow_key !== sent ) {
+						if ( undefined !== values.thatseoagent_indexnow_key ) {
+							var sent = String( values.thatseoagent_indexnow_key ).replace( /[^a-zA-Z0-9-]/g, '' );
+							if ( '' !== sent && saved.thatseoagent_indexnow_key !== sent ) {
 								notes.push( t( 'indexnowKept' ) );
-								var field = self.$refs.form.querySelector( '[name="lean_seo_indexnow_key"]' );
+								var field = self.$refs.form.querySelector( '[name="thatseoagent_indexnow_key"]' );
 								if ( field ) {
-									field.value = saved.lean_seo_indexnow_key || '';
+									field.value = saved.thatseoagent_indexnow_key || '';
 								}
 							}
 						}
@@ -332,7 +332,7 @@
 		/*
 		 * Content check: a batched run, a few posts per request.
 		 */
-		Alpine.data( 'lsAudit', function ( initial ) {
+		Alpine.data( 'tsaAudit', function ( initial ) {
 			initial = initial || {};
 
 			return {
@@ -418,10 +418,10 @@
 							return null;
 						}
 
-						return api( { path: '/lean-seo/v1/audit/runs/' + progress.token, method: 'POST' } ).then( step );
+						return api( { path: '/thatseoagent/v1/audit/runs/' + progress.token, method: 'POST' } ).then( step );
 					};
 
-					return api( { path: '/lean-seo/v1/audit/runs', method: 'POST', data: { post_type: this.postType } } )
+					return api( { path: '/thatseoagent/v1/audit/runs', method: 'POST', data: { post_type: this.postType } } )
 						.then( step )
 						.catch( function ( error ) {
 							if ( run !== self.run ) {
@@ -438,7 +438,7 @@
 					this.status = this.rows.length ? 'done' : 'idle';
 					this.finished = 0;
 					if ( token ) {
-						api( { path: '/lean-seo/v1/audit/runs/' + token, method: 'DELETE' } ).catch( function () {} );
+						api( { path: '/thatseoagent/v1/audit/runs/' + token, method: 'DELETE' } ).catch( function () {} );
 					}
 				},
 
@@ -450,7 +450,7 @@
 					this.loading = true;
 					this.error = '';
 
-					return api( { path: '/lean-seo/v1/audit?post_type=' + encodeURIComponent( this.postType ) } ).then( function ( last ) {
+					return api( { path: '/thatseoagent/v1/audit?post_type=' + encodeURIComponent( this.postType ) } ).then( function ( last ) {
 						self.rows = last ? last.rows : [];
 						self.total = last ? last.total : 0;
 						self.checked = self.total;
@@ -469,7 +469,7 @@
 		/*
 		 * Products: filter the rows on this page by state.
 		 */
-		Alpine.data( 'lsProducts', function () {
+		Alpine.data( 'tsaProducts', function () {
 			return {
 				filter: 'all', // all | attention | complete
 
@@ -485,7 +485,7 @@
 		/*
 		 * AI index: rebuild llms.txt on demand.
 		 */
-		Alpine.data( 'lsLlms', function ( initial ) {
+		Alpine.data( 'tsaLlms', function ( initial ) {
 			initial = initial || {};
 
 			return {
@@ -499,7 +499,7 @@
 
 					this.busy = true;
 
-					return api( { path: '/lean-seo/v1/llms', method: 'POST' } ).then( function ( result ) {
+					return api( { path: '/thatseoagent/v1/llms', method: 'POST' } ).then( function ( result ) {
 						self.body = result.body;
 						self.entries = result.entries;
 						self.sections = result.sections;

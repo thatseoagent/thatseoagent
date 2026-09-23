@@ -1,7 +1,8 @@
 {
-  "name": "lean-seo",
+  "name": "thatseoagent",
   "private": true,
-  "description": "Build tooling for the Lean SEO admin screen. The compiled CSS is committed; installing the plugin needs no Node.",
+  "description": "Build tooling for the ThatSeoAgent admin screen. The compiled CSS is committed; installing the plugin needs no Node.",
+  "author": "Angel Cruz <angel.cruz@wallbit.io>",
   "license": "GPL-2.0-or-later",
   "scripts": {
     "build:css": "tailwindcss -i assets/src/admin.css -o assets/build/admin.css --minify",

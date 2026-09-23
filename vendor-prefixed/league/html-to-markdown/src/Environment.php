@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Lean_SEO\Dependencies\League\HTMLToMarkdown;
+namespace ThatSeoAgent\Dependencies\League\HTMLToMarkdown;
 
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\BlockquoteConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\CodeConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\CommentConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\ConverterInterface;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\DefaultConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\DivConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\EmphasisConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\HardBreakConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\HeaderConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\HorizontalRuleConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\ImageConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\LinkConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\ListBlockConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\ListItemConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\ParagraphConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\PreformattedConverter;
-use Lean_SEO\Dependencies\League\HTMLToMarkdown\Converter\TextConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\BlockquoteConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\CodeConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\CommentConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\ConverterInterface;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\DefaultConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\DivConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\EmphasisConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\HardBreakConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\HeaderConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\HorizontalRuleConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\ImageConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\LinkConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\ListBlockConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\ListItemConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\ParagraphConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\PreformattedConverter;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter\TextConverter;
 
 final class Environment
 {
