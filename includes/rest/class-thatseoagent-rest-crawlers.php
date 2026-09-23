@@ -43,12 +43,8 @@ class ThatSeoAgent_REST_Crawlers extends ThatSeoAgent_REST_Controller {
      * @return WP_REST_Response
      */
     public function create_item( $request ) {
-        return $this->fresh(
-            array(
-                'checked' => time(),
-                'robots'  => ThatSeoAgent_Crawler_Access::robots_status(),
-                'bots'    => ThatSeoAgent_Crawler_Access::probe(),
-            )
-        );
+        ThatSeoAgent_Crawler_Access::check();
+
+        return $this->fresh( ThatSeoAgent_Crawler_Access::for_screen() );
     }
 }

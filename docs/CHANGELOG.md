@@ -2,6 +2,19 @@
 
 ## [2.7.0] - Unreleased
 
+### Added
+- **The access check and the Markdown check are kept, and warn.** Each
+  run is stored with the one before it (`ThatSeoAgent_Checks`), the screen
+  opens on the last one and says what changed since the one before
+  ("GPTBot: reached (200) → turned away (403)"), and both run once a week
+  on their own. From a result at most 8 days old the bulletin warns when
+  robots.txt answers a server error (red), when it answers a 4xx while the
+  site blocks crawlers (yellow), when the server turns away a crawler
+  robots.txt lets in — training crawlers aside (orange) — when a cache
+  hands the Markdown version to browsers (red), and when agents asking for
+  Markdown get the HTML page (yellow). A check that got no answer is no
+  warning.
+
 ### Changed
 - **A post publishes one title and one description, wherever it is
   read.** `ThatSeoAgent_Description::for_post()` is the description the

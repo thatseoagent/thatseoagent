@@ -153,6 +153,106 @@ class ThatSeoAgent_Crawler_Access {
     }
 
     /**
+     * Run the access check and keep its result: robots.txt's status, and
+     * the homepage requested as each crawler.
+     *
+     * @since 2.7.0 From the REST controller, so the weekly run and the
+     *              button keep the same result.
+     * @return array{checked: int, robots: int, bots: array}
+     */
+    public static function check() {
+        $result = array(
+            'checked' => time(),
+            'robots'  => self::robots_status(),
+            'bots'    => self::probe(),
+        );
+
+        ThatSeoAgent_Checks::record( 'access', $result );
+
+        return $result;
+    }
+
+    /**
+     * The last access check as the screen shows it: the result, when it
+     * ran, and what changed since the one before.
+     *
+     * @since 2.7.0
+     * @return array|null Null before the first check.
+     */
+    public static function for_screen() {
+        $last = ThatSeoAgent_Checks::last( 'access' );
+
+        return $last ? $last + array(
+            'when'    => ThatSeoAgent_Checks::when( $last ),
+            'changes' => self::changes(),
+        ) : null;
+    }
+
+    /**
+     * What changed between the last access check and the one before it.
+     *
+     * @since 2.7.0
+     * @return array<int, string> One line per change, empty when nothing
+     *                            changed or there is nothing to compare.
+     */
+    public static function changes() {
+        $last     = ThatSeoAgent_Checks::last( 'access' );
+        $previous = ThatSeoAgent_Checks::previous( 'access' );
+
+        if ( ! $last || ! $previous ) {
+            return array();
+        }
+
+        $changes = array();
+
+        if ( (int) $last['robots'] !== (int) $previous['robots'] ) {
+            /* translators: 1: previous status, 2: current status. */
+            $changes[] = sprintf( __( 'robots.txt: %1$s → %2$s', 'thatseoagent' ), self::status_text( $previous['robots'] ), self::status_text( $last['robots'] ) );
+        }
+
+        foreach ( $last['bots'] as $token => $now ) {
+            if ( ! isset( $previous['bots'][ $token ] ) ) {
+                continue;
+            }
+
+            $before = $previous['bots'][ $token ];
+            if ( (bool) $before['reached'] !== (bool) $now['reached'] ) {
+                /* translators: 1: crawler, 2: what happened before, 3: what happens now. */
+                $changes[] = sprintf( __( '%1$s: %2$s → %3$s', 'thatseoagent' ), $token, self::reach_text( $before ), self::reach_text( $now ) );
+            }
+        }
+
+        return $changes;
+    }
+
+    /**
+     * A status for a change line.
+     *
+     * @since 2.7.0
+     * @param int $status HTTP status, 0 for none.
+     * @return string
+     */
+    private static function status_text( $status ) {
+        return (int) $status ? (string) (int) $status : __( 'no answer', 'thatseoagent' );
+    }
+
+    /**
+     * Whether a crawler got in, for a change line.
+     *
+     * @since 2.7.0
+     * @param array $result One crawler's result.
+     * @return string
+     */
+    private static function reach_text( array $result ) {
+        if ( ! $result['status'] ) {
+            return __( 'no answer', 'thatseoagent' );
+        }
+
+        /* translators: %d: HTTP status. */
+        return sprintf( $result['reached'] ? __( 'reached (%d)', 'thatseoagent' ) : __( 'turned away (%d)', 'thatseoagent' ), $result['status'] );
+    }
+
+    /**
      * Request the homepage as each crawler that fetches pages.
      *
      * All requests go out at once. A 401, 403, 406, 429 or 503, or no answer
@@ -281,11 +381,77 @@ class ThatSeoAgent_Crawler_Access {
             );
         }
 
+        $warnings = array_merge( $warnings, self::access_warnings( $crawlers ) );
+
         return array(
             'observations' => array(
                 ThatSeoAgent_Bulletin::observation( 'crawlers', __( 'AI crawlers', 'thatseoagent' ), $state, $value ),
             ),
             'warnings'     => $warnings,
         );
+    }
+
+    /**
+     * What the last access check found, while it is recent: a robots.txt
+     * that does not answer 200, and crawlers robots.txt lets in that the
+     * server turns away. Training crawlers turned away are no warning, as
+     * blocking them is not.
+     *
+     * @since 2.7.0
+     * @param array $crawlers summary().
+     * @return array<int, array> Warnings.
+     */
+    private static function access_warnings( array $crawlers ) {
+        $access   = ThatSeoAgent_Checks::fresh( 'access' );
+        $warnings = array();
+
+        if ( ! $access ) {
+            return $warnings;
+        }
+
+        $when   = ThatSeoAgent_Checks::when( $access );
+        $robots = (int) $access['robots'];
+
+        if ( $robots >= 500 ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'red',
+                /* translators: %d: HTTP status. */
+                sprintf( __( 'robots.txt answers with a server error (%d)', 'thatseoagent' ), $robots ),
+                __( 'While robots.txt fails, Google and most crawlers stop reading the site at all. The server, a theme router or a security layer is answering for it.', 'thatseoagent' ) . ' ' . $when,
+                __( 'See the access check', 'thatseoagent' ),
+                'crawlers'
+            );
+        } elseif ( $robots >= 400 && $crawlers['blocked'] ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                /* translators: %d: HTTP status. */
+                sprintf( __( 'robots.txt answers %d, so the crawlers you block read everything', 'thatseoagent' ), $robots ),
+                __( 'Crawlers only read the rules from a robots.txt that answers 200; with a 4xx they assume there are none. The file looks fine, so the server, a theme router or a security layer is changing the status.', 'thatseoagent' ) . ' ' . $when,
+                __( 'See the access check', 'thatseoagent' ),
+                'crawlers'
+            );
+        }
+
+        $turned = array();
+        foreach ( self::diagnose()['bots'] as $token => $bot ) {
+            $result = isset( $access['bots'][ $token ] ) ? $access['bots'][ $token ] : null;
+
+            if ( 'training' !== $bot['group'] && $bot['allowed'] && $result && $result['status'] && ! $result['reached'] ) {
+                $turned[] = $token;
+            }
+        }
+
+        if ( $turned ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'orange',
+                /* translators: %s: crawler names joined as a list. */
+                sprintf( _n( 'The server turns %s away', 'The server turns %s away', count( $turned ), 'thatseoagent' ), wp_sprintf_l( '%l', $turned ) ),
+                __( 'robots.txt lets them in, but the server, a firewall or a CDN answers them with an error, so they cannot read the site to quote it or link to it.', 'thatseoagent' ) . ' ' . $when,
+                __( 'See the access check', 'thatseoagent' ),
+                'crawlers'
+            );
+        }
+
+        return $warnings;
     }
 }

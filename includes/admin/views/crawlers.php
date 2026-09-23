@@ -46,7 +46,7 @@ foreach ( $diagnosis['bots'] as $token => $bot ) {
 }
 ?>
 
-<div x-data="tsaCrawlers">
+<div x-data="tsaCrawlers(<?php echo esc_attr( wp_json_encode( ThatSeoAgent_Crawler_Access::for_screen() ) ); ?>)">
 
 <section class="grid gap-6 border-b border-rule pb-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end" aria-labelledby="thatseoagent-crawlers-status">
     <div>
@@ -55,7 +55,11 @@ foreach ( $diagnosis['bots'] as $token => $bot ) {
             <span id="thatseoagent-crawlers-status" class="text-[20px] font-bold text-ink"><?php echo esc_html( $headline ); ?></span>
         </p>
         <p class="mt-1.5 max-w-[40rem] text-ink-2"><?php echo esc_html( $source ); ?></p>
-        <p class="mt-3 max-w-[40rem] text-[13px] text-ink-3"><?php esc_html_e( 'robots.txt is a request, not a lock: the major AI providers honor it, and a few of their crawlers skip it for visits a person asked for. The access check requests the homepage as each crawler to catch a firewall or CDN turning it away.', 'thatseoagent' ); ?></p>
+        <p class="mt-3 max-w-[40rem] text-[13px] text-ink-3"><?php esc_html_e( 'robots.txt is a request, not a lock: the major AI providers honor it, and a few of their crawlers skip it for visits a person asked for. The access check requests the homepage as each crawler to catch a firewall or CDN turning it away. It also runs once a week on its own.', 'thatseoagent' ); ?></p>
+        <p class="mt-2 text-[13px] text-ink-2" x-cloak x-show="when" x-text="when"></p>
+        <ul class="mt-1 list-disc pl-5 text-[13px] text-ink" x-cloak x-show="changes.length" aria-label="<?php esc_attr_e( 'Changes since the check before', 'thatseoagent' ); ?>">
+            <template x-for="change in changes"><li x-text="change"></li></template>
+        </ul>
     </div>
 
     <div class="flex flex-wrap gap-2">

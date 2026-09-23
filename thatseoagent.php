@@ -107,6 +107,7 @@ function thatseoagent_deactivate() {
     // Drop any IndexNow submissions still queued; their callback disappears
     // with the plugin and WP-Cron would keep retrying a missing hook.
     wp_unschedule_hook(ThatSeoAgent_IndexNow::CRON_HOOK);
+    wp_unschedule_hook(ThatSeoAgent_Checks::CRON_HOOK);
 
     // Not flush_rewrite_rules(): `init` already ran in this request, so the
     // sitemap and .md rules are registered and a flush would persist them —

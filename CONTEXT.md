@@ -57,7 +57,7 @@ A post's content as Markdown with a frontmatter, published at the post's URL plu
 _Avoid_: export, API, feed
 
 **Markdown check**:
-Asking one post from outside, on demand, first for its Markdown version and then as a browser, to see whether a cache between WordPress and its visitors undoes the negotiation.
+Asking one post from outside, first for its Markdown version and then as a browser, to see whether a cache between WordPress and its visitors undoes the negotiation. It runs when asked and once a week; the last result and the one before it are kept, and a recent one can raise a warning.
 _Avoid_: probe, test, scan
 
 **AI index**:
@@ -79,7 +79,7 @@ Whether an AI crawler may read the site according to the robots.txt the site ser
 _Avoid_: permission, status
 
 **Access check**:
-Requesting the homepage as each AI crawler, on demand, to see whether the server lets it through.
+Requesting the homepage as each AI crawler, and robots.txt, to see whether the server lets them through. It runs when asked and once a week; the last result and the one before it are kept, and a recent one can raise a warning.
 _Avoid_: probe, test, scan
 
 ### Who the site is

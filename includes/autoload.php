@@ -95,6 +95,7 @@ spl_autoload_register(
 
         'ThatSeoAgent_Bulletin'          => 'bulletin/class-thatseoagent-bulletin.php',
         'ThatSeoAgent_Readings'          => 'bulletin/class-thatseoagent-readings.php',
+        'ThatSeoAgent_Checks'            => 'bulletin/class-thatseoagent-checks.php',
 
         'ThatSeoAgent_AI_Crawlers'       => 'crawlers/class-thatseoagent-ai-crawlers.php',
         'ThatSeoAgent_Crawler_Access'    => 'crawlers/class-thatseoagent-crawler-access.php',

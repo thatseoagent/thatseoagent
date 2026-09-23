@@ -105,7 +105,7 @@ if ( $physical ) {
     </section>
 </div>
 
-<section class="mt-12" x-data="tsaMarkdown" aria-labelledby="thatseoagent-markdown">
+<section class="mt-12" x-data="tsaMarkdown(<?php echo esc_attr( wp_json_encode( ThatSeoAgent_Markdown_Check::for_screen() ) ); ?>)" aria-labelledby="thatseoagent-markdown">
     <div class="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule-strong pb-2.5">
         <h2 id="thatseoagent-markdown" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'Markdown for agents', 'thatseoagent' ); ?></h2>
         <button type="button" class="tsa-press" x-cloak x-show.important="true" @click="check()" :disabled="busy" :aria-busy="busy ? 'true' : 'false'">
@@ -113,7 +113,7 @@ if ( $physical ) {
             <span x-text="checking ? <?php echo esc_attr( wp_json_encode( __( 'Checking…', 'thatseoagent' ) ) ); ?> : <?php echo esc_attr( wp_json_encode( __( 'Check now', 'thatseoagent' ) ) ); ?>"><?php esc_html_e( 'Check now', 'thatseoagent' ); ?></span>
         </button>
     </div>
-    <p class="mt-3 max-w-[44rem] text-ink-2"><?php esc_html_e( 'Each post answers an agent that asks for Markdown with its Markdown version, at its own address. A cache in front of WordPress can undo that without WordPress knowing, so the check asks one of your posts from outside: first as an agent, then as a browser.', 'thatseoagent' ); ?></p>
+    <p class="mt-3 max-w-[44rem] text-ink-2"><?php esc_html_e( 'Each post answers an agent that asks for Markdown with its Markdown version, at its own address. A cache in front of WordPress can undo that without WordPress knowing, so the check asks one of your posts from outside: first as an agent, then as a browser. It also runs once a week on its own.', 'thatseoagent' ); ?></p>
     <p class="mt-2 max-w-[44rem] text-ink-2"><a href="<?php echo esc_url( ThatSeoAgent_App::url( 'settings' ) . '#' . ThatSeoAgent_Cache_Settings::SECTION ); ?>"><?php esc_html_e( 'What a page cache or Cloudflare needs, in Settings → Caches and CDN', 'thatseoagent' ); ?></a></p>
 
     <div class="mt-6 max-w-[44rem] border border-rule bg-sheet px-5 py-4" x-cloak x-show="result" aria-live="polite">
@@ -133,6 +133,10 @@ if ( $physical ) {
             </div>
         </dl>
         <p class="mt-2 truncate font-mono text-[12px] text-ink-3" x-text="result ? result.url : ''"></p>
+        <p class="mt-2 text-[13px] text-ink-2" x-text="result ? result.when : ''"></p>
+        <ul class="mt-1 list-disc pl-5 text-[13px] text-ink" x-show="result && result.changes && result.changes.length" aria-label="<?php esc_attr_e( 'Changes since the check before', 'thatseoagent' ); ?>">
+            <template x-for="change in ( result ? result.changes : [] )"><li x-text="change"></li></template>
+        </ul>
         <p class="mt-3 font-semibold text-ink" x-show="result && result.advice" x-text="result ? result.advice : ''"></p>
     </div>
 

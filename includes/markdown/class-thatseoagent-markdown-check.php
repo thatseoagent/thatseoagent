@@ -58,7 +58,81 @@ class ThatSeoAgent_Markdown_Check {
             $verdict = 'works';
         }
 
-        return self::result( $verdict, $url, $agent, $browser, $layer );
+        $result = self::result( $verdict, $url, $agent, $browser, $layer );
+
+        ThatSeoAgent_Checks::record( 'markdown', $result );
+
+        return $result;
+    }
+
+    /**
+     * The last check as the screen shows it: the result, when it ran, and
+     * what changed since the one before.
+     *
+     * @since 2.7.0
+     * @return array|null Null before the first check.
+     */
+    public static function for_screen() {
+        $last = ThatSeoAgent_Checks::last( 'markdown' );
+
+        return $last ? $last + array(
+            'when'    => ThatSeoAgent_Checks::when( $last ),
+            'changes' => self::changes(),
+        ) : null;
+    }
+
+    /**
+     * What changed between the last check and the one before it.
+     *
+     * @since 2.7.0
+     * @return array<int, string> One line per change, empty when nothing
+     *                            changed or there is nothing to compare.
+     */
+    public static function changes() {
+        $last     = ThatSeoAgent_Checks::last( 'markdown' );
+        $previous = ThatSeoAgent_Checks::previous( 'markdown' );
+
+        if ( ! $last || ! $previous || $last['verdict'] === $previous['verdict'] ) {
+            return array();
+        }
+
+        /* translators: %s: the previous check's headline. */
+        return array( sprintf( __( 'The check before said: %s', 'thatseoagent' ), $previous['headline'] ) );
+    }
+
+    /**
+     * This module's part of the bulletin: what the last check found, while
+     * it is recent. A check that got no answer is not a failure.
+     *
+     * @since 2.7.0
+     * @return array{observations: array, warnings: array}
+     */
+    public static function bulletin() {
+        $check    = ThatSeoAgent_Checks::fresh( 'markdown' );
+        $warnings = array();
+
+        if ( $check && 'markdown_to_browsers' === $check['verdict'] ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'red',
+                __( 'A cache hands the Markdown version to browsers', 'thatseoagent' ),
+                __( 'A cache stored the answer given to an agent and served it to the browser that came next: people may see plain text instead of the page. Clear the cache, and keep requests asking for Markdown out of it.', 'thatseoagent' ) . ' ' . ThatSeoAgent_Checks::when( $check ),
+                __( 'See the Markdown check', 'thatseoagent' ),
+                'markdown'
+            );
+        } elseif ( $check && 'html_to_agents' === $check['verdict'] ) {
+            $warnings[] = ThatSeoAgent_Bulletin::warning(
+                'yellow',
+                __( 'Agents that ask for Markdown get the HTML page', 'thatseoagent' ),
+                __( 'Something answers before WordPress can, most often a page cache: agents get the page a browser caused to be stored. Nothing breaks for people.', 'thatseoagent' ) . ' ' . ThatSeoAgent_Checks::when( $check ),
+                __( 'See the Markdown check', 'thatseoagent' ),
+                'markdown'
+            );
+        }
+
+        return array(
+            'observations' => array(),
+            'warnings'     => $warnings,
+        );
     }
 
     /**

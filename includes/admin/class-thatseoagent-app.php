@@ -455,6 +455,8 @@ class ThatSeoAgent_App {
                 return self::url( 'products' );
             case 'crawlers':
                 return self::url( 'crawlers' );
+            case 'markdown':
+                return self::url( 'llms' ) . '#thatseoagent-markdown';
             case 'privacy':
                 return admin_url( 'options-privacy.php' );
             case 'new_page':

@@ -62,7 +62,9 @@ class ThatSeoAgent_REST_Markdown extends ThatSeoAgent_REST_Controller {
      * @return WP_REST_Response
      */
     public function check() {
-        return $this->fresh( ThatSeoAgent_Markdown_Check::run() );
+        ThatSeoAgent_Markdown_Check::run();
+
+        return $this->fresh( ThatSeoAgent_Markdown_Check::for_screen() );
     }
 
     /**

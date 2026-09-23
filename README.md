@@ -183,6 +183,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Duplicates` | Pages that share a title or a description |
 | | `ThatSeoAgent_Links` | How the pages link to each other: orphan pages and broken links |
 | `bulletin/` | `ThatSeoAgent_Bulletin` | The site's bulletin: gathers each checking module's `bulletin()` — its observations and warnings — ranks the warnings and words the headline |
+| | `ThatSeoAgent_Checks` | The access check's and the Markdown check's last two results, and their weekly run |
 | | `ThatSeoAgent_Readings` | What the dashboard shows beside it: SEO field counts, the public files served |
 | `admin/` | `ThatSeoAgent_App` | The ThatSeoAgent screen: navigation, views, where each action leads, level colors, styles, scripts |
 | | `ThatSeoAgent_Icons` | The screen's inline SVG icons |

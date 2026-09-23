@@ -34,6 +34,7 @@ function thatseoagent_uninstall_site() {
             ThatSeoAgent_Markdown_Cache::VERSION_OPTION,
             ThatSeoAgent_Catalog_Feed::VERSION_OPTION,
             ThatSeoAgent_New_Types::OPTION_KEY,
+            ThatSeoAgent_Checks::OPTION_KEY,
         )
     );
 
@@ -51,6 +52,7 @@ function thatseoagent_uninstall_site() {
     $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE %s", $wpdb->esc_like( ThatSeoAgent_Primary_Term::KEY_PREFIX ) . '%' ) );
 
     wp_unschedule_hook( ThatSeoAgent_IndexNow::CRON_HOOK );
+    wp_unschedule_hook( ThatSeoAgent_Checks::CRON_HOOK );
     delete_transient( ThatSeoAgent_Llms::CACHE_KEY );
     delete_transient( ThatSeoAgent_Llms_Full::CACHE_KEY );
     delete_transient( ThatSeoAgent_Links::CACHE_KEY );

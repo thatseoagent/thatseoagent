@@ -124,6 +124,7 @@ class ThatSeoAgent_Bulletin {
             'ThatSeoAgent_Links',
             'ThatSeoAgent_Product_Report',
             'ThatSeoAgent_Crawler_Access',
+            'ThatSeoAgent_Markdown_Check',
             'ThatSeoAgent_IndexNow',
         );
     }

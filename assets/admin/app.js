@@ -701,9 +701,10 @@
 		/*
 		 * Markdown for agents: the on-demand check.
 		 */
-		Alpine.data( 'tsaMarkdown', function () {
+		Alpine.data( 'tsaMarkdown', function ( initial ) {
 			return {
-				result: null,
+				// The last check, kept on the server.
+				result: initial || null,
 				checking: false,
 				busy: false,
 
@@ -785,10 +786,13 @@
 		/*
 		 * AI crawlers: request the homepage as each crawler, on demand.
 		 */
-		Alpine.data( 'tsaCrawlers', function () {
+		Alpine.data( 'tsaCrawlers', function ( initial ) {
 			return {
-				results: null,
-				robots: null,
+				// The last check, kept on the server.
+				results: initial ? initial.bots : null,
+				robots: initial ? initial.robots : null,
+				when: initial ? initial.when : '',
+				changes: initial ? initial.changes : [],
 				busy: false,
 
 				probe: function () {
@@ -799,6 +803,8 @@
 					return api( { path: '/thatseoagent/v1/crawlers/probe', method: 'POST' } ).then( function ( result ) {
 						self.results = result.bots;
 						self.robots = result.robots;
+						self.when = result.when;
+						self.changes = result.changes;
 						Alpine.store( 'toast' ).show( t( 'probeDone' ), 'ok' );
 					} ).catch( function ( error ) {
 						Alpine.store( 'toast' ).show( t( 'probeFailed' ) + ' ' + errorText( error ), 'error' );

@@ -64,6 +64,7 @@ class ThatSeoAgent {
         ThatSeoAgent_Markdown_Cache::register();
         ThatSeoAgent_Product_Report::register();
         ThatSeoAgent_Links::register();
+        ThatSeoAgent_Checks::register();
         ThatSeoAgent_Author_Profile::register();
 
         add_action('init', array($this, 'maybe_flush_rewrite_rules'), 21);
