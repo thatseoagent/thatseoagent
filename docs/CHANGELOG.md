@@ -93,6 +93,10 @@
   unattributed when it has no author, one that no longer exists, or one
   without a display name — the same for the markup and the bulletin's
   count.
+- **The Markdown cache is keyed by the plugin's version**
+  (`thatseoagent_md_{plugin}_{version}_{post_id}`), so an update that
+  changes what the Markdown says is served at once, not after the copies
+  cached before it expire.
 - **The score's colours come from the server**: each row of the content
   check carries its level (`ThatSeoAgent_Audit::level_for_score()`).
 

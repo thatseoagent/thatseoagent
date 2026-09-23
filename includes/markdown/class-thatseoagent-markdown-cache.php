@@ -2,11 +2,13 @@
 /**
  * Cache for the Markdown version of posts.
  *
- * One transient per post, `thatseoagent_md_{version}_{post_id}`, storing the
- * Markdown next to the post_modified_gmt it was built from. There is no
- * registry of keys to maintain: purging everything bumps the version held in
- * an option, which makes every old transient unreachable, and they expire on
- * their own.
+ * One transient per post, `thatseoagent_md_{plugin}_{version}_{post_id}`,
+ * storing the Markdown next to the post_modified_gmt it was built from. There
+ * is no registry of keys to maintain: purging everything bumps the version
+ * held in an option, which makes every old transient unreachable, and they
+ * expire on their own. The plugin's version is part of the key too, so an
+ * update that changes what the Markdown says is served at once rather than
+ * after the old copies expire.
  *
  * @package ThatSeoAgent
  * @since 1.14.0
@@ -140,11 +142,12 @@ class ThatSeoAgent_Markdown_Cache {
      * Transient key for a post.
      *
      * @since 1.14.0
+     * @since 2.7.0 With the plugin's version.
      * @param int $post_id Post ID.
      * @return string
      */
     private static function key( $post_id ) {
-        return sprintf( 'thatseoagent_md_%d_%d', self::version(), $post_id );
+        return sprintf( 'thatseoagent_md_%s_%d_%d', THATSEOAGENT_VERSION, self::version(), $post_id );
     }
 
     /**
