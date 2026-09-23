@@ -91,7 +91,7 @@ The body is the same Markdown the `.md` URL serves, from the same cache, and `If
 - **Who gets Markdown.** A client whose `Accept` lists `text/markdown` (or `text/x-markdown`) with a weight at least that of `text/html`. Browsers never list it, and a wildcard (`*/*`) alone never selects it, so people and generic clients keep getting the HTML.
 - **`Vary: Accept`** goes on both responses of every post with a Markdown version, so a cache that honors it keeps the two apart.
 - **Page caches** usually key on the URL alone and ignore `Vary`. The Markdown response defines `DONOTCACHEPAGE`, which WP Super Cache, W3 Total Cache, WP Rocket and most others honor, and sends `Cache-Control: private` so no shared cache stores it. A cache that answers before WordPress runs still serves its stored HTML to an agent asking for Markdown — see below.
-- **No `noindex`.** Unlike the `.md` URL, this is the page's own URL, which search engines index as HTML; `Content-Location` names the `.md` URL of this representation.
+- **No `noindex`.** Unlike the `.md` URL, this is the page's own URL, which search engines index as HTML; `Content-Location` names the `.md` URL of this representation. A post kept out of search is the exception: its Markdown says `noindex` here too, as its HTML does.
 - It runs on `template_redirect` after `redirect_canonical()`, so a non-canonical URL is redirected first. Password-protected posts are never negotiated.
 
 ### Caches that answer before WordPress
@@ -132,7 +132,7 @@ add_filter( 'thatseoagent_markdown_negotiation', '__return_false' );
 
 ## Search Engines
 
-The Markdown is a copy of the HTML page. Every response sends `X-Robots-Tag: noindex` and a `Link: <permalink>; rel="canonical"` header, so search engines keep indexing the HTML.
+The Markdown is a copy of the HTML page. Every response sends `X-Robots-Tag: noindex` and a `Link: <permalink>; rel="canonical"` header, so search engines keep indexing the HTML. A post kept out of search keeps its Markdown version — it stays public to anyone with the link — but gets no canonical, as its HTML prints none, and is not in llms.txt.
 
 ## Caching
 

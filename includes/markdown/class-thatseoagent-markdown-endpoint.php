@@ -190,7 +190,7 @@ class ThatSeoAgent_Markdown_Endpoint {
         }
 
         self::send_not_modified_if_fresh( $post );
-        self::send( self::markdown( $post ), $post );
+        self::send( self::markdown( $post ), $post, false, ThatSeoAgent_Indexing::is_post_noindex( $post ) );
     }
 
     /**
@@ -237,7 +237,9 @@ class ThatSeoAgent_Markdown_Endpoint {
                 }
 
                 self::send_not_modified_if_fresh( $post );
-                self::send( self::markdown( $post ), $post, true );
+                // The same answer the HTML at this URL gives in its robots
+                // meta, filters included.
+                self::send( self::markdown( $post ), $post, true, ThatSeoAgent_Indexing::is_noindex() );
             }
         }
 
@@ -380,31 +382,41 @@ class ThatSeoAgent_Markdown_Endpoint {
     /**
      * Send the Markdown and end the request.
      *
+     * A post kept out of search says so here too: noindex at its own URL
+     * as well, and no canonical anywhere, as its HTML prints none.
+     *
      * @since 1.14.0
      * @since 2.3.0 $negotiated.
+     * @since 2.7.0 $kept_out.
      * @param string  $markdown   Markdown.
      * @param WP_Post $post       Post object.
      * @param bool    $negotiated Whether it answers the post's own URL.
+     * @param bool    $kept_out   Whether the post is kept out of search.
      */
-    private static function send( $markdown, WP_Post $post, $negotiated = false ) {
+    private static function send( $markdown, WP_Post $post, $negotiated = false, $kept_out = false ) {
         status_header( 200 );
         header( 'Content-Type: text/markdown; charset=utf-8' );
 
         if ( $negotiated ) {
             // The post's own URL, which search engines index as HTML: no
-            // noindex here. Content-Location names the URL of this
-            // representation (RFC 9110 §8.7), and no shared cache keeps it.
+            // noindex here, unless the HTML says so too. Content-Location
+            // names the URL of this representation (RFC 9110 §8.7), and no
+            // shared cache keeps it.
             header( 'Cache-Control: private, no-cache' );
             $location = self::url_for( $post );
             if ( '' !== $location ) {
                 header( 'Content-Location: ' . esc_url_raw( $location ) );
             }
-        } else {
-            // The HTML page is the one to index; this is a copy of it.
+        }
+
+        // The HTML page is the one to index; this is a copy of it.
+        if ( ! $negotiated || $kept_out ) {
             header( 'X-Robots-Tag: noindex' );
         }
 
-        header( 'Link: <' . esc_url_raw( get_permalink( $post ) ) . '>; rel="canonical"' );
+        if ( ! $kept_out ) {
+            header( 'Link: <' . esc_url_raw( get_permalink( $post ) ) . '>; rel="canonical"' );
+        }
 
         header( 'Last-Modified: ' . get_post_modified_time( 'D, d M Y H:i:s', true, $post ) . ' GMT' );
         header( 'Content-Disposition: inline; filename="' . sanitize_file_name( $post->post_name . '.md' ) . '"' );

@@ -133,12 +133,30 @@ class ThatSeoAgent_Indexing {
     }
 
     /**
+     * Whether a post may be listed for search engines and AI assistants:
+     * published, readable without a password, not kept out of search.
+     *
+     * The check listed_query_args() makes in a query, for one post already
+     * in hand; the two change together.
+     *
+     * @since 2.7.0
+     * @param WP_Post|int $post Post or ID.
+     * @return bool
+     */
+    public static function is_listed( $post ) {
+        $post = get_post( $post );
+
+        return $post && 'publish' === $post->post_status && '' === $post->post_password && ! self::is_post_noindex( $post );
+    }
+
+    /**
      * Query arguments limiting a post query to what may be listed.
      *
      * For the lists handed to search engines and AI assistants — the
      * sitemaps and the AI index. Merged into a `publish` query, so private
      * posts are already out; this removes the password-protected ones, whose
-     * content nobody can read, and the ones kept out of search.
+     * content nobody can read, and the ones kept out of search. is_listed()
+     * asks the same of one post.
      *
      * @since 2.2.0
      * @return array

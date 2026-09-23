@@ -281,13 +281,14 @@ class ThatSeoAgent_IndexNow {
 
 		// Checked here, when the queued submission runs, not when it was
 		// queued: the editor saves the SEO fields after save_post has fired.
-		// Asking a search engine to crawl a page that says noindex only
-		// spends its crawl on nothing.
+		// Asking a search engine to crawl a page that says noindex, or one
+		// behind a password, only spends its crawl on nothing: only what the
+		// sitemaps list is announced.
 		$urls = array_filter(
 			$urls,
 			function ( $url ) {
 				$post_id = url_to_postid( $url );
-				return ! $post_id || ! ThatSeoAgent_Indexing::is_post_noindex( $post_id );
+				return ! $post_id || ThatSeoAgent_Indexing::is_listed( $post_id );
 			}
 		);
 

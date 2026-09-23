@@ -388,7 +388,7 @@ class ThatSeoAgent_Llms {
             $post_id = 0 === strpos( $url, 'mailto:' ) ? 0 : url_to_postid( $url );
             $post    = $post_id ? get_post( $post_id ) : null;
 
-            if ( $post && 'publish' === $post->post_status && ! post_password_required( $post ) && ! ThatSeoAgent_Indexing::is_post_noindex( $post ) ) {
+            if ( $post && ThatSeoAgent_Indexing::is_listed( $post ) ) {
                 $entries[] = self::entry( $post );
                 $ids[]     = (int) $post->ID;
             } elseif ( ! $post ) {

@@ -72,6 +72,10 @@
 - **og:pin:media is the post's own image**, featured, gallery or in the
   content, as the primary image is; before, a post without a featured
   image had none.
+- **`ThatSeoAgent_Indexing::is_listed()`**: whether one post may be listed
+  for search engines and AI assistants, the check `listed_query_args()`
+  makes in a query. llms.txt's trust pages use it, and so does IndexNow,
+  which no longer announces password-protected posts.
 - **The score's colours come from the server**: each row of the content
   check carries its level (`ThatSeoAgent_Audit::level_for_score()`).
 
@@ -82,6 +86,11 @@
 - **"Uncategorized" left the breadcrumb trail**: a post filed only under
   the default category went out as Home › Uncategorized › Post, while
   article:section already left it out.
+- **The Markdown version of a post kept out of search no longer contradicts
+  its page**: asked for at the post's own URL it says `X-Robots-Tag:
+  noindex`, as the HTML's robots meta does (the `thatseoagent_noindex`
+  filter included), and neither it nor the `.md` URL sends a canonical,
+  which the HTML leaves out too.
 - **The blog's posts page** no longer takes the homepage's title and
   description, and its own SEO fields now reach its `<title>` and meta
   description; without a description of its own it says the tagline, as
