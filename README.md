@@ -198,6 +198,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Importer` | Import from Yoast SEO, Rank Math, All in One SEO |
 | `integrations/` | `ThatSeoAgent_Compat` | Stepping aside while another SEO plugin is active |
 | | `ThatSeoAgent_IndexNow` | IndexNow key, verification file and submission |
+| | `ThatSeoAgent_MCP` | The plugin's own MCP server, when MCP Adapter is active |
 
 ## Filters
 
@@ -309,6 +310,21 @@ The audit applies the content check's rules: titles and descriptions that may be
 It also returns `structure`: how the post is built, as facts with no verdict — its headings in order, lists, tables, quotes, question-and-answer blocks, figures and percentages, paragraph and word counts, its first 150 words, its dates and the URL of its Markdown version. Nobody publishes how AI assistants choose what to cite, so the plugin scores none of it; an agent reviewing the site reads these facts, and the Markdown, and draws its own conclusions.
 
 Every option is also registered with `show_in_rest`, so administrators can read and update them at `/wp/v2/settings`.
+
+## MCP server
+
+With the [MCP Adapter](https://github.com/WordPress/mcp-adapter) plugin (0.6) active, the five abilities are also the tools of a dedicated MCP server, `thatseoagent`, whatever the theme. As tools the slash becomes a hyphen: `thatseoagent-update-post-seo`.
+
+- HTTP: `https://<site>/wp-json/mcp/thatseoagent`, with the application password of an editor or administrator (`edit_others_posts`); anyone else gets a 401 or 403. Each tool also checks its own capability.
+- STDIO: `wp mcp-adapter serve --server=thatseoagent --user=<user>`.
+
+```bash
+claude mcp add --transport http thatseoagent \
+  https://<site>/wp-json/mcp/thatseoagent \
+  --header "Authorization: Basic $(printf 'USER:APPLICATION PASSWORD' | base64)"
+```
+
+Without MCP Adapter the server is not created; the abilities stay available through the Abilities API.
 
 ## WP-CLI
 
