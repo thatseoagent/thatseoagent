@@ -372,20 +372,21 @@ class ThatSeoAgent_Meta {
 
         if (is_category() || is_tag() || is_tax()) {
             $term = get_queried_object();
-            if ($term && $term->description) {
-                return wp_strip_all_tags($term->description);
+            if ($term instanceof WP_Term) {
+                return ThatSeoAgent_Term_Seo::description($term);
             }
-            return sprintf('Browse all %s posts on %s', single_term_title('', false), get_bloginfo('name'));
         }
 
         if (is_search()) {
-            return sprintf('Search results for "%s" on %s', get_search_query(), get_bloginfo('name'));
+            /* translators: 1: search terms, 2: site name. */
+            return sprintf(__('Search results for "%1$s" on %2$s', 'thatseoagent'), get_search_query(), get_bloginfo('name'));
         }
 
         if (is_author()) {
             $author = get_queried_object();
             if ($author) {
-                return sprintf('Posts by %s on %s', $author->display_name, get_bloginfo('name'));
+                /* translators: 1: author name, 2: site name. */
+                return sprintf(__('Posts by %1$s on %2$s', 'thatseoagent'), $author->display_name, get_bloginfo('name'));
             }
         }
 

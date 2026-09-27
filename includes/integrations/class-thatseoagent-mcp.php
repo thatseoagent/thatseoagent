@@ -41,6 +41,15 @@ class ThatSeoAgent_MCP {
         'thatseoagent/audit-post-seo',
         'thatseoagent/scan-seo-issues',
         'thatseoagent/update-post-seo',
+        'thatseoagent/generate-descriptions',
+        'thatseoagent/list-term-seo',
+        'thatseoagent/get-term-seo',
+        'thatseoagent/update-term-seo',
+        'thatseoagent/get-seo-settings',
+        'thatseoagent/update-seo-settings',
+        'thatseoagent/get-duplicates',
+        'thatseoagent/get-link-report',
+        'thatseoagent/get-site-bulletin',
     );
 
     /**
@@ -73,7 +82,7 @@ class ThatSeoAgent_MCP {
             'mcp',
             self::SERVER_ID,
             'ThatSeoAgent',
-            'SEO title, meta description and noindex of any post, page or product; SEO audits; sitemap URLs.',
+            'SEO of every post, page, product and term archive; the plugin\'s settings; audits, duplicates, links and the site\'s bulletin; sitemap URLs.',
             THATSEOAGENT_VERSION,
             array( $transport ),
             class_exists( $error_handler ) ? $error_handler : null,

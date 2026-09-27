@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ThatSeoAgent 2.8.0\n"
+"Project-Id-Version: ThatSeoAgent 2.9.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/thatseoagent\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-27T15:22:09+00:00\n"
+"POT-Creation-Date: 2026-09-27T20:39:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thatseoagent\n"
@@ -525,6 +525,7 @@ msgid "Not checked: how many words a page has. Google says length alone does not
 msgstr ""
 
 #: includes/admin/views/crawlers.php:20
+#: includes/content/class-thatseoagent-term-seo.php:300
 msgid "Search engines"
 msgstr ""
 
@@ -624,12 +625,12 @@ msgid "may not read robots.txt"
 msgstr ""
 
 #: includes/admin/views/crawlers.php:143
-#: includes/indexing/class-thatseoagent-indexing.php:197
+#: includes/indexing/class-thatseoagent-indexing.php:198
 msgid "Allowed"
 msgstr ""
 
 #: includes/admin/views/crawlers.php:143
-#: includes/indexing/class-thatseoagent-indexing.php:197
+#: includes/indexing/class-thatseoagent-indexing.php:198
 msgid "Blocked"
 msgstr ""
 
@@ -1179,7 +1180,7 @@ msgid "Whether another page generates the same description: compared only when a
 msgstr ""
 
 #. translators: 1: number of other pages, 2: their titles.
-#: includes/audit/class-thatseoagent-audit.php:767
+#: includes/audit/class-thatseoagent-audit.php:829
 #, php-format
 msgid "Its generated description is the same as that of %1$d other page (%2$s): write one of its own"
 msgid_plural "Its generated description is the same as that of %1$d other pages (%2$s): write one of its own"
@@ -1187,7 +1188,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: number of links.
-#: includes/audit/class-thatseoagent-links.php:492
+#: includes/audit/class-thatseoagent-links.php:557
 #, php-format
 msgid "The site's navigation links to %d page that does not exist"
 msgid_plural "The site's navigation links to %d pages that do not exist"
@@ -1195,12 +1196,12 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: the addresses, comma-separated.
-#: includes/audit/class-thatseoagent-links.php:494
+#: includes/audit/class-thatseoagent-links.php:559
 #, php-format
 msgid "The menus, header or footer point to %s, which answer \"not found\". Visitors who click get an error page; fix the links in the theme or the menus, or create the pages."
 msgstr ""
 
-#: includes/audit/class-thatseoagent-links.php:495
+#: includes/audit/class-thatseoagent-links.php:560
 msgid "See the content check"
 msgstr ""
 
@@ -1471,6 +1472,36 @@ msgstr ""
 msgid "See the posts"
 msgstr ""
 
+#. translators: 1: term name, e.g. "Bristol", 2: site name.
+#: includes/content/class-thatseoagent-term-seo.php:218
+#, php-format
+msgid "Browse everything in %1$s on %2$s."
+msgstr ""
+
+#: includes/content/class-thatseoagent-term-seo.php:326
+msgid "SEO title"
+msgstr ""
+
+#: includes/content/class-thatseoagent-term-seo.php:327
+msgid "The full title in search results; the site name is not added. Empty: the name and the site name."
+msgstr ""
+
+#: includes/content/class-thatseoagent-term-seo.php:330
+msgid "Meta description"
+msgstr ""
+
+#: includes/content/class-thatseoagent-term-seo.php:331
+msgid "The text under the title in search results. Empty: the description above."
+msgstr ""
+
+#: includes/content/class-thatseoagent-term-seo.php:334
+msgid "Search results"
+msgstr ""
+
+#: includes/content/class-thatseoagent-term-seo.php:335
+msgid "Keep this page out of search results and the sitemap"
+msgstr ""
+
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:44
 msgid "Search and answers"
 msgstr ""
@@ -1663,6 +1694,18 @@ msgstr ""
 msgid "Browse all %1$s on %2$s"
 msgstr ""
 
+#. translators: 1: search terms, 2: site name.
+#: includes/head/class-thatseoagent-meta.php:382
+#, php-format
+msgid "Search results for \"%1$s\" on %2$s"
+msgstr ""
+
+#. translators: 1: author name, 2: site name.
+#: includes/head/class-thatseoagent-meta.php:389
+#, php-format
+msgid "Posts by %1$s on %2$s"
+msgstr ""
+
 #: includes/indexing/class-thatseoagent-crawl-cleanup.php:263
 msgid "Crawl cleanup"
 msgstr ""
@@ -1695,61 +1738,61 @@ msgstr ""
 msgid "Searches with emoji, symbols, messenger handles (\"QQ:\", \"Telegram:\") or over 100 characters go to the homepage instead of printing the spammer's text on a results page."
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:197
+#: includes/indexing/class-thatseoagent-indexing.php:198
 msgid "Indexing"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:201
+#: includes/indexing/class-thatseoagent-indexing.php:202
 msgid "Search engines are asked to stay away"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:202
+#: includes/indexing/class-thatseoagent-indexing.php:203
 msgid "\"Discourage search engines from indexing this site\" is ticked, so the site will not appear in search results."
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:203
+#: includes/indexing/class-thatseoagent-indexing.php:204
 msgid "Open Reading settings"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:212
-#: includes/indexing/class-thatseoagent-indexing.php:221
-#: includes/indexing/class-thatseoagent-indexing.php:230
+#: includes/indexing/class-thatseoagent-indexing.php:213
+#: includes/indexing/class-thatseoagent-indexing.php:222
+#: includes/indexing/class-thatseoagent-indexing.php:231
 msgid "Permalinks"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:212
+#: includes/indexing/class-thatseoagent-indexing.php:213
 msgid "Plain"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:215
+#: includes/indexing/class-thatseoagent-indexing.php:216
 msgid "Sitemaps and llms.txt are offline"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:216
+#: includes/indexing/class-thatseoagent-indexing.php:217
 msgid "Plain permalinks (?p=123) leave no address for the sitemap, llms.txt or the Markdown pages."
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:217
+#: includes/indexing/class-thatseoagent-indexing.php:218
 msgid "Choose a permalink structure"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:221
+#: includes/indexing/class-thatseoagent-indexing.php:222
 msgid "Numbers"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:224
+#: includes/indexing/class-thatseoagent-indexing.php:225
 msgid "Post addresses do not say what the post is about"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:225
+#: includes/indexing/class-thatseoagent-indexing.php:226
 msgid "The permalink structure has no %postname%, so addresses are numbers and dates. On a site that has been online a while, changing it moves every post's address: do it only with redirects from the old ones."
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:226
+#: includes/indexing/class-thatseoagent-indexing.php:227
 msgid "Open Permalink settings"
 msgstr ""
 
-#: includes/indexing/class-thatseoagent-indexing.php:230
+#: includes/indexing/class-thatseoagent-indexing.php:231
 msgid "Readable"
 msgstr ""
 
@@ -2472,146 +2515,398 @@ msgstr ""
 msgid "Get the code"
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:22
+#: includes/tooling/class-thatseoagent-abilities.php:46
+msgid "ID of a post, page or other content with SEO fields: every public type with an editing screen, attachments aside."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:52
 msgid "Get Sitemap URLs"
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:23
-msgid "Returns a list of sitemap URLs generated by ThatSeoAgent."
+#: includes/tooling/class-thatseoagent-abilities.php:53
+msgid "Returns every sitemap URL the site publishes: posts, pages, categories, tags, each custom post type and each custom taxonomy (brands, product categories)."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:54
+#: includes/tooling/class-thatseoagent-abilities.php:78
 msgid "Get Post SEO"
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:55
-msgid "Returns SEO data for a specific post."
+#: includes/tooling/class-thatseoagent-abilities.php:79
+msgid "Returns the SEO of a post, page or product as its page publishes it: the search title and meta description (and the ones written for it, if any), the canonical URL, noindex, the image it is shared with, its primary term per taxonomy and its JSON-LD graph."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:72
-msgid "Post ID to retrieve SEO data for."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:86
-#: includes/tooling/class-thatseoagent-abilities.php:360
-msgid "Whether the post is kept out of search results, the sitemap and llms.txt."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:97
-#: includes/tooling/class-thatseoagent-abilities.php:371
-msgid "The JSON-LD @graph the post's page publishes, node by node, as its head prints it. Empty while another SEO plugin is active and ThatSeoAgent prints nothing."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:108
+#: includes/tooling/class-thatseoagent-abilities.php:99
 msgid "Audit Post SEO"
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:109
+#: includes/tooling/class-thatseoagent-abilities.php:100
 msgid "Analyzes a post for SEO issues and returns recommendations. Only what Google or accessibility guidelines ask for lowers the score; findings of our own judgement are marked as such. Also returns the post's structure as facts — outline, lists, tables, figures, opening — for you to judge: no AI provider publishes how it chooses what to cite, so the plugin scores none of it. Read markdown_url for the full content."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:126
-msgid "Post ID to audit."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:139
-msgid "The title and description the page shows in search results, and whether the description was written or generated from the content."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:157
-msgid "Who asks for it: Google Search Central, accessibility guidelines (WCAG 2.2), or our own judgement, which never lowers the score."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:166
-msgid "Checks that could not run on this post, and why. A check that could not run is not a check that passed or failed."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:193
-msgid "How the post is built, as facts with no verdict attached."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:197
-msgid "The language the site declares in <html lang>, from Settings → General. Not detected from the text, which may be written in another."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:203
-msgid "The post as Markdown, to read its full content. Empty when it has no Markdown version."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:209
-msgid "The content's headings in order, up to 60. The page title the theme prints is not among them."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:236
-msgid "Details blocks: collapsible question-and-answer sections."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:241
-msgid "Figures in the text: every run of digits, years and prices included."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:246
-msgid "The first 150 words of the text, as a reader meets them."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:258
+#: includes/tooling/class-thatseoagent-abilities.php:120
 msgid "Scan SEO Issues"
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:259
-msgid "Scans multiple posts for SEO issues and returns a summary."
+#: includes/tooling/class-thatseoagent-abilities.php:121
+msgid "Audits many posts, newest first, and lists the ones with issues, worst first, each with its issues in full (type, severity, source, message). Filter by content type, status and issue type. A scan reads at most max(500, limit × 20) posts: when next_offset is not null, call again with offset = next_offset to go on."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:276
-msgid "Maximum posts to scan (default: 50)."
+#: includes/tooling/class-thatseoagent-abilities.php:134
+msgid "Maximum posts to return (default: 50)."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:281
+#: includes/tooling/class-thatseoagent-abilities.php:140
 msgid "Minimum issues to include in results (default: 1)."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:286
-msgid "Post type to scan (default: post)."
+#: includes/tooling/class-thatseoagent-abilities.php:145
+msgid "Post type to scan, or \"any\" for every type with SEO fields (default: post)."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:311
+#: includes/tooling/class-thatseoagent-abilities.php:151
+msgid "publish (default) or any: drafts, pending and scheduled posts too."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:156
+msgid "Only posts with this issue type, such as missing_description, title_may_be_cut, orphan or featured_image_missing_alt."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:161
+msgid "Posts to skip, newest first: the next_offset of the previous call."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:194
 msgid "Update Post SEO"
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:312
-msgid "Updates SEO meta for a specific post."
+#: includes/tooling/class-thatseoagent-abilities.php:195
+msgid "Updates the SEO of a post, page or product; only the fields you send. The title is the full title in search results, printed as written: the site name is not added, so include it if you want it (\"Terms of use | Acme\"). Returns what the page now publishes, and `warnings` when a title or description may be cut in results (over 70 or 165 characters) or another page has the same one. Warnings never block the save."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:334
-msgid "Post ID to update."
+#: includes/tooling/class-thatseoagent-abilities.php:218
+msgid "Custom SEO title, the full title as it should read in results. Empty string clears the value."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:338
-msgid "Custom SEO title. Empty string clears the value."
-msgstr ""
-
-#: includes/tooling/class-thatseoagent-abilities.php:342
+#: includes/tooling/class-thatseoagent-abilities.php:222
 msgid "Custom meta description. Empty string clears the value."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:346
+#: includes/tooling/class-thatseoagent-abilities.php:226
 msgid "True keeps the post out of search results, the sitemap and llms.txt; false lets search engines index it again."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:433
-#: includes/tooling/class-thatseoagent-abilities.php:471
-#: includes/tooling/class-thatseoagent-abilities.php:504
-msgid "Post ID is required."
+#: includes/tooling/class-thatseoagent-abilities.php:231
+msgid "Attachment ID of the image the post is shared with (Open Graph, X), or null to go back to its own image and then the site's."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:438
-#: includes/tooling/class-thatseoagent-abilities.php:476
-#: includes/tooling/class-thatseoagent-abilities.php:509
+#: includes/tooling/class-thatseoagent-abilities.php:235
+msgid "Primary term per taxonomy — the one breadcrumbs and article:section show — as taxonomy => term ID, or null to let the plugin choose. The term must be assigned to the post."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:248
+msgid "Generate Descriptions"
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:249
+msgid "Saves, as written descriptions, the meta description each post already publishes when none was written: the one generated from its content. The page does not change; the description just stops depending on the content staying as it is. Posts with a description of their own are left alone. Up to 100 posts per call."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:289
+msgid "Taxonomy, such as category, post_tag, or a custom one like a brand or a product category. Only public taxonomies with archives have SEO fields."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:299
+msgid "List Term SEO"
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:300
+msgid "Lists the terms of the taxonomies with SEO fields — categories, tags, brands, product categories — with the title and description their archive publishes, whether a title or description was written, noindex, and how many posts each has. Filter by taxonomy and by what is missing."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:314
+msgid "Only terms without a written title, or without a written description."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:331
+msgid "Get Term SEO"
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:332
+msgid "Returns the SEO of a term's archive page — a category, tag, brand or product category: its URL, the search title and meta description it publishes, the ones written for it, noindex and whether it is in the sitemap."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:353
+msgid "Update Term SEO"
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:354
+msgid "Updates the SEO of a term's archive page; only the fields you send. As with posts, the title is the full title, printed as written: the site name is not added. noindex keeps the archive out of search results and the sitemap. Returns what the archive now publishes, with warnings when a title or description may be cut (over 70 or 165 characters)."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:367
+msgid "Custom SEO title, the full title. Empty string clears it: the term name and the site name."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:371
+msgid "Custom meta description. Empty string clears it: the term's own description, or a sentence naming it."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:419
+msgid "Whether the post is kept out of search results, the sitemap and llms.txt."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:431
+msgid "The image the page is shared with, and where it comes from: chosen for it, its own (featured, gallery, content), the site's default image or the logo."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:435
+msgid "Per taxonomy the primary term, the one breadcrumbs show, and whether it was chosen by hand."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:439
+msgid "The JSON-LD @graph the post's page publishes, node by node, as its head prints it. Empty while another SEO plugin is active and ThatSeoAgent prints nothing."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:499
+msgid "What may go wrong in search results. They never block the save."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:526
+msgid "The title and description the page shows in search results, and whether the description was written or generated from the content."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:544
+msgid "Who asks for it: Google Search Central, accessibility guidelines (WCAG 2.2), or our own judgement, which never lowers the score."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:553
+msgid "Checks that could not run on this post, and why. A check that could not run is not a check that passed or failed."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:580
+msgid "How the post is built, as facts with no verdict attached."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:584
+msgid "The language the site declares in <html lang>, from Settings → General. Not detected from the text, which may be written in another."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:590
+msgid "The post as Markdown, to read its full content. Empty when it has no Markdown version."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:596
+msgid "The content's headings in order, up to 60. The page title the theme prints is not among them."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:623
+msgid "Details blocks: collapsible question-and-answer sections."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:628
+msgid "Figures in the text: every run of digits, years and prices included."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:633
+msgid "The first 150 words of the text, as a reader meets them."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:740
 msgid "No post exists with that ID."
 msgstr ""
 
-#: includes/tooling/class-thatseoagent-abilities.php:534
-msgid "That post type does not exist."
+#. translators: 1: post ID, 2: its post type, 3: post types with SEO fields.
+#: includes/tooling/class-thatseoagent-abilities.php:749
+#, php-format
+msgid "Post %1$d is of type %2$s, which has no SEO fields. Types with them: %3$s."
+msgstr ""
+
+#. translators: %d: post ID.
+#: includes/tooling/class-thatseoagent-abilities.php:755
+#, php-format
+msgid "Post %d is in the trash."
+msgstr ""
+
+#. translators: 1: taxonomy, 2: taxonomies with SEO fields.
+#: includes/tooling/class-thatseoagent-abilities.php:777
+#, php-format
+msgid "Taxonomy \"%1$s\" has no SEO fields. Taxonomies with them: %2$s."
+msgstr ""
+
+#. translators: 1: term ID, 2: taxonomy.
+#: includes/tooling/class-thatseoagent-abilities.php:785
+#, php-format
+msgid "No term %1$d exists in %2$s."
+msgstr ""
+
+#. translators: %s: field names.
+#: includes/tooling/class-thatseoagent-abilities.php:883
+#: includes/tooling/class-thatseoagent-abilities.php:1193
+#, php-format
+msgid "Send at least one of: %s."
+msgstr ""
+
+#. translators: %d: attachment ID.
+#: includes/tooling/class-thatseoagent-abilities.php:903
+#, php-format
+msgid "Attachment %d is not an image."
+msgstr ""
+
+#. translators: 1: taxonomy, 2: taxonomies with a primary term.
+#: includes/tooling/class-thatseoagent-abilities.php:917
+#, php-format
+msgid "Taxonomy \"%1$s\" has no primary term for this post. It has: %2$s."
+msgstr ""
+
+#. translators: 1: taxonomy, 2: taxonomies with a primary term.
+#: includes/tooling/class-thatseoagent-abilities.php:917
+msgid "none"
+msgstr ""
+
+#. translators: 1: term ID, 2: taxonomy.
+#: includes/tooling/class-thatseoagent-abilities.php:925
+#, php-format
+msgid "Term %1$d of %2$s is not assigned to the post: assign it first."
+msgstr ""
+
+#. translators: 1: characters, 2: limit.
+#: includes/tooling/class-thatseoagent-abilities.php:969
+#, php-format
+msgid "The title has %1$d characters: past about %2$d, search results may cut it."
+msgstr ""
+
+#. translators: 1: characters, 2: limit.
+#: includes/tooling/class-thatseoagent-abilities.php:978
+#, php-format
+msgid "The description has %1$d characters: past about %2$d, search results may cut it."
+msgstr ""
+
+#. translators: %s: post IDs.
+#: includes/tooling/class-thatseoagent-abilities.php:987
+#, php-format
+msgid "Other pages have the same title (IDs: %s). Google asks for a distinct title on each page."
+msgstr ""
+
+#. translators: %s: post IDs.
+#: includes/tooling/class-thatseoagent-abilities.php:996
+#, php-format
+msgid "Other pages have the same description (IDs: %s). Google asks for a distinct description on each page."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:1028
+msgid "You cannot edit this post."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:1036
+msgid "It already has a description of its own."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-abilities.php:1047
+msgid "Its content has no text to describe it with."
+msgstr ""
+
+#. translators: %s: post types with SEO fields.
+#: includes/tooling/class-thatseoagent-abilities.php:1105
+#, php-format
+msgid "That post type does not exist. Types with SEO fields: %s, or any."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:29
+msgid "Which setting. See get-seo-settings for what each one holds."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:35
+msgid "Get SEO Settings"
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:36
+msgid "Returns the plugin's settings as the settings screen stores them — or one of them — with what each one does and its JSON schema: identity (who the site represents: name, logo, default sharing image, social profiles), homepage (its search title and description), verification (Search Console and other webmaster codes), default_author, catalog (the product markup of each post type), llms_txt, indexnow_key, ai_crawlers (robots.txt rules for AI crawlers), crawl_cleanup and tracking."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:56
+msgid "Update SEO Settings"
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:57
+msgid "Changes one of the plugin's settings. For the settings that are objects, only the keys you send change; a key that is itself an object (identity.social, one post type of catalog) is replaced whole. The value is checked against the setting's schema and goes through the same sanitizer as the settings screen. Live right away. tracking injects code into every page and also needs the unfiltered_html capability."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:71
+msgid "The new value, or the keys to change for an object setting. Its shape is the setting's schema in get-seo-settings."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:83
+msgid "Get Duplicates"
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:84
+msgid "Lists the groups of published pages that share a search title or a written meta description (compared ignoring case and punctuation). Google asks for both to be distinct on each page. Descriptions generated from the content are compared by audit-post-seo and scan-seo-issues instead."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:108
+msgid "Get Link Report"
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:109
+msgid "Reports how the site's pages link to each other: the pages nothing links to (orphans: not the menus, the header or footer, or another page's text — posts and catalog entries listed in archives are never orphans), the pages with links to addresses of the site that do not exist, and the navigation links that lead nowhere. Uses the last hour's reading of the links unless fresh is true, which reads the whole site again."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:141
+msgid "Get Site Bulletin"
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:142
+msgid "Returns the site's SEO bulletin, the state the plugin's screen opens on: a warning level (green, yellow, orange, red), a headline, the warnings in force — each with what is wrong, why it matters and the admin screen where it is fixed — and the observations: sitemap, AI crawlers, homepage, identity, trust pages and the rest. Computed from the site as it is now."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:169
+msgid "Who the site represents, a person or an organization: name, description, logo (logo_id), default sharing image (default_og_image_id), X handle and social profile URLs. It feeds the Organization or Person node of the structured data."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:173
+msgid "The homepage's search title and meta description. They accept %%sitename%%, %%tagline%% and %%sep%%."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:177
+msgid "Webmaster verification codes printed on the homepage: google, bing, yandex, baidu, pinterest. The code alone, not the whole meta tag."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:181
+msgid "Who the structured data credits for posts with no author of their own: author_name, author_url and author_type (Person or Organization)."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:185
+msgid "Product markup per post type: post type => enabled, the brand and category taxonomies, and the meta keys of the properties, gallery, SKU, MPN and GTIN."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:189
+msgid "Whether the site publishes /llms.txt and /llms-full.txt."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:193
+msgid "The IndexNow key, which tells Bing and other engines about new and changed pages. Empty turns IndexNow off."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:197
+msgid "Whether AI crawlers may read the site, written into robots.txt: allow or block per group (search, user, training), and per crawler in bots (\"\" follows its group)."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:201
+msgid "Optional crawl cleanup: main_feed_only (only the main feed, no feeds per category, tag or author) and search_spam (filter spam searches)."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:205
+msgid "Analytics and tags: ga4 and google_ads IDs, and code printed in the head, after the opening body tag and in the footer of every page."
+msgstr ""
+
+#: includes/tooling/class-thatseoagent-site-abilities.php:269
+msgid "That setting does not exist."
+msgstr ""
+
+#. translators: %s: setting name.
+#: includes/tooling/class-thatseoagent-site-abilities.php:279
+#, php-format
+msgid "%s expects an object with the keys to change."
 msgstr ""
 
 #: assets/blocks/breadcrumbs.js:36

@@ -79,7 +79,8 @@ class ThatSeoAgent_Indexing {
             || is_404()
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read to decide a meta tag, nothing is processed.
             || isset( $_GET['replytocom'] )
-            || ( is_singular() && self::is_post_noindex( get_queried_object() ) );
+            || ( is_singular() && self::is_post_noindex( get_queried_object() ) )
+            || ( ( is_category() || is_tag() || is_tax() ) && get_queried_object() instanceof WP_Term && ThatSeoAgent_Term_Seo::is_noindex( get_queried_object() ) );
 
         /**
          * Filter whether the current request is kept out of search indexes.

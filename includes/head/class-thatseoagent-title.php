@@ -198,6 +198,15 @@ class ThatSeoAgent_Title {
             $override = esc_html( ThatSeoAgent_Homepage::expand_variables( ThatSeoAgent_Homepage::get_settings()['title'] ) );
         }
 
+        // A term archive's own title, the full title as written.
+        if ( '' === $override && ( is_category() || is_tag() || is_tax() ) ) {
+            $term = get_queried_object();
+
+            if ( $term instanceof WP_Term ) {
+                $override = esc_html( ThatSeoAgent_Term_Seo::get( $term, 'title' ) );
+            }
+        }
+
         // WordPress runs no document_title filter on a title that replaces
         // its own, so the last word is given here.
         if ( '' !== $override ) {

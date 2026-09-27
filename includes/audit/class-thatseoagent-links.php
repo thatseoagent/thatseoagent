@@ -100,6 +100,71 @@ class ThatSeoAgent_Links {
     }
 
     /**
+     * The link report the get-link-report ability returns: the pages
+     * nothing links to, the links to addresses that do not exist, and the
+     * header, footer or menu links that lead nowhere.
+     *
+     * Reads the graph from the last hour's cache unless $fresh, which reads
+     * the whole site again (it requests the front page and checks up to 40
+     * unknown addresses).
+     *
+     * @since 2.9.0
+     * @param bool $fresh Read the site's links again.
+     * @return array{built: string, orphans: array<int, array>, broken: array<int, array>, navigation_broken: array<int, string>, unchecked: int}
+     */
+    public static function report( $fresh = false ) {
+        if ( $fresh ) {
+            self::purge();
+            ThatSeoAgent_Memo::forget( 'link_graph' );
+        }
+
+        $graph    = self::graph();
+        $describe = function ( WP_Post $post ) {
+            return array(
+                'post_id' => $post->ID,
+                'type'    => $post->post_type,
+                'title'   => get_the_title( $post ),
+                'url'     => get_permalink( $post ),
+            );
+        };
+
+        $orphans = array();
+        $posts   = get_posts( array(
+            'post_type'              => ThatSeoAgent_Post_Seo::post_types(),
+            'post_status'            => 'publish',
+            'has_password'           => false,
+            'numberposts'            => -1,
+            'update_post_term_cache' => false,
+        ) );
+
+        foreach ( $posts as $post ) {
+            if ( self::needs_links( $post )
+                && ! ThatSeoAgent_Indexing::is_post_noindex( $post )
+                && empty( $graph['inbound'][ $post->ID ] )
+                && empty( $graph['navigation'][ $post->ID ] )
+            ) {
+                $orphans[] = $describe( $post );
+            }
+        }
+
+        $broken = array();
+        foreach ( (array) $graph['broken'] as $post_id => $urls ) {
+            $post = get_post( $post_id );
+            if ( $post ) {
+                $broken[] = $describe( $post ) + array( 'links' => array_values( (array) $urls ) );
+            }
+        }
+
+        return array(
+            'built'             => wp_date( 'Y-m-d H:i:s', (int) $graph['built'] ),
+            'orphans'           => $orphans,
+            'broken'            => $broken,
+            'navigation_broken' => array_values( (array) ( $graph['navigation_broken'] ?? array() ) ),
+            'unchecked'         => (int) array_sum( (array) $graph['unchecked'] ) + (int) ( $graph['navigation_unchecked'] ?? 0 ),
+        );
+    }
+
+    /**
      * Whether a post can only be reached through links to it.
      *
      * Posts of a type with an archive, or with a public taxonomy, are

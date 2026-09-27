@@ -145,6 +145,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Structure` | How a post is built, as facts for an agent to judge |
 | | `ThatSeoAgent_Image` | The image a page is represented by, for sharing and for the schema |
 | | `ThatSeoAgent_Primary_Term` | The category that names a post where only one fits: the breadcrumb trail, article:section and the Product markup's category |
+| | `ThatSeoAgent_Term_Seo` | Per-term SEO fields — title, description and noindex of a category, tag, brand or product category archive — on the term screens, in the head and in the sitemap |
 | | `ThatSeoAgent_Sample_Content` | WordPress's sample post and page, while still published |
 | `head/` | `ThatSeoAgent_Meta` | `<head>` meta tags and canonical |
 | | `ThatSeoAgent_Title` | The single answer to "what title does this post show in search results?": the `<title>`, og:title, the editor's preview |
@@ -194,7 +195,8 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_REST_Controller` | Shared by every controller: namespace, permission, uncached responses |
 | | `ThatSeoAgent_REST_Bulletin`, `_Preferences`, `_Audit`, `_Llms` | One controller per resource |
 | `tooling/` | `ThatSeoAgent_CLI` | WP-CLI commands |
-| | `ThatSeoAgent_Abilities` | Abilities API registration |
+| | `ThatSeoAgent_Abilities` | Abilities API registration: posts and terms |
+| | `ThatSeoAgent_Site_Abilities` | Abilities API registration: settings and site reports |
 | | `ThatSeoAgent_Importer` | Import from Yoast SEO, Rank Math, All in One SEO |
 | `integrations/` | `ThatSeoAgent_Compat` | Stepping aside while another SEO plugin is active |
 | | `ThatSeoAgent_IndexNow` | IndexNow key, verification file and submission |
@@ -300,10 +302,21 @@ Registered on `wp_abilities_api_init`:
 | Ability | Description | Capability |
 |---------|-------------|------------|
 | `thatseoagent/get-sitemap-urls` | Every sitemap URL the site publishes | `manage_options` |
-| `thatseoagent/get-post-seo` | SEO data for a post | `edit_post` |
-| `thatseoagent/update-post-seo` | Update title, description and noindex | `edit_post` |
+| `thatseoagent/get-post-seo` | SEO of a post as its page publishes it: title, description, canonical, noindex, sharing image, primary terms, JSON-LD | `edit_post` |
+| `thatseoagent/update-post-seo` | Update title, description, noindex, sharing image and primary terms; returns warnings (may be cut, shared with another page) | `edit_post` |
 | `thatseoagent/audit-post-seo` | Audit one post, 0–100 score, and its structure as facts | `edit_post` |
-| `thatseoagent/scan-seo-issues` | Scan many posts of a type, worst first | `manage_options` |
+| `thatseoagent/scan-seo-issues` | Scan many posts — one type or `any`, published or `any` status, one issue type — worst first, with each issue in full and `next_offset` to go on | `manage_options` |
+| `thatseoagent/generate-descriptions` | Save the generated description of up to 100 posts that have none | `edit_post` per post |
+| `thatseoagent/list-term-seo` | Terms of every taxonomy with SEO fields, with what their archive publishes; filter by what is missing | `manage_categories` |
+| `thatseoagent/get-term-seo` | SEO of a term's archive | `edit_term` |
+| `thatseoagent/update-term-seo` | Update a term archive's title, description and noindex | `edit_term` |
+| `thatseoagent/get-seo-settings` | The plugin's settings (identity, homepage, verification, catalog, crawlers…), what each does and its schema | `manage_options` |
+| `thatseoagent/update-seo-settings` | Change one setting, through its schema and sanitizer; `tracking` also needs `unfiltered_html` | `manage_options` |
+| `thatseoagent/get-duplicates` | Pages sharing a title or a written description | `manage_options` |
+| `thatseoagent/get-link-report` | Orphan pages, broken internal links, navigation that leads nowhere | `manage_options` |
+| `thatseoagent/get-site-bulletin` | The site's bulletin: level, warnings with where to fix them, observations | `manage_options` |
+
+A post or term that does not exist, or has no SEO fields (a revision, an attachment, a post in the trash), is answered with why rather than a permissions error.
 
 The audit applies the content check's rules: titles and descriptions that may be cut or that another page shares, a missing description, links search engines cannot follow, alt text — telling missing alt from the empty alt of decorative images — headings as accessibility, internal links, orphan pages and broken links as our own judgement, and, on catalog entries, their Product markup. Each finding carries its `source`, and checks that could not run come back in `not_measured`.
 
@@ -313,7 +326,7 @@ Every option is also registered with `show_in_rest`, so administrators can read 
 
 ## MCP server
 
-With the [MCP Adapter](https://github.com/WordPress/mcp-adapter) plugin (0.6) active, the five abilities are also the tools of a dedicated MCP server, `thatseoagent`, whatever the theme. As tools the slash becomes a hyphen: `thatseoagent-update-post-seo`.
+With the [MCP Adapter](https://github.com/WordPress/mcp-adapter) plugin (0.6) active, the fourteen abilities are also the tools of a dedicated MCP server, `thatseoagent`, whatever the theme. As tools the slash becomes a hyphen: `thatseoagent-update-post-seo`.
 
 - HTTP: `https://<site>/wp-json/mcp/thatseoagent`, with the application password of an editor or administrator (`edit_others_posts`); anyone else gets a 401 or 403. Each tool also checks its own capability.
 - STDIO: `wp mcp-adapter serve --server=thatseoagent --user=<user>`.

@@ -603,42 +603,88 @@ class ThatSeoAgent_Audit {
     /**
      * Audit many posts, worst first.
      *
-     * The same check as the screen's, in one go: the site's links read
-     * fresh first, and the findings that need every post applied among the
-     * posts it read.
-     *
      * @since 1.16.0 Moved from ThatSeoAgent_Abilities::scan_seo_issues().
      * @since 2.7.0 Reads the links fresh and compares generated
      *              descriptions, as the screen's check does.
-     * @param int    $limit      Maximum posts to return.
-     * @param int    $min_issues Minimum issues for a post to be listed.
-     * @param string $post_type  Post type to scan.
+     * @since 2.9.0 A wrapper of scan_report(); each result also carries
+     *              its issues in full.
+     * @param int             $limit      Maximum posts to return.
+     * @param int             $min_issues Minimum issues for a post to be listed.
+     * @param string|string[] $post_type  Post type or types to scan.
      * @return array<int, array>
      */
     public static function scan( $limit = 50, $min_issues = 1, $post_type = 'post' ) {
-        $limit      = absint( $limit );
-        $min_issues = absint( $min_issues );
+        $report = self::scan_report( array(
+            'limit'      => $limit,
+            'min_issues' => $min_issues,
+            'post_types' => (array) $post_type,
+        ) );
+
+        return $report['results'];
+    }
+
+    /**
+     * Audit many posts, worst first, and say how far the scan got.
+     *
+     * The same check as the screen's, in one go: the site's links read
+     * fresh first, and the findings that need every post applied among the
+     * posts it read. Posts are read newest first, in batches, so a large
+     * site never loads every post_content at once; the scan stops when
+     * `limit` posts match or after max(500, limit × 20) posts, and
+     * `next_offset` says where the next call should start.
+     *
+     * @since 2.9.0
+     * @param array $args {
+     *     @type int      $limit      Maximum posts to return. Default 50.
+     *     @type int      $min_issues Minimum issues for a post to be listed. Default 1.
+     *     @type string[] $post_types Post types to scan. Default post.
+     *     @type string[] $statuses   Statuses to scan. Default publish.
+     *     @type string   $issue      Only posts with this issue type. Default any.
+     *     @type int      $offset     Posts to skip, newest first. Default 0.
+     * }
+     * @return array{results: array<int, array>, scanned: int, next_offset: int|null}
+     */
+    public static function scan_report( array $args ) {
+        $args = wp_parse_args( $args, array(
+            'limit'      => 50,
+            'min_issues' => 1,
+            'post_types' => array( 'post' ),
+            'statuses'   => array( 'publish' ),
+            'issue'      => '',
+            'offset'     => 0,
+        ) );
+
+        $limit      = absint( $args['limit'] );
+        $min_issues = absint( $args['min_issues'] );
+        $issue      = (string) $args['issue'];
 
         if ( $limit < 1 ) {
             $limit = 50;
         }
 
+        // Whether an audit is listed: enough issues, and the one asked for.
+        $matches = function ( array $audit ) use ( $min_issues, $issue ) {
+            if ( count( $audit['issues'] ) < $min_issues ) {
+                return false;
+            }
+
+            return '' === $issue || in_array( $issue, array_column( $audit['issues'], 'type' ), true );
+        };
+
         self::prepare();
 
-        // Posts are fetched in batches so a large site never loads every
-        // post_content into memory at once. Scanning stops as soon as $limit
-        // matching posts are found, or once the scan cap is reached.
         $batch_size = 100;
         $max_scan   = max( 500, $limit * 20 );
         $scanned    = 0;
-        $offset     = 0;
+        $offset     = absint( $args['offset'] );
         $matching   = 0;
         $audits     = array();
+        $exhausted  = false;
 
         while ( $scanned < $max_scan && $matching < $limit ) {
             $posts = get_posts( array(
-                'post_type'              => $post_type,
-                'post_status'            => 'publish',
+                'post_type'              => array_values( (array) $args['post_types'] ),
+                'post_status'            => array_values( (array) $args['statuses'] ),
                 'posts_per_page'         => $batch_size,
                 'offset'                 => $offset,
                 'orderby'                => 'date',
@@ -649,12 +695,12 @@ class ThatSeoAgent_Audit {
             ) );
 
             if ( empty( $posts ) ) {
+                $exhausted = true;
                 break;
             }
 
-            $offset += count( $posts );
-
             foreach ( $posts as $post ) {
+                $offset++;
                 $scanned++;
                 $audit    = self::post( $post );
                 $audits[] = $audit;
@@ -666,7 +712,7 @@ class ThatSeoAgent_Audit {
 
                 // Findings among posts only add, so a post counted here
                 // stays counted.
-                if ( count( $audit['issues'] ) >= $min_issues ) {
+                if ( $matches( $audit ) ) {
                     $matching++;
                 }
 
@@ -674,11 +720,17 @@ class ThatSeoAgent_Audit {
                     break;
                 }
             }
+
+            // A short batch read to the end, unless it stopped early.
+            if ( count( $posts ) < $batch_size && $matching < $limit && $scanned < $max_scan ) {
+                $exhausted = true;
+                break;
+            }
         }
 
         $results = array();
         foreach ( self::among( $audits ) as $audit ) {
-            if ( count( $audit['issues'] ) < $min_issues || count( $results ) >= $limit ) {
+            if ( ! $matches( $audit ) || count( $results ) >= $limit ) {
                 continue;
             }
 
@@ -689,15 +741,25 @@ class ThatSeoAgent_Audit {
                 'score'       => $audit['score'],
                 'issue_count' => count( $audit['issues'] ),
                 'top_issues'  => array_slice( array_column( $audit['issues'], 'type' ), 0, 3 ),
+                'issues'      => array_map(
+                    function ( $found ) {
+                        return array_intersect_key( $found, array_flip( array( 'type', 'severity', 'source', 'message', 'value' ) ) );
+                    },
+                    $audit['issues']
+                ),
             );
         }
 
-        // Sort by score ascending (worst first)
-        usort( $results, function( $a, $b ) {
+        // Worst first.
+        usort( $results, function ( $a, $b ) {
             return $a['score'] - $b['score'];
         } );
 
-        return $results;
+        return array(
+            'results'     => $results,
+            'scanned'     => $scanned,
+            'next_offset' => $exhausted ? null : $offset,
+        );
     }
 
     /**

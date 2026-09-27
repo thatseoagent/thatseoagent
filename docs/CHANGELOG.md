@@ -1,5 +1,50 @@
 # Changelog
 
+## [2.9.0] - 2026-09-27
+
+### Added
+- **SEO for term archives.** Categories, tags and the public taxonomies of
+  other types — brands, product categories — get a search title, a meta
+  description and noindex of their own (`ThatSeoAgent_Term_Seo`), on the
+  term's add and edit screens. A written title is the full title, as for
+  posts; without one the archive keeps the term name and the site name.
+  The description falls back on the term's own description, then on a
+  translated sentence naming it. noindex reaches the robots meta and takes
+  the term out of the sitemap.
+- **Sitemaps for custom taxonomies**: `/sitemap-tax-{taxonomy}.xml` for
+  each public taxonomy other than categories and tags, listed in the
+  index. Brand and product category archives were in no sitemap.
+- **Nine new abilities, fourteen MCP tools**: `generate-descriptions`,
+  `list-term-seo`, `get-term-seo`, `update-term-seo`, `get-seo-settings`,
+  `update-seo-settings` (every option of the settings registry, through
+  its schema and sanitizer; `tracking` also needs `unfiltered_html`),
+  `get-duplicates`, `get-link-report` and `get-site-bulletin`
+  (`ThatSeoAgent_Site_Abilities`). `ThatSeoAgent_Duplicates::report()` and
+  `ThatSeoAgent_Links::report()` back the reports.
+- **`update-post-seo` sets the sharing image and the primary term** of each
+  taxonomy, and returns `warnings`: a title or description that may be cut
+  (over 70 or 165 characters) or that another page shares. They never
+  block the save. `get-post-seo` returns the image the page is shared with
+  and its source, and the primary terms.
+
+### Changed
+- **`scan-seo-issues` takes `post_type: any`, `status: any`, `issue` and
+  `offset`**, returns each post's issues in full, and answers an object:
+  `results`, `scanned` and `next_offset`. It used to answer the list
+  alone. `ThatSeoAgent_Audit::scan_report()` does the work; `scan()` wraps
+  it.
+- **The post abilities only take content with SEO fields.** A revision, an
+  attachment or a trashed post is answered with why, and a missing post
+  with "No post exists with that ID." instead of a permissions error.
+- The descriptions of `update-post-seo` and `get-post-seo` say that a
+  written title is printed as it is, without the site name.
+- An `update-post-seo` or `update-term-seo` call with no field to change is
+  an error instead of a silent success.
+
+### Fixed
+- The descriptions of term archives, searches and author pages were built
+  from untranslated English sentences.
+
 ## [2.7.0] - Unreleased
 
 ### Added

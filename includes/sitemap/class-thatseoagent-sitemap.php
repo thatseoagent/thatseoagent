@@ -57,6 +57,7 @@ class ThatSeoAgent_Sitemap {
         $vars[] = 'thatseoagent_sitemap';
         $vars[] = 'sitemap_page';
         $vars[] = 'thatseoagent_cpt';
+        $vars[] = 'thatseoagent_tax';
         return $vars;
     }
 
@@ -92,6 +93,12 @@ class ThatSeoAgent_Sitemap {
         add_rewrite_rule('^sitemap-categories\.xml$', 'index.php?thatseoagent_sitemap=categories', 'top');
         add_rewrite_rule('^sitemap-tags\.xml$', 'index.php?thatseoagent_sitemap=tags', 'top');
 
+        // Custom taxonomy sitemaps: brands, product categories. The "tax-"
+        // prefix keeps them apart from a post type of the same name.
+        foreach (self::get_custom_taxonomies() as $taxonomy) {
+            add_rewrite_rule('^sitemap-tax-' . $taxonomy . '\.xml$', 'index.php?thatseoagent_sitemap=taxonomy&thatseoagent_tax=' . $taxonomy, 'top');
+        }
+
         // Custom post type sitemaps
         foreach (self::get_cpts() as $cpt) {
             add_rewrite_rule('^sitemap-' . $cpt . '\.xml$', 'index.php?thatseoagent_sitemap=cpt&thatseoagent_cpt=' . $cpt, 'top');
@@ -114,6 +121,7 @@ class ThatSeoAgent_Sitemap {
         $xml = self::render($sitemap, array(
             'page'      => self::get_page_number(),
             'post_type' => get_query_var('thatseoagent_cpt'),
+            'taxonomy'  => get_query_var('thatseoagent_tax'),
         ));
 
         if ('' === $xml) {
@@ -173,6 +181,7 @@ class ThatSeoAgent_Sitemap {
         $args = wp_parse_args($args, array(
             'page'      => 1,
             'post_type' => '',
+            'taxonomy'  => '',
         ));
 
         $page = max(1, (int) $args['page']);
@@ -198,6 +207,12 @@ class ThatSeoAgent_Sitemap {
                     return '';
                 }
                 $body = self::render_post_type($args['post_type'], $page);
+                break;
+            case 'taxonomy':
+                if (!in_array($args['taxonomy'], self::get_custom_taxonomies(), true)) {
+                    return '';
+                }
+                $body = self::render_taxonomy($args['taxonomy']);
                 break;
             default:
                 return '';
@@ -246,6 +261,18 @@ class ThatSeoAgent_Sitemap {
             'loc'     => home_url('/sitemap-tags.xml'),
             'lastmod' => self::get_term_latest_modified('post_tag'),
         );
+
+        // Custom taxonomies with at least one listed term.
+        foreach (self::get_custom_taxonomies() as $taxonomy) {
+            if (!self::listed_terms($taxonomy)) {
+                continue;
+            }
+
+            $entries[] = array(
+                'loc'     => home_url("/sitemap-tax-{$taxonomy}.xml"),
+                'lastmod' => self::get_term_latest_modified($taxonomy),
+            );
+        }
 
         // Custom post types
         foreach (self::get_cpts() as $cpt) {
@@ -339,6 +366,40 @@ class ThatSeoAgent_Sitemap {
      */
     private static function get_cpts() {
         return get_post_types(array('public' => true, '_builtin' => false), 'names');
+    }
+
+    /**
+     * Public custom taxonomies whose term archives the sitemap lists.
+     *
+     * Categories and tags have their own sitemaps; these are the rest of
+     * the taxonomies with SEO fields, such as brands or product categories.
+     * Before 2.9.0 their archives were in no sitemap at all.
+     *
+     * @since 2.9.0
+     * @return array<int, string>
+     */
+    private static function get_custom_taxonomies() {
+        return array_values(array_diff(ThatSeoAgent_Term_Seo::taxonomies(), array('category', 'post_tag')));
+    }
+
+    /**
+     * The terms of a taxonomy the sitemap lists: with posts, and not kept
+     * out of search results.
+     *
+     * @since 2.9.0
+     * @param string $taxonomy Taxonomy name.
+     * @return array<int, WP_Term>
+     */
+    private static function listed_terms($taxonomy) {
+        $terms = get_terms(array('taxonomy' => $taxonomy, 'hide_empty' => true));
+
+        if (is_wp_error($terms)) {
+            return array();
+        }
+
+        return array_values(array_filter($terms, function ($term) {
+            return !ThatSeoAgent_Term_Seo::is_noindex($term);
+        }));
     }
 
     /**
@@ -462,9 +523,9 @@ class ThatSeoAgent_Sitemap {
      * @return string
      */
     private static function render_taxonomy($taxonomy) {
-        $terms = get_terms(array('taxonomy' => $taxonomy, 'hide_empty' => true));
+        $terms = self::listed_terms($taxonomy);
 
-        if (is_wp_error($terms) || empty($terms)) {
+        if (empty($terms)) {
             return self::urlset(array());
         }
 

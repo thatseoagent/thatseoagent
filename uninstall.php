@@ -42,6 +42,10 @@ function thatseoagent_uninstall_site() {
         delete_option( $option );
     }
 
+    foreach ( ThatSeoAgent_Term_Seo::keys() as $meta_key ) {
+        delete_metadata( 'term', 0, $meta_key, '', true );
+    }
+
     foreach ( ThatSeoAgent_Post_Seo::keys() as $meta_key ) {
         delete_post_meta_by_key( $meta_key );
     }

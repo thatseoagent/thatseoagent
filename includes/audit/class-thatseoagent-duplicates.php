@@ -63,6 +63,55 @@ class ThatSeoAgent_Duplicates {
     }
 
     /**
+     * Every group of pages that share a title or a written description,
+     * as the get-duplicates ability reports them.
+     *
+     * Generated descriptions are not here: they only exist once each page
+     * has been read, which the content check does (audit-post-seo and
+     * scan-seo-issues report them as `duplicate_generated_description`).
+     *
+     * @since 2.9.0
+     * @return array{titles: array<int, array>, descriptions: array<int, array>}
+     */
+    public static function report() {
+        $groups = self::groups();
+        $report = array();
+
+        foreach ( array( 'titles' => 'title', 'descriptions' => 'description' ) as $which => $field ) {
+            $report[ $which ] = array();
+
+            foreach ( $groups[ $which ]['ids'] as $ids ) {
+                $posts = array();
+
+                foreach ( $ids as $id ) {
+                    $post = get_post( $id );
+                    if ( ! $post ) {
+                        continue;
+                    }
+
+                    $posts[] = array(
+                        'post_id' => $post->ID,
+                        'type'    => $post->post_type,
+                        'title'   => get_the_title( $post ),
+                        'url'     => get_permalink( $post ),
+                    );
+                }
+
+                $first = get_post( $ids[0] );
+
+                $report[ $which ][] = array(
+                    // The text as the first page publishes it; the others
+                    // match it once case and punctuation are set aside.
+                    'text'  => $first ? ( 'title' === $field ? ThatSeoAgent_Title::for_post( $first ) : ThatSeoAgent_Post_Seo::get( $first, 'description' ) ) : '',
+                    'posts' => $posts,
+                );
+            }
+        }
+
+        return $report;
+    }
+
+    /**
      * The IDs sharing a group with a post.
      *
      * @since 2.3.0

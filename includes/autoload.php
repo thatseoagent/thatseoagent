@@ -52,6 +52,7 @@ spl_autoload_register(
         'ThatSeoAgent_Primary_Term'      => 'content/class-thatseoagent-primary-term.php',
         'ThatSeoAgent_Sample_Content'    => 'content/class-thatseoagent-sample-content.php',
         'ThatSeoAgent_Structure'         => 'content/class-thatseoagent-structure.php',
+        'ThatSeoAgent_Term_Seo'          => 'content/class-thatseoagent-term-seo.php',
 
         'ThatSeoAgent_Breadcrumbs'       => 'head/class-thatseoagent-breadcrumbs.php',
         'ThatSeoAgent_Meta'              => 'head/class-thatseoagent-meta.php',
@@ -116,6 +117,7 @@ spl_autoload_register(
         'ThatSeoAgent_REST'              => 'rest/class-thatseoagent-rest.php',
 
         'ThatSeoAgent_Abilities'         => 'tooling/class-thatseoagent-abilities.php',
+        'ThatSeoAgent_Site_Abilities'    => 'tooling/class-thatseoagent-site-abilities.php',
         'ThatSeoAgent_CLI'               => 'tooling/class-thatseoagent-cli.php',
         'ThatSeoAgent_Importer'          => 'tooling/class-thatseoagent-importer.php',
 
