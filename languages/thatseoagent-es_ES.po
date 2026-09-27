@@ -1,16 +1,15 @@
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: ThatSeoAgent 2.6.0\n"
 "Report-Msgid-Bugs-To: angel.cruz@wallbit.io\n"
-"POT-Creation-Date: 2026-09-23T18:33:02+00:00\n"
-"PO-Revision-Date: 2026-09-23 16:30+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-23T18:33:02+00:00\n"
+"PO-Revision-Date: 2026-09-23 16:30+0000\n"
+"Language: es_ES\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: thatseoagent\n"
 "X-Generator: WP-CLI 2.12.0\n"
@@ -18,22 +17,25 @@ msgstr ""
 #. Plugin Name of the plugin
 #: thatseoagent.php includes/admin/class-thatseoagent-app.php:65
 #: includes/admin/class-thatseoagent-app.php:66
-#: includes/admin/views/layout.php:36
+#: includes/admin/views/layout.php:39
 msgid "ThatSeoAgent"
-msgstr ""
+msgstr "ThatSeoAgent"
 
 #. Description of the plugin
 #: thatseoagent.php
 msgid ""
-"Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML"
-" sitemaps, per-post SEO fields, and Markdown for AI agents. A Yoast "
+"Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML "
+"sitemaps, per-post SEO fields, and Markdown for AI agents. A Yoast "
 "replacement that doesn't slow your site down."
 msgstr ""
+"SEO ligero y sin excesos. Etiquetas meta, Open Graph, marcado Schema, "
+"sitemaps XML, campos SEO por entrada y Markdown para agentes de IA. Un "
+"reemplazo de Yoast que no ralentiza tu sitio."
 
 #. Author of the plugin
 #: thatseoagent.php
 msgid "Angel Cruz"
-msgstr ""
+msgstr "Angel Cruz"
 
 #: includes/admin/class-thatseoagent-app.php:84
 #: includes/admin/class-thatseoagent-app.php:85
@@ -42,8 +44,8 @@ msgstr "Resumen"
 
 #: includes/admin/class-thatseoagent-app.php:90
 #: includes/admin/class-thatseoagent-app.php:91
-#: includes/bulletin/class-thatseoagent-bulletin.php:352
-#: includes/bulletin/class-thatseoagent-bulletin.php:358
+#: includes/catalog/class-thatseoagent-product-report.php:272
+#: includes/catalog/class-thatseoagent-product-report.php:308
 msgid "Products"
 msgstr "Productos"
 
@@ -66,8 +68,8 @@ msgstr ""
 
 #: includes/admin/class-thatseoagent-app.php:102
 #: includes/admin/class-thatseoagent-app.php:103
-#: includes/bulletin/class-thatseoagent-bulletin.php:409
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:301
+#: includes/crawlers/class-thatseoagent-crawler-access.php:388
 msgid "AI crawlers"
 msgstr "Crawlers de IA"
 
@@ -98,7 +100,7 @@ msgstr ""
 "Quién es el sitio, la portada, el catálogo de productos y las integraciones."
 
 #: includes/admin/class-thatseoagent-app.php:248
-#: includes/admin/views/settings.php:138
+#: includes/admin/views/settings.php:139
 msgid "Saving…"
 msgstr "Guardando…"
 
@@ -188,8 +190,7 @@ msgstr[1] "Meta descripción guardada para %d entradas."
 #: includes/admin/class-thatseoagent-bulk-descriptions.php:137
 #, php-format
 msgid "%d skipped: it already had one or has no content to describe."
-msgid_plural ""
-"%d skipped: they already had one or have no content to describe."
+msgid_plural "%d skipped: they already had one or have no content to describe."
 msgstr[0] "%d omitida: ya tenía una o no tiene contenido que describir."
 msgstr[1] "%d omitidas: ya tenían una o no tienen contenido que describir."
 
@@ -201,11 +202,11 @@ msgstr "🔍 Ajustes de SEO"
 msgid "SEO Title"
 msgstr "Título SEO"
 
-#: includes/admin/class-thatseoagent-meta-box.php:110
+#: includes/admin/class-thatseoagent-meta-box.php:111
 msgid "Meta Description"
 msgstr "Meta descripción"
 
-#: includes/admin/class-thatseoagent-meta-box.php:117
+#: includes/admin/class-thatseoagent-meta-box.php:118
 msgid "Leave blank to auto-generate from content..."
 msgstr ""
 "Déjalo en blanco para generarla automáticamente a partir del contenido..."
@@ -282,7 +283,7 @@ msgstr "Detener"
 msgid "Not checked yet"
 msgstr "Todavía sin revisar"
 
-#: includes/admin/views/audit.php:99 includes/admin/views/crawlers.php:65
+#: includes/admin/views/audit.php:99 includes/admin/views/crawlers.php:69
 #: includes/admin/views/llms.php:113
 msgid "Checking…"
 msgstr "Revisando…"
@@ -349,13 +350,13 @@ msgstr "No hay nada para mejorar en este tipo de contenido."
 msgid "out of 100"
 msgstr "sobre 100"
 
-#: includes/admin/views/audit.php:164 includes/admin/views/products.php:204
+#: includes/admin/views/audit.php:164 includes/admin/views/products.php:207
 msgid "View page"
 msgstr "Ver página"
 
 #: includes/admin/views/audit.php:164 includes/admin/views/dashboard.php:199
 #: includes/admin/views/llms.php:69 includes/admin/views/llms.php:74
-#: includes/admin/views/products.php:204
+#: includes/admin/views/products.php:207
 #: includes/markdown/class-thatseoagent-cache-settings.php:178
 msgid "(opens in a new tab)"
 msgstr "(se abre en una pestaña nueva)"
@@ -377,8 +378,8 @@ msgid ""
 "The crawlers behind Google, Bing and Apple search. Never blocked from here: "
 "that would take the site out of search results."
 msgstr ""
-"Los crawlers de Google, Bing y la búsqueda de Apple. Nunca se bloquean desde"
-" aquí: eso sacaría el sitio de los resultados de búsqueda."
+"Los crawlers de Google, Bing y la búsqueda de Apple. Nunca se bloquean desde "
+"aquí: eso sacaría el sitio de los resultados de búsqueda."
 
 #. translators: %d: number of crawlers.
 #: includes/admin/views/crawlers.php:30
@@ -413,123 +414,111 @@ msgstr ""
 "Leído del robots.txt que WordPress arma para el sitio, con las reglas "
 "elegidas en los ajustes."
 
-#: includes/admin/views/crawlers.php:58
-msgid ""
-"robots.txt is a request, not a lock: the major AI providers honor it, and a "
-"few of their crawlers skip it for visits a person asked for. The access "
-"check requests the homepage as each crawler to catch a firewall or CDN "
-"turning it away."
-msgstr ""
-"robots.txt es un pedido, no un candado: los grandes proveedores de IA lo "
-"respetan, y algunos de sus crawlers lo ignoran en las visitas que pide una "
-"persona. La comprobación de acceso pide la portada como cada crawler para "
-"detectar un firewall o un CDN que lo rechace."
-
-#: includes/admin/views/crawlers.php:62
+#: includes/admin/views/crawlers.php:66
 msgid "Change the rules"
 msgstr "Cambiar las reglas"
 
-#: includes/admin/views/crawlers.php:65
+#: includes/admin/views/crawlers.php:69
 msgid "Check access now"
 msgstr "Comprobar acceso ahora"
 
-#: includes/admin/views/crawlers.php:73
+#: includes/admin/views/crawlers.php:77
 #, php-format
 msgid "robots.txt answers with status %d"
 msgstr "robots.txt responde con el código %d"
 
-#: includes/admin/views/crawlers.php:75
+#: includes/admin/views/crawlers.php:79
 msgid ""
 "Crawlers only read the rules when robots.txt answers 200. With a 404 or any "
 "other 4xx they assume there are none and read everything; with a 5xx most "
 "stay away. The file itself looks fine, so the server, a theme router or a "
 "security layer is changing the status."
 msgstr ""
-"Los crawlers solo leen las reglas cuando robots.txt responde 200. Con un 404"
-" o cualquier otro 4xx asumen que no hay ninguna y leen todo; con un 5xx la "
-"mayoría se aleja. El archivo en sí está bien, así que el servidor, el router"
-" de un tema o una capa de seguridad está cambiando el código."
+"Los crawlers solo leen las reglas cuando robots.txt responde 200. Con un 404 "
+"o cualquier otro 4xx asumen que no hay ninguna y leen todo; con un 5xx la "
+"mayoría se aleja. El archivo en sí está bien, así que el servidor, el router "
+"de un tema o una capa de seguridad está cambiando el código."
 
-#: includes/admin/views/crawlers.php:80
+#: includes/admin/views/crawlers.php:84
 msgid "Rules to add to your robots.txt file"
 msgstr "Reglas para agregar a tu archivo robots.txt"
 
-#: includes/admin/views/crawlers.php:81
+#: includes/admin/views/crawlers.php:85
 msgid ""
 "Paste these lines into the robots.txt file in the site root, or delete that "
 "file so WordPress serves its own with these rules."
 msgstr ""
-"Pega estas líneas en el archivo robots.txt de la raíz del sitio, o borra ese"
-" archivo para que WordPress sirva el suyo con estas reglas."
+"Pega estas líneas en el archivo robots.txt de la raíz del sitio, o borra ese "
+"archivo para que WordPress sirva el suyo con estas reglas."
 
-#: includes/admin/views/crawlers.php:102
+#: includes/admin/views/crawlers.php:106
 msgid "Crawler"
 msgstr "Crawler"
 
-#: includes/admin/views/crawlers.php:103
+#: includes/admin/views/crawlers.php:107
 #: includes/bulletin/class-thatseoagent-readings.php:93
 msgid "robots.txt"
 msgstr "robots.txt"
 
-#: includes/admin/views/crawlers.php:104
+#: includes/admin/views/crawlers.php:108
 msgid "Your choice"
 msgstr "Tu elección"
 
-#: includes/admin/views/crawlers.php:105
+#: includes/admin/views/crawlers.php:109
 msgid "Access check"
 msgstr "Comprobación de acceso"
 
-#: includes/admin/views/crawlers.php:119
+#: includes/admin/views/crawlers.php:123
 msgid "No rule applies"
 msgstr "No hay regla que aplique"
 
-#: includes/admin/views/crawlers.php:121
+#: includes/admin/views/crawlers.php:125
 msgid "By the rules for every crawler"
 msgstr "Por las reglas para todos los crawlers"
 
-#: includes/admin/views/crawlers.php:123
+#: includes/admin/views/crawlers.php:127
 msgid "By a rule naming it"
 msgstr "Por una regla que lo nombra"
 
-#: includes/admin/views/crawlers.php:132
+#: includes/admin/views/crawlers.php:136
 msgid "may not read robots.txt"
 msgstr "puede no leer robots.txt"
 
-#: includes/admin/views/crawlers.php:139
-#: includes/bulletin/class-thatseoagent-bulletin.php:166
+#: includes/admin/views/crawlers.php:143
+#: includes/indexing/class-thatseoagent-indexing.php:197
 msgid "Allowed"
 msgstr "Permitida"
 
-#: includes/admin/views/crawlers.php:139
-#: includes/bulletin/class-thatseoagent-bulletin.php:166
+#: includes/admin/views/crawlers.php:143
+#: includes/indexing/class-thatseoagent-indexing.php:197
 msgid "Blocked"
 msgstr "Bloqueada"
 
-#: includes/admin/views/crawlers.php:145
+#: includes/admin/views/crawlers.php:149
 msgid "Always allowed"
 msgstr "Siempre permitido"
 
-#: includes/admin/views/crawlers.php:147
+#: includes/admin/views/crawlers.php:151
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:352
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:380
 msgid "Block"
 msgstr "Bloquear"
 
-#: includes/admin/views/crawlers.php:147
+#: includes/admin/views/crawlers.php:151
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:351
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:376
 msgid "Allow"
 msgstr "Permitir"
 
-#: includes/admin/views/crawlers.php:149
+#: includes/admin/views/crawlers.php:153
 msgid "Not what robots.txt says"
 msgstr "No coincide con lo que dice robots.txt"
 
-#: includes/admin/views/crawlers.php:155
+#: includes/admin/views/crawlers.php:159
 msgid "A robots.txt token only; it never visits"
 msgstr "Solo es un nombre en robots.txt; nunca visita"
 
-#: includes/admin/views/crawlers.php:157
+#: includes/admin/views/crawlers.php:161
 msgid "Not checked"
 msgstr "Sin comprobar"
 
@@ -648,39 +637,39 @@ msgid "(not published)"
 msgstr "(no publicado)"
 
 #: includes/admin/views/dashboard.php:197
-#: includes/bulletin/class-thatseoagent-bulletin.php:407
+#: includes/crawlers/class-thatseoagent-crawler-access.php:349
 msgid "Open"
 msgstr "Abrir"
 
-#: includes/admin/views/layout.php:37
+#: includes/admin/views/layout.php:40
 msgid "Site bulletin"
 msgstr "Parte del sitio"
 
-#: includes/admin/views/layout.php:63
+#: includes/admin/views/layout.php:67
 msgid "ThatSeoAgent sections"
 msgstr "Secciones de ThatSeoAgent"
 
-#: includes/admin/views/layout.php:82
+#: includes/admin/views/layout.php:86
 msgid "Edition"
 msgstr "Edición"
 
-#: includes/admin/views/layout.php:83
+#: includes/admin/views/layout.php:87
 msgid "Color theme"
 msgstr "Tema de color"
 
-#: includes/admin/views/layout.php:86
+#: includes/admin/views/layout.php:90
 msgid "Day"
 msgstr "Día"
 
-#: includes/admin/views/layout.php:87
+#: includes/admin/views/layout.php:91
 msgid "Night"
 msgstr "Noche"
 
-#: includes/admin/views/layout.php:104
+#: includes/admin/views/layout.php:108
 msgid "Everything here is checked on this site. Nothing is sent anywhere."
 msgstr "Todo se revisa en este sitio. No se envía nada a ningún lado."
 
-#: includes/admin/views/layout.php:139
+#: includes/admin/views/layout.php:143
 msgid "Dismiss"
 msgstr "Cerrar"
 
@@ -763,8 +752,8 @@ msgstr "Todavía no hay catálogo de productos"
 
 #: includes/admin/views/products.php:21
 msgid ""
-"If the site lists products — machines, parts, models — they can be described"
-" to search engines as products, with their brand, category and "
+"If the site lists products — machines, parts, models — they can be described "
+"to search engines as products, with their brand, category and "
 "specifications, instead of as plain pages."
 msgstr ""
 "Si el sitio lista productos (máquinas, repuestos, modelos), se pueden "
@@ -819,7 +808,7 @@ msgid "GTIN / EAN"
 msgstr "GTIN / EAN"
 
 #: includes/admin/views/products.php:53 includes/admin/views/products.php:134
-#: includes/admin/views/products.php:202
+#: includes/admin/views/products.php:203
 #: includes/catalog/class-thatseoagent-product-report.php:254
 msgid "Complete"
 msgstr "Completo"
@@ -846,12 +835,12 @@ msgstr[1] "%1$d de %2$d productos necesitan atención."
 
 #: includes/admin/views/products.php:73
 msgid ""
-"Without a price, reviews or ratings Google shows no product stars or prices,"
-" but the markup still tells search engines and AI assistants exactly what "
+"Without a price, reviews or ratings Google shows no product stars or prices, "
+"but the markup still tells search engines and AI assistants exactly what "
 "each product is."
 msgstr ""
-"Sin precio, reseñas ni valoraciones, Google no muestra estrellas ni precios,"
-" pero el marcado igual les dice a los buscadores y asistentes de IA "
+"Sin precio, reseñas ni valoraciones, Google no muestra estrellas ni precios, "
+"pero el marcado igual les dice a los buscadores y asistentes de IA "
 "exactamente qué es cada producto."
 
 #: includes/admin/views/products.php:100
@@ -898,55 +887,55 @@ msgstr "Producto"
 msgid "What is missing"
 msgstr "Qué falta"
 
-#: includes/admin/views/products.php:211
+#: includes/admin/views/products.php:214
 msgid "Nothing"
 msgstr "Nada"
 
-#: includes/admin/views/audit.php:182 includes/admin/views/products.php:230
+#: includes/admin/views/audit.php:182 includes/admin/views/products.php:233
 msgid "Pages"
 msgstr "Páginas"
 
-#: includes/admin/views/audit.php:183 includes/admin/views/products.php:232
+#: includes/admin/views/audit.php:183 includes/admin/views/products.php:235
 msgid "Previous"
 msgstr "Anterior"
 
 #. translators: 1: current page, 2: total pages.
-#: includes/admin/views/audit.php:185 includes/admin/views/products.php:239
+#: includes/admin/views/audit.php:185 includes/admin/views/products.php:242
 #, php-format
 msgid "Page %1$d of %2$d"
 msgstr "Página %1$d de %2$d"
 
-#: includes/admin/views/audit.php:186 includes/admin/views/products.php:243
+#: includes/admin/views/audit.php:186 includes/admin/views/products.php:246
 msgid "Next"
 msgstr "Siguiente"
 
-#: includes/admin/views/settings.php:81
+#: includes/admin/views/settings.php:82
 msgid "Settings sections"
 msgstr "Secciones de ajustes"
 
-#: includes/admin/views/settings.php:82
+#: includes/admin/views/settings.php:83
 msgid "On this page"
 msgstr "En esta página"
 
-#: includes/admin/views/settings.php:126 includes/admin/views/settings.php:128
+#: includes/admin/views/settings.php:127 includes/admin/views/settings.php:129
 msgid "Changes apply to the whole site as soon as they are saved."
 msgstr "Los cambios se aplican a todo el sitio en cuanto se guardan."
 
-#: includes/admin/views/settings.php:137
+#: includes/admin/views/settings.php:138
 msgid "Save settings"
 msgstr "Guardar ajustes"
 
-#: includes/audit/class-thatseoagent-audit-run.php:97
+#: includes/audit/class-thatseoagent-audit-run.php:98
 msgid "This check was stopped or replaced by a newer one. Start it again."
 msgstr ""
 "Esta revisión se detuvo o fue reemplazada por una más nueva. Vuelve a "
 "empezarla."
 
-#: includes/audit/class-thatseoagent-audit-run.php:299
+#: includes/audit/class-thatseoagent-audit-run.php:244
 msgid "(no title)"
 msgstr "(sin título)"
 
-#: includes/audit/class-thatseoagent-audit.php:288
+#: includes/audit/class-thatseoagent-audit.php:328
 msgid "The featured image has no alt text in the media library"
 msgstr ""
 "La imagen destacada no tiene texto alternativo en la biblioteca de medios"
@@ -967,71 +956,71 @@ msgstr "Aviso naranja"
 msgid "Red warning"
 msgstr "Aviso rojo"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:166
+#: includes/indexing/class-thatseoagent-indexing.php:197
 msgid "Indexing"
 msgstr "Indexación"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:170
+#: includes/indexing/class-thatseoagent-indexing.php:201
 msgid "Search engines are asked to stay away"
 msgstr "Se les pide a los buscadores que no entren"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:171
+#: includes/indexing/class-thatseoagent-indexing.php:202
 msgid ""
-"\"Discourage search engines from indexing this site\" is ticked, so the site"
-" will not appear in search results."
+"\"Discourage search engines from indexing this site\" is ticked, so the site "
+"will not appear in search results."
 msgstr ""
 "\"Pedir a los motores de búsqueda que no indexen este sitio\" está marcado, "
 "así que el sitio no aparecerá en los resultados."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:172
+#: includes/indexing/class-thatseoagent-indexing.php:203
 msgid "Open Reading settings"
 msgstr "Abrir Ajustes de lectura"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:181
-#: includes/bulletin/class-thatseoagent-bulletin.php:183
-#: includes/bulletin/class-thatseoagent-bulletin.php:192
+#: includes/indexing/class-thatseoagent-indexing.php:212
+#: includes/indexing/class-thatseoagent-indexing.php:221
+#: includes/indexing/class-thatseoagent-indexing.php:230
 msgid "Permalinks"
 msgstr "Enlaces permanentes"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:192
+#: includes/indexing/class-thatseoagent-indexing.php:230
 msgid "Readable"
 msgstr "Legibles"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:181
+#: includes/indexing/class-thatseoagent-indexing.php:212
 msgid "Plain"
 msgstr "Simples"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:197
+#: includes/indexing/class-thatseoagent-indexing.php:215
 msgid "Sitemaps and llms.txt are offline"
 msgstr "Los sitemaps y llms.txt están fuera de servicio"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:198
+#: includes/indexing/class-thatseoagent-indexing.php:216
 msgid ""
 "Plain permalinks (?p=123) leave no address for the sitemap, llms.txt or the "
 "Markdown pages."
 msgstr ""
-"Los enlaces simples (?p=123) no dejan dirección para el sitemap, llms.txt ni"
-" las páginas Markdown."
+"Los enlaces simples (?p=123) no dejan dirección para el sitemap, llms.txt ni "
+"las páginas Markdown."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:199
+#: includes/indexing/class-thatseoagent-indexing.php:217
 msgid "Choose a permalink structure"
 msgstr "Elegir una estructura de enlaces"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:206
+#: includes/integrations/class-thatseoagent-compat.php:158
 msgid "SEO plugins"
 msgstr "Plugins SEO"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:206
+#: includes/integrations/class-thatseoagent-compat.php:158
 msgid "Only this one"
 msgstr "Solo este"
 
 #. translators: %s: name of the other SEO plugin.
-#: includes/bulletin/class-thatseoagent-bulletin.php:211
+#: includes/integrations/class-thatseoagent-compat.php:149
 #, php-format
 msgid "%s is active, so ThatSeoAgent is standing aside"
 msgstr "%s está activo, así que ThatSeoAgent se hace a un lado"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:212
+#: includes/integrations/class-thatseoagent-compat.php:150
 msgid ""
 "Two SEO plugins would print every tag twice. Import its data with wp "
 "thatseoagent import, then deactivate one of them."
@@ -1039,57 +1028,57 @@ msgstr ""
 "Dos plugins SEO imprimirían cada etiqueta dos veces. Importa sus datos con "
 "wp thatseoagent import y luego desactiva uno de los dos."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:213
-#: includes/bulletin/class-thatseoagent-bulletin.php:438
+#: includes/crawlers/class-thatseoagent-crawler-access.php:379
+#: includes/integrations/class-thatseoagent-compat.php:151
 msgid "Open Plugins"
 msgstr "Abrir Plugins"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:220
+#: includes/site/class-thatseoagent-identity.php:587
 msgid "Identity"
 msgstr "Identidad"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:220
+#: includes/site/class-thatseoagent-identity.php:587
 msgid "Set"
 msgstr "Configurada"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:220
+#: includes/site/class-thatseoagent-identity.php:587
 msgid "Missing"
 msgstr "Falta"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:224
+#: includes/site/class-thatseoagent-identity.php:578
 msgid "Search engines do not know who runs the site"
 msgstr "Los buscadores no saben quién está detrás del sitio"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:225
+#: includes/site/class-thatseoagent-identity.php:579
 msgid ""
 "Say whether the site is a person or an organization, and add its logo and "
 "social profiles."
 msgstr ""
-"Indica si el sitio es de una persona o de una organización, y agrega su logo"
-" y perfiles sociales."
+"Indica si el sitio es de una persona o de una organización, y agrega su logo "
+"y perfiles sociales."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:226
+#: includes/site/class-thatseoagent-identity.php:580
 msgid "Set up the identity"
 msgstr "Configurar la identidad"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:246
-#: includes/site/class-thatseoagent-homepage.php:130
+#: includes/site/class-thatseoagent-homepage.php:152
+#: includes/site/class-thatseoagent-homepage.php:307
 msgid "Homepage"
 msgstr "Portada"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:246
+#: includes/site/class-thatseoagent-homepage.php:307
 msgid "Described"
 msgstr "Descrita"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:246
+#: includes/site/class-thatseoagent-homepage.php:307
 msgid "Automatic"
 msgstr "Automática"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:250
+#: includes/site/class-thatseoagent-homepage.php:298
 msgid "The homepage description is taken from the page text"
 msgstr "La descripción de la portada se toma del texto de la página"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:251
+#: includes/site/class-thatseoagent-homepage.php:299
 msgid ""
 "It is the first thing people read about the site in search results; a "
 "sentence written for them works better."
@@ -1097,46 +1086,46 @@ msgstr ""
 "Es lo primero que la gente lee del sitio en los resultados de búsqueda; una "
 "frase escrita para ellos funciona mejor."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:252
+#: includes/site/class-thatseoagent-homepage.php:300
 msgid "Write it"
 msgstr "Escribirla"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:352
+#: includes/catalog/class-thatseoagent-product-report.php:272
 msgid "No catalog"
 msgstr "Sin catálogo"
 
 #. translators: 1: complete products, 2: all products.
-#: includes/bulletin/class-thatseoagent-bulletin.php:361
+#: includes/catalog/class-thatseoagent-product-report.php:311
 #, php-format
 msgid "%1$d of %2$d complete"
 msgstr "%1$d de %2$d completos"
 
 #. translators: %d: number of products.
-#: includes/bulletin/class-thatseoagent-bulletin.php:368
+#: includes/catalog/class-thatseoagent-product-report.php:286
 #, php-format
 msgid "%d product is not marked up as a product"
 msgid_plural "%d products are not marked up as products"
 msgstr[0] "%d producto no está marcado como producto"
 msgstr[1] "%d productos no están marcados como productos"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:369
+#: includes/catalog/class-thatseoagent-product-report.php:287
 msgid "Without a title there is no Product markup at all."
 msgstr "Sin título no hay marcado de producto."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:370
-#: includes/bulletin/class-thatseoagent-bulletin.php:381
+#: includes/catalog/class-thatseoagent-product-report.php:288
+#: includes/catalog/class-thatseoagent-product-report.php:299
 msgid "See the products"
 msgstr "Ver los productos"
 
 #. translators: %d: number of products.
-#: includes/bulletin/class-thatseoagent-bulletin.php:379
+#: includes/catalog/class-thatseoagent-product-report.php:297
 #, php-format
 msgid "%d product has gaps in its details"
 msgid_plural "%d products have gaps in their details"
 msgstr[0] "A %d producto le faltan datos"
 msgstr[1] "A %d productos les faltan datos"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:380
+#: includes/catalog/class-thatseoagent-product-report.php:298
 msgid ""
 "Missing specifications, images or brand make the product harder to find and "
 "to compare."
@@ -1144,35 +1133,35 @@ msgstr ""
 "Sin especificaciones, imágenes o marca, el producto cuesta más de encontrar "
 "y de comparar."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:392
+#: includes/crawlers/class-thatseoagent-crawler-access.php:334
 msgid "Search blocked"
 msgstr "Búsqueda bloqueada"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:395
+#: includes/crawlers/class-thatseoagent-crawler-access.php:337
 msgid "Rules not served"
 msgstr "Reglas sin servir"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:398
+#: includes/crawlers/class-thatseoagent-crawler-access.php:340
 msgid "Two sets of rules"
 msgstr "Dos juegos de reglas"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:401
+#: includes/crawlers/class-thatseoagent-crawler-access.php:343
 msgid "Training blocked"
 msgstr "Entrenamiento bloqueado"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:404
+#: includes/crawlers/class-thatseoagent-crawler-access.php:346
 msgid "Some blocked"
 msgstr "Algunos bloqueados"
 
 #. translators: 1: blocked crawlers, 2: all search crawlers.
-#: includes/bulletin/class-thatseoagent-bulletin.php:415
+#: includes/crawlers/class-thatseoagent-crawler-access.php:356
 #, php-format
 msgid "robots.txt keeps %1$d of %2$d search crawlers out"
 msgid_plural "robots.txt keeps %1$d of %2$d search crawlers out"
 msgstr[0] "robots.txt deja fuera a %1$d de %2$d crawlers de búsqueda"
 msgstr[1] "robots.txt deja fuera a %1$d de %2$d crawlers de búsqueda"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:416
+#: includes/crawlers/class-thatseoagent-crawler-access.php:357
 msgid ""
 "AI assistants and search engines that cannot read the site cannot quote it "
 "or link to it in their answers."
@@ -1180,33 +1169,33 @@ msgstr ""
 "Los asistentes de IA y los buscadores que no pueden leer el sitio no pueden "
 "citarlo ni enlazarlo en sus respuestas."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:417
+#: includes/crawlers/class-thatseoagent-crawler-access.php:358
 msgid "See who is blocked"
 msgstr "Ver quién está bloqueado"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:425
+#: includes/crawlers/class-thatseoagent-crawler-access.php:366
 msgid "Your AI crawler rules are not being served"
 msgstr "Tus reglas para crawlers de IA no se están sirviendo"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:426
+#: includes/crawlers/class-thatseoagent-crawler-access.php:367
 msgid ""
-"A robots.txt file in the site root replaces the one WordPress builds, so the"
-" rules chosen here never reach the crawlers."
+"A robots.txt file in the site root replaces the one WordPress builds, so the "
+"rules chosen here never reach the crawlers."
 msgstr ""
 "Un archivo robots.txt en la raíz del sitio reemplaza al que arma WordPress, "
 "así que las reglas elegidas aquí nunca llegan a los crawlers."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:427
+#: includes/crawlers/class-thatseoagent-crawler-access.php:368
 msgid "See the rules to copy"
 msgstr "Ver las reglas para copiar"
 
 #. translators: %s: plugin name.
-#: includes/bulletin/class-thatseoagent-bulletin.php:436
+#: includes/crawlers/class-thatseoagent-crawler-access.php:377
 #, php-format
 msgid "%s also writes crawler rules into robots.txt"
 msgstr "%s también escribe reglas para crawlers en robots.txt"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:437
+#: includes/crawlers/class-thatseoagent-crawler-access.php:378
 msgid ""
 "Two plugins editing the same file can contradict each other. Keep the rules "
 "in one of them."
@@ -1214,44 +1203,44 @@ msgstr ""
 "Dos plugins editando el mismo archivo pueden contradecirse. Deja las reglas "
 "en uno solo."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:445
 #: includes/integrations/class-thatseoagent-indexnow.php:132
+#: includes/integrations/class-thatseoagent-indexnow.php:346
 msgid "IndexNow"
 msgstr "IndexNow"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:445
+#: includes/integrations/class-thatseoagent-indexnow.php:346
 msgid "On"
 msgstr "Activo"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:445
+#: includes/integrations/class-thatseoagent-indexnow.php:346
 msgid "Off"
 msgstr "Inactivo"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:458
+#: includes/bulletin/class-thatseoagent-bulletin.php:175
 msgid "Clear. Nothing needs you right now."
 msgstr "Despejado. Nada necesita de ti ahora."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:459
+#: includes/bulletin/class-thatseoagent-bulletin.php:176
 msgid "Mostly fine, with room to do better."
 msgstr "Casi todo bien, con margen para mejorar."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:460
+#: includes/bulletin/class-thatseoagent-bulletin.php:177
 msgid "Something is holding the site back."
 msgstr "Algo está frenando al sitio."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:461
+#: includes/bulletin/class-thatseoagent-bulletin.php:178
 msgid "Search engines cannot see this site properly."
 msgstr "Los buscadores no pueden ver bien este sitio."
 
 #. translators: 1: the most serious warning, 2: number of other warnings.
-#: includes/bulletin/class-thatseoagent-bulletin.php:467
+#: includes/bulletin/class-thatseoagent-bulletin.php:184
 #, php-format
 msgid "%1$s — and %2$d more below."
 msgid_plural "%1$s — and %2$d more below."
 msgstr[0] "%1$s, y %2$d más abajo."
 msgstr[1] "%1$s, y %2$d más abajo."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:470
+#: includes/bulletin/class-thatseoagent-bulletin.php:187
 msgid ""
 "Every check passed. The meta tags, schema and sitemaps are being published "
 "as they should."
@@ -1349,46 +1338,44 @@ msgstr ""
 msgid "— None —"
 msgstr "— Ninguno —"
 
-#: includes/catalog/class-thatseoagent-product.php:431
+#: includes/catalog/class-thatseoagent-product.php:461
 msgid "The product has no title, so no Product schema is output."
 msgstr "El producto no tiene título, así que no se genera el schema Product."
 
-#: includes/catalog/class-thatseoagent-product.php:451
+#: includes/catalog/class-thatseoagent-product.php:481
 msgid "No description: add an excerpt, content or a meta description."
-msgstr ""
-"Sin descripción: agrega un extracto, contenido o una meta descripción."
+msgstr "Sin descripción: agrega un extracto, contenido o una meta descripción."
 
-#: includes/catalog/class-thatseoagent-product.php:467
+#: includes/catalog/class-thatseoagent-product.php:497
 msgid "No brand assigned."
 msgstr "No tiene marca asignada."
 
-#: includes/catalog/class-thatseoagent-product.php:476
+#: includes/catalog/class-thatseoagent-product.php:507
 msgid "No category assigned."
 msgstr "No tiene categoría asignada."
 
-#: includes/catalog/class-thatseoagent-product.php:505
+#: includes/catalog/class-thatseoagent-product.php:536
 msgid "No specifications could be read."
 msgstr "No se pudieron leer especificaciones."
 
-#: includes/catalog/class-thatseoagent-product.php:512
+#: includes/catalog/class-thatseoagent-product.php:543
 msgid "Some specifications have an empty name or value and were left out."
 msgstr ""
 "Algunas especificaciones tienen el nombre o el valor vacío y se omitieron."
 
-#: includes/catalog/class-thatseoagent-product.php:536
+#: includes/catalog/class-thatseoagent-product.php:567
 msgid ""
 "The GTIN is not 8, 12, 13 or 14 digits with a valid check digit, so it was "
 "left out."
 msgstr ""
-"El GTIN no tiene 8, 12, 13 o 14 dígitos con un dígito de control válido, así"
-" que se omitió."
+"El GTIN no tiene 8, 12, 13 o 14 dígitos con un dígito de control válido, así "
+"que se omitió."
 
-#: includes/catalog/class-thatseoagent-product.php:573
+#: includes/catalog/class-thatseoagent-product.php:594
 msgid "No featured image. Google recommends an image for every product."
-msgstr ""
-"Sin imagen destacada. Google recomienda una imagen para cada producto."
+msgstr "Sin imagen destacada. Google recomienda una imagen para cada producto."
 
-#: includes/catalog/class-thatseoagent-product.php:577
+#: includes/catalog/class-thatseoagent-product.php:598
 msgid ""
 "Some images are not image files or have no absolute URL, and were left out."
 msgstr ""
@@ -1404,8 +1391,8 @@ msgid ""
 "Index the site so AI assistants can find it, quote it and link to it in "
 "their answers."
 msgstr ""
-"Indexan el sitio para que los asistentes de IA puedan encontrarlo, citarlo y"
-" enlazarlo en sus respuestas."
+"Indexan el sitio para que los asistentes de IA puedan encontrarlo, citarlo y "
+"enlazarlo en sus respuestas."
 
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:48
 msgid "Visits asked for by a person"
@@ -1413,11 +1400,11 @@ msgstr "Visitas pedidas por una persona"
 
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:49
 msgid ""
-"Open a page because someone asked an assistant about it. Some of them do not"
-" read robots.txt for these visits."
+"Open a page because someone asked an assistant about it. Some of them do not "
+"read robots.txt for these visits."
 msgstr ""
-"Abren una página porque alguien le preguntó por ella a un asistente. Algunos"
-" no leen robots.txt en estas visitas."
+"Abren una página porque alguien le preguntó por ella a un asistente. Algunos "
+"no leen robots.txt en estas visitas."
 
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:52
 msgid "Training"
@@ -1443,17 +1430,17 @@ msgstr ""
 msgid "See who can read the site right now"
 msgstr "Ver quién puede leer el sitio ahora mismo"
 
-#: includes/crawlers/class-thatseoagent-crawler-access.php:197
+#: includes/class-thatseoagent-loopback.php:109
 msgid "No answer"
 msgstr "Sin respuesta"
 
 #. translators: 1: post type plural label, e.g. "Products", 2: site name.
-#: includes/head/class-thatseoagent-meta.php:373
+#: includes/head/class-thatseoagent-meta.php:369
 #, php-format
 msgid "Browse all %1$s on %2$s"
 msgstr "Explora todos los %1$s de %2$s"
 
-#: includes/head/class-thatseoagent-breadcrumbs.php:229
+#: includes/head/class-thatseoagent-breadcrumbs.php:287
 #: assets/blocks/breadcrumbs.js:48
 msgid "Home"
 msgstr "Inicio"
@@ -1462,13 +1449,13 @@ msgstr "Inicio"
 #: includes/integrations/class-thatseoagent-compat.php:127
 #, php-format
 msgid ""
-"%s is active, so ThatSeoAgent is not printing meta tags, schema or sitemaps:"
-" two SEO plugins would duplicate every tag. Deactivate one of them. The "
+"%s is active, so ThatSeoAgent is not printing meta tags, schema or sitemaps: "
+"two SEO plugins would duplicate every tag. Deactivate one of them. The "
 "Markdown versions of your posts keep working."
 msgstr ""
 "%s está activo, así que ThatSeoAgent no imprime meta etiquetas, schema ni "
-"sitemaps: dos plugins de SEO duplicarían cada etiqueta. Desactiva uno de los"
-" dos. Las versiones Markdown de tus entradas siguen funcionando."
+"sitemaps: dos plugins de SEO duplicarían cada etiqueta. Desactiva uno de los "
+"dos. Las versiones Markdown de tus entradas siguen funcionando."
 
 #: includes/integrations/class-thatseoagent-indexnow.php:134
 msgid ""
@@ -1508,7 +1495,7 @@ msgid "IndexNow API key not configured."
 msgstr "La clave de API de IndexNow no está configurada."
 
 #. translators: %d: HTTP status code returned by the IndexNow API.
-#: includes/integrations/class-thatseoagent-indexnow.php:329
+#: includes/integrations/class-thatseoagent-indexnow.php:330
 #, php-format
 msgid "IndexNow API returned %d"
 msgstr "La API de IndexNow devolvió %d"
@@ -1558,149 +1545,149 @@ msgstr "Ese tipo de contenido no se puede revisar."
 msgid "Only administrators can do this."
 msgstr "Solo los administradores pueden hacer esto."
 
-#: includes/site/class-thatseoagent-default-author.php:118
+#: includes/site/class-thatseoagent-default-author.php:175
 msgid "Default author"
 msgstr "Autor por defecto"
 
-#: includes/site/class-thatseoagent-default-author.php:120
+#: includes/site/class-thatseoagent-default-author.php:177
 msgid ""
 "Credited on posts that have no author assigned. Leave blank to credit the "
 "site itself."
 msgstr ""
-"Aparece como autor en las entradas sin autor asignado. Déjalo en blanco para"
-" atribuirlas al propio sitio."
+"Aparece como autor en las entradas sin autor asignado. Déjalo en blanco para "
+"atribuirlas al propio sitio."
 
-#: includes/site/class-thatseoagent-default-author.php:126
-#: includes/site/class-thatseoagent-identity.php:198
+#: includes/site/class-thatseoagent-default-author.php:183
+#: includes/site/class-thatseoagent-identity.php:308
 msgid "Name"
 msgstr "Nombre"
 
-#: includes/site/class-thatseoagent-default-author.php:127
+#: includes/site/class-thatseoagent-default-author.php:184
 msgid "Web address"
 msgstr "Dirección web"
 
-#: includes/site/class-thatseoagent-default-author.php:128
+#: includes/site/class-thatseoagent-default-author.php:185
 msgid "The author is"
 msgstr "El autor es"
 
-#: includes/site/class-thatseoagent-default-author.php:166
-#: includes/site/class-thatseoagent-identity.php:231
+#: includes/site/class-thatseoagent-default-author.php:223
+#: includes/site/class-thatseoagent-identity.php:341
 msgid "A person"
 msgstr "Una persona"
 
-#: includes/site/class-thatseoagent-default-author.php:167
+#: includes/site/class-thatseoagent-default-author.php:224
 msgid "An organization"
 msgstr "Una organización"
 
-#: includes/site/class-thatseoagent-homepage.php:132
+#: includes/site/class-thatseoagent-homepage.php:154
 msgid ""
 "What search results show for the homepage. Leave blank to use the site name "
 "and tagline."
 msgstr ""
-"Lo que muestran los resultados de búsqueda para la portada. Déjalo en blanco"
-" para usar el nombre y la descripción corta del sitio."
+"Lo que muestran los resultados de búsqueda para la portada. Déjalo en blanco "
+"para usar el nombre y la descripción corta del sitio."
 
-#: includes/site/class-thatseoagent-homepage.php:133
+#: includes/site/class-thatseoagent-homepage.php:155
 msgid "You can use:"
 msgstr "Puedes usar:"
 
-#: includes/site/class-thatseoagent-homepage.php:141
+#: includes/site/class-thatseoagent-homepage.php:163
 msgid "Title"
 msgstr "Título"
 
-#: includes/site/class-thatseoagent-homepage.php:149
+#: includes/site/class-thatseoagent-homepage.php:171
 msgid "Description"
 msgstr "Descripción"
 
-#: includes/site/class-thatseoagent-identity.php:81
+#: includes/site/class-thatseoagent-identity.php:79
 msgid "Twitter / X"
 msgstr "Twitter / X"
 
-#: includes/site/class-thatseoagent-identity.php:82
+#: includes/site/class-thatseoagent-identity.php:80
 msgid "GitHub"
 msgstr "GitHub"
 
-#: includes/site/class-thatseoagent-identity.php:83
+#: includes/site/class-thatseoagent-identity.php:81
 msgid "Facebook"
 msgstr "Facebook"
 
-#: includes/site/class-thatseoagent-identity.php:84
+#: includes/site/class-thatseoagent-identity.php:82
 msgid "LinkedIn"
 msgstr "LinkedIn"
 
-#: includes/site/class-thatseoagent-identity.php:85
+#: includes/site/class-thatseoagent-identity.php:83
 msgid "Instagram"
 msgstr "Instagram"
 
-#: includes/site/class-thatseoagent-identity.php:86
+#: includes/site/class-thatseoagent-identity.php:84
 msgid "YouTube"
 msgstr "YouTube"
 
-#: includes/site/class-thatseoagent-identity.php:87
+#: includes/site/class-thatseoagent-identity.php:85
 msgid "Mastodon"
 msgstr "Mastodon"
 
-#: includes/site/class-thatseoagent-identity.php:189
+#: includes/site/class-thatseoagent-identity.php:299
 msgid "Who the site is"
 msgstr "Quién es el sitio"
 
-#: includes/site/class-thatseoagent-identity.php:191
+#: includes/site/class-thatseoagent-identity.php:301
 msgid ""
-"Tell search engines whether the site belongs to a person or an organization,"
-" and how to recognize it: name, logo and social profiles."
+"Tell search engines whether the site belongs to a person or an organization, "
+"and how to recognize it: name, logo and social profiles."
 msgstr ""
-"Indica a los buscadores si el sitio es de una persona o de una organización,"
-" y cómo reconocerlo: nombre, logo y perfiles sociales."
+"Indica a los buscadores si el sitio es de una persona o de una organización, "
+"y cómo reconocerlo: nombre, logo y perfiles sociales."
 
-#: includes/site/class-thatseoagent-identity.php:197
+#: includes/site/class-thatseoagent-identity.php:307
 msgid "The site belongs to"
 msgstr "El sitio es de"
 
-#: includes/site/class-thatseoagent-identity.php:199
+#: includes/site/class-thatseoagent-identity.php:309
 msgid "Short description"
 msgstr "Descripción breve"
 
-#: includes/site/class-thatseoagent-identity.php:200
+#: includes/site/class-thatseoagent-identity.php:310
 msgid "Logo or photo"
 msgstr "Logo o foto"
 
-#: includes/site/class-thatseoagent-identity.php:201
+#: includes/site/class-thatseoagent-identity.php:311
 msgid "Default sharing image"
 msgstr "Imagen para compartir por defecto"
 
-#: includes/site/class-thatseoagent-identity.php:202
+#: includes/site/class-thatseoagent-identity.php:312
 msgid "X (Twitter) username"
 msgstr "Usuario de X (Twitter)"
 
-#: includes/site/class-thatseoagent-identity.php:203
+#: includes/site/class-thatseoagent-identity.php:313
 msgid "Social profiles"
 msgstr "Perfiles sociales"
 
-#: includes/site/class-thatseoagent-identity.php:235
+#: includes/site/class-thatseoagent-identity.php:345
 msgid "An organization or business"
 msgstr "Una organización o empresa"
 
-#: includes/site/class-thatseoagent-identity.php:237
+#: includes/site/class-thatseoagent-identity.php:347
 msgid "Search engines describe the site as one or the other."
 msgstr "Los buscadores describen el sitio como una cosa o la otra."
 
-#: includes/site/class-thatseoagent-identity.php:254
+#: includes/site/class-thatseoagent-identity.php:364
 msgid "@username"
 msgstr "@usuario"
 
-#: includes/site/class-thatseoagent-identity.php:255
+#: includes/site/class-thatseoagent-identity.php:365
 msgid "Shown on link previews on X. The @ is optional."
 msgstr "Se muestra en las vistas previas de enlaces en X. La @ es opcional."
 
-#: includes/site/class-thatseoagent-identity.php:258
+#: includes/site/class-thatseoagent-identity.php:368
 msgid "The name of the person or organization this site represents."
 msgstr "El nombre de la persona u organización que representa este sitio."
 
-#: includes/site/class-thatseoagent-identity.php:288
+#: includes/site/class-thatseoagent-identity.php:398
 msgid "One or two sentences about who you are and what you do."
 msgstr "Una o dos frases sobre quién eres y qué haces."
 
-#: includes/site/class-thatseoagent-identity.php:304
+#: includes/site/class-thatseoagent-identity.php:414
 msgid ""
 "Shown to search engines next to the site's name. Separate from the theme's "
 "logo."
@@ -1708,20 +1695,19 @@ msgstr ""
 "Se muestra a los buscadores junto al nombre del sitio. Es independiente del "
 "logo del tema."
 
-#: includes/site/class-thatseoagent-identity.php:306
-msgid ""
-"Used when a page without an image of its own is shared on social media."
+#: includes/site/class-thatseoagent-identity.php:416
+msgid "Used when a page without an image of its own is shared on social media."
 msgstr "Se usa cuando se comparte en redes una página sin imagen propia."
 
-#: includes/site/class-thatseoagent-identity.php:321
+#: includes/site/class-thatseoagent-identity.php:431
 msgid "Select Image"
 msgstr "Seleccionar imagen"
 
-#: includes/site/class-thatseoagent-identity.php:322
+#: includes/site/class-thatseoagent-identity.php:432
 msgid "Remove"
 msgstr "Quitar"
 
-#: includes/site/class-thatseoagent-identity.php:355
+#: includes/site/class-thatseoagent-identity.php:465
 msgid "Lets search engines connect the site with these profiles."
 msgstr "Permite a los buscadores relacionar el sitio con estos perfiles."
 
@@ -1745,76 +1731,76 @@ msgstr "Devuelve los datos SEO de una entrada concreta."
 msgid "Post ID to retrieve SEO data for."
 msgstr "ID de la entrada de la que obtener los datos SEO."
 
-#: includes/tooling/class-thatseoagent-abilities.php:103
+#: includes/tooling/class-thatseoagent-abilities.php:108
 msgid "Audit Post SEO"
 msgstr "Auditar SEO de la entrada"
 
-#: includes/tooling/class-thatseoagent-abilities.php:121
+#: includes/tooling/class-thatseoagent-abilities.php:126
 msgid "Post ID to audit."
 msgstr "ID de la entrada a auditar."
 
-#: includes/tooling/class-thatseoagent-abilities.php:253
+#: includes/tooling/class-thatseoagent-abilities.php:258
 msgid "Scan SEO Issues"
 msgstr "Escanear problemas de SEO"
 
-#: includes/tooling/class-thatseoagent-abilities.php:254
+#: includes/tooling/class-thatseoagent-abilities.php:259
 msgid "Scans multiple posts for SEO issues and returns a summary."
 msgstr ""
 "Escanea varias entradas en busca de problemas de SEO y devuelve un resumen."
 
-#: includes/tooling/class-thatseoagent-abilities.php:271
+#: includes/tooling/class-thatseoagent-abilities.php:276
 msgid "Maximum posts to scan (default: 50)."
 msgstr "Máximo de entradas a escanear (por defecto: 50)."
 
-#: includes/tooling/class-thatseoagent-abilities.php:276
+#: includes/tooling/class-thatseoagent-abilities.php:281
 msgid "Minimum issues to include in results (default: 1)."
 msgstr "Mínimo de problemas para incluir en los resultados (por defecto: 1)."
 
-#: includes/tooling/class-thatseoagent-abilities.php:281
+#: includes/tooling/class-thatseoagent-abilities.php:286
 msgid "Post type to scan (default: post)."
 msgstr "Tipo de contenido a analizar (por defecto: post)."
 
-#: includes/tooling/class-thatseoagent-abilities.php:306
+#: includes/tooling/class-thatseoagent-abilities.php:311
 msgid "Update Post SEO"
 msgstr "Actualizar SEO de la entrada"
 
-#: includes/tooling/class-thatseoagent-abilities.php:307
+#: includes/tooling/class-thatseoagent-abilities.php:312
 msgid "Updates SEO meta for a specific post."
 msgstr "Actualiza los metadatos SEO de una entrada concreta."
 
-#: includes/tooling/class-thatseoagent-abilities.php:329
+#: includes/tooling/class-thatseoagent-abilities.php:334
 msgid "Post ID to update."
 msgstr "ID de la entrada a actualizar."
 
-#: includes/tooling/class-thatseoagent-abilities.php:333
+#: includes/tooling/class-thatseoagent-abilities.php:338
 msgid "Custom SEO title. Empty string clears the value."
 msgstr "Título SEO personalizado. Una cadena vacía borra el valor."
 
-#: includes/tooling/class-thatseoagent-abilities.php:337
+#: includes/tooling/class-thatseoagent-abilities.php:342
 msgid "Custom meta description. Empty string clears the value."
 msgstr "Meta descripción personalizada. Una cadena vacía borra el valor."
 
-#: includes/tooling/class-thatseoagent-abilities.php:423
-#: includes/tooling/class-thatseoagent-abilities.php:459
-#: includes/tooling/class-thatseoagent-abilities.php:492
+#: includes/tooling/class-thatseoagent-abilities.php:433
+#: includes/tooling/class-thatseoagent-abilities.php:471
+#: includes/tooling/class-thatseoagent-abilities.php:504
 msgid "Post ID is required."
 msgstr "El ID de la entrada es obligatorio."
 
-#: includes/tooling/class-thatseoagent-abilities.php:428
-#: includes/tooling/class-thatseoagent-abilities.php:464
-#: includes/tooling/class-thatseoagent-abilities.php:497
+#: includes/tooling/class-thatseoagent-abilities.php:438
+#: includes/tooling/class-thatseoagent-abilities.php:476
+#: includes/tooling/class-thatseoagent-abilities.php:509
 msgid "No post exists with that ID."
 msgstr "No existe ninguna entrada con ese ID."
 
-#: includes/tooling/class-thatseoagent-abilities.php:522
+#: includes/tooling/class-thatseoagent-abilities.php:534
 msgid "That post type does not exist."
 msgstr "Ese tipo de contenido no existe."
 
-#: includes/admin/class-thatseoagent-meta-box.php:134
+#: includes/admin/class-thatseoagent-meta-box.php:135
 msgid "Keep out of search results"
 msgstr "Mantener fuera de los resultados de búsqueda"
 
-#: includes/admin/class-thatseoagent-meta-box.php:136
+#: includes/admin/class-thatseoagent-meta-box.php:137
 msgid ""
 "Adds noindex to the page and leaves it out of the sitemap and llms.txt. The "
 "page stays public for anyone with the link."
@@ -1831,14 +1817,14 @@ msgid "marked noindex in their SEO fields"
 msgstr "marcadas noindex en sus campos SEO"
 
 #: includes/tooling/class-thatseoagent-abilities.php:86
-#: includes/tooling/class-thatseoagent-abilities.php:355
+#: includes/tooling/class-thatseoagent-abilities.php:360
 msgid ""
 "Whether the post is kept out of search results, the sitemap and llms.txt."
 msgstr ""
-"Si la entrada se mantiene fuera de los resultados de búsqueda, del sitemap y"
-" de llms.txt."
+"Si la entrada se mantiene fuera de los resultados de búsqueda, del sitemap y "
+"de llms.txt."
 
-#: includes/tooling/class-thatseoagent-abilities.php:341
+#: includes/tooling/class-thatseoagent-abilities.php:346
 msgid ""
 "True keeps the post out of search results, the sitemap and llms.txt; false "
 "lets search engines index it again."
@@ -1846,7 +1832,7 @@ msgstr ""
 "True mantiene la entrada fuera de los resultados de búsqueda, del sitemap y "
 "de llms.txt; false deja que los buscadores vuelvan a indexarla."
 
-#: includes/admin/class-thatseoagent-meta-box.php:105
+#: includes/admin/class-thatseoagent-meta-box.php:106
 msgid ""
 "Leave blank to use the post title. Search results trim titles to the width "
 "of the screen; past the counter it may be cut."
@@ -1855,7 +1841,7 @@ msgstr ""
 "recortan los títulos al ancho de la pantalla; pasado el contador puede "
 "cortarse."
 
-#: includes/admin/class-thatseoagent-meta-box.php:120
+#: includes/admin/class-thatseoagent-meta-box.php:121
 msgid ""
 "The sentence under the title in search results. Google sets no limit, but "
 "past the counter it may be cut."
@@ -1881,8 +1867,8 @@ msgid ""
 "characters. Google sets no minimum and no limit; the width of the screen "
 "decides."
 msgstr ""
-"Se señalan solo cuando pueden cortarse en los resultados: más de 70 y de 165"
-" caracteres. Google no fija mínimo ni límite; lo decide el ancho de la "
+"Se señalan solo cuando pueden cortarse en los resultados: más de 70 y de 165 "
+"caracteres. Google no fija mínimo ni límite; lo decide el ancho de la "
 "pantalla."
 
 #: includes/admin/views/audit.php:46
@@ -1903,8 +1889,8 @@ msgstr "Enlaces que los buscadores pueden seguir"
 
 #: includes/admin/views/audit.php:47
 msgid ""
-"Google follows an <a> with an href. A click handler, or an href on a span or"
-" a div, is invisible to it."
+"Google follows an <a> with an href. A click handler, or an href on a span or "
+"a div, is invisible to it."
 msgstr ""
 "Google sigue un <a> con href. Un manejador de clic, o un href en un span o "
 "un div, le resulta invisible."
@@ -1915,13 +1901,12 @@ msgid ""
 "screen readers navigate by. Google does not mind the order."
 msgstr ""
 "Un H1 dentro del contenido, o un nivel saltado, deja un hueco en el esquema "
-"por el que navegan los lectores de pantalla. A Google no le importa el "
-"orden."
+"por el que navegan los lectores de pantalla. A Google no le importa el orden."
 
 #: includes/admin/views/audit.php:50
 msgid ""
-"Our own judgement: a page that links nowhere else on the site is a dead end."
-" It costs no points."
+"Our own judgement: a page that links nowhere else on the site is a dead end. "
+"It costs no points."
 msgstr ""
 "Criterio propio: una página que no enlaza a ninguna otra del sitio es un "
 "callejón sin salida. No resta puntos."
@@ -1938,24 +1923,24 @@ msgid ""
 "matter for ranking. The score counts only what Google or accessibility "
 "guidelines ask for."
 msgstr ""
-"No se revisa: cuántas palabras tiene una página. Google dice que la longitud"
-" por sí sola no importa para el posicionamiento. La puntuación cuenta solo "
-"lo que piden Google o las pautas de accesibilidad."
+"No se revisa: cuántas palabras tiene una página. Google dice que la longitud "
+"por sí sola no importa para el posicionamiento. La puntuación cuenta solo lo "
+"que piden Google o las pautas de accesibilidad."
 
-#: includes/audit/class-thatseoagent-audit.php:142
+#: includes/audit/class-thatseoagent-audit.php:155
 msgid ""
-"Not checked: this page is the list of posts (Settings → Reading), so its own"
-" content is never shown."
+"Not checked: this page is the list of posts (Settings → Reading), so its own "
+"content is never shown."
 msgstr ""
 "No se revisa: esta página es la lista de entradas (Ajustes → Lectura), así "
 "que su propio contenido nunca se muestra."
 
-#: includes/audit/class-thatseoagent-audit.php:154
+#: includes/audit/class-thatseoagent-audit.php:167
 msgid "Kept out of search results: it has noindex and is not in the sitemap"
 msgstr ""
 "Fuera de los resultados de búsqueda: tiene noindex y no está en el sitemap"
 
-#: includes/audit/class-thatseoagent-audit.php:163
+#: includes/audit/class-thatseoagent-audit.php:176
 msgid ""
 "The title may be cut in search results, which trim it to the width of the "
 "screen"
@@ -1964,13 +1949,13 @@ msgstr ""
 "ancho de la pantalla"
 
 #. translators: %d: number of characters.
-#: includes/audit/class-thatseoagent-audit.php:165
-#: includes/audit/class-thatseoagent-audit.php:183
+#: includes/audit/class-thatseoagent-audit.php:178
+#: includes/audit/class-thatseoagent-audit.php:196
 #, php-format
 msgid "%d characters"
 msgstr "%d caracteres"
 
-#: includes/audit/class-thatseoagent-audit.php:174
+#: includes/audit/class-thatseoagent-audit.php:187
 msgid ""
 "No description: there is no text to write one from, so search engines will "
 "pick a snippet themselves"
@@ -1978,7 +1963,7 @@ msgstr ""
 "Sin descripción: no hay texto del que escribirla, así que los buscadores "
 "elegirán un fragmento por su cuenta"
 
-#: includes/audit/class-thatseoagent-audit.php:181
+#: includes/audit/class-thatseoagent-audit.php:194
 msgid ""
 "The description may be cut in search results; Google sets no limit, the "
 "screen does"
@@ -1986,33 +1971,32 @@ msgstr ""
 "La descripción puede cortarse en los resultados de búsqueda; Google no fija "
 "un límite, lo fija la pantalla"
 
-#: includes/audit/class-thatseoagent-audit.php:216
+#: includes/audit/class-thatseoagent-audit.php:229
 msgid ""
 "Some links cannot be followed by search engines: they have no href, or sit "
 "on an element that is not a link"
 msgstr ""
-"Algunos enlaces no los pueden seguir los buscadores: no tienen href, o están"
-" en un elemento que no es un enlace"
+"Algunos enlaces no los pueden seguir los buscadores: no tienen href, o están "
+"en un elemento que no es un enlace"
 
-#: includes/audit/class-thatseoagent-audit.php:227
+#: includes/audit/class-thatseoagent-audit.php:240
 msgid ""
-"No links to other pages of the site: readers and crawlers reach nothing else"
-" from here"
+"No links to other pages of the site: readers and crawlers reach nothing else "
+"from here"
 msgstr ""
 "Sin enlaces a otras páginas del sitio: desde aquí lectores y crawlers no "
 "llegan a nada más"
 
-#: includes/audit/class-thatseoagent-audit.php:233
+#: includes/audit/class-thatseoagent-audit.php:246
 msgid ""
 "Links to other pages: not measured, the page has almost no text in the "
-"editor. Its content may come from the theme, a page builder or custom "
-"fields."
+"editor. Its content may come from the theme, a page builder or custom fields."
 msgstr ""
 "Enlaces a otras páginas: no medido, la página casi no tiene texto en el "
-"editor. Su contenido puede venir del tema, de un constructor de páginas o de"
-" campos personalizados."
+"editor. Su contenido puede venir del tema, de un constructor de páginas o de "
+"campos personalizados."
 
-#: includes/audit/class-thatseoagent-audit.php:274
+#: includes/audit/class-thatseoagent-audit.php:314
 msgid ""
 "Some images have no alt attribute. One that only decorates should have an "
 "empty one, alt=\"\", so screen readers skip it."
@@ -2021,14 +2005,14 @@ msgstr ""
 "vacío, alt=\"\", para que los lectores de pantalla la salten."
 
 #. translators: %d: number of images.
-#: includes/audit/class-thatseoagent-audit.php:276
+#: includes/audit/class-thatseoagent-audit.php:316
 #, php-format
 msgid "%d image without alt"
 msgid_plural "%d images without alt"
 msgstr[0] "%d imagen sin alt"
 msgstr[1] "%d imágenes sin alt"
 
-#: includes/audit/class-thatseoagent-audit.php:298
+#: includes/audit/class-thatseoagent-audit.php:338
 msgid ""
 "The content has its own H1; with the title the theme prints, the page "
 "usually ends up with two. Google does not mind, but screen readers announce "
@@ -2038,7 +2022,7 @@ msgstr ""
 "página suele quedar con dos. A Google no le importa, pero los lectores de "
 "pantalla anuncian cada uno como el título de la página."
 
-#: includes/audit/class-thatseoagent-audit.php:307
+#: includes/audit/class-thatseoagent-audit.php:347
 msgid ""
 "A heading skips a level, so the outline screen readers navigate by has a "
 "gap. Google does not mind the order."
@@ -2046,16 +2030,16 @@ msgstr ""
 "Un encabezado salta un nivel, así que el esquema por el que navegan los "
 "lectores de pantalla tiene un hueco. A Google no le importa el orden."
 
-#: includes/site/class-thatseoagent-homepage.php:172
+#: includes/site/class-thatseoagent-homepage.php:194
 msgid ""
-"Leave blank to use the site name. Search results trim titles to the width of"
-" the screen; past about 70 characters it may be cut."
+"Leave blank to use the site name. Search results trim titles to the width of "
+"the screen; past about 70 characters it may be cut."
 msgstr ""
 "Déjalo vacío para usar el nombre del sitio. Los resultados de búsqueda "
 "recortan los títulos al ancho de la pantalla; pasados unos 70 caracteres "
 "puede cortarse."
 
-#: includes/site/class-thatseoagent-homepage.php:193
+#: includes/site/class-thatseoagent-homepage.php:215
 msgid ""
 "The sentence people read under the title in search results and link "
 "previews. Google sets no limit, but past about 165 characters it may be cut."
@@ -2064,15 +2048,15 @@ msgstr ""
 "vistas previas de enlaces. Google no fija un límite, pero pasados unos 165 "
 "caracteres puede cortarse."
 
-#: includes/tooling/class-thatseoagent-abilities.php:152
+#: includes/tooling/class-thatseoagent-abilities.php:157
 msgid ""
-"Who asks for it: Google Search Central, accessibility guidelines (WCAG 2.2),"
-" or our own judgement, which never lowers the score."
+"Who asks for it: Google Search Central, accessibility guidelines (WCAG 2.2), "
+"or our own judgement, which never lowers the score."
 msgstr ""
-"Quién lo pide: Google Search Central, las pautas de accesibilidad (WCAG 2.2)"
-" o nuestro criterio propio, que nunca baja la puntuación."
+"Quién lo pide: Google Search Central, las pautas de accesibilidad (WCAG 2.2) "
+"o nuestro criterio propio, que nunca baja la puntuación."
 
-#: includes/tooling/class-thatseoagent-abilities.php:161
+#: includes/tooling/class-thatseoagent-abilities.php:166
 msgid ""
 "Checks that could not run on this post, and why. A check that could not run "
 "is not a check that passed or failed."
@@ -2089,6 +2073,8 @@ msgid "The Markdown check could not run."
 msgstr "La comprobación de Markdown no pudo ejecutarse."
 
 #: includes/admin/class-thatseoagent-app.php:268
+#: includes/crawlers/class-thatseoagent-crawler-access.php:236
+#: includes/crawlers/class-thatseoagent-crawler-access.php:248
 msgid "no answer"
 msgstr "sin respuesta"
 
@@ -2133,8 +2119,8 @@ msgstr ""
 
 #: includes/admin/class-thatseoagent-app.php:277
 msgid ""
-"At the top of .htaccess: requests asking for Markdown reach WordPress before"
-" any page cache served from this file."
+"At the top of .htaccess: requests asking for Markdown reach WordPress before "
+"any page cache served from this file."
 msgstr ""
 "Al principio de .htaccess: los pedidos de Markdown llegan a WordPress antes "
 "que cualquier caché de página servida desde este archivo."
@@ -2146,18 +2132,6 @@ msgstr "Markdown para agentes"
 #: includes/admin/views/llms.php:113
 msgid "Check now"
 msgstr "Comprobar ahora"
-
-#: includes/admin/views/llms.php:116
-msgid ""
-"Each post answers an agent that asks for Markdown with its Markdown version,"
-" at its own address. A cache in front of WordPress can undo that without "
-"WordPress knowing, so the check asks one of your posts from outside: first "
-"as an agent, then as a browser."
-msgstr ""
-"Cada entrada responde con su versión Markdown al agente que la pide, en su "
-"propia dirección. Una caché delante de WordPress puede deshacerlo sin que "
-"WordPress lo sepa, así que la comprobación pide una de tus entradas desde "
-"fuera: primero como agente y después como navegador."
 
 #: includes/admin/views/llms.php:127
 msgid "An agent asking for Markdown got"
@@ -2179,27 +2153,28 @@ msgstr "Añadir la regla a .htaccess"
 msgid "Remove the rule"
 msgstr "Quitar la regla"
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:231
+#: includes/markdown/class-thatseoagent-markdown-check.php:285
 msgid "Agents that ask for Markdown get it"
 msgstr "Los agentes que piden Markdown lo reciben"
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:232
+#: includes/markdown/class-thatseoagent-markdown-check.php:286
 msgid "The page answered the agent with Markdown and the browser with HTML."
 msgstr "La página respondió al agente con Markdown y al navegador con HTML."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:234
+#: includes/markdown/class-thatseoagent-markdown-check.php:288
 msgid ""
 "But something between WordPress and the visitor removed Vary: Accept from "
 "the answer, so a cache added later could mix the two up."
 msgstr ""
-"Pero algo entre WordPress y el visitante quitó Vary: Accept de la respuesta,"
-" así que una caché añadida después podría confundir las dos."
+"Pero algo entre WordPress y el visitante quitó Vary: Accept de la respuesta, "
+"así que una caché añadida después podría confundir las dos."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:242
+#: includes/markdown/class-thatseoagent-markdown-check.php:125
+#: includes/markdown/class-thatseoagent-markdown-check.php:296
 msgid "Agents that ask for Markdown get the HTML page"
 msgstr "Los agentes que piden Markdown reciben la página HTML"
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:244
+#: includes/markdown/class-thatseoagent-markdown-check.php:298
 msgid ""
 "A cache answered before WordPress could: agents get the page a browser "
 "caused to be stored. Nothing breaks for people."
@@ -2207,7 +2182,7 @@ msgstr ""
 "Una caché respondió antes que WordPress: los agentes reciben la página que "
 "un navegador hizo guardar. Para las personas no se rompe nada."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:245
+#: includes/markdown/class-thatseoagent-markdown-check.php:299
 msgid ""
 "Something answered with HTML before WordPress could, or negotiation is "
 "switched off with the thatseoagent_markdown_negotiation filter. Nothing "
@@ -2217,11 +2192,11 @@ msgstr ""
 "desactivada con el filtro thatseoagent_markdown_negotiation. Para las "
 "personas no se rompe nada."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:248
+#: includes/markdown/class-thatseoagent-markdown-check.php:302
 msgid "A browser got the Markdown version"
 msgstr "Un navegador recibió la versión Markdown"
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:249
+#: includes/markdown/class-thatseoagent-markdown-check.php:303
 msgid ""
 "A cache stored the answer given to an agent and handed it to the browser "
 "that came next. People may see plain text instead of the page until the "
@@ -2231,27 +2206,27 @@ msgstr ""
 "que vino después. Las personas pueden ver texto plano en lugar de la página "
 "hasta que se vacíe la caché."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:252
+#: includes/markdown/class-thatseoagent-markdown-check.php:306
 msgid "The site did not answer the check"
 msgstr "El sitio no respondió a la comprobación"
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:253
+#: includes/markdown/class-thatseoagent-markdown-check.php:307
 msgid ""
 "The server did not respond to a request from itself. Some hosts block those."
 msgstr ""
 "El servidor no respondió a un pedido hecho desde sí mismo. Algunos hostings "
 "los bloquean."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:256
+#: includes/markdown/class-thatseoagent-markdown-check.php:310
 msgid "Nothing to check yet"
 msgstr "Todavía no hay nada que comprobar"
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:257
+#: includes/markdown/class-thatseoagent-markdown-check.php:311
 msgid "No published post has a Markdown version."
 msgstr "Ninguna entrada publicada tiene versión Markdown."
 
 #. translators: %s: page cache plugin name.
-#: includes/markdown/class-thatseoagent-markdown-check.php:313
+#: includes/markdown/class-thatseoagent-markdown-check.php:367
 #, php-format
 msgid ""
 "%s serves its stored pages before WordPress. Exclude requests whose Accept "
@@ -2260,17 +2235,17 @@ msgstr ""
 "%s sirve sus páginas guardadas antes que WordPress. Excluye en sus ajustes "
 "los pedidos cuya cabecera Accept contenga text/markdown, si lo permite."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:325
+#: includes/markdown/class-thatseoagent-markdown-check.php:379
 msgid ""
 "The server caches pages by URL. Add the Accept header to the cache key, for "
-"example with a map that sets a variable to \"md\" when Accept contains "
-"text/markdown and appending it to fastcgi_cache_key."
+"example with a map that sets a variable to \"md\" when Accept contains text/"
+"markdown and appending it to fastcgi_cache_key."
 msgstr ""
 "El servidor guarda las páginas por URL. Añade la cabecera Accept a la clave "
 "de caché, por ejemplo con un map que ponga una variable en \"md\" cuando "
 "Accept contenga text/markdown y añadiéndola a fastcgi_cache_key."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:329
+#: includes/markdown/class-thatseoagent-markdown-check.php:383
 msgid ""
 "Varnish stores the page by URL. In vcl_recv, pass requests whose Accept "
 "header contains text/markdown, or add a normalized Accept to the hash."
@@ -2279,7 +2254,7 @@ msgstr ""
 "cabecera Accept contenga text/markdown, o añade un Accept normalizado al "
 "hash."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:333
+#: includes/markdown/class-thatseoagent-markdown-check.php:387
 msgid ""
 "LiteSpeed stores the page by URL. Exclude requests whose Accept header "
 "contains text/markdown from its cache, or have it vary on that header."
@@ -2287,7 +2262,7 @@ msgstr ""
 "LiteSpeed guarda la página por URL. Excluye de su caché los pedidos cuya "
 "cabecera Accept contenga text/markdown, o haz que varíe según esa cabecera."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:336
+#: includes/markdown/class-thatseoagent-markdown-check.php:390
 msgid ""
 "Whatever stores the pages — the hosting, a CDN, a plugin — should not cache "
 "requests whose Accept header contains text/markdown, or should keep a "
@@ -2309,13 +2284,13 @@ msgstr ""
 msgid ".htaccess could not be saved. Nothing was changed."
 msgstr "No se pudo guardar .htaccess. No se cambió nada."
 
-#: includes/rest/class-thatseoagent-rest-markdown.php:78
+#: includes/rest/class-thatseoagent-rest-markdown.php:80
 msgid ""
 "This server does not read .htaccess rewrite rules, so the rule would do "
 "nothing."
 msgstr ""
-"Este servidor no lee reglas de reescritura de .htaccess, así que la regla no"
-" haría nada."
+"Este servidor no lee reglas de reescritura de .htaccess, así que la regla no "
+"haría nada."
 
 #: includes/admin/views/llms.php:67
 msgid "Open llms-full.txt"
@@ -2332,14 +2307,14 @@ msgid ""
 "%1$d more page did not fit in this file. It is listed in %2$s, with a link "
 "to its Markdown version."
 msgid_plural ""
-"%1$d more pages did not fit in this file. They are listed in %2$s, each with"
-" a link to its Markdown version."
+"%1$d more pages did not fit in this file. They are listed in %2$s, each with "
+"a link to its Markdown version."
 msgstr[0] ""
 "%1$d página más no cupo en este archivo. Está en %2$s, con un enlace a su "
 "versión Markdown."
 msgstr[1] ""
-"%1$d páginas más no cupieron en este archivo. Están en %2$s, cada una con un"
-" enlace a su versión Markdown."
+"%1$d páginas más no cupieron en este archivo. Están en %2$s, cada una con un "
+"enlace a su versión Markdown."
 
 #: includes/markdown/class-thatseoagent-llms.php:307
 msgid "Full text"
@@ -2349,36 +2324,36 @@ msgstr "Texto completo"
 msgid "every page above with a Markdown version, in one file"
 msgstr "todas las páginas de arriba con versión Markdown, en un solo archivo"
 
-#: includes/tooling/class-thatseoagent-abilities.php:104
+#: includes/tooling/class-thatseoagent-abilities.php:109
 msgid ""
-"Analyzes a post for SEO issues and returns recommendations. Only what Google"
-" or accessibility guidelines ask for lowers the score; findings of our own "
+"Analyzes a post for SEO issues and returns recommendations. Only what Google "
+"or accessibility guidelines ask for lowers the score; findings of our own "
 "judgement are marked as such. Also returns the post's structure as facts — "
 "outline, lists, tables, figures, opening — for you to judge: no AI provider "
-"publishes how it chooses what to cite, so the plugin scores none of it. Read"
-" markdown_url for the full content."
+"publishes how it chooses what to cite, so the plugin scores none of it. Read "
+"markdown_url for the full content."
 msgstr ""
-"Analiza una entrada en busca de problemas de SEO y devuelve recomendaciones."
-" Solo lo que piden Google o las pautas de accesibilidad baja la puntuación; "
+"Analiza una entrada en busca de problemas de SEO y devuelve recomendaciones. "
+"Solo lo que piden Google o las pautas de accesibilidad baja la puntuación; "
 "los hallazgos de criterio propio se marcan como tales. También devuelve la "
 "estructura de la entrada como hechos —esquema, listas, tablas, cifras, "
-"comienzo— para que tú los juzgues: ningún proveedor de IA publica cómo elige"
-" qué citar, así que el plugin no puntúa nada de eso. Lee markdown_url para "
-"el contenido completo."
+"comienzo— para que tú los juzgues: ningún proveedor de IA publica cómo elige "
+"qué citar, así que el plugin no puntúa nada de eso. Lee markdown_url para el "
+"contenido completo."
 
-#: includes/tooling/class-thatseoagent-abilities.php:188
+#: includes/tooling/class-thatseoagent-abilities.php:193
 msgid "How the post is built, as facts with no verdict attached."
 msgstr "Cómo está construida la entrada, como hechos sin veredicto."
 
-#: includes/tooling/class-thatseoagent-abilities.php:192
+#: includes/tooling/class-thatseoagent-abilities.php:197
 msgid ""
 "The language the site declares in <html lang>, from Settings → General. Not "
 "detected from the text, which may be written in another."
 msgstr ""
-"El idioma que declara el sitio en <html lang>, desde Ajustes → Generales. No"
-" se detecta del texto, que puede estar escrito en otro."
+"El idioma que declara el sitio en <html lang>, desde Ajustes → Generales. No "
+"se detecta del texto, que puede estar escrito en otro."
 
-#: includes/tooling/class-thatseoagent-abilities.php:198
+#: includes/tooling/class-thatseoagent-abilities.php:203
 msgid ""
 "The post as Markdown, to read its full content. Empty when it has no "
 "Markdown version."
@@ -2386,45 +2361,44 @@ msgstr ""
 "La entrada en Markdown, para leer su contenido completo. Vacío cuando no "
 "tiene versión Markdown."
 
-#: includes/tooling/class-thatseoagent-abilities.php:204
+#: includes/tooling/class-thatseoagent-abilities.php:209
 msgid ""
 "The content's headings in order, up to 60. The page title the theme prints "
 "is not among them."
 msgstr ""
-"Los encabezados del contenido en orden, hasta 60. El título de la página que"
-" imprime el tema no está entre ellos."
+"Los encabezados del contenido en orden, hasta 60. El título de la página que "
+"imprime el tema no está entre ellos."
 
-#: includes/tooling/class-thatseoagent-abilities.php:231
+#: includes/tooling/class-thatseoagent-abilities.php:236
 msgid "Details blocks: collapsible question-and-answer sections."
 msgstr "Bloques Detalles: secciones plegables de pregunta y respuesta."
 
-#: includes/tooling/class-thatseoagent-abilities.php:236
+#: includes/tooling/class-thatseoagent-abilities.php:241
 msgid "Figures in the text: every run of digits, years and prices included."
 msgstr ""
 "Cifras en el texto: toda secuencia de dígitos, incluidos años y precios."
 
-#: includes/tooling/class-thatseoagent-abilities.php:241
+#: includes/tooling/class-thatseoagent-abilities.php:246
 msgid "The first 150 words of the text, as a reader meets them."
-msgstr ""
-"Las primeras 150 palabras del texto, tal como las encuentra quien lee."
+msgstr "Las primeras 150 palabras del texto, tal como las encuentra quien lee."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:266
+#: includes/site/class-thatseoagent-trust-pages.php:245
 msgid "Trust pages"
 msgstr "Páginas de confianza"
 
 #. translators: 1: pages found, 2: pages looked for.
-#: includes/bulletin/class-thatseoagent-bulletin.php:269
+#: includes/site/class-thatseoagent-trust-pages.php:248
 #, php-format
 msgid "%1$d of %2$d"
 msgstr "%1$d de %2$d"
 
 #. translators: %s: page names joined as a list, e.g. "About and Contact".
-#: includes/bulletin/class-thatseoagent-bulletin.php:283
+#: includes/site/class-thatseoagent-trust-pages.php:234
 #, php-format
 msgid "No page found for %s"
 msgstr "No se encontró página de %s"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:284
+#: includes/site/class-thatseoagent-trust-pages.php:235
 msgid ""
 "Visitors look for who runs a site, how to reach it and what it does with "
 "their data; search engines and AI assistants read the same pages. Google "
@@ -2435,11 +2409,11 @@ msgstr ""
 "páginas. Google pregunta si eso está claro, aunque no es un factor de "
 "posicionamiento."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:285
+#: includes/site/class-thatseoagent-trust-pages.php:236
 msgid "Choose the privacy policy page"
 msgstr "Elegir la página de política de privacidad"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:285
+#: includes/site/class-thatseoagent-trust-pages.php:236
 msgid "Create a page"
 msgstr "Crear una página"
 
@@ -2470,7 +2444,7 @@ msgstr ""
 "sitio; las generadas, entre las páginas de cada revisión."
 
 #. translators: 1: number of other pages, 2: their titles.
-#: includes/audit/class-thatseoagent-audit-run.php:234
+#: includes/audit/class-thatseoagent-audit.php:767
 #, php-format
 msgid ""
 "Its generated description is the same as that of %1$d other page (%2$s): "
@@ -2479,20 +2453,19 @@ msgid_plural ""
 "Its generated description is the same as that of %1$d other pages (%2$s): "
 "write one of its own"
 msgstr[0] ""
-"Su descripción generada es igual a la de %1$d página más (%2$s): escribe una"
-" propia"
+"Su descripción generada es igual a la de %1$d página más (%2$s): escribe una "
+"propia"
 msgstr[1] ""
 "Su descripción generada es igual a la de otras %1$d páginas (%2$s): escribe "
 "una propia"
 
 #. translators: %d: number of other pages.
-#: includes/audit/class-thatseoagent-audit.php:194
+#: includes/audit/class-thatseoagent-audit.php:207
 #, php-format
 msgid ""
 "Same title in search results as %d other page: people cannot tell them apart"
 msgid_plural ""
-"Same title in search results as %d other pages: people cannot tell them "
-"apart"
+"Same title in search results as %d other pages: people cannot tell them apart"
 msgstr[0] ""
 "El mismo título en los resultados que %d página más: no se pueden distinguir"
 msgstr[1] ""
@@ -2500,21 +2473,20 @@ msgstr[1] ""
 "distinguir"
 
 #. translators: %d: number of other pages.
-#: includes/audit/class-thatseoagent-audit.php:206
+#: includes/audit/class-thatseoagent-audit.php:219
 #, php-format
 msgid "Same written description as %d other page"
 msgid_plural "Same written description as %d other pages"
 msgstr[0] "La misma descripción escrita que %d página más"
 msgstr[1] "La misma descripción escrita que otras %d páginas"
 
-#: includes/tooling/class-thatseoagent-abilities.php:134
+#: includes/tooling/class-thatseoagent-abilities.php:139
 msgid ""
 "The title and description the page shows in search results, and whether the "
 "description was written or generated from the content."
 msgstr ""
 "El título y la descripción que muestra la página en los resultados de "
-"búsqueda, y si la descripción se escribió o se generó a partir del "
-"contenido."
+"búsqueda, y si la descripción se escribió o se generó a partir del contenido."
 
 #: includes/admin/views/audit.php:51
 msgid "Links that lead somewhere"
@@ -2523,8 +2495,8 @@ msgstr "Enlaces que llevan a algún sitio"
 #: includes/admin/views/audit.php:51
 msgid ""
 "Our own judgement, costing no points: pages nothing links to — not the "
-"menus, the header or footer, or another page — and links to addresses of the"
-" site that answer \"not found\". Read from the whole site when the check "
+"menus, the header or footer, or another page — and links to addresses of the "
+"site that answer \"not found\". Read from the whole site when the check "
 "starts."
 msgstr ""
 "Criterio propio, no resta puntos: páginas a las que nada enlaza —ni los "
@@ -2532,18 +2504,18 @@ msgstr ""
 "sitio que responden «no encontrado». Se lee de todo el sitio al empezar la "
 "revisión."
 
-#: includes/audit/class-thatseoagent-audit.php:245
+#: includes/audit/class-thatseoagent-audit.php:285
 msgid ""
 "No page of the site links here — not the menus, not the header or footer, "
-"not another page's text. Search engines still find it in the sitemap; people"
-" browsing the site never reach it."
+"not another page's text. Search engines still find it in the sitemap; people "
+"browsing the site never reach it."
 msgstr ""
-"Ninguna página del sitio enlaza aquí: ni los menús, ni la cabecera o el pie,"
-" ni el texto de otra página. Los buscadores la encuentran igual en el "
+"Ninguna página del sitio enlaza aquí: ni los menús, ni la cabecera o el pie, "
+"ni el texto de otra página. Los buscadores la encuentran igual en el "
 "sitemap; quien navega el sitio nunca llega a ella."
 
 #. translators: %d: number of links.
-#: includes/audit/class-thatseoagent-audit.php:256
+#: includes/audit/class-thatseoagent-audit.php:296
 #, php-format
 msgid "%d link leads to an address of the site that does not exist (404)"
 msgid_plural "%d links lead to addresses of the site that do not exist (404)"
@@ -2551,11 +2523,11 @@ msgstr[0] "%d enlace lleva a una dirección del sitio que no existe (404)"
 msgstr[1] "%d enlaces llevan a direcciones del sitio que no existen (404)"
 
 #. translators: %d: number of links.
-#: includes/audit/class-thatseoagent-audit.php:265
+#: includes/audit/class-thatseoagent-audit.php:305
 #, php-format
 msgid ""
-"Links: %d link to an address the site did not recognize was not checked this"
-" time."
+"Links: %d link to an address the site did not recognize was not checked this "
+"time."
 msgid_plural ""
 "Links: %d links to addresses the site did not recognize were not checked "
 "this time."
@@ -2567,7 +2539,7 @@ msgstr[1] ""
 "comprobaron esta vez."
 
 #. translators: %d: number of links.
-#: includes/bulletin/class-thatseoagent-bulletin.php:341
+#: includes/audit/class-thatseoagent-links.php:492
 #, php-format
 msgid "The site's navigation links to %d page that does not exist"
 msgid_plural "The site's navigation links to %d pages that do not exist"
@@ -2575,18 +2547,18 @@ msgstr[0] "La navegación del sitio enlaza a %d página que no existe"
 msgstr[1] "La navegación del sitio enlaza a %d páginas que no existen"
 
 #. translators: %s: the addresses, comma-separated.
-#: includes/bulletin/class-thatseoagent-bulletin.php:343
+#: includes/audit/class-thatseoagent-links.php:494
 #, php-format
 msgid ""
 "The menus, header or footer point to %s, which answer \"not found\". "
 "Visitors who click get an error page; fix the links in the theme or the "
 "menus, or create the pages."
 msgstr ""
-"Los menús, la cabecera o el pie apuntan a %s, que responden «no encontrado»."
-" Quien hace clic recibe una página de error; corrige los enlaces en el tema "
-"o en los menús, o crea las páginas."
+"Los menús, la cabecera o el pie apuntan a %s, que responden «no encontrado». "
+"Quien hace clic recibe una página de error; corrige los enlaces en el tema o "
+"en los menús, o crea las páginas."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:344
+#: includes/audit/class-thatseoagent-links.php:495
 msgid "See the content check"
 msgstr "Ver la revisión de contenido"
 
@@ -2627,41 +2599,40 @@ msgstr ""
 "Las direcciones de este sitio se omiten."
 
 #. translators: %s: taxonomy singular name, e.g. "Category".
-#: includes/content/class-thatseoagent-primary-term.php:292
+#: includes/content/class-thatseoagent-primary-term.php:329
 #, php-format
 msgid "Primary %s"
 msgstr "%s principal"
 
 #. translators: %s: the term picked automatically.
-#: includes/content/class-thatseoagent-primary-term.php:299
+#: includes/content/class-thatseoagent-primary-term.php:336
 #, php-format
 msgid "Automatic (%s)"
 msgstr "Automática (%s)"
 
-#: includes/content/class-thatseoagent-primary-term.php:306
+#: includes/content/class-thatseoagent-primary-term.php:343
 msgid ""
 "The one search results and breadcrumbs name. Choosing one also puts it in "
 "the address when the permalinks include the category. The list shows the "
 "terms saved with the post."
 msgstr ""
-"La que nombran los resultados de búsqueda y las migas. Elegir una también la"
-" pone en la dirección cuando los enlaces permanentes incluyen la categoría. "
+"La que nombran los resultados de búsqueda y las migas. Elegir una también la "
+"pone en la dirección cuando los enlaces permanentes incluyen la categoría. "
 "La lista muestra los términos guardados con la entrada."
 
-#: includes/head/class-thatseoagent-breadcrumbs.php:282
-#: includes/head/class-thatseoagent-breadcrumbs.php:316
+#: includes/head/class-thatseoagent-breadcrumbs.php:340
+#: includes/head/class-thatseoagent-breadcrumbs.php:374
 #: assets/blocks/breadcrumbs.js:47
 msgid "Breadcrumb"
 msgstr "Migas de pan"
 
-#: includes/head/class-thatseoagent-breadcrumbs.php:345
+#: includes/head/class-thatseoagent-breadcrumbs.php:403
 #: assets/blocks/breadcrumbs.js:15 assets/blocks/breadcrumbs.js:34
 msgid "Breadcrumbs"
 msgstr "Migas de pan"
 
-#: includes/head/class-thatseoagent-breadcrumbs.php:346
-msgid ""
-"Where the current page sits in the site, as the search results show it."
+#: includes/head/class-thatseoagent-breadcrumbs.php:404
+msgid "Where the current page sits in the site, as the search results show it."
 msgstr ""
 "Dónde está la página actual dentro del sitio, como la muestran los "
 "resultados de búsqueda."
@@ -2689,9 +2660,9 @@ msgid ""
 "indexes. These two go further, and are off until you switch them on."
 msgstr ""
 "Siempre: el enlace corto, los enlaces RSD y WLW y la versión de WordPress "
-"quedan fuera de cada página, y los feeds de comentarios fuera de los índices"
-" de búsqueda. Estas dos opciones van más allá y están apagadas hasta que las"
-" actives."
+"quedan fuera de cada página, y los feeds de comentarios fuera de los índices "
+"de búsqueda. Estas dos opciones van más allá y están apagadas hasta que las "
+"actives."
 
 #: includes/indexing/class-thatseoagent-crawl-cleanup.php:272
 msgid "Feeds"
@@ -2704,11 +2675,11 @@ msgstr "Solo el feed principal"
 #: includes/indexing/class-thatseoagent-crawl-cleanup.php:279
 msgid ""
 "Category, tag, author, search and comment feeds stop being announced, and a "
-"request for one goes to the page it follows. Leave off if people or services"
-" subscribe to them."
+"request for one goes to the page it follows. Leave off if people or services "
+"subscribe to them."
 msgstr ""
-"Los feeds de categorías, etiquetas, autores, búsqueda y comentarios dejan de"
-" anunciarse, y quien pida uno va a la página que sigue. Déjalo apagado si "
+"Los feeds de categorías, etiquetas, autores, búsqueda y comentarios dejan de "
+"anunciarse, y quien pida uno va a la página que sigue. Déjalo apagado si "
 "alguien o algún servicio se suscribe a ellos."
 
 #: includes/indexing/class-thatseoagent-crawl-cleanup.php:285
@@ -2726,8 +2697,8 @@ msgid ""
 "text on a results page."
 msgstr ""
 "Las búsquedas con emojis, símbolos, contactos de mensajería («QQ:», "
-"«Telegram:») o de más de 100 caracteres van a la portada en lugar de mostrar"
-" el texto del spammer en una página de resultados."
+"«Telegram:») o de más de 100 caracteres van a la portada en lugar de mostrar "
+"el texto del spammer en una página de resultados."
 
 #: includes/site/class-thatseoagent-verification.php:173
 msgid "Site verification"
@@ -2735,15 +2706,15 @@ msgstr "Verificación del sitio"
 
 #: includes/site/class-thatseoagent-verification.php:175
 msgid ""
-"To prove to a search engine's console that the site is yours, paste the code"
-" it gives you — or the whole meta tag, as it shows it. The tag goes on the "
+"To prove to a search engine's console that the site is yours, paste the code "
+"it gives you — or the whole meta tag, as it shows it. The tag goes on the "
 "homepage only. Google Search Console can verify through DNS instead, which "
 "needs nothing here."
 msgstr ""
 "Para demostrar ante la consola de un buscador que el sitio es tuyo, pega el "
-"código que te da, o la etiqueta meta entera tal como la muestra. La etiqueta"
-" se imprime solo en la portada. Google Search Console también puede "
-"verificar por DNS, lo que no necesita nada aquí."
+"código que te da, o la etiqueta meta entera tal como la muestra. La etiqueta "
+"se imprime solo en la portada. Google Search Console también puede verificar "
+"por DNS, lo que no necesita nada aquí."
 
 #: includes/site/class-thatseoagent-verification.php:214
 msgid "Printed as"
@@ -2777,14 +2748,14 @@ msgid "All %d products"
 msgstr "Los %d productos"
 
 #. translators: %s: the titles, e.g. "Hello world! and Sample Page".
-#: includes/bulletin/class-thatseoagent-bulletin.php:325
+#: includes/content/class-thatseoagent-sample-content.php:119
 #, php-format
 msgid "WordPress's sample content is still published: %s"
 msgid_plural "WordPress's sample content is still published: %s"
 msgstr[0] "El contenido de ejemplo de WordPress sigue publicado: %s"
 msgstr[1] "El contenido de ejemplo de WordPress sigue publicado: %s"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:326
+#: includes/content/class-thatseoagent-sample-content.php:120
 msgid ""
 "Search engines index it like any page, and it is in the sitemap: a "
 "placeholder shown as part of the site. Delete it, or replace it with "
@@ -2794,98 +2765,97 @@ msgstr ""
 "relleno que se muestra como parte del sitio. Bórralo o reemplázalo por algo "
 "propio."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:327
+#: includes/content/class-thatseoagent-sample-content.php:121
 msgid "Edit it"
 msgstr "Editarlo"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:313
-#: includes/bulletin/class-thatseoagent-bulletin.php:327
+#: includes/content/class-thatseoagent-sample-content.php:121
+#: includes/site/class-thatseoagent-default-author.php:288
 msgid "See the posts"
 msgstr "Ver las entradas"
 
 #. translators: %s: content type names, e.g. "Machines and Parts".
-#: includes/bulletin/class-thatseoagent-bulletin.php:298
+#: includes/site/class-thatseoagent-new-types.php:154
 #, php-format
 msgid "A new content type is being published: %s"
 msgid_plural "New content types are being published: %s"
 msgstr[0] "Se está publicando un tipo de contenido nuevo: %s"
 msgstr[1] "Se están publicando tipos de contenido nuevos: %s"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:299
+#: includes/site/class-thatseoagent-new-types.php:155
 msgid ""
 "Its pages are already in the sitemap and have SEO fields. If they list "
 "products — machines, parts, models — mark it as a product catalog so each "
 "one is described as a product."
 msgstr ""
 "Sus páginas ya están en el sitemap y tienen campos SEO. Si enumeran "
-"productos —máquinas, repuestos, modelos—, márcalo como catálogo de productos"
-" para que cada uno se describa como producto."
+"productos —máquinas, repuestos, modelos—, márcalo como catálogo de productos "
+"para que cada uno se describa como producto."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:300
+#: includes/site/class-thatseoagent-new-types.php:156
 msgid "Review it"
 msgstr "Revisarlo"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:183
+#: includes/indexing/class-thatseoagent-indexing.php:221
 msgid "Numbers"
 msgstr "Números"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:186
+#: includes/indexing/class-thatseoagent-indexing.php:224
 msgid "Post addresses do not say what the post is about"
 msgstr "Las direcciones de las entradas no dicen de qué tratan"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:187
+#: includes/indexing/class-thatseoagent-indexing.php:225
 msgid ""
 "The permalink structure has no %postname%, so addresses are numbers and "
 "dates. On a site that has been online a while, changing it moves every "
 "post's address: do it only with redirects from the old ones."
 msgstr ""
 "La estructura de enlaces permanentes no incluye %postname%, así que las "
-"direcciones son números y fechas. En un sitio que ya lleva tiempo publicado,"
-" cambiarla mueve la dirección de cada entrada: hazlo solo con redirecciones "
+"direcciones son números y fechas. En un sitio que ya lleva tiempo publicado, "
+"cambiarla mueve la dirección de cada entrada: hazlo solo con redirecciones "
 "desde las antiguas."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:188
+#: includes/indexing/class-thatseoagent-indexing.php:226
 msgid "Open Permalink settings"
 msgstr "Abrir Ajustes de enlaces permanentes"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:236
+#: includes/site/class-thatseoagent-homepage.php:287
 msgid "Search results describe the site with WordPress's default tagline"
 msgstr ""
 "Los resultados de búsqueda describen el sitio con la descripción corta de "
 "fábrica de WordPress"
 
 #. translators: %s: the tagline.
-#: includes/bulletin/class-thatseoagent-bulletin.php:238
+#: includes/site/class-thatseoagent-homepage.php:289
 #, php-format
 msgid ""
 "\"%s\" is what the homepage says about the site, in search results and in "
 "llms.txt. Write a tagline of your own, or a homepage description."
 msgstr ""
-"«%s» es lo que la portada dice del sitio, en los resultados de búsqueda y en"
-" llms.txt. Escribe una descripción corta propia, o una descripción de "
-"portada."
+"«%s» es lo que la portada dice del sitio, en los resultados de búsqueda y en "
+"llms.txt. Escribe una descripción corta propia, o una descripción de portada."
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:239
+#: includes/site/class-thatseoagent-homepage.php:290
 msgid "Open General settings"
 msgstr "Abrir Ajustes generales"
 
 #. translators: %d: number of posts.
-#: includes/bulletin/class-thatseoagent-bulletin.php:311
+#: includes/site/class-thatseoagent-default-author.php:286
 #, php-format
 msgid "%d post has no author"
 msgid_plural "%d posts have no author"
 msgstr[0] "%d entrada no tiene autor"
 msgstr[1] "%d entradas no tienen autor"
 
-#: includes/bulletin/class-thatseoagent-bulletin.php:312
+#: includes/site/class-thatseoagent-default-author.php:287
 msgid ""
 "They are credited to the site itself. Google asks for a byline where one is "
 "expected: assign each post its author — whose profile can carry a job title "
 "and profiles elsewhere — or set a default author in the settings."
 msgstr ""
 "Se atribuyen al propio sitio. Google pide una firma donde se espera una: "
-"asigna a cada entrada su autor —cuyo perfil puede llevar un cargo y perfiles"
-" en otros sitios— o configura un autor por defecto en los ajustes."
+"asigna a cada entrada su autor —cuyo perfil puede llevar un cargo y perfiles "
+"en otros sitios— o configura un autor por defecto en los ajustes."
 
 #. translators: 1: view title, 2: site name.
 #: includes/admin/class-thatseoagent-app.php:327
@@ -2919,9 +2889,9 @@ msgid ""
 "nothing. The lines are here to paste at the very top of .htaccess on an "
 "Apache server, before a page cache that serves from that file."
 msgstr ""
-"Este servidor no aplica las reglas de reescritura de .htaccess, así que aquí"
-" la regla no hace nada. Las líneas están para pegarlas al principio del "
-".htaccess en un servidor Apache, antes de una caché de páginas que sirva "
+"Este servidor no aplica las reglas de reescritura de .htaccess, así que aquí "
+"la regla no hace nada. Las líneas están para pegarlas al principio "
+"del .htaccess en un servidor Apache, antes de una caché de páginas que sirva "
 "desde ese archivo."
 
 #: includes/admin/views/llms.php:117
@@ -2955,15 +2925,15 @@ msgstr "Cachés y CDN"
 
 #: includes/markdown/class-thatseoagent-cache-settings.php:91
 msgid ""
-"Each post answers an agent that asks for Markdown with its Markdown version,"
-" at its own address. A cache in front of WordPress stores pages by address, "
-"and can hand that agent the HTML page a browser caused to be stored. Here is"
-" what each layer needs."
+"Each post answers an agent that asks for Markdown with its Markdown version, "
+"at its own address. A cache in front of WordPress stores pages by address, "
+"and can hand that agent the HTML page a browser caused to be stored. Here is "
+"what each layer needs."
 msgstr ""
 "Cada entrada responde con su versión en Markdown al agente que la pide, en "
 "su propia dirección. Una caché delante de WordPress guarda las páginas por "
-"dirección, y puede darle a ese agente la página HTML que se guardó cuando la"
-" visitó un navegador. Aquí está lo que necesita cada capa."
+"dirección, y puede darle a ese agente la página HTML que se guardó cuando la "
+"visitó un navegador. Aquí está lo que necesita cada capa."
 
 #: includes/markdown/class-thatseoagent-cache-settings.php:95
 msgid "Check whether agents get the Markdown, in AI index"
@@ -2989,8 +2959,8 @@ msgstr ""
 
 #: includes/markdown/class-thatseoagent-cache-settings.php:156
 msgid ""
-"If a rule does cache the pages, in the Cloudflare dashboard, under Caching →"
-" Cache Rules, do one of these:"
+"If a rule does cache the pages, in the Cloudflare dashboard, under Caching → "
+"Cache Rules, do one of these:"
 msgstr ""
 "Si una regla sí guarda las páginas, en el panel de Cloudflare, en Caching → "
 "Cache Rules, haz una de estas dos cosas:"
@@ -3002,13 +2972,13 @@ msgstr "Una copia por formato."
 #: includes/markdown/class-thatseoagent-cache-settings.php:160
 msgid ""
 "In the rule that caches the pages, under Vary, add the Accept header with "
-"the Normalize action. ThatSeoAgent sends Vary: Accept with both the HTML and"
-" the Markdown, so Cloudflare stores them apart. Available on every plan."
+"the Normalize action. ThatSeoAgent sends Vary: Accept with both the HTML and "
+"the Markdown, so Cloudflare stores them apart. Available on every plan."
 msgstr ""
-"En la regla que guarda las páginas, en Vary, añade la cabecera Accept con la"
-" acción Normalize. ThatSeoAgent envía Vary: Accept tanto con el HTML como "
-"con el Markdown, así que Cloudflare los guarda por separado. Disponible en "
-"todos los planes."
+"En la regla que guarda las páginas, en Vary, añade la cabecera Accept con la "
+"acción Normalize. ThatSeoAgent envía Vary: Accept tanto con el HTML como con "
+"el Markdown, así que Cloudflare los guarda por separado. Disponible en todos "
+"los planes."
 
 #: includes/markdown/class-thatseoagent-cache-settings.php:163
 msgid "Or no cache for agents."
@@ -3034,7 +3004,7 @@ msgstr ""
 msgid "Cloudflare documentation"
 msgstr "Documentación de Cloudflare"
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:307
+#: includes/markdown/class-thatseoagent-markdown-check.php:361
 msgid ""
 "Cloudflare stores the page by its URL. Settings → Caches and CDN gives the "
 "two ways to fix it in its Cache Rules, with links to Cloudflare’s "
@@ -3046,17 +3016,17 @@ msgstr ""
 "de Cloudflare. Luego ejecuta de nuevo esta comprobación: te dice si el "
 "cambio funcionó."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:316
+#: includes/markdown/class-thatseoagent-markdown-check.php:370
 msgid ""
 "Add the .htaccess rule in Settings → Caches and CDN: it sends requests "
 "asking for Markdown to WordPress before any page cache can answer them."
 msgstr ""
-"Añade la regla de .htaccess en Ajustes → Cachés y CDN: envía a WordPress las"
-" peticiones que piden Markdown antes de que una caché de páginas pueda "
+"Añade la regla de .htaccess en Ajustes → Cachés y CDN: envía a WordPress las "
+"peticiones que piden Markdown antes de que una caché de páginas pueda "
 "responderlas."
 
 #. translators: %s: page cache plugin name.
-#: includes/markdown/class-thatseoagent-markdown-check.php:320
+#: includes/markdown/class-thatseoagent-markdown-check.php:374
 #, php-format
 msgid ""
 "The .htaccess rule is below the rules of %s, which run first. Use “Write it "
@@ -3074,17 +3044,17 @@ msgid ""
 "ThatSeoAgent’s Markdown; the check in AI index tells which one agents get."
 msgstr ""
 "Markdown for Agents, de Cloudflare (planes Pro y superiores), convierte la "
-"página HTML en Markdown en su red. ThatSeoAgent ya responde con el suyo, que"
-" lleva más: el autor, las fechas, el tipo de contenido y el título SEO. Si "
-"lo activas, Cloudflare puede responder con su conversión en lugar del "
-"Markdown de ThatSeoAgent; la comprobación en Índice para IA dice cuál "
-"reciben los agentes."
+"página HTML en Markdown en su red. ThatSeoAgent ya responde con el suyo, que "
+"lleva más: el autor, las fechas, el tipo de contenido y el título SEO. Si lo "
+"activas, Cloudflare puede responder con su conversión en lugar del Markdown "
+"de ThatSeoAgent; la comprobación en Índice para IA dice cuál reciben los "
+"agentes."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:238
+#: includes/markdown/class-thatseoagent-markdown-check.php:292
 msgid "Agents get Cloudflare’s Markdown, not ThatSeoAgent’s"
 msgstr "Los agentes reciben el Markdown de Cloudflare, no el de ThatSeoAgent"
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:239
+#: includes/markdown/class-thatseoagent-markdown-check.php:293
 msgid ""
 "Markdown for Agents is on in Cloudflare: it converts the HTML page and "
 "answers in place of WordPress. Agents get Markdown, but made from the "
@@ -3096,12 +3066,250 @@ msgstr ""
 "partir de la página del tema y sin lo que añade el de ThatSeoAgent: el "
 "autor, las fechas, el tipo de contenido y el título SEO."
 
-#: includes/markdown/class-thatseoagent-markdown-check.php:303
+#: includes/markdown/class-thatseoagent-markdown-check.php:357
 msgid ""
 "In Cloudflare, turn Markdown for Agents off under AI Crawl Control, or keep "
 "it for the rest of the zone and turn it off for this site with a "
 "Configuration Rule. Then run this check again."
 msgstr ""
-"En Cloudflare, desactiva Markdown for Agents en AI Crawl Control, o mantenlo"
-" para el resto de la zona y desactívalo para este sitio con una "
-"Configuration Rule. Luego ejecuta de nuevo esta comprobación."
+"En Cloudflare, desactiva Markdown for Agents en AI Crawl Control, o mantenlo "
+"para el resto de la zona y desactívalo para este sitio con una Configuration "
+"Rule. Luego ejecuta de nuevo esta comprobación."
+
+#: includes/admin/views/crawlers.php:58
+msgid ""
+"robots.txt is a request, not a lock: the major AI providers honor it, and a "
+"few of their crawlers skip it for visits a person asked for. The access "
+"check requests the homepage as each crawler to catch a firewall or CDN "
+"turning it away. It also runs once a week on its own."
+msgstr ""
+"robots.txt es una petición, no un candado: los grandes proveedores de IA lo "
+"respetan, y algunos de sus crawlers lo saltan en las visitas que pidió una "
+"persona. La comprobación de acceso pide la portada como cada crawler para "
+"detectar un firewall o una CDN que lo rechace. También se ejecuta sola una "
+"vez por semana."
+
+#: includes/admin/views/crawlers.php:60 includes/admin/views/llms.php:137
+msgid "Changes since the check before"
+msgstr "Cambios desde la comprobación anterior"
+
+#: includes/admin/views/llms.php:116
+msgid ""
+"Each post answers an agent that asks for Markdown with its Markdown version, "
+"at its own address. A cache in front of WordPress can undo that without "
+"WordPress knowing, so the check asks one of your posts from outside: first "
+"as an agent, then as a browser. It also runs once a week on its own."
+msgstr ""
+"Cada entrada responde con su versión Markdown, en su propia dirección, al "
+"agente que pide Markdown. Una caché delante de WordPress puede deshacerlo "
+"sin que WordPress lo sepa, así que la comprobación pide una de tus entradas "
+"desde fuera: primero como agente y luego como navegador. También se ejecuta "
+"sola una vez por semana."
+
+#: includes/audit/class-thatseoagent-audit.php:267
+msgid ""
+"Links to the site's own pages: not checked, the site's links have not been "
+"read in the last hour. Checking a whole content type reads them."
+msgstr ""
+"Enlaces a páginas del propio sitio: sin comprobar, los enlaces del sitio no "
+"se han leído en la última hora. Revisar un tipo de contenido entero los lee."
+
+#: includes/audit/class-thatseoagent-audit.php:273
+msgid ""
+"Whether any page links here: not checked, the site's links have not been "
+"read in the last hour. Checking a whole content type reads them."
+msgstr ""
+"Si alguna página enlaza aquí: sin comprobar, los enlaces del sitio no se han "
+"leído en la última hora. Revisar un tipo de contenido entero los lee."
+
+#: includes/audit/class-thatseoagent-audit.php:364
+msgid ""
+"Whether another page generates the same description: compared only when a "
+"whole content type is checked."
+msgstr ""
+"Si otra página genera la misma descripción: solo se compara cuando se revisa "
+"un tipo de contenido entero."
+
+#. translators: %s: date and time.
+#: includes/bulletin/class-thatseoagent-checks.php:140
+#, php-format
+msgid "Checked %s."
+msgstr "Comprobado el %s."
+
+#. translators: 1: previous status, 2: current status.
+#: includes/crawlers/class-thatseoagent-crawler-access.php:210
+#, php-format
+msgid "robots.txt: %1$s → %2$s"
+msgstr "robots.txt: %1$s → %2$s"
+
+#. translators: 1: crawler, 2: what happened before, 3: what happens now.
+#: includes/crawlers/class-thatseoagent-crawler-access.php:221
+#, php-format
+msgid "%1$s: %2$s → %3$s"
+msgstr "%1$s: %2$s → %3$s"
+
+#. translators: %d: HTTP status.
+#: includes/crawlers/class-thatseoagent-crawler-access.php:252
+#, php-format
+msgid "reached (%d)"
+msgstr "llegó (%d)"
+
+#. translators: %d: HTTP status.
+#: includes/crawlers/class-thatseoagent-crawler-access.php:252
+#, php-format
+msgid "turned away (%d)"
+msgstr "rechazado (%d)"
+
+#. translators: %d: HTTP status.
+#: includes/crawlers/class-thatseoagent-crawler-access.php:419
+#, php-format
+msgid "robots.txt answers with a server error (%d)"
+msgstr "robots.txt responde con un error del servidor (%d)"
+
+#: includes/crawlers/class-thatseoagent-crawler-access.php:420
+msgid ""
+"While robots.txt fails, Google and most crawlers stop reading the site at "
+"all. The server, a theme router or a security layer is answering for it."
+msgstr ""
+"Mientras robots.txt falle, Google y la mayoría de los crawlers dejan de leer "
+"el sitio por completo. El servidor, el router de un tema o una capa de "
+"seguridad está respondiendo en su lugar."
+
+#: includes/crawlers/class-thatseoagent-crawler-access.php:421
+#: includes/crawlers/class-thatseoagent-crawler-access.php:430
+#: includes/crawlers/class-thatseoagent-crawler-access.php:450
+msgid "See the access check"
+msgstr "Ver la comprobación de acceso"
+
+#. translators: %d: HTTP status.
+#: includes/crawlers/class-thatseoagent-crawler-access.php:428
+#, php-format
+msgid "robots.txt answers %d, so the crawlers you block read everything"
+msgstr "robots.txt responde %d, así que los crawlers que bloqueas leen todo"
+
+#: includes/crawlers/class-thatseoagent-crawler-access.php:429
+msgid ""
+"Crawlers only read the rules from a robots.txt that answers 200; with a 4xx "
+"they assume there are none. The file looks fine, so the server, a theme "
+"router or a security layer is changing the status."
+msgstr ""
+"Los crawlers solo leen las reglas de un robots.txt que responde 200; con un "
+"4xx asumen que no hay ninguna. El archivo está bien, así que el servidor, el "
+"router de un tema o una capa de seguridad está cambiando el código."
+
+#. translators: %s: crawler names joined as a list.
+#: includes/crawlers/class-thatseoagent-crawler-access.php:448
+#, php-format
+msgid "The server turns %s away"
+msgid_plural "The server turns %s away"
+msgstr[0] "El servidor rechaza a %s"
+msgstr[1] "El servidor rechaza a %s"
+
+#: includes/crawlers/class-thatseoagent-crawler-access.php:449
+msgid ""
+"robots.txt lets them in, but the server, a firewall or a CDN answers them "
+"with an error, so they cannot read the site to quote it or link to it."
+msgstr ""
+"robots.txt los deja pasar, pero el servidor, un firewall o una CDN les "
+"responde con un error, así que no pueden leer el sitio para citarlo ni "
+"enlazarlo."
+
+#: includes/integrations/class-thatseoagent-tracking.php:92
+msgid "Code in the head"
+msgstr "Código en el head"
+
+#: includes/integrations/class-thatseoagent-tracking.php:93
+msgid "For code the service asks to place inside <head>."
+msgstr "Para el código que el servicio pide colocar dentro de <head>."
+
+#: includes/integrations/class-thatseoagent-tracking.php:96
+msgid "Code after the opening body tag"
+msgstr "Código tras la apertura de body"
+
+#: includes/integrations/class-thatseoagent-tracking.php:97
+msgid ""
+"For code the service asks to place right after <body>, such as a <noscript> "
+"fallback. Printed only if the theme supports it; block themes do."
+msgstr ""
+"Para el código que el servicio pide colocar justo después de <body>, como "
+"una alternativa <noscript>. Solo se imprime si el tema lo admite; los temas "
+"de bloques lo hacen."
+
+#: includes/integrations/class-thatseoagent-tracking.php:100
+msgid "Code in the footer"
+msgstr "Código en el footer"
+
+#: includes/integrations/class-thatseoagent-tracking.php:101
+msgid "For code the service asks to place before </body>."
+msgstr "Para el código que el servicio pide colocar antes de </body>."
+
+#: includes/integrations/class-thatseoagent-tracking.php:287
+msgid "Analytics and tags"
+msgstr "Analítica y etiquetas"
+
+#: includes/integrations/class-thatseoagent-tracking.php:289
+msgid ""
+"Google Analytics and Google Ads share one Google tag: paste each one's ID — "
+"or the whole snippet, as Google shows it — and the tag is loaded once for "
+"both. For any other service, paste the code it gives you in the box for "
+"where it asks you to place it."
+msgstr ""
+"Google Analytics y Google Ads comparten una misma etiqueta de Google: pega "
+"el ID de cada uno, o el fragmento entero tal como lo muestra Google, y la "
+"etiqueta se carga una sola vez para los dos. Para cualquier otro servicio, "
+"pega el código que te da en la caja del lugar donde te pide colocarlo."
+
+#: includes/integrations/class-thatseoagent-tracking.php:344
+msgid "Where to find the ID"
+msgstr "Dónde encontrar el ID"
+
+#: includes/integrations/class-thatseoagent-tracking.php:373
+msgid "Only users who may publish unfiltered HTML can change this code."
+msgstr ""
+"Solo los usuarios que pueden publicar HTML sin filtrar pueden cambiar este "
+"código."
+
+#. translators: %s: the previous check's headline.
+#: includes/markdown/class-thatseoagent-markdown-check.php:100
+#, php-format
+msgid "The check before said: %s"
+msgstr "La comprobación anterior decía: %s"
+
+#: includes/markdown/class-thatseoagent-markdown-check.php:117
+msgid "A cache hands the Markdown version to browsers"
+msgstr "Una caché entrega la versión Markdown a los navegadores"
+
+#: includes/markdown/class-thatseoagent-markdown-check.php:118
+msgid ""
+"A cache stored the answer given to an agent and served it to the browser "
+"that came next: people may see plain text instead of the page. Clear the "
+"cache, and keep requests asking for Markdown out of it."
+msgstr ""
+"Una caché guardó la respuesta dada a un agente y se la sirvió al navegador "
+"que llegó después: la gente puede ver texto plano en lugar de la página. "
+"Vacía la caché y deja fuera de ella las peticiones que piden Markdown."
+
+#: includes/markdown/class-thatseoagent-markdown-check.php:119
+#: includes/markdown/class-thatseoagent-markdown-check.php:127
+msgid "See the Markdown check"
+msgstr "Ver la comprobación de Markdown"
+
+#: includes/markdown/class-thatseoagent-markdown-check.php:126
+msgid ""
+"Something answers before WordPress can, most often a page cache: agents get "
+"the page a browser caused to be stored. Nothing breaks for people."
+msgstr ""
+"Algo responde antes que WordPress, casi siempre una caché de páginas: los "
+"agentes reciben la página que quedó guardada por un navegador. Para la gente "
+"no se rompe nada."
+
+#: includes/tooling/class-thatseoagent-abilities.php:97
+#: includes/tooling/class-thatseoagent-abilities.php:371
+msgid ""
+"The JSON-LD @graph the post's page publishes, node by node, as its head "
+"prints it. Empty while another SEO plugin is active and ThatSeoAgent prints "
+"nothing."
+msgstr ""
+"El @graph JSON-LD que publica la página de la entrada, nodo por nodo, tal "
+"como lo imprime su head. Vacío mientras otro plugin SEO esté activo y "
+"ThatSeoAgent no imprima nada."
