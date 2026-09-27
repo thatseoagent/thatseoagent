@@ -14,3 +14,6 @@
 /.impeccable/review/
 /.impeccable/direction-payload.json
 /.impeccable/questions/
+
+# Local SEO reports (not part of the plugin)
+/seo-intel/
