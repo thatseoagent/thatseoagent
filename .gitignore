@@ -7,6 +7,7 @@
 
 # Build artifacts
 *.zip
+/dist/
 
 # Impeccable: review captures and decision payloads are scratch; design.json
 # is the DESIGN.md sidecar and is kept.
