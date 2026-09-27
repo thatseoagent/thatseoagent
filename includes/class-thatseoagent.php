@@ -67,6 +67,12 @@ class ThatSeoAgent {
         ThatSeoAgent_Checks::register();
         ThatSeoAgent_Author_Profile::register();
 
+        // Before the check below: analytics tags are not something another
+        // SEO plugin prints, so they stay while ThatSeoAgent steps aside.
+        if (! is_admin()) {
+            ThatSeoAgent_Tracking::register();
+        }
+
         add_action('init', array($this, 'maybe_flush_rewrite_rules'), 21);
 
         if (is_admin()) {
@@ -84,6 +90,7 @@ class ThatSeoAgent {
             ThatSeoAgent_Cache_Settings::register();
             ThatSeoAgent_Crawl_Cleanup::register_settings();
             ThatSeoAgent_Verification::register_settings();
+            ThatSeoAgent_Tracking::register_settings();
             ThatSeoAgent_New_Types::register();
         }
 

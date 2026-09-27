@@ -60,6 +60,7 @@ class ThatSeoAgent_Settings {
             'ThatSeoAgent_AI_Crawlers',
             'ThatSeoAgent_Crawl_Cleanup',
             'ThatSeoAgent_Verification',
+            'ThatSeoAgent_Tracking',
         );
     }
 

@@ -17,7 +17,7 @@
  *     admin/         the ThatSeoAgent screen, the meta box, the bulk action
  *     rest/          the screen's REST controllers (thatseoagent/v1)
  *     tooling/       WP-CLI, the Abilities API, the importer
- *     integrations/  other SEO plugins, IndexNow
+ *     integrations/  other SEO plugins, IndexNow, analytics and tags
  *
  * The map is explicit rather than derived from the class name: the folder
  * is a fact about the concept, which the name does not carry, and a class
@@ -121,6 +121,7 @@ spl_autoload_register(
 
         'ThatSeoAgent_Compat'            => 'integrations/class-thatseoagent-compat.php',
         'ThatSeoAgent_IndexNow'          => 'integrations/class-thatseoagent-indexnow.php',
+        'ThatSeoAgent_Tracking'          => 'integrations/class-thatseoagent-tracking.php',
         );
 
         if ( isset( $map[ $class ] ) ) {

@@ -27,7 +27,7 @@ One fact checked about the site (indexing allowed, permalinks, other SEO plugins
 _Avoid_: check, metric, test
 
 **Stepping aside**:
-What ThatSeoAgent does while another SEO plugin is active: it prints nothing in the page head, serves no sitemaps or AI index, and leaves robots.txt alone.
+What ThatSeoAgent does while another SEO plugin is active: it prints nothing in the page head but the analytics tags, serves no sitemaps or AI index, and leaves robots.txt alone.
 _Avoid_: conflict mode, disabled, compatibility mode
 
 ### What a post says
