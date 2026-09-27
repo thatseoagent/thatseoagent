@@ -2,9 +2,9 @@
 /**
  * Per-post SEO fields: storage, sanitization and slashing.
  *
- * The owner of `_thatseoagent_title`, `_thatseoagent_description` and
- * `_thatseoagent_noindex`. Before 1.9.0 the first two key strings appeared
- * in six files — including a hand-written SQL
+ * The owner of `_thatseoagent_title`, `_thatseoagent_description`,
+ * `_thatseoagent_noindex` and `_thatseoagent_share_image`. Before 1.9.0
+ * the first two key strings appeared in six files — including a hand-written SQL
  * join in the WP-CLI command and a hard-coded list in uninstall.php — and
  * each writer decided its own sanitizer and its own slashing.
  *
@@ -46,10 +46,19 @@ class ThatSeoAgent_Post_Seo {
     const NOINDEX_KEY = '_thatseoagent_noindex';
 
     /**
+     * Meta key holding the attachment ID of the image the post is shared
+     * with on social media.
+     *
+     * @since 2.7.1
+     */
+    const SHARE_IMAGE_KEY = '_thatseoagent_share_image';
+
+    /**
      * The fields, their storage keys and their sanitizers.
      *
      * @since 1.9.0
      * @since 2.2.0 The noindex field.
+     * @since 2.7.1 The share_image field.
      * @return array<string, array{key: string, sanitize: callable}>
      */
     public static function fields() {
@@ -66,7 +75,27 @@ class ThatSeoAgent_Post_Seo {
                 'key'      => self::NOINDEX_KEY,
                 'sanitize' => array( __CLASS__, 'sanitize_flag' ),
             ),
+            'share_image' => array(
+                'key'      => self::SHARE_IMAGE_KEY,
+                'sanitize' => array( __CLASS__, 'sanitize_attachment_id' ),
+            ),
         );
+    }
+
+    /**
+     * An attachment ID as stored: its digits, or '' for none.
+     *
+     * The empty string makes save() delete the key, so only posts with an
+     * image of their own carry it.
+     *
+     * @since 2.7.1
+     * @param mixed $value Submitted value.
+     * @return string
+     */
+    public static function sanitize_attachment_id( $value ) {
+        $id = absint( $value );
+
+        return $id ? (string) $id : '';
     }
 
     /**
@@ -101,7 +130,8 @@ class ThatSeoAgent_Post_Seo {
      *
      * @since 1.9.0
      * @param WP_Post|int $post  Post or ID.
-     * @param string      $field 'title', 'description' or 'noindex'.
+     * @param string      $field 'title', 'description', 'noindex' or
+     *                           'share_image'.
      * @return string Empty string when unset or unknown.
      */
     public static function get( $post, $field ) {

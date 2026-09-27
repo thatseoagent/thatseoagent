@@ -13,3 +13,5 @@
 .thatseoagent-preview-title { color: #1a0dab; font-size: 18px; margin-bottom: 5px; }
 .thatseoagent-preview-url { color: #006621; font-size: 14px; margin-bottom: 5px; }
 .thatseoagent-preview-desc { color: #545454; font-size: 14px; line-height: 1.4; }
+.thatseoagent-share-image-preview img { display: block; max-width: 300px; height: auto; margin-bottom: 8px; border: 1px solid #ccd0d4; }
+.thatseoagent-share-image .thatseoagent-share-image-remove[hidden] { display: none; }

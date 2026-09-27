@@ -35,3 +35,43 @@ jQuery( function ( $ ) {
 		updatePreview();
 	} ).trigger( 'input' );
 } );
+
+/**
+ * The social sharing image picker.
+ */
+jQuery( function ( $ ) {
+	var $field = $( '.thatseoagent-share-image' );
+	var frame;
+
+	$field.on( 'click', '.thatseoagent-share-image-select', function ( e ) {
+		e.preventDefault();
+
+		if ( ! frame ) {
+			frame = wp.media( {
+				title: $( this ).attr( 'data-title' ),
+				button: { text: $( this ).attr( 'data-button' ) },
+				multiple: false,
+				library: { type: 'image' }
+			} );
+
+			frame.on( 'select', function () {
+				var attachment = frame.state().get( 'selection' ).first().toJSON();
+				var src = attachment.sizes && attachment.sizes.medium ? attachment.sizes.medium.url : attachment.url;
+
+				$( '#thatseoagent_share_image' ).val( attachment.id );
+				$field.find( '.thatseoagent-share-image-preview' ).empty().append( $( '<img alt="">' ).attr( 'src', src ) );
+				$field.find( '.thatseoagent-share-image-remove' ).prop( 'hidden', false );
+			} );
+		}
+
+		frame.open();
+	} );
+
+	$field.on( 'click', '.thatseoagent-share-image-remove', function ( e ) {
+		e.preventDefault();
+
+		$( '#thatseoagent_share_image' ).val( '' );
+		$field.find( '.thatseoagent-share-image-preview' ).empty();
+		$( this ).prop( 'hidden', true );
+	} );
+} );

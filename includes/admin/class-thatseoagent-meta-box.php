@@ -1,7 +1,8 @@
 <?php
 /**
  * The SEO meta box in the post editor: title and description fields with a
- * search result preview, and whether search engines may index the post.
+ * search result preview, whether search engines may index the post, and
+ * the image it is shared with on social media.
  *
  * Values go through ThatSeoAgent_Post_Seo, which owns the fields; this module is
  * the editor's form for them.
@@ -63,6 +64,9 @@ class ThatSeoAgent_Meta_Box {
         if ( ! in_array( $screen->post_type, ThatSeoAgent_Post_Seo::post_types(), true ) ) {
             return;
         }
+
+        // The sharing image picker.
+        wp_enqueue_media();
 
         wp_enqueue_style(
             'thatseoagent-meta-box',
@@ -137,6 +141,28 @@ class ThatSeoAgent_Meta_Box {
             <p class="description"><?php esc_html_e( 'Adds noindex to the page and leaves it out of the sitemap and llms.txt. The page stays public for anyone with the link.', 'thatseoagent' ); ?></p>
         </div>
 
+        <?php
+        $share_image = (int) $seo['share_image'];
+        $share_thumb = $share_image ? wp_get_attachment_image_url( $share_image, 'medium' ) : '';
+        ?>
+        <div class="thatseoagent-field thatseoagent-share-image">
+            <label><?php esc_html_e( 'Social sharing image', 'thatseoagent' ); ?></label>
+            <input type="hidden" id="thatseoagent_share_image" name="thatseoagent_share_image" value="<?php echo $share_image ? (int) $share_image : ''; ?>">
+            <div class="thatseoagent-share-image-preview">
+                <?php if ( $share_thumb ) : ?>
+                    <img src="<?php echo esc_url( $share_thumb ); ?>" alt="">
+                <?php endif; ?>
+            </div>
+            <button
+                type="button"
+                class="button thatseoagent-share-image-select"
+                data-title="<?php esc_attr_e( 'Social sharing image', 'thatseoagent' ); ?>"
+                data-button="<?php esc_attr_e( 'Use this image', 'thatseoagent' ); ?>"
+            ><?php esc_html_e( 'Select Image', 'thatseoagent' ); ?></button>
+            <button type="button" class="button thatseoagent-share-image-remove" <?php echo $share_image ? '' : 'hidden'; ?>><?php esc_html_e( 'Remove', 'thatseoagent' ); ?></button>
+            <p class="description"><?php esc_html_e( 'Shown when the page is shared on Facebook, LinkedIn, WhatsApp or X. Best at 1200 × 630 pixels. Leave empty to use the default sharing image.', 'thatseoagent' ); ?></p>
+        </div>
+
         <?php ThatSeoAgent_Primary_Term::render_fields( $post ); ?>
 
         <div class="thatseoagent-preview">
@@ -171,7 +197,7 @@ class ThatSeoAgent_Meta_Box {
         // Only fields actually present in the submission are touched; a
         // field absent from the form is left as it was.
         $submitted = array();
-        foreach (array('title', 'description', 'noindex') as $field) {
+        foreach (array('title', 'description', 'noindex', 'share_image') as $field) {
             if (isset($_POST['thatseoagent_' . $field])) {
                 // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Passed on raw by design: ThatSeoAgent_Post_Seo::save_from_request() unslashes and sanitizes, and it must receive the still-slashed value to do so correctly. Sanitizing here would double-process it.
                 $submitted[$field] = $_POST['thatseoagent_' . $field];

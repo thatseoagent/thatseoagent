@@ -395,8 +395,8 @@ class ThatSeoAgent_Meta {
     /**
      * The URL of the image the current view is shared with.
      *
-     * @since 2.4.0 Through ThatSeoAgent_Image: the featured image, a
-     *              gallery or content image, the default sharing image,
+     * @since 2.4.0 Through ThatSeoAgent_Image.
+     * @since 2.7.1 The post's sharing image, the default sharing image,
      *              then the theme logo.
      * @return string
      */

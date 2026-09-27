@@ -9,15 +9,20 @@
  * (every ImageObject, logos included). Before
  * 2.4.0 it was the featured image or, failing that, the theme's logo — a
  * small, often transparent picture that previews badly — and the images in
- * the post were never looked at. The chain, first found wins:
+ * the post were never looked at. The chain for sharing, first found wins:
  *
- *     1. the featured image
- *     2. a catalog entry's first gallery image
- *     3. the first image in the content (galleries included)
- *     4. the default sharing image from the site identity
- *     5. the theme's logo
+ *     1. the post's own sharing image, chosen in the SEO meta box
+ *     2. the default sharing image from the site identity
+ *     3. the theme's logo
  *
- * Listings, which have no image of their own, start at 4.
+ * Listings, which have no image of their own, start at 2.
+ *
+ * Since 2.7.1 neither the featured image nor a gallery or content image is
+ * shared: a catalog's featured images are often too small for a preview,
+ * and a theme's decorative images in the content won over the default
+ * sharing image. The schema's primary image still looks for the post's
+ * own, in order: featured image, a catalog entry's first gallery image,
+ * the first image in the content (galleries included).
  *
  * Only images count: an attachment that is not an image file, or whose
  * address is not absolute, is left out wherever it would be used.
@@ -68,7 +73,13 @@ class ThatSeoAgent_Image {
      * @return array{id: int, url: string, width: int, height: int, type: string, alt: string, source: string}|null
      */
     public static function for_post( WP_Post $post, $purpose = 'share' ) {
-        $image = self::own( $post, $purpose );
+        // For sharing, only the image chosen for it stands before the site's.
+        if ( 'share' === $purpose ) {
+            $chosen = (int) ThatSeoAgent_Post_Seo::get( $post, 'share_image' );
+            $image  = $chosen ? self::describe( $chosen, '', $purpose, 'chosen' ) : null;
+        } else {
+            $image = self::own( $post, $purpose );
+        }
 
         return $image ? $image : self::site_image( $purpose );
     }

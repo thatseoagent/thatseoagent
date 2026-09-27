@@ -413,7 +413,7 @@ class ThatSeoAgent_Identity {
         if ( 'logo_id' === $key ) {
             $description = __( "Shown to search engines next to the site's name. Separate from the theme's logo.", 'thatseoagent' );
         } elseif ( 'default_og_image_id' === $key ) {
-            $description = __( 'Used when a page without an image of its own is shared on social media.', 'thatseoagent' );
+            $description = __( 'Used when a page without a sharing image of its own is shared on social media.', 'thatseoagent' );
         }
         ?>
         <div class="thatseoagent-media-field" data-key="<?php echo esc_attr( $key ); ?>">
