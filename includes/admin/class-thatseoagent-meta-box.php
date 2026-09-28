@@ -160,7 +160,7 @@ class ThatSeoAgent_Meta_Box {
                 data-button="<?php esc_attr_e( 'Use this image', 'thatseoagent' ); ?>"
             ><?php esc_html_e( 'Select Image', 'thatseoagent' ); ?></button>
             <button type="button" class="button thatseoagent-share-image-remove" <?php echo $share_image ? '' : 'hidden'; ?>><?php esc_html_e( 'Remove', 'thatseoagent' ); ?></button>
-            <p class="description"><?php esc_html_e( 'Shown when the page is shared on Facebook, LinkedIn, WhatsApp or X. Best at 1200 × 630 pixels. Leave empty to use the default sharing image.', 'thatseoagent' ); ?></p>
+            <p class="description"><?php esc_html_e( 'Shown when the page is shared on Facebook, LinkedIn, WhatsApp or X. Best at 1200 × 630 pixels. Leave empty to use the default sharing image or, without one, the featured image.', 'thatseoagent' ); ?></p>
         </div>
 
         <?php ThatSeoAgent_Primary_Term::render_fields( $post ); ?>

@@ -162,6 +162,11 @@ $observed  = wp_date( get_option( 'date_format' ) . ', ' . get_option( 'time_for
                 empty( ThatSeoAgent_Product::post_types() ) ? __( 'no catalog set up', 'thatseoagent' ) : __( 'as schema.org Product', 'thatseoagent' ),
             ),
         );
+
+        // A shop's products are marked up by WooCommerce, not counted here.
+        if ( ThatSeoAgent_WooCommerce::active() && empty( ThatSeoAgent_Product::post_types() ) ) {
+            array_pop( $readings );
+        }
         ?>
         <dl class="divide-y divide-rule">
             <?php foreach ( $readings as $reading ) : ?>

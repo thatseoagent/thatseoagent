@@ -100,8 +100,8 @@ class ThatSeoAgent_Meta {
             }
         }
 
-        // Article specific: dated content, not pages or catalog entries,
-        // whose publication date tells a reader nothing.
+        // Article specific: dated content, not pages or products, whose
+        // publication date tells a reader nothing.
         if (self::is_dated_article()) {
             echo '<meta property="article:published_time" content="' . esc_attr(get_the_date('c')) . '">' . "\n";
 
@@ -176,15 +176,19 @@ class ThatSeoAgent_Meta {
     /**
      * The og:type of the current view.
      *
-     * `article` for any single page but the front page, `profile` for an
+     * `product` for a catalog entry or a WooCommerce product, `article`
+     * for any other single page but the front page, `profile` for an
      * author's archive, `website` for the rest.
      *
      * @since 2.4.0
+     * @since 2.10.0 `product` for products.
      * @return string
      */
     public static function get_og_type() {
         if (is_front_page() || is_home()) {
             $type = 'website';
+        } elseif (is_singular() && self::is_product(get_queried_object())) {
+            $type = 'product';
         } elseif (is_singular()) {
             $type = 'article';
         } elseif (is_author()) {
@@ -197,7 +201,7 @@ class ThatSeoAgent_Meta {
          * Filter the og:type of the current view.
          *
          * @since 2.4.0
-         * @param string $type    'article', 'profile' or 'website'.
+         * @param string $type    'product', 'article', 'profile' or 'website'.
          * @param string $context Current page context (see get_context()).
          */
         return (string) apply_filters('thatseoagent_og_type', $type, self::get_context());
@@ -205,9 +209,10 @@ class ThatSeoAgent_Meta {
 
     /**
      * Whether the current view is dated content: a single post of a type
-     * that is neither hierarchical (pages) nor a product catalog.
+     * that is neither hierarchical (pages) nor a product.
      *
      * @since 2.4.0
+     * @since 2.10.0 Not WooCommerce's products either.
      * @return bool
      */
     public static function is_dated_article() {
@@ -216,11 +221,24 @@ class ThatSeoAgent_Meta {
         }
 
         $post = get_queried_object();
-        if (! $post instanceof WP_Post || is_post_type_hierarchical($post->post_type) || ThatSeoAgent_Product::is_product($post)) {
+        if (! $post instanceof WP_Post || is_post_type_hierarchical($post->post_type) || self::is_product($post)) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Whether a post is a product: a catalog entry, or a WooCommerce
+     * product.
+     *
+     * @since 2.10.0
+     * @param mixed $post Post object, or the queried object.
+     * @return bool
+     */
+    private static function is_product($post) {
+        return $post instanceof WP_Post
+            && (ThatSeoAgent_Product::is_product($post) || ThatSeoAgent_WooCommerce::is_product($post));
     }
 
     /**

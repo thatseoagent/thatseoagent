@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-27T20:39:33+00:00\n"
+"POT-Creation-Date: 2026-09-28T01:54:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thatseoagent\n"
@@ -32,181 +32,181 @@ msgstr ""
 msgid "Angel Cruz"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:84
-#: includes/admin/class-thatseoagent-app.php:85
+#: includes/admin/class-thatseoagent-app.php:89
+#: includes/admin/class-thatseoagent-app.php:90
 msgid "Overview"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:90
-#: includes/admin/class-thatseoagent-app.php:91
-#: includes/catalog/class-thatseoagent-product-report.php:272
-#: includes/catalog/class-thatseoagent-product-report.php:308
+#: includes/admin/class-thatseoagent-app.php:95
+#: includes/admin/class-thatseoagent-app.php:96
+#: includes/catalog/class-thatseoagent-product-report.php:276
+#: includes/catalog/class-thatseoagent-product-report.php:312
 msgid "Products"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:92
+#: includes/admin/class-thatseoagent-app.php:97
 msgid "How each product in the catalog is described to search engines, and what is missing."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:96
-#: includes/admin/class-thatseoagent-app.php:97
+#: includes/admin/class-thatseoagent-app.php:101
+#: includes/admin/class-thatseoagent-app.php:102
 msgid "Content check"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:98
+#: includes/admin/class-thatseoagent-app.php:103
 msgid "Titles, descriptions, headings, links and images, page by page."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:102
-#: includes/admin/class-thatseoagent-app.php:103
+#: includes/admin/class-thatseoagent-app.php:107
+#: includes/admin/class-thatseoagent-app.php:108
 #: includes/crawlers/class-thatseoagent-ai-crawlers.php:301
 #: includes/crawlers/class-thatseoagent-crawler-access.php:388
 msgid "AI crawlers"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:104
+#: includes/admin/class-thatseoagent-app.php:109
 msgid "Which AI crawlers can read the site right now, and why."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:108
-#: includes/admin/class-thatseoagent-app.php:109
+#: includes/admin/class-thatseoagent-app.php:113
+#: includes/admin/class-thatseoagent-app.php:114
 #: includes/markdown/class-thatseoagent-llms.php:524
 msgid "AI index"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:110
+#: includes/admin/class-thatseoagent-app.php:115
 msgid "llms.txt: the list of your pages that AI assistants can read."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:114
-#: includes/admin/class-thatseoagent-app.php:115
+#: includes/admin/class-thatseoagent-app.php:119
+#: includes/admin/class-thatseoagent-app.php:120
 #: includes/admin/views/llms.php:60
 msgid "Settings"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:116
+#: includes/admin/class-thatseoagent-app.php:121
 msgid "Who the site is, the homepage, the product catalog and integrations."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:248
+#: includes/admin/class-thatseoagent-app.php:259
 #: includes/admin/views/settings.php:139
 msgid "Saving…"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:249
+#: includes/admin/class-thatseoagent-app.php:260
 msgid "Saved. The changes are live."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:250
+#: includes/admin/class-thatseoagent-app.php:261
 msgid "You have unsaved changes."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:251
+#: includes/admin/class-thatseoagent-app.php:262
 msgid "You have unsaved changes. Leave anyway?"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:252
+#: includes/admin/class-thatseoagent-app.php:263
 msgid "The settings were not saved."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:253
+#: includes/admin/class-thatseoagent-app.php:264
 msgid "The IndexNow key was not changed: it must be 8 to 128 letters, numbers or dashes."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:254
+#: includes/admin/class-thatseoagent-app.php:265
 msgid "The edition could not be saved; it will reset on the next visit."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:255
+#: includes/admin/class-thatseoagent-app.php:266
 msgid "The check stopped because of an error."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:256
+#: includes/admin/class-thatseoagent-app.php:267
 msgid "The site could not be reached. Check your connection and try again."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:257
+#: includes/admin/class-thatseoagent-app.php:268
 msgid "llms.txt was rebuilt."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:258
+#: includes/admin/class-thatseoagent-app.php:269
 msgid "llms.txt could not be rebuilt."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:259
+#: includes/admin/class-thatseoagent-app.php:270
 msgid "Access checked."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:260
+#: includes/admin/class-thatseoagent-app.php:271
 msgid "The access check could not run."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:261
+#: includes/admin/class-thatseoagent-app.php:272
 msgid "No answer: the site did not respond to this crawler"
 msgstr ""
 
 #. translators: %d: HTTP status code.
-#: includes/admin/class-thatseoagent-app.php:263
+#: includes/admin/class-thatseoagent-app.php:274
 #, php-format
 msgid "Reached the site (%d)"
 msgstr ""
 
 #. translators: %d: HTTP status code.
-#: includes/admin/class-thatseoagent-app.php:265
+#: includes/admin/class-thatseoagent-app.php:276
 #, php-format
 msgid "Turned away by the server (%d)"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:266
+#: includes/admin/class-thatseoagent-app.php:277
 msgid "Markdown checked."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:267
+#: includes/admin/class-thatseoagent-app.php:278
 msgid "The Markdown check could not run."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:268
+#: includes/admin/class-thatseoagent-app.php:279
 #: includes/crawlers/class-thatseoagent-crawler-access.php:236
 #: includes/crawlers/class-thatseoagent-crawler-access.php:248
 msgid "no answer"
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:269
+#: includes/admin/class-thatseoagent-app.php:280
 msgid "The rule is at the top of .htaccess."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:270
+#: includes/admin/class-thatseoagent-app.php:281
 msgid "The rule was removed from .htaccess."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:271
+#: includes/admin/class-thatseoagent-app.php:282
 msgid ".htaccess was not changed."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:272
+#: includes/admin/class-thatseoagent-app.php:283
 msgid "This server does not apply .htaccess rewrite rules, so here the rule does nothing. The lines are here to paste at the very top of .htaccess on an Apache server, before a page cache that serves from that file."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:273
+#: includes/admin/class-thatseoagent-app.php:284
 msgid "Not in .htaccess. Without a page cache it changes nothing; add it before installing one, and it keeps requests asking for Markdown away from the cached copies."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:274
+#: includes/admin/class-thatseoagent-app.php:285
 msgid "WordPress cannot write to the file: paste the lines at its very top by hand."
 msgstr ""
 
 #. translators: %s: page cache plugin name.
-#: includes/admin/class-thatseoagent-app.php:276
+#: includes/admin/class-thatseoagent-app.php:287
 #, php-format
 msgid "In .htaccess, but below the rules of %s, which run first: write it again to move it to the top."
 msgstr ""
 
-#: includes/admin/class-thatseoagent-app.php:277
+#: includes/admin/class-thatseoagent-app.php:288
 msgid "At the top of .htaccess: requests asking for Markdown reach WordPress before any page cache served from this file."
 msgstr ""
 
 #. translators: 1: view title, 2: site name.
-#: includes/admin/class-thatseoagent-app.php:327
+#: includes/admin/class-thatseoagent-app.php:338
 #, php-format
 msgid "%1$s ‹ %2$s — WordPress"
 msgstr ""
@@ -283,7 +283,7 @@ msgid "Remove"
 msgstr ""
 
 #: includes/admin/class-thatseoagent-meta-box.php:163
-msgid "Shown when the page is shared on Facebook, LinkedIn, WhatsApp or X. Best at 1200 × 630 pixels. Leave empty to use the default sharing image."
+msgid "Shown when the page is shared on Facebook, LinkedIn, WhatsApp or X. Best at 1200 × 630 pixels. Leave empty to use the default sharing image or, without one, the featured image."
 msgstr ""
 
 #: includes/admin/views/audit.php:38
@@ -482,7 +482,7 @@ msgid "View page"
 msgstr ""
 
 #: includes/admin/views/audit.php:164
-#: includes/admin/views/dashboard.php:199
+#: includes/admin/views/dashboard.php:204
 #: includes/admin/views/llms.php:69
 #: includes/admin/views/llms.php:74
 #: includes/admin/views/products.php:207
@@ -764,19 +764,19 @@ msgstr ""
 msgid "as schema.org Product"
 msgstr ""
 
-#: includes/admin/views/dashboard.php:179
+#: includes/admin/views/dashboard.php:184
 msgid "What the site publishes"
 msgstr ""
 
-#: includes/admin/views/dashboard.php:187
+#: includes/admin/views/dashboard.php:192
 msgid "(published)"
 msgstr ""
 
-#: includes/admin/views/dashboard.php:187
+#: includes/admin/views/dashboard.php:192
 msgid "(not published)"
 msgstr ""
 
-#: includes/admin/views/dashboard.php:197
+#: includes/admin/views/dashboard.php:202
 #: includes/crawlers/class-thatseoagent-crawler-access.php:349
 msgid "Open"
 msgstr ""
@@ -918,37 +918,37 @@ msgid "Set up the catalog"
 msgstr ""
 
 #: includes/admin/views/products.php:42
-#: includes/catalog/class-thatseoagent-product-settings.php:60
+#: includes/catalog/class-thatseoagent-product-settings.php:64
 msgid "Brand"
 msgstr ""
 
 #: includes/admin/views/products.php:43
-#: includes/catalog/class-thatseoagent-product-settings.php:64
+#: includes/catalog/class-thatseoagent-product-settings.php:68
 msgid "Category"
 msgstr ""
 
 #: includes/admin/views/products.php:44
-#: includes/catalog/class-thatseoagent-product-settings.php:68
+#: includes/catalog/class-thatseoagent-product-settings.php:72
 msgid "Specifications"
 msgstr ""
 
 #: includes/admin/views/products.php:45
-#: includes/catalog/class-thatseoagent-product-settings.php:72
+#: includes/catalog/class-thatseoagent-product-settings.php:76
 msgid "Gallery"
 msgstr ""
 
 #: includes/admin/views/products.php:46
-#: includes/catalog/class-thatseoagent-product-settings.php:76
+#: includes/catalog/class-thatseoagent-product-settings.php:80
 msgid "SKU"
 msgstr ""
 
 #: includes/admin/views/products.php:47
-#: includes/catalog/class-thatseoagent-product-settings.php:80
+#: includes/catalog/class-thatseoagent-product-settings.php:84
 msgid "MPN"
 msgstr ""
 
 #: includes/admin/views/products.php:48
-#: includes/catalog/class-thatseoagent-product-settings.php:84
+#: includes/catalog/class-thatseoagent-product-settings.php:88
 msgid "GTIN / EAN"
 msgstr ""
 
@@ -1312,40 +1312,44 @@ msgid "Note"
 msgstr ""
 
 #: includes/catalog/class-thatseoagent-product-report.php:272
+msgid "Left to WooCommerce"
+msgstr ""
+
+#: includes/catalog/class-thatseoagent-product-report.php:272
 msgid "No catalog"
 msgstr ""
 
 #. translators: %d: number of products.
-#: includes/catalog/class-thatseoagent-product-report.php:286
+#: includes/catalog/class-thatseoagent-product-report.php:290
 #, php-format
 msgid "%d product is not marked up as a product"
 msgid_plural "%d products are not marked up as products"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/catalog/class-thatseoagent-product-report.php:287
+#: includes/catalog/class-thatseoagent-product-report.php:291
 msgid "Without a title there is no Product markup at all."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-report.php:288
-#: includes/catalog/class-thatseoagent-product-report.php:299
+#: includes/catalog/class-thatseoagent-product-report.php:292
+#: includes/catalog/class-thatseoagent-product-report.php:303
 msgid "See the products"
 msgstr ""
 
 #. translators: %d: number of products.
-#: includes/catalog/class-thatseoagent-product-report.php:297
+#: includes/catalog/class-thatseoagent-product-report.php:301
 #, php-format
 msgid "%d product has gaps in its details"
 msgid_plural "%d products have gaps in their details"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/catalog/class-thatseoagent-product-report.php:298
+#: includes/catalog/class-thatseoagent-product-report.php:302
 msgid "Missing specifications, images or brand make the product harder to find and to compare."
 msgstr ""
 
 #. translators: 1: complete products, 2: all products.
-#: includes/catalog/class-thatseoagent-product-report.php:311
+#: includes/catalog/class-thatseoagent-product-report.php:315
 #, php-format
 msgid "%1$d of %2$d complete"
 msgstr ""
@@ -1359,75 +1363,79 @@ msgstr ""
 msgid "Tick the content type that lists your products. Each one is then described to search engines as a product, with the details below."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-settings.php:44
+#: includes/catalog/class-thatseoagent-product-settings.php:40
+msgid "WooCommerce products are not listed: WooCommerce describes them itself, with their prices. ThatSeoAgent keeps their title, description and sharing image."
+msgstr ""
+
+#: includes/catalog/class-thatseoagent-product-settings.php:48
 msgid "Content types"
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-settings.php:61
+#: includes/catalog/class-thatseoagent-product-settings.php:65
 msgid "Taxonomy whose term is the brand."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-settings.php:65
+#: includes/catalog/class-thatseoagent-product-settings.php:69
 msgid "Taxonomy whose term is the product category."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-settings.php:69
+#: includes/catalog/class-thatseoagent-product-settings.php:73
 msgid "Meta key holding a list of name/value pairs (JSON or array)."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-settings.php:73
+#: includes/catalog/class-thatseoagent-product-settings.php:77
 msgid "Meta key holding image IDs, added after the featured image."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-settings.php:77
+#: includes/catalog/class-thatseoagent-product-settings.php:81
 msgid "Meta key holding your own product code."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-settings.php:81
+#: includes/catalog/class-thatseoagent-product-settings.php:85
 msgid "Meta key holding the manufacturer's part number or model."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-settings.php:85
+#: includes/catalog/class-thatseoagent-product-settings.php:89
 msgid "Meta key holding the barcode number. Invalid values are left out."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product-settings.php:144
+#: includes/catalog/class-thatseoagent-product-settings.php:148
 msgid "— None —"
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product.php:461
+#: includes/catalog/class-thatseoagent-product.php:471
 msgid "The product has no title, so no Product schema is output."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product.php:481
+#: includes/catalog/class-thatseoagent-product.php:491
 msgid "No description: add an excerpt, content or a meta description."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product.php:497
+#: includes/catalog/class-thatseoagent-product.php:507
 msgid "No brand assigned."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product.php:507
+#: includes/catalog/class-thatseoagent-product.php:517
 msgid "No category assigned."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product.php:536
+#: includes/catalog/class-thatseoagent-product.php:546
 msgid "No specifications could be read."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product.php:543
+#: includes/catalog/class-thatseoagent-product.php:553
 msgid "Some specifications have an empty name or value and were left out."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product.php:567
+#: includes/catalog/class-thatseoagent-product.php:577
 msgid "The GTIN is not 8, 12, 13 or 14 digits with a valid check digit, so it was left out."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product.php:594
+#: includes/catalog/class-thatseoagent-product.php:604
 msgid "No featured image. Google recommends an image for every product."
 msgstr ""
 
-#: includes/catalog/class-thatseoagent-product.php:598
+#: includes/catalog/class-thatseoagent-product.php:608
 msgid "Some images are not image files or have no absolute URL, and were left out."
 msgstr ""
 
@@ -1689,19 +1697,19 @@ msgid "Where the current page sits in the site, as the search results show it."
 msgstr ""
 
 #. translators: 1: post type plural label, e.g. "Products", 2: site name.
-#: includes/head/class-thatseoagent-meta.php:369
+#: includes/head/class-thatseoagent-meta.php:387
 #, php-format
 msgid "Browse all %1$s on %2$s"
 msgstr ""
 
 #. translators: 1: search terms, 2: site name.
-#: includes/head/class-thatseoagent-meta.php:382
+#: includes/head/class-thatseoagent-meta.php:400
 #, php-format
 msgid "Search results for \"%1$s\" on %2$s"
 msgstr ""
 
 #. translators: 1: author name, 2: site name.
-#: includes/head/class-thatseoagent-meta.php:389
+#: includes/head/class-thatseoagent-meta.php:407
 #, php-format
 msgid "Posts by %1$s on %2$s"
 msgstr ""
@@ -2444,18 +2452,18 @@ msgid "Missing"
 msgstr ""
 
 #. translators: %s: content type names, e.g. "Machines and Parts".
-#: includes/site/class-thatseoagent-new-types.php:154
+#: includes/site/class-thatseoagent-new-types.php:156
 #, php-format
 msgid "A new content type is being published: %s"
 msgid_plural "New content types are being published: %s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/site/class-thatseoagent-new-types.php:155
+#: includes/site/class-thatseoagent-new-types.php:157
 msgid "Its pages are already in the sitemap and have SEO fields. If they list products — machines, parts, models — mark it as a product catalog so each one is described as a product."
 msgstr ""
 
-#: includes/site/class-thatseoagent-new-types.php:156
+#: includes/site/class-thatseoagent-new-types.php:158
 msgid "Review it"
 msgstr ""
 

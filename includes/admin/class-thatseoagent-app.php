@@ -75,11 +75,16 @@ class ThatSeoAgent_App {
     /**
      * The sections of the screen, in navigation order.
      *
+     * No Products while WooCommerce is active and no other content type is
+     * a catalog: WooCommerce marks its products up, and there is nothing
+     * for the report to read.
+     *
      * @since 1.17.0
+     * @since 2.10.0 Without Products on a shop with no catalog.
      * @return array<string, array{label: string, title: string, subtitle: string, icon: string}>
      */
     public static function views() {
-        return array(
+        $views = array(
             'dashboard' => array(
                 'label'    => __( 'Overview', 'thatseoagent' ),
                 'title'    => __( 'Overview', 'thatseoagent' ),
@@ -117,6 +122,12 @@ class ThatSeoAgent_App {
                 'icon'     => 'settings',
             ),
         );
+
+        if ( ThatSeoAgent_WooCommerce::active() && ! ThatSeoAgent_Product::post_types() ) {
+            unset( $views['products'] );
+        }
+
+        return $views;
     }
 
     /**

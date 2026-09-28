@@ -59,17 +59,22 @@ class ThatSeoAgent_Schema {
     /**
      * The JSON-LD graph of a post's own page, as its head prints it, from
      * anywhere: the site's nodes, the WebPage, the Product or the Article
-     * with its author and FAQ, and the BreadcrumbList.
+     * with its author and FAQ, and the BreadcrumbList — unless WooCommerce
+     * states that one (ThatSeoAgent_WooCommerce).
      *
      * @since 2.7.0 From output().
+     * @since 2.10.0 No BreadcrumbList where WooCommerce states one.
      * @param WP_Post $post Post.
      * @return array<int, array> The @graph's nodes.
      */
     public static function for_post(WP_Post $post) {
         $graph = self::site_nodes();
 
-        // Built first: the WebPage node points at it.
-        $breadcrumb = self::get_breadcrumb_schema(ThatSeoAgent_Breadcrumbs::for_post($post), get_permalink($post), $post);
+        // Built first: the WebPage node points at it. None where
+        // WooCommerce states its own.
+        $breadcrumb = ThatSeoAgent_WooCommerce::states_breadcrumbs($post)
+            ? null
+            : self::get_breadcrumb_schema(ThatSeoAgent_Breadcrumbs::for_post($post), get_permalink($post), $post);
 
         // A catalog entry is a Product, and the page is about it. Not an
         // Article as well, even when its post type is listed as one: a
@@ -97,13 +102,17 @@ class ThatSeoAgent_Schema {
      * The graph of a listing: an archive, the blog, or an author's page.
      *
      * @since 2.7.0 From output().
+     * @since 2.10.0 No BreadcrumbList on the shop and the product archives
+     *               while WooCommerce states one.
      * @param string $type 'CollectionPage' or 'ProfilePage'.
      * @return array<int, array>
      */
     private static function listing_graph($type) {
         $graph      = self::site_nodes();
         $url        = self::current_url();
-        $breadcrumb = self::get_breadcrumb_schema(ThatSeoAgent_Breadcrumbs::trail(), $url, null);
+        $breadcrumb = ThatSeoAgent_WooCommerce::states_breadcrumbs()
+            ? null
+            : self::get_breadcrumb_schema(ThatSeoAgent_Breadcrumbs::trail(), $url, null);
         $person     = 'ProfilePage' === $type ? self::get_author_person_schema(get_queried_object_id()) : null;
 
         $graph[] = self::get_listing_page_schema($type, $breadcrumb, $person ? $person['@id'] : '');

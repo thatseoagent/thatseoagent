@@ -3278,11 +3278,12 @@ msgstr "Usar esta imagen"
 #: includes/admin/class-thatseoagent-meta-box.php:163
 msgid ""
 "Shown when the page is shared on Facebook, LinkedIn, WhatsApp or X. Best at "
-"1200 × 630 pixels. Leave empty to use the default sharing image."
+"1200 × 630 pixels. Leave empty to use the default sharing image or, without "
+"one, the featured image."
 msgstr ""
 "Se muestra al compartir la página en Facebook, LinkedIn, WhatsApp o X. Mejor "
 "a 1200 × 630 píxeles. Dejala vacía para usar la imagen para compartir por "
-"defecto."
+"defecto o, si no hay, la imagen destacada."
 
 #. translators: 1: term name, e.g. "Bristol", 2: site name.
 #: includes/content/class-thatseoagent-term-seo.php:218
@@ -3894,3 +3895,16 @@ msgstr "Ese ajuste no existe."
 #, php-format
 msgid "%s expects an object with the keys to change."
 msgstr "%s espera un objeto con las claves a cambiar."
+
+#: includes/catalog/class-thatseoagent-product-report.php:272
+msgid "Left to WooCommerce"
+msgstr "A cargo de WooCommerce"
+
+#: includes/catalog/class-thatseoagent-product-settings.php:40
+msgid ""
+"WooCommerce products are not listed: WooCommerce describes them itself, with "
+"their prices. ThatSeoAgent keeps their title, description and sharing image."
+msgstr ""
+"Los productos de WooCommerce no aparecen: WooCommerce los describe por su "
+"cuenta, con sus precios. ThatSeoAgent mantiene su título, su descripción y su "
+"imagen para compartir."

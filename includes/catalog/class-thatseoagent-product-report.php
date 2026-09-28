@@ -260,16 +260,20 @@ class ThatSeoAgent_Product_Report {
     /**
      * This module's part of the bulletin: how complete the catalog is. A
      * site without one is not doing anything wrong, so it is an
-     * observation, never a warning.
+     * observation, never a warning. A shop's products are WooCommerce's to
+     * mark up.
      *
      * @since 2.7.0 Moved from ThatSeoAgent_Bulletin::compose().
+     * @since 2.10.0 Says when WooCommerce marks the products up.
      * @return array{observations: array, warnings: array}
      */
     public static function bulletin() {
         if ( empty( ThatSeoAgent_Product::post_types() ) ) {
+            $value = ThatSeoAgent_WooCommerce::active() ? __( 'Left to WooCommerce', 'thatseoagent' ) : __( 'No catalog', 'thatseoagent' );
+
             return array(
                 'observations' => array(
-                    ThatSeoAgent_Bulletin::observation( 'products', __( 'Products', 'thatseoagent' ), 'off', __( 'No catalog', 'thatseoagent' ) ),
+                    ThatSeoAgent_Bulletin::observation( 'products', __( 'Products', 'thatseoagent' ), 'off', $value ),
                 ),
                 'warnings'     => array(),
             );

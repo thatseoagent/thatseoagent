@@ -1,5 +1,30 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- **WooCommerce marks up its own products.** WooCommerce prints a Product
+  with its offers, and a BreadcrumbList, in its own JSON-LD; ThatSeoAgent
+  keeps the title, the description and the sharing image, and leaves the
+  rest to it (`ThatSeoAgent_WooCommerce`). While WooCommerce is active:
+  - its product types cannot be a catalog: they are no longer offered in
+    Settings → Product catalog, a saved mapping of them is ignored, and the
+    bulletin never asks whether they list products. With no other catalog,
+    the Products screen and the "Products marked up" reading are gone,
+    `/catalog.jsonl` is not served and the bulletin reads "Left to
+    WooCommerce".
+  - the graph has no BreadcrumbList on products, the shop page and the
+    product category, tag and brand archives, where WooCommerce states
+    one. The visible breadcrumbs stay. A theme that prints no WooCommerce
+    breadcrumbs can keep ThatSeoAgent's with the new
+    `thatseoagent_woocommerce_states_breadcrumbs` filter.
+- **`og:type` is `product`** on catalog entries and WooCommerce products,
+  which no longer get `article:*` or `og:pin:*` tags either.
+- **The featured image is shared again**, after the sharing image chosen
+  for the post and the default sharing image, before the theme logo. A
+  post with neither of the first two was shared with the logo, or with no
+  image at all — a product without its photo.
+
 ## [2.9.0] - 2026-09-27
 
 ### Added

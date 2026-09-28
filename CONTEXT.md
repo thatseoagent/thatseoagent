@@ -107,7 +107,7 @@ _Avoid_: path, navigation
 ### Product catalogs
 
 **Catalog**:
-A content type marked as listing products, with or without prices. Each of its published posts is a **catalog entry**.
+A content type marked as listing products, with or without prices. Each of its published posts is a **catalog entry**. WooCommerce's products are never one: WooCommerce marks them up itself.
 _Avoid_: shop, store, product post type
 
 **Mapping**:

@@ -108,12 +108,16 @@ class ThatSeoAgent_Product {
     }
 
     /**
-     * The saved configuration, limited to post types that still exist.
+     * The saved configuration, limited to post types that still exist and
+     * that WooCommerce does not mark up itself.
      *
      * A theme switch can unregister the catalog's post type; its settings are
      * kept, so switching back restores them, but they do nothing meanwhile.
+     * The same goes for WooCommerce's products while WooCommerce is active:
+     * it prints their Product, and a second one would compete with it.
      *
      * @since 1.16.0
+     * @since 2.10.0 Without WooCommerce's product types.
      * @return array<string, array<string, string>>
      */
     public static function config() {
@@ -122,10 +126,11 @@ class ThatSeoAgent_Product {
             return array();
         }
 
-        $config = array();
+        $config   = array();
+        $excluded = ThatSeoAgent_WooCommerce::post_types();
 
         foreach ( $saved as $post_type => $mapping ) {
-            if ( ! post_type_exists( $post_type ) || ! is_array( $mapping ) ) {
+            if ( ! post_type_exists( $post_type ) || ! is_array( $mapping ) || in_array( $post_type, $excluded, true ) ) {
                 continue;
             }
 
@@ -172,9 +177,10 @@ class ThatSeoAgent_Product {
      *
      * Every public post type with an editing screen, whoever registered it —
      * a theme, a plugin or code in functions.php. Attachments are not
-     * content.
+     * content, and WooCommerce's products are marked up by WooCommerce.
      *
      * @since 1.16.0
+     * @since 2.10.0 Without WooCommerce's product types.
      * @return array<string, WP_Post_Type>
      */
     public static function candidate_post_types() {
@@ -187,6 +193,10 @@ class ThatSeoAgent_Product {
         );
 
         unset( $post_types['attachment'] );
+
+        foreach ( ThatSeoAgent_WooCommerce::post_types() as $post_type ) {
+            unset( $post_types[ $post_type ] );
+        }
 
         return $post_types;
     }

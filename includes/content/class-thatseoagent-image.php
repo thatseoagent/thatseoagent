@@ -13,16 +13,20 @@
  *
  *     1. the post's own sharing image, chosen in the SEO meta box
  *     2. the default sharing image from the site identity
- *     3. the theme's logo
+ *     3. the post's featured image
+ *     4. the theme's logo
  *
- * Listings, which have no image of their own, start at 2.
+ * Listings, which have no image of their own, skip 1 and 3.
  *
- * Since 2.7.1 neither the featured image nor a gallery or content image is
- * shared: a catalog's featured images are often too small for a preview,
- * and a theme's decorative images in the content won over the default
- * sharing image. The schema's primary image still looks for the post's
- * own, in order: featured image, a catalog entry's first gallery image,
- * the first image in the content (galleries included).
+ * The default sharing image stands before the featured image: a catalog's
+ * featured images are often too small for a preview, and the site owner
+ * who set a default chose it for sharing. Since 2.10.0 a post without
+ * either is shared with its featured image rather than the logo — a
+ * product with its photo. Gallery and content images are never shared:
+ * a theme's decorative images in the content would win. The schema's
+ * primary image still looks for the post's own, in order: featured image,
+ * a catalog entry's first gallery image, the first image in the content
+ * (galleries included).
  *
  * Only images count: an attachment that is not an image file, or whose
  * address is not absolute, is left out wherever it would be used.
@@ -73,15 +77,26 @@ class ThatSeoAgent_Image {
      * @return array{id: int, url: string, width: int, height: int, type: string, alt: string, source: string}|null
      */
     public static function for_post( WP_Post $post, $purpose = 'share' ) {
-        // For sharing, only the image chosen for it stands before the site's.
-        if ( 'share' === $purpose ) {
-            $chosen = (int) ThatSeoAgent_Post_Seo::get( $post, 'share_image' );
-            $image  = $chosen ? self::describe( $chosen, '', $purpose, 'chosen' ) : null;
-        } else {
+        if ( 'share' !== $purpose ) {
             $image = self::own( $post, $purpose );
+
+            return $image ? $image : self::site_image( $purpose );
         }
 
-        return $image ? $image : self::site_image( $purpose );
+        // For sharing: the image chosen for it, the site's default, the
+        // featured image, the logo.
+        $chosen   = (int) ThatSeoAgent_Post_Seo::get( $post, 'share_image' );
+        $featured = (int) get_post_thumbnail_id( $post );
+
+        $image = $chosen ? self::describe( $chosen, '', $purpose, 'chosen' ) : null;
+        if ( ! $image ) {
+            $image = self::default_image( $purpose );
+        }
+        if ( ! $image && $featured ) {
+            $image = self::describe( $featured, '', $purpose, 'featured' );
+        }
+
+        return $image ? $image : self::logo( $purpose );
     }
 
     /**
@@ -259,6 +274,19 @@ class ThatSeoAgent_Image {
      * @return array|null
      */
     private static function site_image( $purpose ) {
+        $image = self::default_image( $purpose );
+
+        return $image ? $image : self::logo( $purpose );
+    }
+
+    /**
+     * The default sharing image: the site identity's, or the filter's.
+     *
+     * @since 2.10.0 Split from site_image().
+     * @param string $purpose 'share' or 'schema'.
+     * @return array|null
+     */
+    private static function default_image( $purpose ) {
         $identity = ThatSeoAgent_Identity::get_settings();
 
         if ( ! empty( $identity['default_og_image_id'] ) ) {
@@ -271,17 +299,27 @@ class ThatSeoAgent_Image {
         /**
          * Filter the image used when a page has none of its own.
          *
-         * Runs after the default sharing image of the site identity and
-         * before the theme logo. Return a URL to use it.
+         * Runs after the default sharing image of the site identity, and
+         * before a post's featured image and the theme logo. Return a URL
+         * to use it.
          *
          * @since 1.5.0
+         * @since 2.10.0 Before the featured image.
          * @param string $url Default ''.
          */
         $url = (string) apply_filters( 'thatseoagent_default_image', '' );
-        if ( '' !== $url ) {
-            return self::describe( (int) attachment_url_to_postid( $url ), $url, $purpose, 'default' );
-        }
 
+        return '' !== $url ? self::describe( (int) attachment_url_to_postid( $url ), $url, $purpose, 'default' ) : null;
+    }
+
+    /**
+     * The theme's logo.
+     *
+     * @since 2.10.0 Split from site_image().
+     * @param string $purpose 'share' or 'schema'.
+     * @return array|null
+     */
+    private static function logo( $purpose ) {
         $logo = (int) get_theme_mod( 'custom_logo' );
 
         return $logo ? self::describe( $logo, '', $purpose, 'logo' ) : null;

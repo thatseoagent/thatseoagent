@@ -45,14 +45,13 @@ The title follows the same order — the homepage's own, the SEO title, then the
 
 `ThatSeoAgent_Image` picks it, first found wins:
 
-1. the featured image
-2. a catalog entry's first gallery image
-3. the first image in the content (galleries included)
-4. the default sharing image (ThatSeoAgent → Settings → Identity)
-5. the `thatseoagent_default_image` filter
-6. the theme logo
+1. the sharing image chosen in the post's SEO fields
+2. the default sharing image (ThatSeoAgent → Settings → Identity)
+3. the `thatseoagent_default_image` filter
+4. the featured image
+5. the theme logo
 
-Listings start at 4. For sharing, the largest size under 2 MB is used (filter `thatseoagent_og_image_size` to force one), with its width, height, type and alt text. The schema's primary image uses the post's own images only.
+Listings skip 1 and 4. Gallery and content images are never shared. For sharing, the largest size under 2 MB is used (filter `thatseoagent_og_image_size` to force one), with its width, height, type and alt text. The schema's primary image uses the post's own images only.
 
 ### Default Fallback Image
 
@@ -94,6 +93,11 @@ For posts and pages, you can customize the SEO title and description using the "
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2024-01-15T10:00:00+00:00">
 <meta property="article:modified_time" content="2024-01-20T15:30:00+00:00">
+```
+
+**Product meta tags** (a catalog entry or a WooCommerce product): `og:type` is `product`, and no `article:*` tags, as the publication date of a product tells a reader nothing.
+```html
+<meta property="og:type" content="product">
 ```
 
 ## Technical Details

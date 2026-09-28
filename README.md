@@ -20,6 +20,8 @@ wp plugin activate thatseoagent
 
 Activate and it works; the defaults need no configuration. Settings — site identity, homepage, product catalogs, llms.txt, IndexNow — live in their own **ThatSeoAgent** admin menu.
 
+With WooCommerce active, WooCommerce marks up its products — the Product with its prices, and the BreadcrumbList of the shop's pages — and ThatSeoAgent keeps their title, description and sharing image. WooCommerce's products are never a product catalog.
+
 While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPress, The SEO Framework, Squirrly), ThatSeoAgent outputs nothing in `<head>`, serves no sitemaps or llms.txt and leaves robots.txt alone, so the two never duplicate each other's tags. Import that plugin's data with `wp thatseoagent import`, then deactivate it.
 
 ## Features
@@ -92,7 +94,7 @@ See [docs/markdown](docs/markdown/) for the details.
 
 ## Product catalogs
 
-A catalog without WooCommerce — machinery, parts, a range of models — is usually a custom post type with its own taxonomies and meta. Under **ThatSeoAgent → Settings → Product catalogs**, every active public post type is listed; tick the catalog and map its fields:
+A catalog without WooCommerce — machinery, parts, a range of models — is usually a custom post type with its own taxonomies and meta. Under **ThatSeoAgent → Settings → Product catalogs**, every active public post type is listed — but WooCommerce's products, which WooCommerce marks up itself; tick the catalog and map its fields:
 
 | Field | Source | Schema |
 |-------|--------|--------|
@@ -199,6 +201,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Site_Abilities` | Abilities API registration: settings and site reports |
 | | `ThatSeoAgent_Importer` | Import from Yoast SEO, Rank Math, All in One SEO |
 | `integrations/` | `ThatSeoAgent_Compat` | Stepping aside while another SEO plugin is active |
+| | `ThatSeoAgent_WooCommerce` | What WooCommerce marks up itself: its products and their breadcrumbs |
 | | `ThatSeoAgent_IndexNow` | IndexNow key, verification file and submission |
 | | `ThatSeoAgent_MCP` | The plugin's own MCP server, when MCP Adapter is active |
 
@@ -252,7 +255,7 @@ Both FAQ opt-ins are off by default: they synthesise questions that do not appea
 
 **Other SEO plugins and llms.txt**
 
-`thatseoagent_other_seo_plugin` (return `''` to keep ThatSeoAgent's output on) · `thatseoagent_ai_crawlers` (the known crawlers and their groups) · `thatseoagent_llms_txt_post_types` · `thatseoagent_llms_txt_limit` · `thatseoagent_llms_txt`
+`thatseoagent_other_seo_plugin` (return `''` to keep ThatSeoAgent's output on) · `thatseoagent_woocommerce_states_breadcrumbs` (return `false` to keep ThatSeoAgent's BreadcrumbList on WooCommerce's pages, for a theme that prints none) · `thatseoagent_ai_crawlers` (the known crawlers and their groups) · `thatseoagent_llms_txt_post_types` · `thatseoagent_llms_txt_limit` · `thatseoagent_llms_txt`
 
 **Markdown**
 

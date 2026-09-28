@@ -65,9 +65,11 @@ class ThatSeoAgent_New_Types {
     /**
      * The types nobody has looked at yet, with their names.
      *
-     * The first call records what exists and returns nothing.
+     * The first call records what exists and returns nothing. WooCommerce's
+     * products are never asked about: they cannot be a catalog.
      *
      * @since 2.5.0
+     * @since 2.10.0 Without WooCommerce's product types.
      * @return array<int, array{name: string, label: string}>
      */
     public static function unreviewed() {
@@ -79,7 +81,7 @@ class ThatSeoAgent_New_Types {
         }
 
         $new = array();
-        foreach ( array_diff( self::current(), $known, ThatSeoAgent_Product::post_types() ) as $type ) {
+        foreach ( array_diff( self::current(), $known, ThatSeoAgent_Product::post_types(), ThatSeoAgent_WooCommerce::post_types() ) as $type ) {
             $object = get_post_type_object( $type );
             $new[]  = array(
                 'name'  => $type,

@@ -35,6 +35,10 @@ class ThatSeoAgent_Product_Settings {
             __( 'Product catalog', 'thatseoagent' ),
             function () {
                 echo '<p>' . esc_html__( 'Tick the content type that lists your products. Each one is then described to search engines as a product, with the details below.', 'thatseoagent' ) . '</p>';
+
+                if ( ThatSeoAgent_WooCommerce::active() ) {
+                    echo '<p>' . esc_html__( 'WooCommerce products are not listed: WooCommerce describes them itself, with their prices. ThatSeoAgent keeps their title, description and sharing image.', 'thatseoagent' ) . '</p>';
+                }
             },
             ThatSeoAgent_Settings::GROUP
         );
