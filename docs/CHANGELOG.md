@@ -1,6 +1,13 @@
 # Changelog
 
-## [Unreleased]
+## [2.10.0] - 2026-09-28
+
+### Added
+- **The bulletin on the WordPress dashboard** (`ThatSeoAgent_Dashboard_Widget`):
+  the headline in a core notice coloured by the warning level, the three most
+  serious warnings with a link to where each is fixed, how many more there
+  are, and a link to the whole bulletin. For administrators only, in the
+  admin's own markup.
 
 ### Changed
 - **WooCommerce marks up its own products.** WooCommerce prints a Product
@@ -20,10 +27,13 @@
     `thatseoagent_woocommerce_states_breadcrumbs` filter.
 - **`og:type` is `product`** on catalog entries and WooCommerce products,
   which no longer get `article:*` or `og:pin:*` tags either.
+- **Clearer wording** across the screen, the meta box and the bulletin:
+  no dashes as connectors, no title case on field labels, no emoji in the
+  meta box title. The bulletin's summary is translated into Spanish, which it was not.
 - **The featured image is shared again**, after the sharing image chosen
   for the post and the default sharing image, before the theme logo. A
   post with neither of the first two was shared with the logo, or with no
-  image at all — a product without its photo.
+  image at all: a product without its photo.
 
 ## [2.9.0] - 2026-09-27
 

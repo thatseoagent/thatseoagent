@@ -172,7 +172,7 @@ class ThatSeoAgent_Bulletin {
         $level = $warnings ? $warnings[0]['level'] : 'clear';
 
         $headlines = array(
-            'clear'  => __( 'Clear. Nothing needs you right now.', 'thatseoagent' ),
+            'clear'  => __( 'Nothing needs your attention right now.', 'thatseoagent' ),
             'yellow' => __( 'Mostly fine, with room to do better.', 'thatseoagent' ),
             'orange' => __( 'Something is holding the site back.', 'thatseoagent' ),
             'red'    => __( 'Search engines cannot see this site properly.', 'thatseoagent' ),
@@ -181,7 +181,7 @@ class ThatSeoAgent_Bulletin {
         if ( $warnings ) {
             $summary_text = count( $warnings ) > 1
                 /* translators: 1: the most serious warning, 2: number of other warnings. */
-                ? sprintf( _n( '%1$s — and %2$d more below.', '%1$s — and %2$d more below.', count( $warnings ) - 1, 'thatseoagent' ), $warnings[0]['title'], count( $warnings ) - 1 )
+                ? sprintf( _n( '%1$s (and %2$d more below).', '%1$s (and %2$d more below).', count( $warnings ) - 1, 'thatseoagent' ), $warnings[0]['title'], count( $warnings ) - 1 )
                 : $warnings[0]['title'] . '.';
         } else {
             $summary_text = __( 'Every check passed. The meta tags, schema and sitemaps are being published as they should.', 'thatseoagent' );

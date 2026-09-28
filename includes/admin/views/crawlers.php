@@ -156,7 +156,7 @@ foreach ( $diagnosis['bots'] as $token => $bot ) {
                             </td>
                             <td class="col-span-2 md:py-3">
                                 <?php if ( ! $bot['fetches'] ) : ?>
-                                    <span class="text-[13px] text-ink-3"><?php esc_html_e( 'A robots.txt token only; it never visits', 'thatseoagent' ); ?></span>
+                                    <span class="text-[13px] text-ink-3"><?php esc_html_e( 'Only a name for robots.txt rules; no crawler visits with it', 'thatseoagent' ); ?></span>
                                 <?php else : ?>
                                     <span class="text-[13px] text-ink-3" x-show="! results"><?php esc_html_e( 'Not checked', 'thatseoagent' ); ?></span>
                                     <span class="text-[13px]" x-cloak x-show="results" :class="{ 'font-semibold text-ink': results && results[<?php echo esc_attr( wp_json_encode( $token ) ); ?>] && ! results[<?php echo esc_attr( wp_json_encode( $token ) ); ?>].reached, 'text-ink-2': ! results || ! results[<?php echo esc_attr( wp_json_encode( $token ) ); ?>] || results[<?php echo esc_attr( wp_json_encode( $token ) ); ?>].reached }" x-text="describe(<?php echo esc_attr( wp_json_encode( $token ) ); ?>)"></span>

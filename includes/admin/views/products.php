@@ -18,7 +18,7 @@ if ( empty( $config ) ) :
     ?>
     <section class="max-w-[40rem] py-6">
         <h2 class="text-[20px] font-bold text-ink"><?php esc_html_e( 'No product catalog yet', 'thatseoagent' ); ?></h2>
-        <p class="mt-2 text-[15px] text-ink-2"><?php esc_html_e( 'If the site lists products — machines, parts, models — they can be described to search engines as products, with their brand, category and specifications, instead of as plain pages.', 'thatseoagent' ); ?></p>
+        <p class="mt-2 text-[15px] text-ink-2"><?php esc_html_e( 'If the site lists products, such as machines, parts or models, they can be described to search engines as products, with their brand, category and specifications, instead of as plain pages.', 'thatseoagent' ); ?></p>
         <p class="mt-2 text-[15px] text-ink-2"><?php esc_html_e( 'Pick the content type that holds them; ThatSeoAgent suggests where each detail is stored.', 'thatseoagent' ); ?></p>
         <a href="<?php echo esc_url( $settings ); ?>" class="tsa-press mt-6">
             <?php esc_html_e( 'Set up the catalog', 'thatseoagent' ); ?>

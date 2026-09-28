@@ -154,7 +154,7 @@ class ThatSeoAgent_New_Types {
                 'yellow',
                 /* translators: %s: content type names, e.g. "Machines and Parts". */
                 sprintf( _n( 'A new content type is being published: %s', 'New content types are being published: %s', count( $new_types ), 'thatseoagent' ), wp_sprintf_l( '%l', $names ) ),
-                __( 'Its pages are already in the sitemap and have SEO fields. If they list products — machines, parts, models — mark it as a product catalog so each one is described as a product.', 'thatseoagent' ),
+                __( 'Its pages are already in the sitemap and have SEO fields. If they list products, such as machines, parts or models, mark it as a product catalog so each one is described as a product.', 'thatseoagent' ),
                 __( 'Review it', 'thatseoagent' ),
                 'review_types'
             );

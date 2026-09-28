@@ -30,6 +30,7 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 - **XML sitemaps** — auto-generated and paginated at 1000 URLs per file, without the posts kept out of search or protected by a password
 - **Robots meta** — `noindex` on search results, 404 pages and private posts, largest image and text previews everywhere else, through core's `wp_robots`
 - **Schema/JSON-LD** — WebSite, Organization *or* Person, Article with its author as a Person (with a job title and profiles elsewhere, from two fields the plugin adds to the user profile), WebPage, CollectionPage, ProfilePage, BreadcrumbList, FAQPage (from question headings and Details blocks)
+- **Dashboard widget** — the bulletin's headline, on the colour of its level, and its three most serious warnings on the WordPress dashboard, for administrators, in the admin's own markup
 - **Admin screen** — a site bulletin: whether the site is fine in one sentence, on the color of its warning level, the warnings in force and what to do about each; plus the product report, llms.txt and settings
 - **Product catalogs** — mark a custom post type as a catalog and map its brand, category, specifications and gallery; each entry becomes a validated schema.org Product
 - **Breadcrumbs** — the trail the schema states, for a theme to print with `thatseoagent_breadcrumbs()`, `[thatseoagent_breadcrumbs]` or the Breadcrumbs block; accessible markup, no styles
@@ -192,6 +193,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Icons` | The screen's inline SVG icons |
 | | `ThatSeoAgent_Meta_Box` | The SEO fields in the post editor |
 | | `ThatSeoAgent_Bulk_Descriptions` | The "Generate meta description" bulk action |
+| | `ThatSeoAgent_Dashboard_Widget` | The bulletin on the WordPress dashboard |
 | | `views/` | The screen's templates |
 | `rest/` | `ThatSeoAgent_REST` | Registers the screen's controllers (`thatseoagent/v1`) |
 | | `ThatSeoAgent_REST_Controller` | Shared by every controller: namespace, permission, uncached responses |

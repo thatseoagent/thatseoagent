@@ -428,7 +428,7 @@ class ThatSeoAgent_Identity {
                     <img src="<?php echo esc_url( $preview_url ); ?>" alt="" style="max-width: 150px; height: auto; border: 1px solid #ccd0d4; padding: 4px; background: #fff;">
                 <?php endif; ?>
             </div>
-            <button type="button" class="button thatseoagent-media-select"><?php esc_html_e( 'Select Image', 'thatseoagent' ); ?></button>
+            <button type="button" class="button thatseoagent-media-select"><?php esc_html_e( 'Select image', 'thatseoagent' ); ?></button>
             <button type="button" class="button thatseoagent-media-remove" <?php echo $attachment_id ? '' : 'style="display:none;"'; ?>><?php esc_html_e( 'Remove', 'thatseoagent' ); ?></button>
             <?php if ( $description ) : ?>
                 <p class="description"><?php echo esc_html( $description ); ?></p>
@@ -533,7 +533,7 @@ class ThatSeoAgent_Identity {
         e.preventDefault();
         var $wrap = $( this ).closest( '.thatseoagent-media-field' );
         var frame = wp.media( {
-            title: 'Select Image',
+            title: 'Select image',
             button: { text: 'Use this image' },
             multiple: false,
             library: { type: 'image' }

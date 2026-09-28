@@ -14,7 +14,7 @@
  *     audit/         the SEO audit and the batched content check
  *     crawlers/      AI crawlers: the rules and who can read the site
  *     bulletin/      the site's state: the bulletin and the readings
- *     admin/         the ThatSeoAgent screen, the meta box, the bulk action
+ *     admin/         the ThatSeoAgent screen, the meta box, the bulk action, the dashboard widget
  *     rest/          the screen's REST controllers (thatseoagent/v1)
  *     tooling/       WP-CLI, the Abilities API, the importer
  *     integrations/  other SEO plugins, WooCommerce, IndexNow, analytics and tags, MCP
@@ -104,6 +104,7 @@ spl_autoload_register(
 
         'ThatSeoAgent_App'               => 'admin/class-thatseoagent-app.php',
         'ThatSeoAgent_Bulk_Descriptions' => 'admin/class-thatseoagent-bulk-descriptions.php',
+        'ThatSeoAgent_Dashboard_Widget'  => 'admin/class-thatseoagent-dashboard-widget.php',
         'ThatSeoAgent_Icons'             => 'admin/class-thatseoagent-icons.php',
         'ThatSeoAgent_Meta_Box'          => 'admin/class-thatseoagent-meta-box.php',
 

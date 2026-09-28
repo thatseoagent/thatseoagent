@@ -37,7 +37,7 @@ class ThatSeoAgent_Meta_Box {
         
         add_meta_box(
             'thatseoagent_meta',
-            __( '🔍 SEO Settings', 'thatseoagent' ),
+            __( 'SEO', 'thatseoagent' ),
             array(__CLASS__, 'render'),
             $post_types,
             'normal',
@@ -96,7 +96,7 @@ class ThatSeoAgent_Meta_Box {
         ?>
         <div class="thatseoagent-field">
             <label for="thatseoagent_title">
-                <?php esc_html_e( 'SEO Title', 'thatseoagent' ); ?>
+                <?php esc_html_e( 'SEO title', 'thatseoagent' ); ?>
                 <span class="thatseoagent-counter" id="title-counter" data-limit="<?php echo (int) ThatSeoAgent_Audit::TITLE_MAY_TRUNCATE; ?>">0/<?php echo (int) ThatSeoAgent_Audit::TITLE_MAY_TRUNCATE; ?></span>
             </label>
             <input 
@@ -112,14 +112,14 @@ class ThatSeoAgent_Meta_Box {
 
         <div class="thatseoagent-field">
             <label for="thatseoagent_description">
-                <?php esc_html_e( 'Meta Description', 'thatseoagent' ); ?>
+                <?php esc_html_e( 'Meta description', 'thatseoagent' ); ?>
                 <span class="thatseoagent-counter" id="desc-counter" data-limit="<?php echo (int) ThatSeoAgent_Audit::DESCRIPTION_MAY_TRUNCATE; ?>">0/<?php echo (int) ThatSeoAgent_Audit::DESCRIPTION_MAY_TRUNCATE; ?></span>
             </label>
             <textarea 
                 id="thatseoagent_description" 
                 name="thatseoagent_description" 
                 rows="3" 
-                placeholder="<?php esc_attr_e( 'Leave blank to auto-generate from content...', 'thatseoagent' ); ?>"
+                placeholder="<?php esc_attr_e( 'Leave blank to generate it from the content', 'thatseoagent' ); ?>"
                 data-thatseoagent-generated="<?php echo esc_attr( ThatSeoAgent_Description::for_post( $post, '' ) ); ?>"
             ><?php echo esc_textarea($seo_desc); ?></textarea>
             <p class="description"><?php esc_html_e( 'The sentence under the title in search results. Google sets no limit, but past the counter it may be cut.', 'thatseoagent' ); ?></p>
@@ -158,7 +158,7 @@ class ThatSeoAgent_Meta_Box {
                 class="button thatseoagent-share-image-select"
                 data-title="<?php esc_attr_e( 'Social sharing image', 'thatseoagent' ); ?>"
                 data-button="<?php esc_attr_e( 'Use this image', 'thatseoagent' ); ?>"
-            ><?php esc_html_e( 'Select Image', 'thatseoagent' ); ?></button>
+            ><?php esc_html_e( 'Select image', 'thatseoagent' ); ?></button>
             <button type="button" class="button thatseoagent-share-image-remove" <?php echo $share_image ? '' : 'hidden'; ?>><?php esc_html_e( 'Remove', 'thatseoagent' ); ?></button>
             <p class="description"><?php esc_html_e( 'Shown when the page is shared on Facebook, LinkedIn, WhatsApp or X. Best at 1200 × 630 pixels. Leave empty to use the default sharing image or, without one, the featured image.', 'thatseoagent' ); ?></p>
         </div>

@@ -286,7 +286,7 @@ class ThatSeoAgent_Tracking {
             'thatseoagent_tracking_section',
             __( 'Analytics and tags', 'thatseoagent' ),
             function () {
-                echo '<p>' . esc_html__( 'Google Analytics and Google Ads share one Google tag: paste each one\'s ID — or the whole snippet, as Google shows it — and the tag is loaded once for both. For any other service, paste the code it gives you in the box for where it asks you to place it.', 'thatseoagent' ) . '</p>';
+                echo '<p>' . esc_html__( 'Google Analytics and Google Ads share one Google tag: paste each one\'s ID, or the whole snippet as Google shows it, and the tag is loaded once for both. For any other service, paste its code in the box for the place it asks you to put it.', 'thatseoagent' ) . '</p>';
             },
             ThatSeoAgent_Settings::GROUP
         );

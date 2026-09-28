@@ -48,7 +48,7 @@ $checks = array(
     array( __( 'Image descriptions', 'thatseoagent' ), __( 'Images need alt text, except decorative ones, which are marked empty on purpose.', 'thatseoagent' ) ),
     array( __( 'Headings', 'thatseoagent' ), __( 'An H1 inside the content, or a skipped level, leaves a gap in the outline screen readers navigate by. Google does not mind the order.', 'thatseoagent' ) ),
     array( __( 'Links to other pages', 'thatseoagent' ), __( 'Our own judgement: a page that links nowhere else on the site is a dead end. It costs no points.', 'thatseoagent' ) ),
-    array( __( 'Links that lead somewhere', 'thatseoagent' ), __( 'Our own judgement, costing no points: pages nothing links to — not the menus, the header or footer, or another page — and links to addresses of the site that answer "not found". Read from the whole site when the check starts.', 'thatseoagent' ) ),
+    array( __( 'Links that lead somewhere', 'thatseoagent' ), __( 'Our own judgement, costing no points: pages nothing links to (no menu, header, footer or other page), and links to addresses of the site that answer "not found". The whole site is read when the check starts.', 'thatseoagent' ) ),
     array( __( 'Kept out of search', 'thatseoagent' ), __( 'Pages marked noindex are listed, so none is hidden by accident.', 'thatseoagent' ) ),
     array( __( 'Product details', 'thatseoagent' ), __( 'For products: what their product description to search engines is missing.', 'thatseoagent' ) ),
 );

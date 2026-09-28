@@ -387,6 +387,6 @@ class ThatSeoAgent_Markdown_Check {
             return __( 'LiteSpeed stores the page by URL. Exclude requests whose Accept header contains text/markdown from its cache, or have it vary on that header.', 'thatseoagent' );
         }
 
-        return __( 'Whatever stores the pages — the hosting, a CDN, a plugin — should not cache requests whose Accept header contains text/markdown, or should keep a separate copy for them.', 'thatseoagent' );
+        return __( 'Whatever stores the pages (the hosting, a CDN or a plugin) should not cache requests whose Accept header contains text/markdown, or should keep a separate copy for them.', 'thatseoagent' );
     }
 }

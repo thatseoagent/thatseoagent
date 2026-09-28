@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-28T01:54:38+00:00\n"
+"POT-Creation-Date: 2026-09-28T22:35:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thatseoagent\n"
@@ -18,13 +18,14 @@ msgstr ""
 #: thatseoagent.php
 #: includes/admin/class-thatseoagent-app.php:65
 #: includes/admin/class-thatseoagent-app.php:66
+#: includes/admin/class-thatseoagent-dashboard-widget.php:50
 #: includes/admin/views/layout.php:39
 msgid "ThatSeoAgent"
 msgstr ""
 
 #. Description of the plugin
 #: thatseoagent.php
-msgid "Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, per-post SEO fields, and Markdown for AI agents. A Yoast replacement that doesn't slow your site down."
+msgid "SEO for WordPress with no paid tier: meta tags, Open Graph, schema markup, XML sitemaps, per-post SEO fields and a Markdown version of every post for AI agents. Replaces Yoast SEO and imports its data."
 msgstr ""
 
 #. Author of the plugin
@@ -231,12 +232,34 @@ msgid_plural "%d skipped: they already had one or have no content to describe."
 msgstr[0] ""
 msgstr[1] ""
 
+#: includes/admin/class-thatseoagent-dashboard-widget.php:95
+msgid "What to fix"
+msgstr ""
+
+#. translators: %d: number of warnings not listed.
+#: includes/admin/class-thatseoagent-dashboard-widget.php:110
+#, php-format
+msgid "And %d more warning."
+msgid_plural "And %d more warnings."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/admin/class-thatseoagent-dashboard-widget.php:115
+#: includes/admin/views/dashboard.php:111
+msgid "No warnings in force."
+msgstr ""
+
+#: includes/admin/class-thatseoagent-dashboard-widget.php:119
+msgid "See the whole bulletin"
+msgstr ""
+
 #: includes/admin/class-thatseoagent-meta-box.php:40
-msgid "🔍 SEO Settings"
+msgid "SEO"
 msgstr ""
 
 #: includes/admin/class-thatseoagent-meta-box.php:99
-msgid "SEO Title"
+#: includes/content/class-thatseoagent-term-seo.php:326
+msgid "SEO title"
 msgstr ""
 
 #: includes/admin/class-thatseoagent-meta-box.php:110
@@ -244,11 +267,12 @@ msgid "Leave blank to use the post title. Search results trim titles to the widt
 msgstr ""
 
 #: includes/admin/class-thatseoagent-meta-box.php:115
-msgid "Meta Description"
+#: includes/content/class-thatseoagent-term-seo.php:330
+msgid "Meta description"
 msgstr ""
 
 #: includes/admin/class-thatseoagent-meta-box.php:122
-msgid "Leave blank to auto-generate from content..."
+msgid "Leave blank to generate it from the content"
 msgstr ""
 
 #: includes/admin/class-thatseoagent-meta-box.php:125
@@ -274,7 +298,7 @@ msgstr ""
 
 #: includes/admin/class-thatseoagent-meta-box.php:161
 #: includes/site/class-thatseoagent-identity.php:431
-msgid "Select Image"
+msgid "Select image"
 msgstr ""
 
 #: includes/admin/class-thatseoagent-meta-box.php:162
@@ -355,7 +379,7 @@ msgid "Links that lead somewhere"
 msgstr ""
 
 #: includes/admin/views/audit.php:51
-msgid "Our own judgement, costing no points: pages nothing links to — not the menus, the header or footer, or another page — and links to addresses of the site that answer \"not found\". Read from the whole site when the check starts."
+msgid "Our own judgement, costing no points: pages nothing links to (no menu, header, footer or other page), and links to addresses of the site that answer \"not found\". The whole site is read when the check starts."
 msgstr ""
 
 #: includes/admin/views/audit.php:52
@@ -655,7 +679,7 @@ msgid "Not what robots.txt says"
 msgstr ""
 
 #: includes/admin/views/crawlers.php:159
-msgid "A robots.txt token only; it never visits"
+msgid "Only a name for robots.txt rules; no crawler visits with it"
 msgstr ""
 
 #: includes/admin/views/crawlers.php:161
@@ -709,10 +733,6 @@ msgid "%d warning"
 msgid_plural "%d warnings"
 msgstr[0] ""
 msgstr[1] ""
-
-#: includes/admin/views/dashboard.php:111
-msgid "No warnings in force."
-msgstr ""
 
 #: includes/admin/views/dashboard.php:112
 msgid "Come back after big changes to the site: new sections, a new theme, another plugin."
@@ -906,7 +926,7 @@ msgid "No product catalog yet"
 msgstr ""
 
 #: includes/admin/views/products.php:21
-msgid "If the site lists products — machines, parts, models — they can be described to search engines as products, with their brand, category and specifications, instead of as plain pages."
+msgid "If the site lists products, such as machines, parts or models, they can be described to search engines as products, with their brand, category and specifications, instead of as plain pages."
 msgstr ""
 
 #: includes/admin/views/products.php:22
@@ -1132,7 +1152,7 @@ msgid "Whether any page links here: not checked, the site's links have not been 
 msgstr ""
 
 #: includes/audit/class-thatseoagent-audit.php:285
-msgid "No page of the site links here — not the menus, not the header or footer, not another page's text. Search engines still find it in the sitemap; people browsing the site never reach it."
+msgid "No page of the site links here: not the menus, the header, the footer or the text of another page. Search engines still find it in the sitemap, but people browsing the site never reach it."
 msgstr ""
 
 #. translators: %d: number of links.
@@ -1222,7 +1242,7 @@ msgid "Red warning"
 msgstr ""
 
 #: includes/bulletin/class-thatseoagent-bulletin.php:175
-msgid "Clear. Nothing needs you right now."
+msgid "Nothing needs your attention right now."
 msgstr ""
 
 #: includes/bulletin/class-thatseoagent-bulletin.php:176
@@ -1240,8 +1260,8 @@ msgstr ""
 #. translators: 1: the most serious warning, 2: number of other warnings.
 #: includes/bulletin/class-thatseoagent-bulletin.php:184
 #, php-format
-msgid "%1$s — and %2$d more below."
-msgid_plural "%1$s — and %2$d more below."
+msgid "%1$s (and %2$d more below)."
+msgid_plural "%1$s (and %2$d more below)."
 msgstr[0] ""
 msgstr[1] ""
 
@@ -1456,7 +1476,7 @@ msgid "Automatic (%s)"
 msgstr ""
 
 #: includes/content/class-thatseoagent-primary-term.php:343
-msgid "The one search results and breadcrumbs name. Choosing one also puts it in the address when the permalinks include the category. The list shows the terms saved with the post."
+msgid "The term search results and breadcrumbs show for the post. Choosing one also puts it in the address when the permalinks include the category. The list shows the terms saved with the post."
 msgstr ""
 
 #. translators: %s: the titles, e.g. "Hello world! and Sample Page".
@@ -1486,16 +1506,8 @@ msgstr ""
 msgid "Browse everything in %1$s on %2$s."
 msgstr ""
 
-#: includes/content/class-thatseoagent-term-seo.php:326
-msgid "SEO title"
-msgstr ""
-
 #: includes/content/class-thatseoagent-term-seo.php:327
 msgid "The full title in search results; the site name is not added. Empty: the name and the site name."
-msgstr ""
-
-#: includes/content/class-thatseoagent-term-seo.php:330
-msgid "Meta description"
 msgstr ""
 
 #: includes/content/class-thatseoagent-term-seo.php:331
@@ -1838,7 +1850,7 @@ msgid "Notify Bing, Yandex and other IndexNow engines whenever a post is publish
 msgstr ""
 
 #: includes/integrations/class-thatseoagent-indexnow.php:141
-msgid "API Key"
+msgid "API key"
 msgstr ""
 
 #: includes/integrations/class-thatseoagent-indexnow.php:166
@@ -1908,7 +1920,7 @@ msgid "Analytics and tags"
 msgstr ""
 
 #: includes/integrations/class-thatseoagent-tracking.php:289
-msgid "Google Analytics and Google Ads share one Google tag: paste each one's ID — or the whole snippet, as Google shows it — and the tag is loaded once for both. For any other service, paste the code it gives you in the box for where it asks you to place it."
+msgid "Google Analytics and Google Ads share one Google tag: paste each one's ID, or the whole snippet as Google shows it, and the tag is loaded once for both. For any other service, paste its code in the box for the place it asks you to put it."
 msgstr ""
 
 #: includes/integrations/class-thatseoagent-tracking.php:344
@@ -2171,7 +2183,7 @@ msgid "LiteSpeed stores the page by URL. Exclude requests whose Accept header co
 msgstr ""
 
 #: includes/markdown/class-thatseoagent-markdown-check.php:390
-msgid "Whatever stores the pages — the hosting, a CDN, a plugin — should not cache requests whose Accept header contains text/markdown, or should keep a separate copy for them."
+msgid "Whatever stores the pages (the hosting, a CDN or a plugin) should not cache requests whose Accept header contains text/markdown, or should keep a separate copy for them."
 msgstr ""
 
 #: includes/markdown/class-thatseoagent-markdown-endpoint.php:185
@@ -2265,7 +2277,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/site/class-thatseoagent-default-author.php:287
-msgid "They are credited to the site itself. Google asks for a byline where one is expected: assign each post its author — whose profile can carry a job title and profiles elsewhere — or set a default author in the settings."
+msgid "They are credited to the site itself. Google asks for a byline where one is expected: assign each post its author, whose profile can carry a job title and profiles elsewhere, or set a default author in the settings."
 msgstr ""
 
 #: includes/site/class-thatseoagent-homepage.php:152
@@ -2460,7 +2472,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/site/class-thatseoagent-new-types.php:157
-msgid "Its pages are already in the sitemap and have SEO fields. If they list products — machines, parts, models — mark it as a product catalog so each one is described as a product."
+msgid "Its pages are already in the sitemap and have SEO fields. If they list products, such as machines, parts or models, mark it as a product catalog so each one is described as a product."
 msgstr ""
 
 #: includes/site/class-thatseoagent-new-types.php:158
@@ -2512,7 +2524,7 @@ msgid "Site verification"
 msgstr ""
 
 #: includes/site/class-thatseoagent-verification.php:175
-msgid "To prove to a search engine's console that the site is yours, paste the code it gives you — or the whole meta tag, as it shows it. The tag goes on the homepage only. Google Search Console can verify through DNS instead, which needs nothing here."
+msgid "To prove to a search engine's console that the site is yours, paste the code it gives you, or the whole meta tag as it shows it. The tag goes on the homepage only. Google Search Console can also verify through DNS, which needs nothing here."
 msgstr ""
 
 #: includes/site/class-thatseoagent-verification.php:214

@@ -82,6 +82,7 @@ class ThatSeoAgent {
             ThatSeoAgent_Meta_Box::register();
             ThatSeoAgent_Bulk_Descriptions::register();
             ThatSeoAgent_App::register();
+            ThatSeoAgent_Dashboard_Widget::register();
             ThatSeoAgent_Default_Author::register();
             ThatSeoAgent_Identity::register();
             ThatSeoAgent_Homepage::register();

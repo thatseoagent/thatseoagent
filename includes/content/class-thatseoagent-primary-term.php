@@ -340,7 +340,7 @@ class ThatSeoAgent_Primary_Term {
                         <option value="<?php echo (int) $term->term_id; ?>" <?php selected( (int) $term->term_id, $chosen ); ?>><?php echo esc_html( $term->name ); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <p class="description"><?php esc_html_e( 'The one search results and breadcrumbs name. Choosing one also puts it in the address when the permalinks include the category. The list shows the terms saved with the post.', 'thatseoagent' ); ?></p>
+                <p class="description"><?php esc_html_e( 'The term search results and breadcrumbs show for the post. Choosing one also puts it in the address when the permalinks include the category. The list shows the terms saved with the post.', 'thatseoagent' ); ?></p>
             </div>
             <?php
         }

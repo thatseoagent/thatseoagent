@@ -282,7 +282,7 @@ class ThatSeoAgent_Audit {
                 'orphan',
                 'info',
                 'heuristic',
-                __( 'No page of the site links here — not the menus, not the header or footer, not another page\'s text. Search engines still find it in the sitemap; people browsing the site never reach it.', 'thatseoagent' )
+                __( 'No page of the site links here: not the menus, the header, the footer or the text of another page. Search engines still find it in the sitemap, but people browsing the site never reach it.', 'thatseoagent' )
             );
         }
 

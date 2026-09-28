@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: ThatSeoAgent
- * Description: Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML sitemaps, per-post SEO fields, and Markdown for AI agents. A Yoast replacement that doesn't slow your site down.
- * Version: 2.9.0
+ * Description: SEO for WordPress with no paid tier: meta tags, Open Graph, schema markup, XML sitemaps, per-post SEO fields and a Markdown version of every post for AI agents. Replaces Yoast SEO and imports its data.
+ * Version: 2.10.0
  * Author: Angel Cruz
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('THATSEOAGENT_VERSION', '2.9.0');
+define('THATSEOAGENT_VERSION', '2.10.0');
 define('THATSEOAGENT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('THATSEOAGENT_PLUGIN_URL', plugin_dir_url(__FILE__));
 

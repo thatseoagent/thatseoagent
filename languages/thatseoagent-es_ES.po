@@ -24,13 +24,13 @@ msgstr "ThatSeoAgent"
 #. Description of the plugin
 #: thatseoagent.php
 msgid ""
-"Lightweight SEO without the bloat. Meta tags, Open Graph, Schema markup, XML "
-"sitemaps, per-post SEO fields, and Markdown for AI agents. A Yoast "
-"replacement that doesn't slow your site down."
+"SEO for WordPress with no paid tier: meta tags, Open Graph, schema markup, "
+"XML sitemaps, per-post SEO fields and a Markdown version of every post for "
+"AI agents. Replaces Yoast SEO and imports its data."
 msgstr ""
-"SEO ligero y sin excesos. Etiquetas meta, Open Graph, marcado Schema, "
-"sitemaps XML, campos SEO por entrada y Markdown para agentes de IA. Un "
-"reemplazo de Yoast que no ralentiza tu sitio."
+"SEO para WordPress sin versión de pago: etiquetas meta, Open Graph, marcado "
+"schema, sitemaps XML, campos SEO por entrada y una versión en Markdown de "
+"cada entrada para agentes de IA. Reemplaza a Yoast SEO e importa sus datos."
 
 #. Author of the plugin
 #: thatseoagent.php
@@ -195,21 +195,12 @@ msgstr[0] "%d omitida: ya tenía una o no tiene contenido que describir."
 msgstr[1] "%d omitidas: ya tenían una o no tienen contenido que describir."
 
 #: includes/admin/class-thatseoagent-meta-box.php:40
-msgid "🔍 SEO Settings"
-msgstr "🔍 Ajustes de SEO"
-
-#: includes/admin/class-thatseoagent-meta-box.php:99
-msgid "SEO Title"
-msgstr "Título SEO"
-
-#: includes/admin/class-thatseoagent-meta-box.php:115
-msgid "Meta Description"
-msgstr "Meta descripción"
+msgid "SEO"
+msgstr "SEO"
 
 #: includes/admin/class-thatseoagent-meta-box.php:122
-msgid "Leave blank to auto-generate from content..."
-msgstr ""
-"Déjalo en blanco para generarla automáticamente a partir del contenido..."
+msgid "Leave blank to generate it from the content"
+msgstr "Déjala vacía para generarla a partir del contenido"
 
 #: includes/admin/views/audit.php:49
 msgid "Headings"
@@ -516,8 +507,9 @@ msgid "Not what robots.txt says"
 msgstr "No coincide con lo que dice robots.txt"
 
 #: includes/admin/views/crawlers.php:159
-msgid "A robots.txt token only; it never visits"
-msgstr "Solo es un nombre en robots.txt; nunca visita"
+msgid "Only a name for robots.txt rules; no crawler visits with it"
+msgstr ""
+"Solo es un nombre para reglas de robots.txt; ningún crawler visita con él"
 
 #: includes/admin/views/crawlers.php:161
 msgid "Not checked"
@@ -753,8 +745,8 @@ msgstr "Todavía no hay catálogo de productos"
 
 #: includes/admin/views/products.php:21
 msgid ""
-"If the site lists products — machines, parts, models — they can be described "
-"to search engines as products, with their brand, category and "
+"If the site lists products, such as machines, parts or models, they can be "
+"described to search engines as products, with their brand, category and "
 "specifications, instead of as plain pages."
 msgstr ""
 "Si el sitio lista productos (máquinas, repuestos, modelos), se pueden "
@@ -1218,8 +1210,8 @@ msgid "Off"
 msgstr "Inactivo"
 
 #: includes/bulletin/class-thatseoagent-bulletin.php:175
-msgid "Clear. Nothing needs you right now."
-msgstr "Despejado. Nada necesita de ti ahora."
+msgid "Nothing needs your attention right now."
+msgstr "Por ahora no hay nada que requiera tu atención."
 
 #: includes/bulletin/class-thatseoagent-bulletin.php:176
 msgid "Mostly fine, with room to do better."
@@ -1236,10 +1228,10 @@ msgstr "Los buscadores no pueden ver bien este sitio."
 #. translators: 1: the most serious warning, 2: number of other warnings.
 #: includes/bulletin/class-thatseoagent-bulletin.php:184
 #, php-format
-msgid "%1$s — and %2$d more below."
-msgid_plural "%1$s — and %2$d more below."
-msgstr[0] "%1$s, y %2$d más abajo."
-msgstr[1] "%1$s, y %2$d más abajo."
+msgid "%1$s (and %2$d more below)."
+msgid_plural "%1$s (and %2$d more below)."
+msgstr[0] "%1$s (y %2$d más abajo)."
+msgstr[1] "%1$s (y %2$d más abajo)."
 
 #: includes/bulletin/class-thatseoagent-bulletin.php:187
 msgid ""
@@ -1468,7 +1460,7 @@ msgstr ""
 "desactivarlo."
 
 #: includes/integrations/class-thatseoagent-indexnow.php:141
-msgid "API Key"
+msgid "API key"
 msgstr "Clave de API"
 
 #: includes/integrations/class-thatseoagent-indexnow.php:166
@@ -1706,7 +1698,7 @@ msgstr ""
 
 #: includes/admin/class-thatseoagent-meta-box.php:161
 #: includes/site/class-thatseoagent-identity.php:431
-msgid "Select Image"
+msgid "Select image"
 msgstr "Seleccionar imagen"
 
 #: includes/admin/class-thatseoagent-meta-box.php:162
@@ -2217,11 +2209,11 @@ msgstr ""
 
 #: includes/markdown/class-thatseoagent-markdown-check.php:390
 msgid ""
-"Whatever stores the pages — the hosting, a CDN, a plugin — should not cache "
+"Whatever stores the pages (the hosting, a CDN or a plugin) should not cache "
 "requests whose Accept header contains text/markdown, or should keep a "
 "separate copy for them."
 msgstr ""
-"Lo que guarde las páginas —el hosting, una CDN, un plugin— no debería "
+"Lo que guarde las páginas (el hosting, una CDN o un plugin) no debería "
 "cachear los pedidos cuya cabecera Accept contenga text/markdown, o debería "
 "guardar una copia aparte para ellos."
 
@@ -2447,25 +2439,23 @@ msgstr "Enlaces que llevan a algún sitio"
 
 #: includes/admin/views/audit.php:51
 msgid ""
-"Our own judgement, costing no points: pages nothing links to — not the "
-"menus, the header or footer, or another page — and links to addresses of the "
-"site that answer \"not found\". Read from the whole site when the check "
-"starts."
+"Our own judgement, costing no points: pages nothing links to (no menu, "
+"header, footer or other page), and links to addresses of the site that "
+"answer \"not found\". The whole site is read when the check starts."
 msgstr ""
-"Criterio propio, no resta puntos: páginas a las que nada enlaza —ni los "
-"menús, ni la cabecera o el pie, ni otra página— y enlaces a direcciones del "
-"sitio que responden «no encontrado». Se lee de todo el sitio al empezar la "
-"revisión."
+"Criterio propio, no resta puntos: páginas a las que nada enlaza (ningún "
+"menú, cabecera, pie ni otra página) y enlaces a direcciones del sitio que "
+"responden «no encontrado». Todo el sitio se lee al empezar la revisión."
 
 #: includes/audit/class-thatseoagent-audit.php:285
 msgid ""
-"No page of the site links here — not the menus, not the header or footer, "
-"not another page's text. Search engines still find it in the sitemap; people "
-"browsing the site never reach it."
+"No page of the site links here: not the menus, the header, the footer or "
+"the text of another page. Search engines still find it in the sitemap, but "
+"people browsing the site never reach it."
 msgstr ""
-"Ninguna página del sitio enlaza aquí: ni los menús, ni la cabecera o el pie, "
-"ni el texto de otra página. Los buscadores la encuentran igual en el "
-"sitemap; quien navega el sitio nunca llega a ella."
+"Ninguna página del sitio enlaza aquí: ni los menús, ni la cabecera, ni el "
+"pie, ni el texto de otra página. Los buscadores la encuentran igual en el "
+"sitemap, pero quien navega el sitio nunca llega a ella."
 
 #. translators: %d: number of links.
 #: includes/audit/class-thatseoagent-audit.php:296
@@ -2565,13 +2555,14 @@ msgstr "Automática (%s)"
 
 #: includes/content/class-thatseoagent-primary-term.php:343
 msgid ""
-"The one search results and breadcrumbs name. Choosing one also puts it in "
-"the address when the permalinks include the category. The list shows the "
-"terms saved with the post."
+"The term search results and breadcrumbs show for the post. Choosing one "
+"also puts it in the address when the permalinks include the category. The "
+"list shows the terms saved with the post."
 msgstr ""
-"La que nombran los resultados de búsqueda y las migas. Elegir una también la "
-"pone en la dirección cuando los enlaces permanentes incluyen la categoría. "
-"La lista muestra los términos guardados con la entrada."
+"El término que muestran para la entrada los resultados de búsqueda y las "
+"migas de pan. Elegir uno también lo pone en la dirección cuando los enlaces "
+"permanentes incluyen la categoría. La lista muestra los términos guardados "
+"con la entrada."
 
 #: includes/head/class-thatseoagent-breadcrumbs.php:340
 #: includes/head/class-thatseoagent-breadcrumbs.php:374
@@ -2659,9 +2650,9 @@ msgstr "Verificación del sitio"
 
 #: includes/site/class-thatseoagent-verification.php:175
 msgid ""
-"To prove to a search engine's console that the site is yours, paste the code "
-"it gives you — or the whole meta tag, as it shows it. The tag goes on the "
-"homepage only. Google Search Console can verify through DNS instead, which "
+"To prove to a search engine's console that the site is yours, paste the "
+"code it gives you, or the whole meta tag as it shows it. The tag goes on "
+"the homepage only. Google Search Console can also verify through DNS, which "
 "needs nothing here."
 msgstr ""
 "Para demostrar ante la consola de un buscador que el sitio es tuyo, pega el "
@@ -2738,12 +2729,12 @@ msgstr[1] "Se están publicando tipos de contenido nuevos: %s"
 #: includes/site/class-thatseoagent-new-types.php:155
 msgid ""
 "Its pages are already in the sitemap and have SEO fields. If they list "
-"products — machines, parts, models — mark it as a product catalog so each "
-"one is described as a product."
+"products, such as machines, parts or models, mark it as a product catalog "
+"so each one is described as a product."
 msgstr ""
 "Sus páginas ya están en el sitemap y tienen campos SEO. Si enumeran "
-"productos —máquinas, repuestos, modelos—, márcalo como catálogo de productos "
-"para que cada uno se describa como producto."
+"productos (máquinas, repuestos, modelos), márcalo como catálogo de "
+"productos para que cada uno se describa como producto."
 
 #: includes/site/class-thatseoagent-new-types.php:156
 msgid "Review it"
@@ -2803,12 +2794,12 @@ msgstr[1] "%d entradas no tienen autor"
 #: includes/site/class-thatseoagent-default-author.php:287
 msgid ""
 "They are credited to the site itself. Google asks for a byline where one is "
-"expected: assign each post its author — whose profile can carry a job title "
-"and profiles elsewhere — or set a default author in the settings."
+"expected: assign each post its author, whose profile can carry a job title "
+"and profiles elsewhere, or set a default author in the settings."
 msgstr ""
 "Se atribuyen al propio sitio. Google pide una firma donde se espera una: "
-"asigna a cada entrada su autor —cuyo perfil puede llevar un cargo y perfiles "
-"en otros sitios— o configura un autor por defecto en los ajustes."
+"asigna a cada entrada su autor, cuyo perfil puede llevar un cargo y "
+"perfiles en otros sitios, o configura un autor por defecto en los ajustes."
 
 #. translators: 1: view title, 2: site name.
 #: includes/admin/class-thatseoagent-app.php:327
@@ -3202,15 +3193,15 @@ msgstr "Analítica y etiquetas"
 
 #: includes/integrations/class-thatseoagent-tracking.php:289
 msgid ""
-"Google Analytics and Google Ads share one Google tag: paste each one's ID — "
-"or the whole snippet, as Google shows it — and the tag is loaded once for "
-"both. For any other service, paste the code it gives you in the box for "
-"where it asks you to place it."
+"Google Analytics and Google Ads share one Google tag: paste each one's ID, "
+"or the whole snippet as Google shows it, and the tag is loaded once for "
+"both. For any other service, paste its code in the box for the place it "
+"asks you to put it."
 msgstr ""
 "Google Analytics y Google Ads comparten una misma etiqueta de Google: pega "
 "el ID de cada uno, o el fragmento entero tal como lo muestra Google, y la "
 "etiqueta se carga una sola vez para los dos. Para cualquier otro servicio, "
-"pega el código que te da en la caja del lugar donde te pide colocarlo."
+"pega su código en la caja del lugar donde te pide colocarlo."
 
 #: includes/integrations/class-thatseoagent-tracking.php:344
 msgid "Where to find the ID"
@@ -3908,3 +3899,19 @@ msgstr ""
 "Los productos de WooCommerce no aparecen: WooCommerce los describe por su "
 "cuenta, con sus precios. ThatSeoAgent mantiene su título, su descripción y su "
 "imagen para compartir."
+
+#. translators: %d: number of warnings not listed.
+#: includes/admin/class-thatseoagent-dashboard-widget.php:104
+#, php-format
+msgid "And %d more warning."
+msgid_plural "And %d more warnings."
+msgstr[0] "Y %d aviso más."
+msgstr[1] "Y %d avisos más."
+
+#: includes/admin/class-thatseoagent-dashboard-widget.php:113
+msgid "See the whole bulletin"
+msgstr "Ver el parte completo"
+
+#: includes/admin/class-thatseoagent-dashboard-widget.php:90
+msgid "What to fix"
+msgstr "Qué arreglar"

@@ -284,7 +284,7 @@ class ThatSeoAgent_Default_Author {
                 'yellow',
                 /* translators: %d: number of posts. */
                 sprintf( _n( '%d post has no author', '%d posts have no author', $unattributed, 'thatseoagent' ), $unattributed ),
-                __( 'They are credited to the site itself. Google asks for a byline where one is expected: assign each post its author — whose profile can carry a job title and profiles elsewhere — or set a default author in the settings.', 'thatseoagent' ),
+                __( 'They are credited to the site itself. Google asks for a byline where one is expected: assign each post its author, whose profile can carry a job title and profiles elsewhere, or set a default author in the settings.', 'thatseoagent' ),
                 __( 'See the posts', 'thatseoagent' ),
                 'posts'
             );

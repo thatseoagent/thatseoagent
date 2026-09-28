@@ -172,7 +172,7 @@ class ThatSeoAgent_Verification {
             'thatseoagent_verification_section',
             __( 'Site verification', 'thatseoagent' ),
             function () {
-                echo '<p>' . esc_html__( 'To prove to a search engine\'s console that the site is yours, paste the code it gives you — or the whole meta tag, as it shows it. The tag goes on the homepage only. Google Search Console can verify through DNS instead, which needs nothing here.', 'thatseoagent' ) . '</p>';
+                echo '<p>' . esc_html__( 'To prove to a search engine\'s console that the site is yours, paste the code it gives you, or the whole meta tag as it shows it. The tag goes on the homepage only. Google Search Console can also verify through DNS, which needs nothing here.', 'thatseoagent' ) . '</p>';
             },
             ThatSeoAgent_Settings::GROUP
         );

@@ -138,7 +138,7 @@ class ThatSeoAgent_IndexNow {
 
 		add_settings_field(
 			'thatseoagent_indexnow_key',
-			__( 'API Key', 'thatseoagent' ),
+			__( 'API key', 'thatseoagent' ),
 			array( __CLASS__, 'render_key_field' ),
 			'thatseoagent_settings',
 			'thatseoagent_indexnow_section'
