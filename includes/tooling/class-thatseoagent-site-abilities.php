@@ -41,7 +41,7 @@ class ThatSeoAgent_Site_Abilities {
                 'input_schema'        => array(
                     'type'                 => 'object',
                     'additionalProperties' => false,
-                    'default'              => (object) array(),
+                    'default'              => array(),
                     'properties'           => array(
                         'setting' => $setting,
                     ),
@@ -89,7 +89,7 @@ class ThatSeoAgent_Site_Abilities {
                 'input_schema'        => array(
                     'type'                 => 'object',
                     'additionalProperties' => false,
-                    'default'              => (object) array(),
+                    'default'              => array(),
                     'properties'           => array(),
                 ),
                 'output_schema'       => array(
@@ -114,7 +114,7 @@ class ThatSeoAgent_Site_Abilities {
                 'input_schema'        => array(
                     'type'                 => 'object',
                     'additionalProperties' => false,
-                    'default'              => (object) array(),
+                    'default'              => array(),
                     'properties'           => array(
                         'fresh' => array(
                             'type'    => 'boolean',
@@ -147,7 +147,7 @@ class ThatSeoAgent_Site_Abilities {
                 'input_schema'        => array(
                     'type'                 => 'object',
                     'additionalProperties' => false,
-                    'default'              => (object) array(),
+                    'default'              => array(),
                     'properties'           => array(),
                 ),
                 'output_schema'       => array( 'type' => 'object' ),

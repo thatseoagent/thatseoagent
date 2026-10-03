@@ -61,7 +61,9 @@ class ThatSeoAgent_Abilities {
                     'additionalProperties' => false,
                     // Hardening for the indirect-invocation path, which is
                     // stricter than direct invocation about a zero-arg call.
-                    'default'              => (object) array(),
+                    // An array, as core declares its own: an object default
+                    // reaches the callbacks as a stdClass they can't index.
+                    'default'              => array(),
                 ),
                 'output_schema'       => array(
                     'type'  => 'array',
@@ -305,7 +307,7 @@ class ThatSeoAgent_Abilities {
                 'input_schema'        => array(
                     'type'                 => 'object',
                     'additionalProperties' => false,
-                    'default'              => (object) array(),
+                    'default'              => array(),
                     'properties'           => array(
                         'taxonomy' => $taxonomy,
                         'missing'  => array(
