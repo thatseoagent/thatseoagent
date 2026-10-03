@@ -375,11 +375,36 @@ Tailwind scans `includes/admin/`, `includes/crawlers/`, the Caches and CDN setti
 
 ### Dependencies
 
-The HTML-to-Markdown library, `league/html-to-markdown`, ships in `vendor-prefixed/` with its namespace rewritten to `ThatSeoAgent\Dependencies\` by [Strauss](https://github.com/BrianHenryIE/strauss), so another plugin loading its own copy cannot conflict. `vendor-prefixed/` is committed; installing the plugin needs no Composer. To update the library:
+The HTML-to-Markdown library, `league/html-to-markdown`, ships in `vendor-prefixed/` with its namespace rewritten to `ThatSeoAgent\Dependencies\` by [Strauss](https://github.com/BrianHenryIE/strauss), so another plugin loading its own copy cannot conflict. `vendor-prefixed/` is committed; installing the plugin needs no Composer.
+
+Strauss runs as a `.phar`, not as a Composer package: its dependencies clash with Pest's. The `.phar` is not committed; before the first `composer install`, download it to `bin/strauss.phar`:
+
+```bash
+mkdir -p bin && curl -fL -o bin/strauss.phar https://github.com/BrianHenryIE/strauss/releases/download/0.30.0/strauss.phar
+```
+
+To update the library:
 
 ```bash
 composer update league/html-to-markdown   # Strauss runs on post-update-cmd
 git add vendor-prefixed/ composer.lock
+```
+
+### Tests and checks
+
+Tests are written with [Pest](https://pestphp.com/), in two suites. `tests/Unit` runs on the plugin's classes alone, with no WordPress. `tests/WordPress` runs inside a disposable WordPress started with [wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/) (Docker), where the plugin is active.
+
+In that suite each test runs inside a database transaction that is rolled back afterwards, so nothing it writes reaches the next one. No HTTP request leaves the site: a test answers the ones it expects with `fakeHttp()`, and any other request fails it.
+
+```bash
+composer test               # Unit suite; the WordPress tests skip themselves
+pnpm env:start              # Start the WordPress for the tests (http://localhost:8894)
+pnpm test:wordpress         # WordPress suite
+pnpm env:stop
+
+composer analyse            # PHPStan, level 5, with phpstan-baseline.neon
+composer lint               # Pint, checking the code style (pint.json)
+composer format             # Pint, fixing it
 ```
 
 ## Translations

@@ -2,3 +2,5 @@
 # fallback. Nothing else in the tree needs to run install scripts.
 allowBuilds:
   '@parcel/watcher': false
+  # Pulled in by @wordpress/env; ships prebuilt binaries too.
+  fs-ext-extra-prebuilt: false

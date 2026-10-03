@@ -17,3 +17,9 @@
 
 # Local SEO reports (not part of the plugin)
 /seo-intel/
+
+# Strauss, as a .phar: see Dependencies in the README
+/bin/strauss.phar
+
+# Tooling caches
+/.phpunit.cache/

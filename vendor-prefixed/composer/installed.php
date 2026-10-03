@@ -4,7 +4,7 @@
     'name' => 'angelcruz/thatseoagent',
     'pretty_version' => 'dev-master',
     'version' => 'dev-master',
-    'reference' => 'c315fb7caa2fcc634d64bbab042b32eebcd300cb',
+    'reference' => '14cc9a8108e33bd97582177e7f0e95db4769dde8',
     'type' => 'wordpress-plugin',
     'install_path' => __DIR__ . '/../',
     'aliases' => 

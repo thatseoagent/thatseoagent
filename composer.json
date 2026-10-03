@@ -13,11 +13,25 @@
         "league/html-to-markdown": "^5.1.2"
     },
     "require-dev": {
-        "brianhenryie/strauss": "^0.30.0"
+        "pestphp/pest": "^4",
+        "phpstan/phpstan": "^2.1",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "php-stubs/wp-cli-stubs": "^2.11",
+        "php-stubs/woocommerce-stubs": "^11.1",
+        "laravel/pint": "^1.32"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ThatSeoAgent\\Tests\\": "tests/"
+        }
     },
     "config": {
         "platform": {
             "php": "8.3.0"
+        },
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
         }
     },
     "extra": {
@@ -36,13 +50,18 @@
     },
     "scripts": {
         "prefix-namespaces": [
-            "@php vendor/bin/strauss"
+            "@php bin/strauss.phar",
+            "@composer dump-autoload"
         ],
         "post-install-cmd": [
             "@prefix-namespaces"
         ],
         "post-update-cmd": [
             "@prefix-namespaces"
-        ]
+        ],
+        "test": "pest",
+        "analyse": "phpstan analyse --memory-limit=2G",
+        "format": "pint",
+        "lint": "pint --test"
     }
 }

@@ -1,0 +1,19 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    phpVersion: 80300
+    paths:
+        - thatseoagent.php
+        - uninstall.php
+        - includes
+    bootstrapFiles:
+        - tests/phpstan/constants.php
+    scanFiles:
+        - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+        - vendor/php-stubs/wp-cli-stubs/wp-cli-tools-stubs.php
+        - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+    scanDirectories:
+        - vendor-prefixed
