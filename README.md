@@ -392,15 +392,18 @@ git add vendor-prefixed/ composer.lock
 
 ### Tests and checks
 
-Tests are written with [Pest](https://pestphp.com/), in three suites. `tests/Unit` runs on the plugin's classes alone, with no WordPress. The other two run inside a disposable WordPress started with [wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/) (Docker), where the plugin is active:
+Tests are written with [Pest](https://pestphp.com/), in four suites. `tests/Unit` runs on the plugin's classes alone, with no WordPress. The other three run inside a disposable WordPress started with [wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/) (Docker), where the plugin is active:
 
 - `tests/WordPress` calls the plugin in-process. `pageAt()` serves a URL up to the template and reads the `<head>` it prints. Each test runs inside a database transaction that is rolled back afterwards, so nothing it writes reaches the next one. No HTTP request leaves the site: a test answers the ones it expects with `fakeHttp()`, and any other request fails it.
-- `tests/Http` asks the site's web server with `fetch()`, for the responses that end the request (sitemaps, Markdown, llms.txt) and their headers. The server cannot see an uncommitted transaction, so these tests write for real and `Fixtures` undoes it after each one.
+- `tests/Http` asks the site's web server with `fetch()`, for the responses that end the request (sitemaps, Markdown, llms.txt, the MCP server) and their headers.
+- `tests/Cli` runs `wp thatseoagent …` with `wpCli()`, as a person would.
+
+The web server and WP-CLI cannot see an uncommitted transaction, so the Http and Cli tests write for real and `Fixtures` undoes it after each one. `tests/mu-plugin.php`, which wp-env loads into the test site only, gives them switches for situations a test cannot set up from its own process, such as another SEO plugin being active.
 
 ```bash
 composer test               # Unit suite; the WordPress tests skip themselves
 pnpm env:start              # Start the WordPress for the tests (http://localhost:8894)
-pnpm test:wordpress         # WordPress and Http suites
+pnpm test:wordpress         # WordPress, Http and Cli suites
 pnpm env:stop
 
 composer analyse            # PHPStan, level 5, with phpstan-baseline.neon

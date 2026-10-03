@@ -365,8 +365,17 @@ class ThatSeoAgent_CLI {
             );
         }
 
+        $format = $assoc_args['format'] ?? 'table';
+
+        // JSON and CSV are read by programs: the rows alone, an empty list
+        // included, with no summary line after them to break the parse.
+        if ( 'table' !== $format ) {
+            \WP_CLI\Utils\format_items( $format, $rows, array( 'ID', 'title', 'status', 'issues' ) );
+            return;
+        }
+
         if ( $rows ) {
-            \WP_CLI\Utils\format_items( $assoc_args['format'] ?? 'table', $rows, array( 'ID', 'title', 'status', 'issues' ) );
+            \WP_CLI\Utils\format_items( $format, $rows, array( 'ID', 'title', 'status', 'issues' ) );
         }
 
         WP_CLI::success( sprintf(

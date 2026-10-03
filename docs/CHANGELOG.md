@@ -16,6 +16,9 @@
 - **A product's brand and category are plain text** too, in its markup
   and in `/catalog.jsonl`.
 - **`get-post-seo` names the primary terms in plain text** too.
+- **`wp thatseoagent validate-products --format=json` (and `csv`) prints
+  only the rows**, an empty list when there are none: the summary line after
+  them made the output impossible to parse.
 - **Deleting the plugin removes its caches too**: the Markdown version of
   each post and the pages of `/catalog.jsonl` were left in the options
   table, one transient each.

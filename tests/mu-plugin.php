@@ -16,3 +16,15 @@ if ( get_option( 'thatseoagent_tests_other_seo_plugin' ) ) {
         }
     );
 }
+
+// A product catalog of machines, for the processes the test site runs on
+// its own: its web server and WP-CLI.
+if ( get_option( 'thatseoagent_tests_machine_catalog' ) ) {
+    add_action(
+        'init',
+        static function () {
+            register_post_type( 'machine', array( 'public' => true, 'label' => 'Machines' ) );
+        },
+        0
+    );
+}

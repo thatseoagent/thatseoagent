@@ -48,9 +48,9 @@ uses()
     ->in( 'WordPress' );
 
 /*
- * The Http suite asks the test site's web server, as a crawler or an agent
- * would: status codes, headers and bodies of responses that end the
- * request. What its tests write is committed, for the server to see, and
+ * The Http and Cli suites reach the site from outside this process: its web
+ * server, as a crawler or an agent would, and WP-CLI, as a person would.
+ * What their tests write is committed, for the other process to see, and
  * undone after each one (Fixtures).
  */
 uses()
@@ -66,7 +66,7 @@ uses()
             Fixtures::clean();
         }
     } )
-    ->in( 'Http' );
+    ->in( 'Http', 'Cli' );
 
 /**
  * The site's answer to a request.
