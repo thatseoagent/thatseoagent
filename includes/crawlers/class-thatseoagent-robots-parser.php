@@ -65,7 +65,10 @@ class ThatSeoAgent_Robots_Parser {
         $agents  = array();
         $in_rules = false;
 
-        foreach ( preg_split( '/\r\n|\r|\n/', (string) $robots ) as $line ) {
+        // A byte order mark would hide the first line, often its User-agent.
+        $robots = preg_replace( '/^\xEF\xBB\xBF/', '', (string) $robots );
+
+        foreach ( preg_split( '/\r\n|\r|\n/', $robots ) as $line ) {
             $line = trim( preg_replace( '/#.*$/', '', $line ) );
             if ( ! preg_match( '/^([a-z-]+)\s*:\s*(.*)$/i', $line, $m ) ) {
                 continue;

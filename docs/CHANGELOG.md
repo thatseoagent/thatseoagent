@@ -5,6 +5,11 @@
 ### Changed
 - **PHP 8.3 or later is required**, up from 7.4.
 
+### Fixed
+- **A robots.txt that starts with a byte order mark is read whole.** The
+  mark hid its first line, usually a `User-agent`, so the rules of that
+  group were dropped and AI crawlers it blocks were reported as allowed.
+
 ## [2.10.0] - 2026-09-28
 
 ### Added
