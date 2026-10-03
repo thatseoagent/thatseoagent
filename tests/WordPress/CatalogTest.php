@@ -16,7 +16,9 @@ function machineCatalog( array $mapping = array() ): void {
     register_taxonomy( 'machine_brand', 'machine', array( 'public' => true, 'label' => 'Brands' ) );
     register_taxonomy( 'machine_type', 'machine', array( 'public' => true, 'label' => 'Types', 'hierarchical' => true ) );
 
-    // Its addresses, for pageAt() to resolve.
+    // Its addresses, for pageAt() to resolve. The rules before them are put
+    // back afterwards: unregistering the type leaves most of them behind.
+    $GLOBALS['thatseoagent_test_rewrite_rules'] = get_option( 'rewrite_rules' );
     flush_rewrite_rules( false );
 
     update_option( ThatSeoAgent_Product::OPTION_KEY, array(
@@ -33,7 +35,12 @@ afterEach( function () {
         unregister_taxonomy( 'machine_brand' );
         unregister_taxonomy( 'machine_type' );
         unregister_post_type( 'machine' );
-        flush_rewrite_rules( false );
+    }
+
+    if ( isset( $GLOBALS['thatseoagent_test_rewrite_rules'] ) ) {
+        update_option( 'rewrite_rules', $GLOBALS['thatseoagent_test_rewrite_rules'] );
+        $GLOBALS['wp_rewrite']->rules = $GLOBALS['thatseoagent_test_rewrite_rules'];
+        unset( $GLOBALS['thatseoagent_test_rewrite_rules'] );
     }
 } );
 
