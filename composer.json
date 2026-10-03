@@ -5,8 +5,7 @@
     "license": "GPL-2.0-or-later",
     "authors": [
         {
-            "name": "Angel Cruz",
-            "email": "angel.cruz@wallbit.io"
+            "name": "Angel Cruz"
         }
     ],
     "require": {
