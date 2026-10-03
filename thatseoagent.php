@@ -82,7 +82,7 @@ if ( function_exists( 'wp_register_ability' ) ) {
         add_action( 'wp_abilities_api_init', array( 'ThatSeoAgent_Abilities', 'register' ) );
     }
 
-    // Their own MCP server, when Lean MCP or MCP Adapter is active.
+    // Their own MCP server, when Lean MCP is active.
     ThatSeoAgent_MCP::register();
 }
 

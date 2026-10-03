@@ -205,7 +205,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | `integrations/` | `ThatSeoAgent_Compat` | Stepping aside while another SEO plugin is active |
 | | `ThatSeoAgent_WooCommerce` | What WooCommerce marks up itself: its products and their breadcrumbs |
 | | `ThatSeoAgent_IndexNow` | IndexNow key, verification file and submission |
-| | `ThatSeoAgent_MCP` | The plugin's own MCP server, when MCP Adapter is active |
+| | `ThatSeoAgent_MCP` | The plugin's own MCP server, when Lean MCP is active |
 
 ## Filters
 
@@ -331,18 +331,17 @@ Every option is also registered with `show_in_rest`, so administrators can read 
 
 ## MCP server
 
-With the [MCP Adapter](https://github.com/WordPress/mcp-adapter) plugin (0.6) active, the fourteen abilities are also the tools of a dedicated MCP server, `thatseoagent`, whatever the theme. As tools the slash becomes a hyphen: `thatseoagent-update-post-seo`.
+With the Lean MCP plugin active, the fourteen abilities are also the tools of a dedicated MCP server, `thatseoagent`, whatever the theme. As tools the slash becomes a hyphen: `thatseoagent-update-post-seo`.
 
-- HTTP: `https://<site>/wp-json/mcp/thatseoagent`, with the application password of an editor or administrator (`edit_others_posts`); anyone else gets a 401 or 403. Each tool also checks its own capability.
-- STDIO: `wp mcp-adapter serve --server=thatseoagent --user=<user>`.
+At `https://<site>/wp-json/lean-mcp/thatseoagent`, with the application password of an editor or administrator (`edit_others_posts`); anyone else gets a 401 or 403. Each tool also checks its own capability.
 
 ```bash
 claude mcp add --transport http thatseoagent \
-  https://<site>/wp-json/mcp/thatseoagent \
+  https://<site>/wp-json/lean-mcp/thatseoagent \
   --header "Authorization: Basic $(printf 'USER:APPLICATION PASSWORD' | base64)"
 ```
 
-Without MCP Adapter the server is not created; the abilities stay available through the Abilities API.
+Without Lean MCP the server is not created; the abilities stay available through the Abilities API.
 
 ## WP-CLI
 
