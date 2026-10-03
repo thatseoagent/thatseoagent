@@ -501,7 +501,7 @@ class ThatSeoAgent_Product {
             if ( $brand ) {
                 $node['brand'] = array(
                     '@type' => 'Brand',
-                    'name'  => $brand->name,
+                    'name'  => self::clean_text( $brand->name ),
                 );
             } else {
                 $issues[] = self::issue( 'product_brand_missing', 'warning', __( 'No brand assigned.', 'thatseoagent' ), $map['brand_taxonomy'] );
@@ -510,7 +510,7 @@ class ThatSeoAgent_Product {
 
         if ( '' !== $map['category_taxonomy'] ) {
             // The primary one: the same the breadcrumb and the meta tags name.
-            $category = ThatSeoAgent_Primary_Term::label( $post, $map['category_taxonomy'] );
+            $category = self::clean_text( ThatSeoAgent_Primary_Term::label( $post, $map['category_taxonomy'] ) );
             if ( '' !== $category ) {
                 $node['category'] = $category;
             } else {

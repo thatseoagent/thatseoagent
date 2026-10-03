@@ -13,6 +13,8 @@
   breadcrumbs and products already did.
 - **Names in the Markdown frontmatter are plain text** too: the author,
   the categories and the tags said `Ana &amp; Bob`.
+- **A product's brand and category are plain text** too, in its markup
+  and in `/catalog.jsonl`.
 
 ### Changed
 - **PHP 8.3 or later is required**, up from 7.4.
