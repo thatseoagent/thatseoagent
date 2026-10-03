@@ -12,6 +12,11 @@
             "port": 8894,
             "mappings": {
                 "wp-content/mu-plugins/thatseoagent-tests.php": "./tests/mu-plugin.php"
+            },
+            "config": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": false,
+                "WP_DEBUG_LOG": "/var/www/html/wp-content/debug.log"
             }
         }
     }

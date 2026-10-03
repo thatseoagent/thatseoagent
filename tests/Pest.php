@@ -63,7 +63,10 @@ uses()
     } )
     ->afterEach( function () {
         if ( function_exists( 'add_filter' ) ) {
+            $logged = Fixtures::logged();
             Fixtures::clean();
+
+            expect( $logged )->toBe( array(), 'PHP logged errors while the site answered.' );
         }
     } )
     ->in( 'Http', 'Cli' );

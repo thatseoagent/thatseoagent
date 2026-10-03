@@ -1,30 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Offset ''id'' does not exist on array\{label\: string, destination\: ''edit_post''\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: includes/admin/class-thatseoagent-app.php
-
-		-
-			message: '#^Offset ''id'' on array\{label\: string, destination\: ''edit_post''\} in empty\(\) does not exist\.$#'
-			identifier: empty.offset
-			count: 1
-			path: includes/admin/class-thatseoagent-app.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: includes/admin/class-thatseoagent-app.php
-
-		-
-			message: '#^Offset ''dot'' does not exist on array\{square\: string, field\: string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: includes/admin/views/dashboard.php
-
-		-
 			message: '#^Parameter \#1 \$text of function esc_attr expects string, float given\.$#'
 			identifier: argument.type
 			count: 1

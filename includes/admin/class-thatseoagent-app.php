@@ -390,7 +390,7 @@ class ThatSeoAgent_App {
      * @since 1.20.0 Split from ThatSeoAgent_App::levels(), whose names and
      *               order moved to ThatSeoAgent_Bulletin::levels().
      * @param string $level Warning level.
-     * @return array{square: string, field: string}
+     * @return array{square: string, field: string, dot: string}
      */
     public static function level_classes( $level ) {
         $classes = array(
@@ -446,7 +446,7 @@ class ThatSeoAgent_App {
      * lives.
      *
      * @since 1.20.0
-     * @param array{label: string, destination: string} $action A warning's action.
+     * @param array{label: string, destination: string, id?: int} $action A warning's action.
      * @return string
      */
     public static function action_url( array $action ) {

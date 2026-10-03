@@ -26,11 +26,17 @@ final class Fixtures {
 
     private const ABSENT = "\0absent";
 
+    /** How long the debug log was when the test started. */
+    private static int $log_offset = 0;
+
     public static function start(): void {
         self::$posts   = array();
         self::$users   = array();
         self::$terms   = array();
         self::$options = array();
+
+        clearstatcache();
+        self::$log_offset = is_string( WP_DEBUG_LOG ) && is_file( WP_DEBUG_LOG ) ? (int) filesize( WP_DEBUG_LOG ) : 0;
 
         add_action( 'wp_insert_post', array( self::class, 'post_created' ), 10, 3 );
         // Attachments are created without wp_insert_post firing.
@@ -39,6 +45,23 @@ final class Fixtures {
         add_action( 'user_register', array( self::class, 'user_created' ) );
         add_action( 'add_option', array( self::class, 'option_added' ) );
         add_action( 'update_option', array( self::class, 'option_updated' ), 10, 2 );
+    }
+
+    /**
+     * What PHP logged while the test ran, in this process or the others:
+     * the web server's answers and WP-CLI's commands log there too.
+     *
+     * @return list<string>
+     */
+    public static function logged(): array {
+        clearstatcache();
+        if ( ! is_string( WP_DEBUG_LOG ) || ! is_file( WP_DEBUG_LOG ) || filesize( WP_DEBUG_LOG ) <= self::$log_offset ) {
+            return array();
+        }
+
+        $lines = explode( "\n", trim( (string) file_get_contents( WP_DEBUG_LOG, false, null, self::$log_offset ) ) );
+
+        return array_values( array_filter( $lines, static fn ( string $line ): bool => (bool) preg_match( '/PHP (Fatal|Parse|Warning|Notice|Deprecated)|WordPress database error/', $line ) ) );
     }
 
     public static function clean(): void {
