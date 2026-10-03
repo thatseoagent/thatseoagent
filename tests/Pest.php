@@ -1,7 +1,9 @@
 <?php
 
+use ThatSeoAgent\Tests\Fixtures;
 use ThatSeoAgent\Tests\HttpFake;
 use ThatSeoAgent\Tests\Page;
+use ThatSeoAgent\Tests\Response;
 
 /*
  * The WordPress suite needs a real WordPress: it runs in wp-env.
@@ -44,6 +46,36 @@ uses()
         expect( $unfaked )->toBe( array(), 'Requests the test did not fake with fakeHttp().' );
     } )
     ->in( 'WordPress' );
+
+/*
+ * The Http suite asks the test site's web server, as a crawler or an agent
+ * would: status codes, headers and bodies of responses that end the
+ * request. What its tests write is committed, for the server to see, and
+ * undone after each one (Fixtures).
+ */
+uses()
+    ->beforeEach( function () {
+        if ( ! function_exists( 'add_filter' ) ) {
+            $this->markTestSkipped( 'Needs WordPress: run pnpm test:wordpress.' );
+        }
+
+        Fixtures::start();
+    } )
+    ->afterEach( function () {
+        if ( function_exists( 'add_filter' ) ) {
+            Fixtures::clean();
+        }
+    } )
+    ->in( 'Http' );
+
+/**
+ * The site's answer to a request.
+ *
+ * @param array<string, string> $headers
+ */
+function fetch( string $url, array $headers = array(), string $method = 'GET' ): Response {
+    return Response::fetch( $url, $headers, $method );
+}
 
 /**
  * Answers the requests whose URL matches a pattern, for one test.

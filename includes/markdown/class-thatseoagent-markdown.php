@@ -118,7 +118,7 @@ class ThatSeoAgent_Markdown {
             'title'     => ThatSeoAgent_Content::to_text( $post->post_title ),
             'date'      => get_the_date( 'c', $post ),
             'modified'  => get_the_modified_date( 'c', $post ),
-            'author'    => get_the_author_meta( 'display_name', $post->post_author ),
+            'author'    => ThatSeoAgent_Content::to_text( get_the_author_meta( 'display_name', $post->post_author ) ),
             'permalink' => get_permalink( $post ),
             'type'      => $post->post_type,
         );
@@ -133,12 +133,12 @@ class ThatSeoAgent_Markdown {
         if ( 'post' === $post->post_type ) {
             $categories = get_the_category( $post->ID );
             if ( ! empty( $categories ) ) {
-                $fields['categories'] = wp_list_pluck( $categories, 'name' );
+                $fields['categories'] = array_map( array( 'ThatSeoAgent_Content', 'to_text' ), wp_list_pluck( $categories, 'name' ) );
             }
 
             $tags = get_the_tags( $post->ID );
             if ( ! empty( $tags ) && ! is_wp_error( $tags ) ) {
-                $fields['tags'] = wp_list_pluck( $tags, 'name' );
+                $fields['tags'] = array_map( array( 'ThatSeoAgent_Content', 'to_text' ), wp_list_pluck( $tags, 'name' ) );
             }
         }
 
@@ -259,8 +259,6 @@ class ThatSeoAgent_Markdown {
                     'strip_tags'        => true,
                     'remove_nodes'      => 'script style',
                     'header_style'      => 'atx',
-                    'bold_style'        => '**',
-                    'italic_style'      => '_',
                     'hard_break'        => true,
                     'preserve_comments' => false,
                 )

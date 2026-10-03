@@ -2,9 +2,6 @@
 
 ## [Unreleased]
 
-### Changed
-- **PHP 8.3 or later is required**, up from 7.4.
-
 ### Fixed
 - **A robots.txt that starts with a byte order mark is read whole.** The
   mark hid its first line, usually a `User-agent`, so the rules of that
@@ -14,6 +11,14 @@
   out as WordPress prints them in HTML, with entities: `Bob&#8217;s`,
   `Tools &amp; Co`. The graph now says `Bob’s` and `Tools & Co`, as the
   breadcrumbs and products already did.
+- **Names in the Markdown frontmatter are plain text** too: the author,
+  the categories and the tags said `Ana &amp; Bob`.
+
+### Changed
+- **PHP 8.3 or later is required**, up from 7.4.
+- **Italics in the Markdown versions are written `*like this*`**, the
+  converter's default, instead of `_like this_`: the option that chose
+  underscores is deprecated in league/html-to-markdown.
 
 ## [2.10.0] - 2026-09-28
 

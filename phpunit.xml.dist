@@ -5,13 +5,18 @@
          cacheDirectory=".phpunit.cache"
          colors="true"
          failOnWarning="true"
-         failOnRisky="true">
+         failOnRisky="true"
+         failOnDeprecation="true"
+         failOnNotice="true">
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
         </testsuite>
         <testsuite name="WordPress">
             <directory>tests/WordPress</directory>
+        </testsuite>
+        <testsuite name="Http">
+            <directory>tests/Http</directory>
         </testsuite>
     </testsuites>
     <source>
