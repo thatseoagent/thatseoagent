@@ -181,3 +181,16 @@ describe( 'an attachment page', function () {
             ->and( $response->header( 'location' ) )->toBe( wp_get_attachment_url( $image ) );
     } );
 } );
+
+describe( 'the IndexNow key file', function () {
+    it( 'is served at the key’s address, and nothing else is', function () {
+        update_option( ThatSeoAgent_IndexNow::OPTION_KEY, 'a1b2c3d4e5f6a7b8' );
+
+        $key   = fetch( home_url( '/a1b2c3d4e5f6a7b8.txt' ) );
+        $other = fetch( home_url( '/ffffffffffffffff.txt' ) );
+
+        expect( $key->status )->toBe( 200 )
+            ->and( $key->body )->toBe( 'a1b2c3d4e5f6a7b8' )
+            ->and( $other->status )->toBe( 404 );
+    } );
+} );
