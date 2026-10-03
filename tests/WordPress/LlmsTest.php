@@ -6,16 +6,6 @@
  */
 
 /**
- * The site's own content only: the post and page wp-env ships with would
- * otherwise sit in every list.
- */
-function withoutSampleContent(): void {
-    foreach ( get_posts( array( 'post_type' => array( 'post', 'page' ), 'post_status' => 'any', 'numberposts' => -1 ) ) as $post ) {
-        wp_delete_post( $post->ID, true );
-    }
-}
-
-/**
  * The lines of llms.txt under one `##` heading.
  *
  * @return list<string>

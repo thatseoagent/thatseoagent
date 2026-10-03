@@ -15,6 +15,7 @@
   the categories and the tags said `Ana &amp; Bob`.
 - **A product's brand and category are plain text** too, in its markup
   and in `/catalog.jsonl`.
+- **`get-post-seo` names the primary terms in plain text** too.
 
 ### Changed
 - **PHP 8.3 or later is required**, up from 7.4.
