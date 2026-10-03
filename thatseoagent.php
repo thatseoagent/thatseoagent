@@ -15,14 +15,14 @@
  */
 
 // Prevent direct access
-if (!defined('ABSPATH')) {
+if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 
 // Plugin constants
-define('THATSEOAGENT_VERSION', '2.10.0');
-define('THATSEOAGENT_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('THATSEOAGENT_PLUGIN_URL', plugin_dir_url(__FILE__));
+define( 'THATSEOAGENT_VERSION', '2.10.0' );
+define( 'THATSEOAGENT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'THATSEOAGENT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 // Third-party libraries, namespaced under ThatSeoAgent\Dependencies by Strauss.
 require_once THATSEOAGENT_PLUGIN_DIR . 'vendor-prefixed/autoload.php';
@@ -35,7 +35,7 @@ require_once THATSEOAGENT_PLUGIN_DIR . 'includes/autoload.php';
 function thatseoagent_init() {
     return ThatSeoAgent::get_instance();
 }
-add_action('plugins_loaded', 'thatseoagent_init');
+add_action( 'plugins_loaded', 'thatseoagent_init' );
 
 /**
  * Load translations from /languages.
@@ -87,7 +87,7 @@ if ( function_exists( 'wp_register_ability' ) ) {
 }
 
 // Activation hook
-register_activation_hook(__FILE__, 'thatseoagent_activate');
+register_activation_hook( __FILE__, 'thatseoagent_activate' );
 /**
  * Flag the rewrite rules for a refresh.
  *
@@ -99,25 +99,25 @@ register_activation_hook(__FILE__, 'thatseoagent_activate');
  * flushes on the next `init`, once the rules exist.
  */
 function thatseoagent_activate() {
-    delete_option(ThatSeoAgent::REWRITE_VERSION_OPTION);
+    delete_option( ThatSeoAgent::REWRITE_VERSION_OPTION );
 }
 
 // Deactivation hook
-register_deactivation_hook(__FILE__, 'thatseoagent_deactivate');
+register_deactivation_hook( __FILE__, 'thatseoagent_deactivate' );
 function thatseoagent_deactivate() {
-    delete_option(ThatSeoAgent::REWRITE_VERSION_OPTION);
+    delete_option( ThatSeoAgent::REWRITE_VERSION_OPTION );
 
     // Drop any IndexNow submissions still queued; their callback disappears
     // with the plugin and WP-Cron would keep retrying a missing hook.
-    wp_unschedule_hook(ThatSeoAgent_IndexNow::CRON_HOOK);
-    wp_unschedule_hook(ThatSeoAgent_Checks::CRON_HOOK);
+    wp_unschedule_hook( ThatSeoAgent_IndexNow::CRON_HOOK );
+    wp_unschedule_hook( ThatSeoAgent_Checks::CRON_HOOK );
 
     // Not flush_rewrite_rules(): `init` already ran in this request, so the
     // sitemap and .md rules are registered and a flush would persist them —
     // /sitemap.xml and /post.md would keep routing to a plugin that is gone.
     // Deleting the option makes WordPress rebuild the rules on the next
     // request, without them.
-    delete_option('rewrite_rules');
+    delete_option( 'rewrite_rules' );
 
     ThatSeoAgent_Markdown_Cache::purge_all();
 }

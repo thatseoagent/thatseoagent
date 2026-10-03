@@ -12,7 +12,7 @@
  * @since 1.19.0 Moved out of ThatSeoAgent_Admin.
  */
 
-if (!defined('ABSPATH')) {
+if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 
@@ -24,9 +24,9 @@ class ThatSeoAgent_Meta_Box {
      * @since 1.19.0
      */
     public static function register() {
-        add_action('add_meta_boxes', array(__CLASS__, 'add'));
-        add_action('save_post', array(__CLASS__, 'save'), 10, 1);
-        add_action('admin_enqueue_scripts', array(__CLASS__, 'enqueue_assets'));
+        add_action( 'add_meta_boxes', array( __CLASS__, 'add' ) );
+        add_action( 'save_post', array( __CLASS__, 'save' ), 10, 1 );
+        add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
     }
 
     /**
@@ -34,11 +34,11 @@ class ThatSeoAgent_Meta_Box {
      */
     public static function add() {
         $post_types = ThatSeoAgent_Post_Seo::post_types();
-        
+
         add_meta_box(
             'thatseoagent_meta',
             __( 'SEO', 'thatseoagent' ),
-            array(__CLASS__, 'render'),
+            array( __CLASS__, 'render' ),
             $post_types,
             'normal',
             'high'
@@ -87,10 +87,10 @@ class ThatSeoAgent_Meta_Box {
     /**
      * Render meta box
      */
-    public static function render($post) {
-        wp_nonce_field('thatseoagent_save', 'thatseoagent_nonce');
+    public static function render( $post ) {
+        wp_nonce_field( 'thatseoagent_save', 'thatseoagent_nonce' );
 
-        $seo = ThatSeoAgent_Post_Seo::all($post);
+        $seo = ThatSeoAgent_Post_Seo::all( $post );
         $seo_title = $seo['title'];
         $seo_desc = $seo['description'];
         ?>
@@ -103,8 +103,8 @@ class ThatSeoAgent_Meta_Box {
                 type="text" 
                 id="thatseoagent_title" 
                 name="thatseoagent_title" 
-                value="<?php echo esc_attr($seo_title); ?>" 
-                placeholder="<?php echo esc_attr($post->post_title); ?>"
+                value="<?php echo esc_attr( $seo_title ); ?>" 
+                placeholder="<?php echo esc_attr( $post->post_title ); ?>"
                 data-thatseoagent-generated="<?php echo esc_attr( ThatSeoAgent_Title::for_post( $post, '' ) ); ?>"
             >
             <p class="description"><?php esc_html_e( 'Leave blank to use the post title. Search results trim titles to the width of the screen; past the counter it may be cut.', 'thatseoagent' ); ?></p>
@@ -121,7 +121,7 @@ class ThatSeoAgent_Meta_Box {
                 rows="3" 
                 placeholder="<?php esc_attr_e( 'Leave blank to generate it from the content', 'thatseoagent' ); ?>"
                 data-thatseoagent-generated="<?php echo esc_attr( ThatSeoAgent_Description::for_post( $post, '' ) ); ?>"
-            ><?php echo esc_textarea($seo_desc); ?></textarea>
+            ><?php echo esc_textarea( $seo_desc ); ?></textarea>
             <p class="description"><?php esc_html_e( 'The sentence under the title in search results. Google sets no limit, but past the counter it may be cut.', 'thatseoagent' ); ?></p>
         </div>
 
@@ -167,8 +167,8 @@ class ThatSeoAgent_Meta_Box {
 
         <div class="thatseoagent-preview">
             <div class="thatseoagent-preview-title" id="preview-title"><?php echo esc_html( ThatSeoAgent_Title::for_post( $post ) ); ?></div>
-            <div class="thatseoagent-preview-url"><?php echo esc_url(get_permalink($post)); ?></div>
-            <div class="thatseoagent-preview-desc" id="preview-desc"><?php echo esc_html(ThatSeoAgent_Description::for_post($post)); ?></div>
+            <div class="thatseoagent-preview-url"><?php echo esc_url( get_permalink( $post ) ); ?></div>
+            <div class="thatseoagent-preview-desc" id="preview-desc"><?php echo esc_html( ThatSeoAgent_Description::for_post( $post ) ); ?></div>
         </div>
 
         <?php
@@ -177,38 +177,38 @@ class ThatSeoAgent_Meta_Box {
     /**
      * Save meta box data
      */
-    public static function save($post_id) {
+    public static function save( $post_id ) {
         // Verify nonce
-        $nonce = isset($_POST['thatseoagent_nonce']) ? sanitize_text_field(wp_unslash($_POST['thatseoagent_nonce'])) : '';
-        if (!$nonce || !wp_verify_nonce($nonce, 'thatseoagent_save')) {
+        $nonce = isset( $_POST['thatseoagent_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['thatseoagent_nonce'] ) ) : '';
+        if ( !$nonce || !wp_verify_nonce( $nonce, 'thatseoagent_save' ) ) {
             return;
         }
 
         // Check autosave
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
             return;
         }
 
         // Check permissions
-        if (!current_user_can('edit_post', $post_id)) {
+        if ( !current_user_can( 'edit_post', $post_id ) ) {
             return;
         }
 
         // Only fields actually present in the submission are touched; a
         // field absent from the form is left as it was.
         $submitted = array();
-        foreach (array('title', 'description', 'noindex', 'share_image') as $field) {
-            if (isset($_POST['thatseoagent_' . $field])) {
+        foreach ( array( 'title', 'description', 'noindex', 'share_image' ) as $field ) {
+            if ( isset( $_POST['thatseoagent_' . $field] ) ) {
                 // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Passed on raw by design: ThatSeoAgent_Post_Seo::save_from_request() unslashes and sanitizes, and it must receive the still-slashed value to do so correctly. Sanitizing here would double-process it.
                 $submitted[$field] = $_POST['thatseoagent_' . $field];
             }
         }
 
-        ThatSeoAgent_Post_Seo::save_from_request($post_id, $submitted);
+        ThatSeoAgent_Post_Seo::save_from_request( $post_id, $submitted );
 
-        if (isset($_POST['thatseoagent_primary'])) {
+        if ( isset( $_POST['thatseoagent_primary'] ) ) {
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Keys sanitized as taxonomy names and values as term IDs in save_from_request().
-            ThatSeoAgent_Primary_Term::save_from_request($post_id, wp_unslash($_POST['thatseoagent_primary']));
+            ThatSeoAgent_Primary_Term::save_from_request( $post_id, wp_unslash( $_POST['thatseoagent_primary'] ) );
         }
     }
 }

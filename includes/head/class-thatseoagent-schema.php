@@ -6,7 +6,7 @@
  * @since 1.0.0
  */
 
-if (!defined('ABSPATH')) {
+if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 
@@ -18,7 +18,7 @@ class ThatSeoAgent_Schema {
      * @since 1.19.0 Moved out of ThatSeoAgent.
      */
     public static function register() {
-        add_action('wp_head', array(__CLASS__, 'output'), 2);
+        add_action( 'wp_head', array( __CLASS__, 'output' ), 2 );
     }
 
     /**
@@ -34,14 +34,14 @@ class ThatSeoAgent_Schema {
     public static function output() {
         $post = is_singular() ? get_queried_object() : null;
 
-        if ($post instanceof WP_Post) {
-            $graph = self::for_post($post);
-        } elseif (is_author()) {
-            $graph = self::listing_graph('ProfilePage');
-        } elseif (self::is_listing()) {
-            $graph = self::listing_graph('CollectionPage');
+        if ( $post instanceof WP_Post ) {
+            $graph = self::for_post( $post );
+        } elseif ( is_author() ) {
+            $graph = self::listing_graph( 'ProfilePage' );
+        } elseif ( self::is_listing() ) {
+            $graph = self::listing_graph( 'CollectionPage' );
         } else {
-            $graph = self::finish(self::site_nodes(), null);
+            $graph = self::finish( self::site_nodes(), null );
         }
 
         $output = array(
@@ -52,7 +52,7 @@ class ThatSeoAgent_Schema {
         echo '<script type="application/ld+json">' . "\n";
         // JSON_HEX_TAG escapes < and > so content containing "</script>"
         // cannot break out of the JSON-LD block.
-        echo wp_json_encode($output, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+        echo wp_json_encode( $output, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG );
         echo "\n</script>\n";
     }
 
@@ -67,35 +67,35 @@ class ThatSeoAgent_Schema {
      * @param WP_Post $post Post.
      * @return array<int, array> The @graph's nodes.
      */
-    public static function for_post(WP_Post $post) {
+    public static function for_post( WP_Post $post ) {
         $graph = self::site_nodes();
 
         // Built first: the WebPage node points at it. None where
         // WooCommerce states its own.
-        $breadcrumb = ThatSeoAgent_WooCommerce::states_breadcrumbs($post)
+        $breadcrumb = ThatSeoAgent_WooCommerce::states_breadcrumbs( $post )
             ? null
-            : self::get_breadcrumb_schema(ThatSeoAgent_Breadcrumbs::for_post($post), get_permalink($post), $post);
+            : self::get_breadcrumb_schema( ThatSeoAgent_Breadcrumbs::for_post( $post ), get_permalink( $post ), $post );
 
         // A catalog entry is a Product, and the page is about it. Not an
         // Article as well, even when its post type is listed as one: a
         // page has one main entity.
-        $product = ThatSeoAgent_Product::schema($post);
+        $product = ThatSeoAgent_Product::schema( $post );
 
-        $graph[] = self::get_webpage_schema($post, $product ? $product['@id'] : '', $breadcrumb);
+        $graph[] = self::get_webpage_schema( $post, $product ? $product['@id'] : '', $breadcrumb );
 
-        if ($product) {
+        if ( $product ) {
             $graph[] = $product;
         }
 
-        if (! $product && in_array($post->post_type, self::article_post_types(), true)) {
-            $graph[] = self::get_article_schema($post);
-            $graph[] = self::get_author_person_schema((int) $post->post_author);
-            $graph[] = self::get_faq_schema($post);
+        if ( ! $product && in_array( $post->post_type, self::article_post_types(), true ) ) {
+            $graph[] = self::get_article_schema( $post );
+            $graph[] = self::get_author_person_schema( (int) $post->post_author );
+            $graph[] = self::get_faq_schema( $post );
         }
 
         $graph[] = $breadcrumb;
 
-        return self::finish($graph, $post);
+        return self::finish( $graph, $post );
     }
 
     /**
@@ -107,19 +107,19 @@ class ThatSeoAgent_Schema {
      * @param string $type 'CollectionPage' or 'ProfilePage'.
      * @return array<int, array>
      */
-    private static function listing_graph($type) {
+    private static function listing_graph( $type ) {
         $graph      = self::site_nodes();
         $url        = self::current_url();
         $breadcrumb = ThatSeoAgent_WooCommerce::states_breadcrumbs()
             ? null
-            : self::get_breadcrumb_schema(ThatSeoAgent_Breadcrumbs::trail(), $url, null);
-        $person     = 'ProfilePage' === $type ? self::get_author_person_schema(get_queried_object_id()) : null;
+            : self::get_breadcrumb_schema( ThatSeoAgent_Breadcrumbs::trail(), $url, null );
+        $person     = 'ProfilePage' === $type ? self::get_author_person_schema( get_queried_object_id() ) : null;
 
-        $graph[] = self::get_listing_page_schema($type, $breadcrumb, $person ? $person['@id'] : '');
+        $graph[] = self::get_listing_page_schema( $type, $breadcrumb, $person ? $person['@id'] : '' );
         $graph[] = $person;
         $graph[] = $breadcrumb;
 
-        return self::finish($graph, null);
+        return self::finish( $graph, null );
     }
 
     /**
@@ -130,7 +130,7 @@ class ThatSeoAgent_Schema {
      * @return array<int, array|null>
      */
     private static function site_nodes() {
-        $nodes = array(self::get_website_schema());
+        $nodes = array( self::get_website_schema() );
 
         // Person schema — only present when the site is configured (or a
         // filter opts in) as representing an individual.
@@ -139,13 +139,13 @@ class ThatSeoAgent_Schema {
         // The site has exactly one primary entity. Emitting both a Person and
         // an Organization leaves two nodes competing to be the publisher, so
         // the Organization node is dropped when a Person is the primary one.
-        $person_is_primary = ('person' === self::get_primary_entity()) && ! empty($person_schema);
+        $person_is_primary = ( 'person' === self::get_primary_entity() ) && ! empty( $person_schema );
 
-        if (! $person_is_primary) {
+        if ( ! $person_is_primary ) {
             $nodes[] = self::get_organization_schema();
         }
 
-        if ($person_schema) {
+        if ( $person_schema ) {
             $nodes[] = $person_schema;
         }
 
@@ -161,7 +161,7 @@ class ThatSeoAgent_Schema {
      * @param WP_Post|null $post  The post whose page it is, null otherwise.
      * @return array<int, array>
      */
-    private static function finish(array $graph, $post) {
+    private static function finish( array $graph, $post ) {
         /**
          * Filter the complete JSON-LD @graph before output.
          *
@@ -175,11 +175,11 @@ class ThatSeoAgent_Schema {
          * @param array        $graph Array of schema node arrays.
          * @param WP_Post|null $post  The post whose page it is, null on any other view.
          */
-        $graph = apply_filters('thatseoagent_schema_graph', array_filter($graph), $post);
+        $graph = apply_filters( 'thatseoagent_schema_graph', array_filter( $graph ), $post );
 
         // After the filter, so a node removed there takes its references
         // with it.
-        return self::without_dangling_references(array_values(array_filter((array) $graph)));
+        return self::without_dangling_references( array_values( array_filter( (array) $graph ) ) );
     }
 
     /**
@@ -197,42 +197,42 @@ class ThatSeoAgent_Schema {
      * @param array<int, array> $graph Nodes.
      * @return array<int, array>
      */
-    private static function without_dangling_references(array $graph) {
+    private static function without_dangling_references( array $graph ) {
         $declared = array();
-        self::collect_ids($graph, $declared);
+        self::collect_ids( $graph, $declared );
 
-        $home = untrailingslashit(home_url());
+        $home = untrailingslashit( home_url() );
 
-        $prune = function ($value) use (&$prune, $declared, $home) {
-            if (! is_array($value)) {
+        $prune = function ( $value ) use ( &$prune, $declared, $home ) {
+            if ( ! is_array( $value ) ) {
                 return $value;
             }
 
             $clean = array();
-            foreach ($value as $key => $item) {
-                if (is_array($item) && self::is_reference($item)) {
+            foreach ( $value as $key => $item ) {
+                if ( is_array( $item ) && self::is_reference( $item ) ) {
                     $id = (string) $item['@id'];
-                    if (0 === strpos($id, $home) && ! isset($declared[$id])) {
+                    if ( 0 === strpos( $id, $home ) && ! isset( $declared[$id] ) ) {
                         continue;
                     }
                 }
 
-                $item = $prune($item);
+                $item = $prune( $item );
 
                 // A list emptied of every reference it held goes too.
-                if (is_array($item) && array() === $item && is_array($value[$key])) {
+                if ( is_array( $item ) && array() === $item && is_array( $value[$key] ) ) {
                     continue;
                 }
 
                 $clean[$key] = $item;
             }
 
-            return array_keys($value) === range(0, count($value) - 1) ? array_values($clean) : $clean;
+            return array_keys( $value ) === range( 0, count( $value ) - 1 ) ? array_values( $clean ) : $clean;
         };
 
         $result = array();
-        foreach ($graph as $node) {
-            $result[] = is_array($node) ? $prune($node) : $node;
+        foreach ( $graph as $node ) {
+            $result[] = is_array( $node ) ? $prune( $node ) : $node;
         }
 
         return $result;
@@ -245,17 +245,17 @@ class ThatSeoAgent_Schema {
      * @param mixed                $value    Graph or node.
      * @param array<string, bool>  $declared IDs found, by reference.
      */
-    private static function collect_ids($value, array &$declared) {
-        if (! is_array($value)) {
+    private static function collect_ids( $value, array &$declared ) {
+        if ( ! is_array( $value ) ) {
             return;
         }
 
-        if (isset($value['@id']) && ! self::is_reference($value)) {
+        if ( isset( $value['@id'] ) && ! self::is_reference( $value ) ) {
             $declared[(string) $value['@id']] = true;
         }
 
-        foreach ($value as $item) {
-            self::collect_ids($item, $declared);
+        foreach ( $value as $item ) {
+            self::collect_ids( $item, $declared );
         }
     }
 
@@ -266,8 +266,8 @@ class ThatSeoAgent_Schema {
      * @param array $node Node.
      * @return bool
      */
-    private static function is_reference(array $node) {
-        return isset($node['@id']) && array() === array_diff(array_keys($node), array('@id', '@type'));
+    private static function is_reference( array $node ) {
+        return isset( $node['@id'] ) && array() === array_diff( array_keys( $node ), array( '@id', '@type' ) );
     }
 
     /**
@@ -289,7 +289,7 @@ class ThatSeoAgent_Schema {
          *              'organization'.
          * @param string $entity Either 'organization' or 'person'.
          */
-        $entity = apply_filters('thatseoagent_primary_entity', ThatSeoAgent_Identity::primary_entity());
+        $entity = apply_filters( 'thatseoagent_primary_entity', ThatSeoAgent_Identity::primary_entity() );
 
         return 'person' === $entity ? 'person' : 'organization';
     }
@@ -301,11 +301,11 @@ class ThatSeoAgent_Schema {
      * @return string
      */
     public static function get_publisher_id() {
-        if ('person' === self::get_primary_entity() && self::get_person_schema()) {
-            return home_url('/#person');
+        if ( 'person' === self::get_primary_entity() && self::get_person_schema() ) {
+            return home_url( '/#person' );
         }
 
-        return home_url('/#organization');
+        return home_url( '/#organization' );
     }
 
     /**
@@ -317,7 +317,7 @@ class ThatSeoAgent_Schema {
      * @return string
      */
     private static function get_language() {
-        return get_bloginfo('language');
+        return get_bloginfo( 'language' );
     }
 
     /**
@@ -326,16 +326,16 @@ class ThatSeoAgent_Schema {
     private static function get_website_schema() {
         $schema = array(
             '@type' => 'WebSite',
-            '@id' => home_url('/#website'),
-            'url' => home_url('/'),
-            'name' => get_bloginfo('name'),
+            '@id' => home_url( '/#website' ),
+            'url' => home_url( '/' ),
+            'name' => get_bloginfo( 'name' ),
             'inLanguage' => self::get_language(),
         );
 
         // Only when the site actually has a tagline: an empty string is noise
         // in the graph.
-        $tagline = get_bloginfo('description');
-        if ($tagline) {
+        $tagline = get_bloginfo( 'description' );
+        if ( $tagline ) {
             $schema['description'] = $tagline;
         }
 
@@ -349,7 +349,7 @@ class ThatSeoAgent_Schema {
          * @since 1.5.0
          * @param array $schema WebSite schema array.
          */
-        return apply_filters('thatseoagent_website_schema', $schema);
+        return apply_filters( 'thatseoagent_website_schema', $schema );
     }
 
     /**
@@ -358,15 +358,15 @@ class ThatSeoAgent_Schema {
     private static function get_organization_schema() {
         $schema = array(
             '@type' => 'Organization',
-            '@id' => home_url('/#organization'),
-            'name' => get_bloginfo('name'),
-            'url' => home_url('/'),
+            '@id' => home_url( '/#organization' ),
+            'name' => get_bloginfo( 'name' ),
+            'url' => home_url( '/' ),
         );
 
         // Add logo if available
-        $logo = ThatSeoAgent_Image::of((int) get_theme_mod('custom_logo'));
-        if ($logo) {
-            $schema['logo'] = ThatSeoAgent_Image::object($logo);
+        $logo = ThatSeoAgent_Image::of( (int) get_theme_mod( 'custom_logo' ) );
+        if ( $logo ) {
+            $schema['logo'] = ThatSeoAgent_Image::object( $logo );
         }
 
         /**
@@ -378,7 +378,7 @@ class ThatSeoAgent_Schema {
          * @since 1.5.0
          * @param array $schema Organization schema array.
          */
-        return apply_filters('thatseoagent_organization_schema', ThatSeoAgent_Identity::organization_node($schema));
+        return apply_filters( 'thatseoagent_organization_schema', ThatSeoAgent_Identity::organization_node( $schema ) );
     }
 
     /**
@@ -428,7 +428,7 @@ class ThatSeoAgent_Schema {
          * @since 2.7.0 Receives the identity's Person node, when there is one.
          * @param array|null $schema The identity's Person node, else null (omitted).
          */
-        return apply_filters('thatseoagent_person_schema', $default);
+        return apply_filters( 'thatseoagent_person_schema', $default );
     }
 
     /**
@@ -438,34 +438,34 @@ class ThatSeoAgent_Schema {
      * @param WP_Post $post Post.
      * @return array
      */
-    private static function get_article_schema($post) {
-        $url = get_permalink($post);
+    private static function get_article_schema( $post ) {
+        $url = get_permalink( $post );
 
         $schema = array(
             '@type' => 'Article',
             '@id' => $url . '#article',
-            'isPartOf' => array('@id' => $url . '#webpage'),
-            'headline' => get_the_title($post),
-            'datePublished' => get_the_date('c', $post),
-            'dateModified' => get_the_modified_date('c', $post),
-            'mainEntityOfPage' => array('@id' => $url . '#webpage'),
-            'wordCount' => ThatSeoAgent_Content::word_count($post),
+            'isPartOf' => array( '@id' => $url . '#webpage' ),
+            'headline' => get_the_title( $post ),
+            'datePublished' => get_the_date( 'c', $post ),
+            'dateModified' => get_the_modified_date( 'c', $post ),
+            'mainEntityOfPage' => array( '@id' => $url . '#webpage' ),
+            'wordCount' => ThatSeoAgent_Content::word_count( $post ),
             'inLanguage' => self::get_language(),
-            'publisher' => array('@id' => self::get_publisher_id()),
-            'author' => self::get_author_schema($post),
+            'publisher' => array( '@id' => self::get_publisher_id() ),
+            'author' => self::get_author_schema( $post ),
         );
 
         // The post's own image: the featured one, else the first in its
         // content. Never the site's logo or default image, which say
         // nothing about this article.
-        $image = self::post_image($post);
-        if ($image) {
+        $image = self::post_image( $post );
+        if ( $image ) {
             $schema['image'] = $image;
         }
 
         // Add description
-        $description = ThatSeoAgent_Description::for_post($post);
-        if ($description) {
+        $description = ThatSeoAgent_Description::for_post( $post );
+        if ( $description ) {
             $schema['description'] = $description;
         }
 
@@ -481,8 +481,8 @@ class ThatSeoAgent_Schema {
      * @param WP_Post $post Post.
      * @return string
      */
-    private static function webpage_type($post) {
-        $kind = ThatSeoAgent_Trust_Pages::kind_of($post->ID);
+    private static function webpage_type( $post ) {
+        $kind = ThatSeoAgent_Trust_Pages::kind_of( $post->ID );
 
         return array(
             'about'   => 'AboutPage',
@@ -508,7 +508,7 @@ class ThatSeoAgent_Schema {
          * @since 1.10.0
          * @param array $post_types Default array('post').
          */
-        return (array) apply_filters('thatseoagent_article_post_types', array('post'));
+        return (array) apply_filters( 'thatseoagent_article_post_types', array( 'post' ) );
     }
 
     /**
@@ -518,10 +518,10 @@ class ThatSeoAgent_Schema {
      * @param WP_Post $post Post.
      * @return array|null
      */
-    private static function post_image($post) {
-        $image = ThatSeoAgent_Image::own($post, 'schema');
+    private static function post_image( $post ) {
+        $image = ThatSeoAgent_Image::own( $post, 'schema' );
 
-        return $image ? ThatSeoAgent_Image::object($image) : null;
+        return $image ? ThatSeoAgent_Image::object( $image ) : null;
     }
 
     /**
@@ -534,38 +534,38 @@ class ThatSeoAgent_Schema {
      * @param string     $main_entity_id @id of the node the page is about, or ''.
      * @param array|null $breadcrumb     BreadcrumbList node, if any.
      */
-    private static function get_webpage_schema($post, $main_entity_id = '', $breadcrumb = null) {
-        $url = get_permalink($post);
+    private static function get_webpage_schema( $post, $main_entity_id = '', $breadcrumb = null ) {
+        $url = get_permalink( $post );
 
         $schema = array(
             // The about and contact pages say what they are: AboutPage and
             // ContactPage are the WebPage subtypes schema.org has for them.
-            '@type' => self::webpage_type($post),
+            '@type' => self::webpage_type( $post ),
             '@id' => $url . '#webpage',
             'url' => $url,
-            'name' => get_the_title($post),
-            'isPartOf' => array('@id' => home_url('/#website')),
+            'name' => get_the_title( $post ),
+            'isPartOf' => array( '@id' => home_url( '/#website' ) ),
             'inLanguage' => self::get_language(),
-            'datePublished' => get_the_date('c', $post),
-            'dateModified' => get_the_modified_date('c', $post),
+            'datePublished' => get_the_date( 'c', $post ),
+            'dateModified' => get_the_modified_date( 'c', $post ),
         );
 
-        $description = ThatSeoAgent_Description::for_post($post);
-        if ($description) {
+        $description = ThatSeoAgent_Description::for_post( $post );
+        if ( $description ) {
             $schema['description'] = $description;
         }
 
-        if ($breadcrumb) {
-            $schema['breadcrumb'] = array('@id' => $breadcrumb['@id']);
+        if ( $breadcrumb ) {
+            $schema['breadcrumb'] = array( '@id' => $breadcrumb['@id'] );
         }
 
-        $image = self::post_image($post);
-        if ($image) {
-            $schema['primaryImageOfPage'] = array_merge(array('@id' => $url . '#primaryimage'), $image);
+        $image = self::post_image( $post );
+        if ( $image ) {
+            $schema['primaryImageOfPage'] = array_merge( array( '@id' => $url . '#primaryimage' ), $image );
         }
 
-        if ($main_entity_id) {
-            $schema['mainEntity'] = array('@id' => $main_entity_id);
+        if ( $main_entity_id ) {
+            $schema['mainEntity'] = array( '@id' => $main_entity_id );
         }
 
         /**
@@ -576,7 +576,7 @@ class ThatSeoAgent_Schema {
          * @param array   $schema WebPage schema array.
          * @param WP_Post $post   The post whose page it is.
          */
-        return apply_filters('thatseoagent_webpage_schema', $schema, $post);
+        return apply_filters( 'thatseoagent_webpage_schema', $schema, $post );
     }
 
     /**
@@ -596,18 +596,18 @@ class ThatSeoAgent_Schema {
      * @param WP_Post|null $post   The post whose page it is, null on a listing.
      * @return array|null
      */
-    private static function get_breadcrumb_schema(array $crumbs, $url, $post) {
+    private static function get_breadcrumb_schema( array $crumbs, $url, $post ) {
         // A trail with a gap — a crumb with no name, or one before the last
         // with no link — is dropped whole rather than published broken; so
         // is a lone "Home", which says nothing. The WebPage then points at
         // no breadcrumb.
-        if (! ThatSeoAgent_Breadcrumbs::is_complete($crumbs)) {
+        if ( ! ThatSeoAgent_Breadcrumbs::is_complete( $crumbs ) ) {
             return null;
         }
 
-        $last  = count($crumbs) - 1;
+        $last  = count( $crumbs ) - 1;
         $items = array();
-        foreach ($crumbs as $index => $crumb) {
+        foreach ( $crumbs as $index => $crumb ) {
             $item = array(
                 '@type'    => 'ListItem',
                 'position' => $index + 1,
@@ -616,7 +616,7 @@ class ThatSeoAgent_Schema {
 
             // The last crumb is the page itself and carries no link, as
             // Google's BreadcrumbList guidance allows.
-            if ($index < $last) {
+            if ( $index < $last ) {
                 $item['item'] = $crumb['url'];
             }
 
@@ -637,7 +637,7 @@ class ThatSeoAgent_Schema {
          * @param array        $schema Breadcrumb schema array.
          * @param WP_Post|null $post   The post whose page it is, null on a listing.
          */
-        return apply_filters('thatseoagent_breadcrumb_schema', $schema, $post);
+        return apply_filters( 'thatseoagent_breadcrumb_schema', $schema, $post );
     }
 
     /**
@@ -651,7 +651,7 @@ class ThatSeoAgent_Schema {
             || is_category()
             || is_tag()
             || is_tax()
-            || (is_home() && ! is_front_page());
+            || ( is_home() && ! is_front_page() );
     }
 
     /**
@@ -663,7 +663,7 @@ class ThatSeoAgent_Schema {
     private static function current_url() {
         $canonical = ThatSeoAgent_Meta::get_canonical();
 
-        return $canonical ? $canonical : home_url('/');
+        return $canonical ? $canonical : home_url( '/' );
     }
 
     /**
@@ -675,29 +675,29 @@ class ThatSeoAgent_Schema {
      * @param string     $main_entity_id @id of the node the page is about, or ''.
      * @return array
      */
-    private static function get_listing_page_schema($type, $breadcrumb = null, $main_entity_id = '') {
+    private static function get_listing_page_schema( $type, $breadcrumb = null, $main_entity_id = '' ) {
         $url = self::current_url();
 
         $schema = array(
             '@type'      => $type,
             '@id'        => $url . '#webpage',
             'url'        => $url,
-            'name'       => wp_strip_all_tags(self::listing_title()),
-            'isPartOf'   => array('@id' => home_url('/#website')),
+            'name'       => wp_strip_all_tags( self::listing_title() ),
+            'isPartOf'   => array( '@id' => home_url( '/#website' ) ),
             'inLanguage' => self::get_language(),
         );
 
         $description = ThatSeoAgent_Meta::get_description();
-        if ($description) {
+        if ( $description ) {
             $schema['description'] = $description;
         }
 
-        if ($breadcrumb) {
-            $schema['breadcrumb'] = array('@id' => $breadcrumb['@id']);
+        if ( $breadcrumb ) {
+            $schema['breadcrumb'] = array( '@id' => $breadcrumb['@id'] );
         }
 
-        if ($main_entity_id) {
-            $schema['mainEntity'] = array('@id' => $main_entity_id);
+        if ( $main_entity_id ) {
+            $schema['mainEntity'] = array( '@id' => $main_entity_id );
         }
 
         /**
@@ -707,7 +707,7 @@ class ThatSeoAgent_Schema {
          * @param array  $schema Page node.
          * @param string $type   'CollectionPage' or 'ProfilePage'.
          */
-        return apply_filters('thatseoagent_listing_page_schema', $schema, $type);
+        return apply_filters( 'thatseoagent_listing_page_schema', $schema, $type );
     }
 
     /**
@@ -717,21 +717,21 @@ class ThatSeoAgent_Schema {
      * @return string
      */
     private static function listing_title() {
-        if (is_post_type_archive()) {
-            return post_type_archive_title('', false);
+        if ( is_post_type_archive() ) {
+            return post_type_archive_title( '', false );
         }
 
-        if (is_category() || is_tag() || is_tax()) {
-            return single_term_title('', false);
+        if ( is_category() || is_tag() || is_tax() ) {
+            return single_term_title( '', false );
         }
 
-        if (is_author()) {
+        if ( is_author() ) {
             $author = get_queried_object();
             return $author instanceof WP_User ? $author->display_name : '';
         }
 
-        if (is_home()) {
-            return get_the_title((int) get_option('page_for_posts'));
+        if ( is_home() ) {
+            return get_the_title( (int) get_option( 'page_for_posts' ) );
         }
 
         return wp_get_document_title();
@@ -748,13 +748,13 @@ class ThatSeoAgent_Schema {
      * @param int $user_id User ID.
      * @return array|null
      */
-    private static function get_author_person_schema($user_id) {
-        $user = $user_id ? get_userdata($user_id) : false;
-        if (! $user || '' === $user->display_name) {
+    private static function get_author_person_schema( $user_id ) {
+        $user = $user_id ? get_userdata( $user_id ) : false;
+        if ( ! $user || '' === $user->display_name ) {
             return null;
         }
 
-        $url = get_author_posts_url($user->ID);
+        $url = get_author_posts_url( $user->ID );
 
         $schema = array(
             '@type' => 'Person',
@@ -763,25 +763,25 @@ class ThatSeoAgent_Schema {
             'url'   => $url,
         );
 
-        if ($user->description) {
-            $schema['description'] = wp_strip_all_tags($user->description);
+        if ( $user->description ) {
+            $schema['description'] = wp_strip_all_tags( $user->description );
         }
 
-        $job_title = ThatSeoAgent_Author_Profile::job_title($user->ID);
-        if ('' !== $job_title) {
+        $job_title = ThatSeoAgent_Author_Profile::job_title( $user->ID );
+        if ( '' !== $job_title ) {
             $schema['jobTitle'] = $job_title;
         }
 
         // The profile's website field — often a personal site or a social
         // profile, which is what sameAs is for — and the profiles elsewhere
         // the author listed. The site's own URL adds nothing.
-        $same_as = ThatSeoAgent_Author_Profile::profiles($user->ID);
-        $website = $user->user_url ? esc_url_raw($user->user_url) : '';
-        if ($website && untrailingslashit($website) !== untrailingslashit(home_url('/'))) {
-            array_unshift($same_as, $website);
+        $same_as = ThatSeoAgent_Author_Profile::profiles( $user->ID );
+        $website = $user->user_url ? esc_url_raw( $user->user_url ) : '';
+        if ( $website && untrailingslashit( $website ) !== untrailingslashit( home_url( '/' ) ) ) {
+            array_unshift( $same_as, $website );
         }
-        $same_as = array_values(array_unique(array_map('untrailingslashit', $same_as)));
-        if ($same_as) {
+        $same_as = array_values( array_unique( array_map( 'untrailingslashit', $same_as ) ) );
+        if ( $same_as ) {
             $schema['sameAs'] = $same_as;
         }
 
@@ -795,7 +795,7 @@ class ThatSeoAgent_Schema {
          * @param array   $schema Person node.
          * @param WP_User $user   The author.
          */
-        return apply_filters('thatseoagent_author_schema', $schema, $user);
+        return apply_filters( 'thatseoagent_author_schema', $schema, $user );
     }
 
     /**

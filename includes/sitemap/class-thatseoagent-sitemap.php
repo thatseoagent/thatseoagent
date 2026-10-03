@@ -16,7 +16,7 @@
  * @since 1.0.0
  */
 
-if (!defined('ABSPATH')) {
+if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 
@@ -36,14 +36,14 @@ class ThatSeoAgent_Sitemap {
      * @since 1.19.0 Moved out of ThatSeoAgent.
      */
     public static function register() {
-        add_action('init', array(__CLASS__, 'register_routes'), 20);
-        add_filter('query_vars', array(__CLASS__, 'query_vars'));
-        add_action('template_redirect', array(__CLASS__, 'handle_request'));
-        add_action('template_redirect', array(__CLASS__, 'send_link_header'), 11);
-        add_filter('redirect_canonical', array(__CLASS__, 'disable_redirect'), 10, 2);
+        add_action( 'init', array( __CLASS__, 'register_routes' ), 20 );
+        add_filter( 'query_vars', array( __CLASS__, 'query_vars' ) );
+        add_action( 'template_redirect', array( __CLASS__, 'handle_request' ) );
+        add_action( 'template_redirect', array( __CLASS__, 'send_link_header' ), 11 );
+        add_filter( 'redirect_canonical', array( __CLASS__, 'disable_redirect' ), 10, 2 );
 
         // Core's /wp-sitemap.xml would be a second, competing set.
-        add_filter('wp_sitemaps_enabled', '__return_false');
+        add_filter( 'wp_sitemaps_enabled', '__return_false' );
     }
 
     /**
@@ -53,7 +53,7 @@ class ThatSeoAgent_Sitemap {
      * @param array $vars Query vars.
      * @return array
      */
-    public static function query_vars($vars) {
+    public static function query_vars( $vars ) {
         $vars[] = 'thatseoagent_sitemap';
         $vars[] = 'sitemap_page';
         $vars[] = 'thatseoagent_cpt';
@@ -72,8 +72,8 @@ class ThatSeoAgent_Sitemap {
      * @param string $requested_url The requested URL
      * @return string|false The redirect URL or false to prevent redirect
      */
-    public static function disable_redirect($redirect_url, $requested_url) {
-        if (preg_match('/sitemap[^?]*\.xml/', $requested_url)) {
+    public static function disable_redirect( $redirect_url, $requested_url ) {
+        if ( preg_match( '/sitemap[^?]*\.xml/', $requested_url ) ) {
             return false;
         }
         return $redirect_url;
@@ -83,26 +83,26 @@ class ThatSeoAgent_Sitemap {
      * Register rewrite rules
      */
     public static function register_routes() {
-        add_rewrite_rule('^sitemap\.xml$', 'index.php?thatseoagent_sitemap=index', 'top');
+        add_rewrite_rule( '^sitemap\.xml$', 'index.php?thatseoagent_sitemap=index', 'top' );
         // Legacy Yoast sitemap URL redirect for backwards compatibility
-        add_rewrite_rule('^sitemap_index\.xml$', 'index.php?thatseoagent_sitemap=index', 'top');
-        add_rewrite_rule('^sitemap-posts\.xml$', 'index.php?thatseoagent_sitemap=posts', 'top');
-        add_rewrite_rule('^sitemap-posts-([0-9]+)\.xml$', 'index.php?thatseoagent_sitemap=posts&sitemap_page=$matches[1]', 'top');
-        add_rewrite_rule('^sitemap-pages\.xml$', 'index.php?thatseoagent_sitemap=pages', 'top');
-        add_rewrite_rule('^sitemap-pages-([0-9]+)\.xml$', 'index.php?thatseoagent_sitemap=pages&sitemap_page=$matches[1]', 'top');
-        add_rewrite_rule('^sitemap-categories\.xml$', 'index.php?thatseoagent_sitemap=categories', 'top');
-        add_rewrite_rule('^sitemap-tags\.xml$', 'index.php?thatseoagent_sitemap=tags', 'top');
+        add_rewrite_rule( '^sitemap_index\.xml$', 'index.php?thatseoagent_sitemap=index', 'top' );
+        add_rewrite_rule( '^sitemap-posts\.xml$', 'index.php?thatseoagent_sitemap=posts', 'top' );
+        add_rewrite_rule( '^sitemap-posts-([0-9]+)\.xml$', 'index.php?thatseoagent_sitemap=posts&sitemap_page=$matches[1]', 'top' );
+        add_rewrite_rule( '^sitemap-pages\.xml$', 'index.php?thatseoagent_sitemap=pages', 'top' );
+        add_rewrite_rule( '^sitemap-pages-([0-9]+)\.xml$', 'index.php?thatseoagent_sitemap=pages&sitemap_page=$matches[1]', 'top' );
+        add_rewrite_rule( '^sitemap-categories\.xml$', 'index.php?thatseoagent_sitemap=categories', 'top' );
+        add_rewrite_rule( '^sitemap-tags\.xml$', 'index.php?thatseoagent_sitemap=tags', 'top' );
 
         // Custom taxonomy sitemaps: brands, product categories. The "tax-"
         // prefix keeps them apart from a post type of the same name.
-        foreach (self::get_custom_taxonomies() as $taxonomy) {
-            add_rewrite_rule('^sitemap-tax-' . $taxonomy . '\.xml$', 'index.php?thatseoagent_sitemap=taxonomy&thatseoagent_tax=' . $taxonomy, 'top');
+        foreach ( self::get_custom_taxonomies() as $taxonomy ) {
+            add_rewrite_rule( '^sitemap-tax-' . $taxonomy . '\.xml$', 'index.php?thatseoagent_sitemap=taxonomy&thatseoagent_tax=' . $taxonomy, 'top' );
         }
 
         // Custom post type sitemaps
-        foreach (self::get_cpts() as $cpt) {
-            add_rewrite_rule('^sitemap-' . $cpt . '\.xml$', 'index.php?thatseoagent_sitemap=cpt&thatseoagent_cpt=' . $cpt, 'top');
-            add_rewrite_rule('^sitemap-' . $cpt . '-([0-9]+)\.xml$', 'index.php?thatseoagent_sitemap=cpt&thatseoagent_cpt=' . $cpt . '&sitemap_page=$matches[1]', 'top');
+        foreach ( self::get_cpts() as $cpt ) {
+            add_rewrite_rule( '^sitemap-' . $cpt . '\.xml$', 'index.php?thatseoagent_sitemap=cpt&thatseoagent_cpt=' . $cpt, 'top' );
+            add_rewrite_rule( '^sitemap-' . $cpt . '-([0-9]+)\.xml$', 'index.php?thatseoagent_sitemap=cpt&thatseoagent_cpt=' . $cpt . '&sitemap_page=$matches[1]', 'top' );
         }
     }
 
@@ -113,23 +113,23 @@ class ThatSeoAgent_Sitemap {
      * query vars, prints what render() returns, and exits.
      */
     public static function handle_request() {
-        $sitemap = get_query_var('thatseoagent_sitemap');
-        if (!$sitemap) {
+        $sitemap = get_query_var( 'thatseoagent_sitemap' );
+        if ( !$sitemap ) {
             return;
         }
 
-        $xml = self::render($sitemap, array(
+        $xml = self::render( $sitemap, array(
             'page'      => self::get_page_number(),
-            'post_type' => get_query_var('thatseoagent_cpt'),
-            'taxonomy'  => get_query_var('thatseoagent_tax'),
-        ));
+            'post_type' => get_query_var( 'thatseoagent_cpt' ),
+            'taxonomy'  => get_query_var( 'thatseoagent_tax' ),
+        ) );
 
-        if ('' === $xml) {
+        if ( '' === $xml ) {
             return;
         }
 
-        header('Content-Type: application/xml; charset=UTF-8');
-        header('X-Robots-Tag: noindex, follow');
+        header( 'Content-Type: application/xml; charset=UTF-8' );
+        header( 'X-Robots-Tag: noindex, follow' );
 
         echo $xml; // phpcs:ignore WordPress.Security.EscapeOutput -- built and escaped in render().
         exit;
@@ -149,7 +149,7 @@ class ThatSeoAgent_Sitemap {
      * @since 2.3.0
      */
     public static function send_link_header() {
-        if (is_feed() || is_robots() || headers_sent()) {
+        if ( is_feed() || is_robots() || headers_sent() ) {
             return;
         }
 
@@ -159,11 +159,11 @@ class ThatSeoAgent_Sitemap {
          * @since 2.3.0
          * @param bool $enabled Default true.
          */
-        if (!apply_filters('thatseoagent_sitemap_link_header', true)) {
+        if ( !apply_filters( 'thatseoagent_sitemap_link_header', true ) ) {
             return;
         }
 
-        header('Link: <' . esc_url_raw(home_url('/sitemap.xml')) . '>; rel="sitemap"; type="application/xml"', false);
+        header( 'Link: <' . esc_url_raw( home_url( '/sitemap.xml' ) ) . '>; rel="sitemap"; type="application/xml"', false );
     }
 
     /**
@@ -177,42 +177,42 @@ class ThatSeoAgent_Sitemap {
      * }
      * @return string XML document, or empty string when $which is unknown.
      */
-    public static function render($which, $args = array()) {
-        $args = wp_parse_args($args, array(
+    public static function render( $which, $args = array() ) {
+        $args = wp_parse_args( $args, array(
             'page'      => 1,
             'post_type' => '',
             'taxonomy'  => '',
-        ));
+        ) );
 
-        $page = max(1, (int) $args['page']);
+        $page = max( 1, (int) $args['page'] );
 
-        switch ($which) {
+        switch ( $which ) {
             case 'index':
                 $body = self::render_index();
                 break;
             case 'posts':
-                $body = self::render_post_type('post', $page);
+                $body = self::render_post_type( 'post', $page );
                 break;
             case 'pages':
-                $body = self::render_pages($page);
+                $body = self::render_pages( $page );
                 break;
             case 'categories':
-                $body = self::render_taxonomy('category');
+                $body = self::render_taxonomy( 'category' );
                 break;
             case 'tags':
-                $body = self::render_taxonomy('post_tag');
+                $body = self::render_taxonomy( 'post_tag' );
                 break;
             case 'cpt':
-                if (!$args['post_type'] || !post_type_exists($args['post_type'])) {
+                if ( !$args['post_type'] || !post_type_exists( $args['post_type'] ) ) {
                     return '';
                 }
-                $body = self::render_post_type($args['post_type'], $page);
+                $body = self::render_post_type( $args['post_type'], $page );
                 break;
             case 'taxonomy':
-                if (!in_array($args['taxonomy'], self::get_custom_taxonomies(), true)) {
+                if ( !in_array( $args['taxonomy'], self::get_custom_taxonomies(), true ) ) {
                     return '';
                 }
-                $body = self::render_taxonomy($args['taxonomy']);
+                $body = self::render_taxonomy( $args['taxonomy'] );
                 break;
             default:
                 return '';
@@ -235,56 +235,56 @@ class ThatSeoAgent_Sitemap {
         $entries = array();
 
         // Posts
-        foreach (self::chunks_for('post') as $i => $offset) {
-            $suffix    = null === $offset ? '' : '-' . ($i + 1);
+        foreach ( self::chunks_for( 'post' ) as $i => $offset ) {
+            $suffix    = null === $offset ? '' : '-' . ( $i + 1 );
             $entries[] = array(
-                'loc'     => home_url("/sitemap-posts{$suffix}.xml"),
-                'lastmod' => self::get_latest_modified_date('post', self::PER_PAGE, (int) $offset),
+                'loc'     => home_url( "/sitemap-posts{$suffix}.xml" ),
+                'lastmod' => self::get_latest_modified_date( 'post', self::PER_PAGE, (int) $offset ),
             );
         }
 
         // Pages
-        foreach (self::chunks_for('page') as $i => $offset) {
-            $suffix    = null === $offset ? '' : '-' . ($i + 1);
+        foreach ( self::chunks_for( 'page' ) as $i => $offset ) {
+            $suffix    = null === $offset ? '' : '-' . ( $i + 1 );
             $entries[] = array(
-                'loc'     => home_url("/sitemap-pages{$suffix}.xml"),
-                'lastmod' => self::get_latest_modified_date('page', self::PER_PAGE, (int) $offset),
+                'loc'     => home_url( "/sitemap-pages{$suffix}.xml" ),
+                'lastmod' => self::get_latest_modified_date( 'page', self::PER_PAGE, (int) $offset ),
             );
         }
 
         // Terms
         $entries[] = array(
-            'loc'     => home_url('/sitemap-categories.xml'),
-            'lastmod' => self::get_term_latest_modified('category'),
+            'loc'     => home_url( '/sitemap-categories.xml' ),
+            'lastmod' => self::get_term_latest_modified( 'category' ),
         );
         $entries[] = array(
-            'loc'     => home_url('/sitemap-tags.xml'),
-            'lastmod' => self::get_term_latest_modified('post_tag'),
+            'loc'     => home_url( '/sitemap-tags.xml' ),
+            'lastmod' => self::get_term_latest_modified( 'post_tag' ),
         );
 
         // Custom taxonomies with at least one listed term.
-        foreach (self::get_custom_taxonomies() as $taxonomy) {
-            if (!self::listed_terms($taxonomy)) {
+        foreach ( self::get_custom_taxonomies() as $taxonomy ) {
+            if ( !self::listed_terms( $taxonomy ) ) {
                 continue;
             }
 
             $entries[] = array(
-                'loc'     => home_url("/sitemap-tax-{$taxonomy}.xml"),
-                'lastmod' => self::get_term_latest_modified($taxonomy),
+                'loc'     => home_url( "/sitemap-tax-{$taxonomy}.xml" ),
+                'lastmod' => self::get_term_latest_modified( $taxonomy ),
             );
         }
 
         // Custom post types
-        foreach (self::get_cpts() as $cpt) {
-            if (self::count_listed($cpt) < 1) {
+        foreach ( self::get_cpts() as $cpt ) {
+            if ( self::count_listed( $cpt ) < 1 ) {
                 continue;
             }
 
-            foreach (self::chunks_for($cpt) as $i => $offset) {
-                $suffix    = null === $offset ? '' : '-' . ($i + 1);
+            foreach ( self::chunks_for( $cpt ) as $i => $offset ) {
+                $suffix    = null === $offset ? '' : '-' . ( $i + 1 );
                 $entries[] = array(
-                    'loc'     => home_url("/sitemap-{$cpt}{$suffix}.xml"),
-                    'lastmod' => self::get_latest_modified_date($cpt, self::PER_PAGE, (int) $offset),
+                    'loc'     => home_url( "/sitemap-{$cpt}{$suffix}.xml" ),
+                    'lastmod' => self::get_latest_modified_date( $cpt, self::PER_PAGE, (int) $offset ),
                 );
             }
         }
@@ -295,7 +295,7 @@ class ThatSeoAgent_Sitemap {
          * @since 1.9.0
          * @param array $entries List of ['loc' => string, 'lastmod' => string|null].
          */
-        return apply_filters('thatseoagent_sitemap_entries', $entries);
+        return apply_filters( 'thatseoagent_sitemap_entries', $entries );
     }
 
     /**
@@ -304,15 +304,15 @@ class ThatSeoAgent_Sitemap {
      * @param string $post_type Post type.
      * @return array<int, int|null>
      */
-    private static function chunks_for($post_type) {
-        $needed = (int) ceil(self::count_listed($post_type) / self::PER_PAGE);
+    private static function chunks_for( $post_type ) {
+        $needed = (int) ceil( self::count_listed( $post_type ) / self::PER_PAGE );
 
-        if ($needed <= 1) {
-            return array(null);
+        if ( $needed <= 1 ) {
+            return array( null );
         }
 
         $offsets = array();
-        for ($i = 0; $i < $needed; $i++) {
+        for ( $i = 0; $i < $needed; $i++ ) {
             $offsets[] = $i * self::PER_PAGE;
         }
 
@@ -330,19 +330,19 @@ class ThatSeoAgent_Sitemap {
      * @param string $post_type Post type.
      * @return int
      */
-    private static function count_listed($post_type) {
-        return ThatSeoAgent_Memo::remember('sitemap_count', $post_type, function () use ($post_type) {
-            $query = new WP_Query(self::listed_args(array(
+    private static function count_listed( $post_type ) {
+        return ThatSeoAgent_Memo::remember( 'sitemap_count', $post_type, function () use ( $post_type ) {
+            $query = new WP_Query( self::listed_args( array(
                 'post_type'              => $post_type,
                 'post_status'            => 'publish',
                 'posts_per_page'         => 1,
                 'fields'                 => 'ids',
                 'update_post_meta_cache' => false,
                 'update_post_term_cache' => false,
-            )));
+            ) ) );
 
             return (int) $query->found_posts;
-        });
+        } );
     }
 
     /**
@@ -355,8 +355,8 @@ class ThatSeoAgent_Sitemap {
      * @param array $args Query arguments.
      * @return array
      */
-    private static function listed_args(array $args) {
-        return array_merge($args, ThatSeoAgent_Indexing::listed_query_args());
+    private static function listed_args( array $args ) {
+        return array_merge( $args, ThatSeoAgent_Indexing::listed_query_args() );
     }
 
     /**
@@ -365,7 +365,7 @@ class ThatSeoAgent_Sitemap {
      * @return array<int, string>
      */
     private static function get_cpts() {
-        return get_post_types(array('public' => true, '_builtin' => false), 'names');
+        return get_post_types( array( 'public' => true, '_builtin' => false ), 'names' );
     }
 
     /**
@@ -379,7 +379,7 @@ class ThatSeoAgent_Sitemap {
      * @return array<int, string>
      */
     private static function get_custom_taxonomies() {
-        return array_values(array_diff(ThatSeoAgent_Term_Seo::taxonomies(), array('category', 'post_tag')));
+        return array_values( array_diff( ThatSeoAgent_Term_Seo::taxonomies(), array( 'category', 'post_tag' ) ) );
     }
 
     /**
@@ -390,16 +390,16 @@ class ThatSeoAgent_Sitemap {
      * @param string $taxonomy Taxonomy name.
      * @return array<int, WP_Term>
      */
-    private static function listed_terms($taxonomy) {
-        $terms = get_terms(array('taxonomy' => $taxonomy, 'hide_empty' => true));
+    private static function listed_terms( $taxonomy ) {
+        $terms = get_terms( array( 'taxonomy' => $taxonomy, 'hide_empty' => true ) );
 
-        if (is_wp_error($terms)) {
+        if ( is_wp_error( $terms ) ) {
             return array();
         }
 
-        return array_values(array_filter($terms, function ($term) {
-            return !ThatSeoAgent_Term_Seo::is_noindex($term);
-        }));
+        return array_values( array_filter( $terms, function ( $term ) {
+            return !ThatSeoAgent_Term_Seo::is_noindex( $term );
+        } ) );
     }
 
     /**
@@ -411,7 +411,7 @@ class ThatSeoAgent_Sitemap {
      * @return int
      */
     private static function get_page_number() {
-        return max(1, absint(get_query_var('sitemap_page', 1)));
+        return max( 1, absint( get_query_var( 'sitemap_page', 1 ) ) );
     }
 
     /**
@@ -422,11 +422,11 @@ class ThatSeoAgent_Sitemap {
     private static function render_index() {
         $xml = '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-        foreach (self::get_sitemap_urls() as $entry) {
+        foreach ( self::get_sitemap_urls() as $entry ) {
             $xml .= '  <sitemap>' . "\n";
-            $xml .= '    <loc>' . esc_url($entry['loc']) . '</loc>' . "\n";
-            if (!empty($entry['lastmod'])) {
-                $xml .= '    <lastmod>' . esc_html($entry['lastmod']) . '</lastmod>' . "\n";
+            $xml .= '    <loc>' . esc_url( $entry['loc'] ) . '</loc>' . "\n";
+            if ( !empty( $entry['lastmod'] ) ) {
+                $xml .= '    <lastmod>' . esc_html( $entry['lastmod'] ) . '</lastmod>' . "\n";
             }
             $xml .= '  </sitemap>' . "\n";
         }
@@ -434,7 +434,7 @@ class ThatSeoAgent_Sitemap {
         // Back-compat: themes echo extra <sitemap> entries from this action.
         // Prefer the thatseoagent_sitemap_entries filter, which needs no buffering.
         ob_start();
-        do_action('thatseoagent_sitemap_index');
+        do_action( 'thatseoagent_sitemap_index' );
         $xml .= ob_get_clean();
 
         return $xml . '</sitemapindex>';
@@ -447,28 +447,28 @@ class ThatSeoAgent_Sitemap {
      * @param int    $page      1-based chunk number.
      * @return string
      */
-    private static function render_post_type($post_type, $page = 1) {
-        $posts = get_posts(self::listed_args(array(
+    private static function render_post_type( $post_type, $page = 1 ) {
+        $posts = get_posts( self::listed_args( array(
             'post_type'              => $post_type,
             'post_status'            => 'publish',
             'posts_per_page'         => self::PER_PAGE,
-            'offset'                 => (max(1, (int) $page) - 1) * self::PER_PAGE,
+            'offset'                 => ( max( 1, (int) $page ) - 1 ) * self::PER_PAGE,
             'orderby'                => 'modified',
             'order'                  => 'DESC',
             'no_found_rows'          => true,
             'update_post_meta_cache' => false,
             'update_post_term_cache' => false,
-        )));
+        ) ) );
 
         $urls = array();
-        foreach ($posts as $post) {
+        foreach ( $posts as $post ) {
             $urls[] = array(
-                'loc'     => get_permalink($post),
-                'lastmod' => get_the_modified_date('c', $post),
+                'loc'     => get_permalink( $post ),
+                'lastmod' => get_the_modified_date( 'c', $post ),
             );
         }
 
-        return self::urlset($urls);
+        return self::urlset( $urls );
     }
 
     /**
@@ -480,40 +480,40 @@ class ThatSeoAgent_Sitemap {
      * @param int $page 1-based chunk number.
      * @return string
      */
-    private static function render_pages($page = 1) {
-        $page          = max(1, (int) $page);
-        $front_page_id = 'page' === get_option('show_on_front') ? (int) get_option('page_on_front') : 0;
+    private static function render_pages( $page = 1 ) {
+        $page          = max( 1, (int) $page );
+        $front_page_id = 'page' === get_option( 'show_on_front' ) ? (int) get_option( 'page_on_front' ) : 0;
 
         $urls = array();
 
-        if (1 === $page) {
-            $urls[] = array('loc' => home_url('/'), 'lastmod' => null);
+        if ( 1 === $page ) {
+            $urls[] = array( 'loc' => home_url( '/' ), 'lastmod' => null );
         }
 
-        $pages = get_posts(self::listed_args(array(
+        $pages = get_posts( self::listed_args( array(
             'post_type'              => 'page',
             'post_status'            => 'publish',
             'posts_per_page'         => self::PER_PAGE,
-            'offset'                 => ($page - 1) * self::PER_PAGE,
+            'offset'                 => ( $page - 1 ) * self::PER_PAGE,
             'orderby'                => 'ID',
             'order'                  => 'ASC',
             'no_found_rows'          => true,
             'update_post_meta_cache' => false,
             'update_post_term_cache' => false,
-        )));
+        ) ) );
 
-        foreach ($pages as $p) {
-            if ($front_page_id && $front_page_id === (int) $p->ID) {
+        foreach ( $pages as $p ) {
+            if ( $front_page_id && $front_page_id === (int) $p->ID ) {
                 continue;
             }
 
             $urls[] = array(
-                'loc'     => get_permalink($p),
-                'lastmod' => get_the_modified_date('c', $p),
+                'loc'     => get_permalink( $p ),
+                'lastmod' => get_the_modified_date( 'c', $p ),
             );
         }
 
-        return self::urlset($urls);
+        return self::urlset( $urls );
     }
 
     /**
@@ -522,31 +522,31 @@ class ThatSeoAgent_Sitemap {
      * @param string $taxonomy Taxonomy name.
      * @return string
      */
-    private static function render_taxonomy($taxonomy) {
-        $terms = self::listed_terms($taxonomy);
+    private static function render_taxonomy( $taxonomy ) {
+        $terms = self::listed_terms( $taxonomy );
 
-        if (empty($terms)) {
-            return self::urlset(array());
+        if ( empty( $terms ) ) {
+            return self::urlset( array() );
         }
 
         // One query for every term's lastmod. Asking per term made this an
         // N+1: a site with 200 categories ran 200 queries per request.
-        $lastmods = self::get_term_lastmods($taxonomy);
+        $lastmods = self::get_term_lastmods( $taxonomy );
 
         $urls = array();
-        foreach ($terms as $term) {
-            $link = get_term_link($term);
-            if (is_wp_error($link)) {
+        foreach ( $terms as $term ) {
+            $link = get_term_link( $term );
+            if ( is_wp_error( $link ) ) {
                 continue;
             }
 
             $urls[] = array(
                 'loc'     => $link,
-                'lastmod' => isset($lastmods[$term->term_id]) ? $lastmods[$term->term_id] : null,
+                'lastmod' => isset( $lastmods[$term->term_id] ) ? $lastmods[$term->term_id] : null,
             );
         }
 
-        return self::urlset($urls);
+        return self::urlset( $urls );
     }
 
     /**
@@ -555,14 +555,14 @@ class ThatSeoAgent_Sitemap {
      * @param array<int, array{loc: string, lastmod: string|null}> $urls URL entries.
      * @return string
      */
-    private static function urlset($urls) {
+    private static function urlset( $urls ) {
         $xml = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-        foreach ($urls as $url) {
+        foreach ( $urls as $url ) {
             $xml .= '  <url>' . "\n";
-            $xml .= '    <loc>' . esc_url($url['loc']) . '</loc>' . "\n";
-            if (!empty($url['lastmod'])) {
-                $xml .= '    <lastmod>' . esc_html($url['lastmod']) . '</lastmod>' . "\n";
+            $xml .= '    <loc>' . esc_url( $url['loc'] ) . '</loc>' . "\n";
+            if ( !empty( $url['lastmod'] ) ) {
+                $xml .= '    <lastmod>' . esc_html( $url['lastmod'] ) . '</lastmod>' . "\n";
             }
             $xml .= '  </url>' . "\n";
         }
@@ -573,8 +573,8 @@ class ThatSeoAgent_Sitemap {
     /**
      * Get latest modified date for a post type, optionally within a page range
      */
-    private static function get_latest_modified_date($post_type = 'post', $limit = 1, $offset = 0) {
-        $posts = get_posts(self::listed_args(array(
+    private static function get_latest_modified_date( $post_type = 'post', $limit = 1, $offset = 0 ) {
+        $posts = get_posts( self::listed_args( array(
             'post_type' => $post_type,
             'post_status' => 'publish',
             'posts_per_page' => $limit,
@@ -584,13 +584,13 @@ class ThatSeoAgent_Sitemap {
             'no_found_rows' => true,
             'update_post_meta_cache' => false,
             'update_post_term_cache' => false,
-        )));
+        ) ) );
 
-        if ($posts) {
-            return get_the_modified_date('c', $posts[0]);
+        if ( $posts ) {
+            return get_the_modified_date( 'c', $posts[0] );
         }
 
-        return current_time('c');
+        return current_time( 'c' );
     }
 
     /**
@@ -604,10 +604,10 @@ class ThatSeoAgent_Sitemap {
      * @param string $taxonomy Taxonomy name.
      * @return array<int, string> term_id => ISO 8601 date.
      */
-    private static function get_term_lastmods($taxonomy) {
-        return ThatSeoAgent_Memo::remember('term_lastmods', $taxonomy, function () use ($taxonomy) {
-            return self::query_term_lastmods($taxonomy);
-        });
+    private static function get_term_lastmods( $taxonomy ) {
+        return ThatSeoAgent_Memo::remember( 'term_lastmods', $taxonomy, function () use ( $taxonomy ) {
+            return self::query_term_lastmods( $taxonomy );
+        } );
     }
 
     /**
@@ -617,7 +617,7 @@ class ThatSeoAgent_Sitemap {
      * @param string $taxonomy Taxonomy name.
      * @return array<int, string> term_id => ISO 8601 date.
      */
-    private static function query_term_lastmods($taxonomy) {
+    private static function query_term_lastmods( $taxonomy ) {
         global $wpdb;
 
         // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
@@ -640,9 +640,9 @@ class ThatSeoAgent_Sitemap {
         // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
         $map = array();
-        foreach ((array) $rows as $row) {
-            if (!empty($row->lastmod)) {
-                $map[(int) $row->term_id] = get_date_from_gmt($row->lastmod, 'c');
+        foreach ( (array) $rows as $row ) {
+            if ( !empty( $row->lastmod ) ) {
+                $map[(int) $row->term_id] = get_date_from_gmt( $row->lastmod, 'c' );
             }
         }
 
@@ -658,13 +658,13 @@ class ThatSeoAgent_Sitemap {
      * @param string $taxonomy Taxonomy name.
      * @return string|null
      */
-    private static function get_term_latest_modified($taxonomy) {
-        $lastmods = self::get_term_lastmods($taxonomy);
+    private static function get_term_latest_modified( $taxonomy ) {
+        $lastmods = self::get_term_lastmods( $taxonomy );
 
-        if (empty($lastmods)) {
+        if ( empty( $lastmods ) ) {
             return null;
         }
 
-        return max($lastmods);
+        return max( $lastmods );
     }
 }

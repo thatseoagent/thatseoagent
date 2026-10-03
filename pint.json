@@ -1,0 +1,40 @@
+{
+    "preset": "empty",
+    "exclude": [
+        "vendor-prefixed",
+        "dist",
+        "node_modules"
+    ],
+    "rules": {
+        "encoding": true,
+        "full_opening_tag": true,
+        "no_closing_tag": true,
+        "line_ending": true,
+        "no_trailing_whitespace": true,
+        "no_whitespace_in_blank_line": true,
+        "single_blank_line_at_eof": true,
+        "indentation_type": true,
+        "lowercase_keywords": true,
+        "constant_case": true,
+        "elseif": true,
+        "no_spaces_after_function_name": true,
+        "array_syntax": {
+            "syntax": "long"
+        },
+        "spaces_inside_parentheses": {
+            "space": "single"
+        },
+        "concat_space": {
+            "spacing": "one"
+        },
+        "braces_position": {
+            "functions_opening_brace": "same_line",
+            "classes_opening_brace": "same_line",
+            "anonymous_functions_opening_brace": "same_line",
+            "control_structures_opening_brace": "same_line"
+        },
+        "visibility_required": {
+            "elements": ["property", "method"]
+        }
+    }
+}

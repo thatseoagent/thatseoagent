@@ -6,7 +6,7 @@
  * @since 1.0.0
  */
 
-if (!defined('ABSPATH')) {
+if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 
@@ -27,7 +27,7 @@ class ThatSeoAgent {
      * Get instance
      */
     public static function get_instance() {
-        if (null === self::$instance) {
+        if ( null === self::$instance ) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -70,13 +70,13 @@ class ThatSeoAgent {
 
         // Before the check below: analytics tags are not something another
         // SEO plugin prints, so they stay while ThatSeoAgent steps aside.
-        if (! is_admin()) {
+        if ( ! is_admin() ) {
             ThatSeoAgent_Tracking::register();
         }
 
-        add_action('init', array($this, 'maybe_flush_rewrite_rules'), 21);
+        add_action( 'init', array( $this, 'maybe_flush_rewrite_rules' ), 21 );
 
-        if (is_admin()) {
+        if ( is_admin() ) {
             // Before the bulk action's: its notice has always come first.
             ThatSeoAgent_Compat::register();
             ThatSeoAgent_Meta_Box::register();
@@ -98,7 +98,7 @@ class ThatSeoAgent {
 
         // Everything below writes to <head>, serves sitemaps or edits
         // robots.txt — all of which another active SEO plugin does too.
-        if (! ThatSeoAgent_Compat::outputs_enabled()) {
+        if ( ! ThatSeoAgent_Compat::outputs_enabled() ) {
             return;
         }
 
@@ -134,9 +134,9 @@ class ThatSeoAgent {
         // sitemap routes), so the stored version records that too: activating
         // or deactivating that plugin must trigger a flush, or /sitemap.xml
         // stays missing after it is gone.
-        $version = THATSEOAGENT_VERSION . (ThatSeoAgent_Compat::outputs_enabled() ? '' : '-compat');
+        $version = THATSEOAGENT_VERSION . ( ThatSeoAgent_Compat::outputs_enabled() ? '' : '-compat' );
 
-        if (get_option(self::REWRITE_VERSION_OPTION) === $version) {
+        if ( get_option( self::REWRITE_VERSION_OPTION ) === $version ) {
             return;
         }
 
@@ -152,6 +152,6 @@ class ThatSeoAgent {
         // Autoloaded on purpose: this runs on every init, and a
         // non-autoloaded option costs one query per request forever to read a
         // short version string that changes once per release.
-        update_option(self::REWRITE_VERSION_OPTION, $version, true);
+        update_option( self::REWRITE_VERSION_OPTION, $version, true );
     }
 }
