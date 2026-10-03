@@ -1,13 +1,18 @@
 {
     "core": null,
     "phpVersion": "8.3",
-    "plugins": ["."],
+    "plugins": [
+        "."
+    ],
     "env": {
         "development": {
             "port": 8893
         },
         "tests": {
-            "port": 8894
+            "port": 8894,
+            "mappings": {
+                "wp-content/mu-plugins/thatseoagent-tests.php": "./tests/mu-plugin.php"
+            }
         }
     }
 }
