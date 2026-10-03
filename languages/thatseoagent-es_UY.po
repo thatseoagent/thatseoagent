@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ThatSeoAgent 2.6.0\n"
-"Report-Msgid-Bugs-To: angel.cruz@wallbit.io\n"
+"Report-Msgid-Bugs-To: bullgram@gmail.com\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
