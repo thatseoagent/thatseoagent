@@ -16,6 +16,9 @@
 - **A product's brand and category are plain text** too, in its markup
   and in `/catalog.jsonl`.
 - **`get-post-seo` names the primary terms in plain text** too.
+- **Deleting the plugin removes its caches too**: the Markdown version of
+  each post and the pages of `/catalog.jsonl` were left in the options
+  table, one transient each.
 
 ### Changed
 - **PHP 8.3 or later is required**, up from 7.4.

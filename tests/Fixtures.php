@@ -67,6 +67,10 @@ final class Fixtures {
             }
         }
 
+        // The caches the site's web server filled while answering.
+        global $wpdb;
+        $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\\_transient\\_%thatseoagent\\_%'" );
+
         wp_cache_flush();
         \ThatSeoAgent_Memo::reset();
     }

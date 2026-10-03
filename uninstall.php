@@ -55,6 +55,19 @@ function thatseoagent_uninstall_site() {
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- A one-off cleanup; no API deletes meta by prefix.
     $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE %s", $wpdb->esc_like( ThatSeoAgent_Primary_Term::KEY_PREFIX ) . '%' ) );
 
+    // The caches with one transient per post or page — the Markdown
+    // versions, the catalog file — are keyed by a version purging bumps, so
+    // no list of their names exists: every transient of the plugin goes by
+    // prefix. (With an object cache they are not here, and expire there.)
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- A one-off cleanup; no API deletes transients by prefix.
+    $wpdb->query(
+        $wpdb->prepare(
+            "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+            $wpdb->esc_like( '_transient_thatseoagent_' ) . '%',
+            $wpdb->esc_like( '_transient_timeout_thatseoagent_' ) . '%'
+        )
+    );
+
     wp_unschedule_hook( ThatSeoAgent_IndexNow::CRON_HOOK );
     wp_unschedule_hook( ThatSeoAgent_Checks::CRON_HOOK );
     delete_transient( ThatSeoAgent_Llms::CACHE_KEY );

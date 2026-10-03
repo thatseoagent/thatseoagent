@@ -5,41 +5,6 @@
  * it, and what each route answers.
  */
 
-/**
- * A request to the plugin's REST API, as the current user.
- *
- * @param array<string, mixed> $params
- */
-function rest( string $method, string $route, array $params = array() ): WP_REST_Response {
-    $request = new WP_REST_Request( $method, '/thatseoagent/v1' . $route );
-    foreach ( $params as $name => $value ) {
-        $request->set_param( $name, $value );
-    }
-
-    return rest_get_server()->dispatch( $request );
-}
-
-/**
- * The homepage and robots.txt as the site's own requests see them, every
- * crawler let in unless it is one of the turned away.
- *
- * @param list<string> $turned_away User-agent tokens answered 403.
- */
-function fakeOwnSite( array $turned_away = array() ): void {
-    fakeHttp( array(
-        home_url( '/robots.txt' ) => array( 'body' => "User-agent: *\nDisallow: /wp-admin/\n" ),
-        home_url( '/*' )          => function ( array $args ) use ( $turned_away ) {
-            foreach ( $turned_away as $token ) {
-                if ( str_contains( (string) $args['user-agent'], $token ) ) {
-                    return array( 'code' => 403, 'body' => 'Forbidden' );
-                }
-            }
-
-            return array( 'body' => '<html><body>Home</body></html>', 'headers' => array( 'Content-Type' => 'text/html' ) );
-        },
-    ) );
-}
-
 afterEach( function () {
     if ( function_exists( 'wp_set_current_user' ) ) {
         wp_set_current_user( 0 );
