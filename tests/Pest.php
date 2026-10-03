@@ -80,8 +80,9 @@ function fetch( string $url, array $headers = array(), string $method = 'GET' ):
 /**
  * Answers the requests whose URL matches a pattern, for one test.
  *
- * @param array<string, array{code?: int, body?: string, headers?: array<string, string>}|WP_Error> $responses
- *        `fnmatch()` pattern => response.
+ * @param array<string, array{code?: int, body?: string, headers?: array<string, string>}|WP_Error|Closure> $responses
+ *        `fnmatch()` pattern => response, or a closure that gets the
+ *        request's arguments and URL and returns one.
  */
 function fakeHttp( array $responses ): void {
     HttpFake::answer( $responses );

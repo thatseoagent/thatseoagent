@@ -13,7 +13,7 @@ use WP_Error;
  */
 final class HttpFake {
 
-    /** @var array<string, array{code?: int, body?: string, headers?: array<string, string>}|WP_Error> */
+    /** @var array<string, array{code?: int, body?: string, headers?: array<string, string>}|WP_Error|\Closure> */
     private static array $responses = array();
 
     /** @var list<array{url: string, method: string, body: mixed}> */
@@ -39,7 +39,9 @@ final class HttpFake {
     }
 
     /**
-     * @param array<string, array{code?: int, body?: string, headers?: array<string, string>}|WP_Error> $responses
+     * @param array<string, array{code?: int, body?: string, headers?: array<string, string>}|WP_Error|\Closure> $responses
+     *        A closure gets the request's arguments and URL, and returns
+     *        one of the others: for answers that depend on the request.
      */
     public static function answer( array $responses ): void {
         self::$responses = $responses + self::$responses;
@@ -71,6 +73,10 @@ final class HttpFake {
 
         foreach ( self::$responses as $pattern => $response ) {
             if ( fnmatch( $pattern, $url ) ) {
+                if ( $response instanceof \Closure ) {
+                    $response = $response( $args, $url );
+                }
+
                 return $response instanceof WP_Error ? $response : self::response( $response );
             }
         }
