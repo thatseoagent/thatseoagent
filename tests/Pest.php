@@ -258,3 +258,27 @@ function withoutSampleContent(): void {
         wp_delete_post( $post->ID, true );
     }
 }
+
+/**
+ * A user with a role.
+ */
+function user( string $role ): WP_User {
+    $id = wp_insert_user( array(
+        'user_login' => $role . '-' . wp_generate_password( 6, false ),
+        'user_pass'  => wp_generate_password(),
+        'role'       => $role,
+    ) );
+    expect( $id )->toBeInt();
+
+    return get_user_by( 'id', $id );
+}
+
+/**
+ * A user with a role, current from now on.
+ */
+function actingAs( string $role ): WP_User {
+    $user = user( $role );
+    wp_set_current_user( $user->ID );
+
+    return $user;
+}

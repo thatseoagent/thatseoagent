@@ -23,3 +23,6 @@
 
 # Tooling caches
 /.phpunit.cache/
+
+# Local wp-env additions, such as Lean MCP for the MCP tests (see the README)
+/.wp-env.override.json

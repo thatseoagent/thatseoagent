@@ -15,6 +15,9 @@ final class Fixtures {
     /** @var list<int> */
     private static array $posts = array();
 
+    /** @var list<int> */
+    private static array $users = array();
+
     /** @var list<array{int, string}> Term ID and taxonomy. */
     private static array $terms = array();
 
@@ -25,6 +28,7 @@ final class Fixtures {
 
     public static function start(): void {
         self::$posts   = array();
+        self::$users   = array();
         self::$terms   = array();
         self::$options = array();
 
@@ -32,6 +36,7 @@ final class Fixtures {
         // Attachments are created without wp_insert_post firing.
         add_action( 'add_attachment', array( self::class, 'attachment_created' ) );
         add_action( 'created_term', array( self::class, 'term_created' ), 10, 3 );
+        add_action( 'user_register', array( self::class, 'user_created' ) );
         add_action( 'add_option', array( self::class, 'option_added' ) );
         add_action( 'update_option', array( self::class, 'option_updated' ), 10, 2 );
     }
@@ -40,11 +45,16 @@ final class Fixtures {
         remove_action( 'wp_insert_post', array( self::class, 'post_created' ), 10 );
         remove_action( 'add_attachment', array( self::class, 'attachment_created' ) );
         remove_action( 'created_term', array( self::class, 'term_created' ), 10 );
+        remove_action( 'user_register', array( self::class, 'user_created' ) );
         remove_action( 'add_option', array( self::class, 'option_added' ) );
         remove_action( 'update_option', array( self::class, 'option_updated' ), 10 );
 
         foreach ( array_reverse( self::$posts ) as $id ) {
             wp_delete_post( $id, true );
+        }
+        require_once ABSPATH . 'wp-admin/includes/user.php';
+        foreach ( self::$users as $id ) {
+            wp_delete_user( $id );
         }
         foreach ( self::$terms as list( $id, $taxonomy ) ) {
             wp_delete_term( $id, $taxonomy );
@@ -69,6 +79,10 @@ final class Fixtures {
 
     public static function attachment_created( int $id ): void {
         self::$posts[] = $id;
+    }
+
+    public static function user_created( int $id ): void {
+        self::$users[] = $id;
     }
 
     public static function term_created( int $id, int $tt_id, string $taxonomy ): void {

@@ -40,8 +40,9 @@ final class Response {
      * without following redirects.
      *
      * @param array<string, string> $headers
+     * @param string|null           $body    Request body, for a POST.
      */
-    public static function fetch( string $url, array $headers = array(), string $method = 'GET' ): self {
+    public static function fetch( string $url, array $headers = array(), string $method = 'GET', ?string $body = null ): self {
         // The site's address, localhost:8894, is the host's; inside wp-env
         // its web server is tests-wordpress, asked for that host.
         $home   = wp_parse_url( home_url() );
@@ -61,6 +62,7 @@ final class Response {
                 CURLOPT_CUSTOMREQUEST  => $method,
                 CURLOPT_NOBODY         => 'HEAD' === $method,
                 CURLOPT_TIMEOUT        => 30,
+                CURLOPT_POSTFIELDS     => $body,
                 CURLOPT_HTTPHEADER     => array_map(
                     static fn ( string $name, string $value ): string => "$name: $value",
                     array_keys( $headers ),

@@ -7,21 +7,6 @@
  */
 
 /**
- * A user with a role, current from now on.
- */
-function actingAs( string $role ): WP_User {
-    $id = wp_insert_user( array(
-        'user_login' => $role . '-' . wp_generate_password( 6, false ),
-        'user_pass'  => wp_generate_password(),
-        'role'       => $role,
-    ) );
-    expect( $id )->toBeInt();
-    wp_set_current_user( $id );
-
-    return get_user_by( 'id', $id );
-}
-
-/**
  * Runs an Ability as the current user.
  *
  * @param array<string, mixed>|null $input

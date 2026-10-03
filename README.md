@@ -408,6 +408,16 @@ composer lint               # Pint, checking the code style (pint.json)
 composer format             # Pint, fixing it
 ```
 
+The MCP server's tests need Lean MCP active in the test site, and skip themselves without it. wp-env mounts it from a local `.wp-env.override.json`, not committed, that points at your copy:
+
+```json
+{
+    "plugins": [".", "/path/to/lean-mcp"]
+}
+```
+
+Run `pnpm env:start` again after creating it.
+
 ## Translations
 
 Ships with Spanish (`es_ES`). To add a language, copy `languages/thatseoagent.pot` and compile:
