@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.3",
         "league/html-to-markdown": "^5.1.2"
     },
     "require-dev": {
@@ -17,7 +17,7 @@
     },
     "config": {
         "platform": {
-            "php": "7.4.33"
+            "php": "8.3.0"
         }
     },
     "extra": {

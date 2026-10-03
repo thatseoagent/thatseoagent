@@ -26,7 +26,7 @@ The plugin is designed to be developer-friendly with clean, hookable code and no
 ### Requirements
 
 - WordPress 6.0 or higher
-- PHP 7.4 or higher
+- PHP 8.3 or higher
 
 ### Activation
 

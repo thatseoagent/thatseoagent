@@ -2,9 +2,9 @@
   'root' => 
   array (
     'name' => 'angelcruz/thatseoagent',
-    'pretty_version' => 'dev-main',
-    'version' => 'dev-main',
-    'reference' => 'd0be33960bbb0b75f9c3ae251244759de4111da1',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
+    'reference' => 'c315fb7caa2fcc634d64bbab042b32eebcd300cb',
     'type' => 'wordpress-plugin',
     'install_path' => __DIR__ . '/../',
     'aliases' => 

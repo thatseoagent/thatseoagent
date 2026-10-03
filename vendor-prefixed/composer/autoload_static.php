@@ -7,9 +7,9 @@ namespace ThatSeoAgent\Dependencies\Composer\Autoload;
 class ComposerStaticInit0300bcfc6aad19f34e05505ca4d07bcd
 {
     public static $prefixLengthsPsr4 = array (
-        'L' =>
+        'T' =>
         array (
-            'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\' => 44,
+            'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\' => 48,
         ),
     );
 

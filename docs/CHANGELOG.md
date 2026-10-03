@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+- **PHP 8.3 or later is required**, up from 7.4.
+
 ## [2.10.0] - 2026-09-28
 
 ### Added

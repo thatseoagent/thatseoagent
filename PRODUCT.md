@@ -36,7 +36,7 @@ No upsells, no paid tier, no remote service, no external requests (IndexNow only
 - Server-rendered PHP templates in `includes/admin/views/`, styled with Tailwind CSS v4 compiled by `pnpm run build:css` into a committed stylesheet; installing the plugin requires no Node.
 - No web fonts or other assets from external hosts.
 - Source strings in English, translated through WordPress (`languages/`, Spanish shipped). Spanish strings run longer and must fit.
-- PHP 7.4+, WordPress 7.1+.
+- PHP 8.3+, WordPress 7.1+.
 - The product is named ThatSeoAgent (decided 2026-09-23); its logo and voice are still open.
 
 ## Brand Commitments
