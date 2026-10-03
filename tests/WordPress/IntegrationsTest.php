@@ -100,7 +100,9 @@ describe( 'the .htaccess rule', function () {
     } );
 
     afterEach( function () {
-        @unlink( $this->file );
+        if ( isset( $this->file ) ) {
+            @unlink( $this->file );
+        }
     } );
 
     it( 'goes at the very top, above a page cache’s rules, keeping them', function () {

@@ -6,14 +6,14 @@
  * .po and in the .mo WordPress reads.
  */
 
-require_once ABSPATH . WPINC . '/pomo/po.php';
-
 /**
  * The entries of a translation file, keyed as gettext keys them.
  *
  * @return array<string, Translation_Entry>
  */
 function translationEntries( string $file ): array {
+    require_once ABSPATH . WPINC . '/pomo/po.php';
+
     $reader = str_ends_with( $file, '.mo' ) ? new MO() : new PO();
     expect( $reader->import_from_file( $file ) )->toBeTrue( "Cannot read $file" );
 
@@ -25,15 +25,6 @@ function translationEntries( string $file ): array {
  */
 function languagesDir(): string {
     return dirname( __DIR__, 2 ) . '/languages';
-}
-
-/**
- * The shipped .po files.
- *
- * @return list<string>
- */
-function poFiles(): array {
-    return glob( languagesDir() . '/thatseoagent-*.po' ) ?: array();
 }
 
 it( 'has every string in the code in its template', function () {
@@ -63,7 +54,8 @@ it( 'has every string in the code in its template', function () {
         ->and( array_values( array_diff( $in_template, $in_code ) ) )->toBe( array(), 'Strings in the template no longer in the code.' );
 } );
 
-it( 'translates every entry of the template, with nothing left fuzzy', function ( string $po ) {
+it( 'translates every entry of the template, with nothing left fuzzy', function ( string $locale ) {
+    $po = languagesDir() . "/thatseoagent-$locale.po";
     $template = translationEntries( languagesDir() . '/thatseoagent.pot' );
     $entries  = translationEntries( $po );
 
@@ -76,9 +68,10 @@ it( 'translates every entry of the template, with nothing left fuzzy', function 
     }
 
     expect( $missing )->toBe( array(), basename( $po ) . ' has untranslated entries.' );
-} )->with( fn () => poFiles() );
+} )->with( array( 'es_ES', 'es_UY' ) );
 
-it( 'compiles each .po into the .mo WordPress reads', function ( string $po ) {
+it( 'compiles each .po into the .mo WordPress reads', function ( string $locale ) {
+    $po = languagesDir() . "/thatseoagent-$locale.po";
     $source   = translationEntries( $po );
     $compiled = translationEntries( substr( $po, 0, -3 ) . '.mo' );
 
@@ -90,7 +83,7 @@ it( 'compiles each .po into the .mo WordPress reads', function ( string $po ) {
     }
 
     expect( $differ )->toBe( array(), basename( $po ) . ' changed since its .mo was made: run wp i18n make-mo.' );
-} )->with( fn () => poFiles() );
+} )->with( array( 'es_ES', 'es_UY' ) );
 
 it( 'has each language’s script translations translated too', function () {
     $files = glob( languagesDir() . '/thatseoagent-*.json' ) ?: array();
