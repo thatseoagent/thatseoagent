@@ -328,7 +328,7 @@ class ThatSeoAgent_Schema {
             '@type' => 'WebSite',
             '@id' => home_url( '/#website' ),
             'url' => home_url( '/' ),
-            'name' => get_bloginfo( 'name' ),
+            'name' => self::text( get_bloginfo( 'name' ) ),
             'inLanguage' => self::get_language(),
         );
 
@@ -336,7 +336,7 @@ class ThatSeoAgent_Schema {
         // in the graph.
         $tagline = get_bloginfo( 'description' );
         if ( $tagline ) {
-            $schema['description'] = $tagline;
+            $schema['description'] = self::text( $tagline );
         }
 
         // No potentialAction/SearchAction: Google retired the sitelinks
@@ -359,7 +359,7 @@ class ThatSeoAgent_Schema {
         $schema = array(
             '@type' => 'Organization',
             '@id' => home_url( '/#organization' ),
-            'name' => get_bloginfo( 'name' ),
+            'name' => self::text( get_bloginfo( 'name' ) ),
             'url' => home_url( '/' ),
         );
 
@@ -445,7 +445,7 @@ class ThatSeoAgent_Schema {
             '@type' => 'Article',
             '@id' => $url . '#article',
             'isPartOf' => array( '@id' => $url . '#webpage' ),
-            'headline' => get_the_title( $post ),
+            'headline' => self::text( get_the_title( $post ) ),
             'datePublished' => get_the_date( 'c', $post ),
             'dateModified' => get_the_modified_date( 'c', $post ),
             'mainEntityOfPage' => array( '@id' => $url . '#webpage' ),
@@ -543,7 +543,7 @@ class ThatSeoAgent_Schema {
             '@type' => self::webpage_type( $post ),
             '@id' => $url . '#webpage',
             'url' => $url,
-            'name' => get_the_title( $post ),
+            'name' => self::text( get_the_title( $post ) ),
             'isPartOf' => array( '@id' => home_url( '/#website' ) ),
             'inLanguage' => self::get_language(),
             'datePublished' => get_the_date( 'c', $post ),
@@ -682,7 +682,7 @@ class ThatSeoAgent_Schema {
             '@type'      => $type,
             '@id'        => $url . '#webpage',
             'url'        => $url,
-            'name'       => wp_strip_all_tags( self::listing_title() ),
+            'name'       => self::text( self::listing_title() ),
             'isPartOf'   => array( '@id' => home_url( '/#website' ) ),
             'inLanguage' => self::get_language(),
         );
@@ -759,7 +759,7 @@ class ThatSeoAgent_Schema {
         $schema = array(
             '@type' => 'Person',
             '@id'   => $url . '#person',
-            'name'  => $user->display_name,
+            'name'  => self::text( $user->display_name ),
             'url'   => $url,
         );
 
@@ -823,7 +823,7 @@ class ThatSeoAgent_Schema {
             return array(
                 '@type' => 'Person',
                 '@id'   => get_author_posts_url( $author_id ) . '#person',
-                'name'  => $author_name,
+                'name'  => self::text( $author_name ),
                 'url'   => get_author_posts_url( $author_id ),
             );
         }
@@ -894,5 +894,20 @@ class ThatSeoAgent_Schema {
             '@id'        => get_permalink( $post ) . '#faq',
             'mainEntity' => $entities,
         );
+    }
+
+    /**
+     * A name or a description as plain text.
+     *
+     * WordPress hands most of them out ready for HTML: titles texturized
+     * into entities (`&#8217;`), the site's name and a term's with `&amp;`.
+     * JSON-LD is not HTML, and its readers take an entity for the
+     * characters it is made of.
+     *
+     * @param string $value Name or description, maybe with HTML.
+     * @return string
+     */
+    private static function text( $value ) {
+        return trim( html_entity_decode( wp_strip_all_tags( (string) $value ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
     }
 }

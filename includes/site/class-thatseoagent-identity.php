@@ -184,7 +184,8 @@ class ThatSeoAgent_Identity {
         $node = array(
             '@type' => 'Person',
             '@id'   => home_url( '/#person' ),
-            'name'  => $settings['name'] ? $settings['name'] : get_bloginfo( 'name' ),
+            // The site's name is stored ready for HTML (`&amp;`).
+            'name'  => $settings['name'] ? $settings['name'] : html_entity_decode( get_bloginfo( 'name' ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ),
             'url'   => home_url( '/' ),
         );
 

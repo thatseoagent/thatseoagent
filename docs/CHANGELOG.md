@@ -9,6 +9,11 @@
 - **A robots.txt that starts with a byte order mark is read whole.** The
   mark hid its first line, usually a `User-agent`, so the rules of that
   group were dropped and AI crawlers it blocks were reported as allowed.
+- **Names in the JSON-LD are plain text.** A post's headline and page name,
+  the site's name and tagline, a listing's name and an author's name went
+  out as WordPress prints them in HTML, with entities: `Bob&#8217;s`,
+  `Tools &amp; Co`. The graph now says `Bob’s` and `Tools & Co`, as the
+  breadcrumbs and products already did.
 
 ## [2.10.0] - 2026-09-28
 
