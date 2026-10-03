@@ -2,18 +2,19 @@
 /**
  * The plugin's own MCP server.
  *
- * When the MCP Adapter plugin is active, the abilities of
- * ThatSeoAgent_Abilities are exposed as the tools of a dedicated server,
- * `thatseoagent`, whatever the theme:
+ * The abilities of ThatSeoAgent_Abilities are exposed as the tools of a
+ * dedicated server, `thatseoagent`, whatever the theme, through whichever
+ * MCP plugin is active:
  *
- *     HTTP:  /wp-json/mcp/thatseoagent
- *     STDIO: wp mcp-adapter serve --server=thatseoagent --user=<user>
+ *     Lean MCP:    /wp-json/lean-mcp/thatseoagent
+ *     MCP Adapter: /wp-json/mcp/thatseoagent
+ *                  wp mcp-adapter serve --server=thatseoagent --user=<user>
  *
  * A dedicated server rather than the adapter's default one: each ability
  * reaches the client as a direct tool with its full schema, instead of
  * having to be discovered first through the default server's meta-tools.
  *
- * Without MCP Adapter nothing happens: the hook never fires, and the
+ * Without either plugin nothing happens: their hooks never fire, and the
  * abilities stay available to anything that calls the Abilities API.
  *
  * @package ThatSeoAgent
@@ -30,6 +31,11 @@ class ThatSeoAgent_MCP {
      * Server ID, also the last segment of its route.
      */
     const SERVER_ID = 'thatseoagent';
+
+    /**
+     * What the server offers, for the model.
+     */
+    const DESCRIPTION = 'SEO of every post, page, product and term archive; the plugin\'s settings; audits, duplicates, links and the site\'s bulletin; sitemap URLs.';
 
     /**
      * The abilities exposed as tools. As MCP tools the slash becomes a
@@ -58,11 +64,34 @@ class ThatSeoAgent_MCP {
      * @since 2.8.0
      */
     public static function register() {
+        add_action( 'lean_mcp_init', array( __CLASS__, 'register_lean_mcp_server' ) );
         add_action( 'mcp_adapter_init', array( __CLASS__, 'create_server' ) );
     }
 
     /**
-     * Create the server.
+     * Declare the server to Lean MCP.
+     *
+     * @since 2.10.1
+     */
+    public static function register_lean_mcp_server() {
+        if ( ! function_exists( 'lean_mcp_register_server' ) ) {
+            return;
+        }
+
+        lean_mcp_register_server(
+            self::SERVER_ID,
+            array(
+                'title'        => 'ThatSeoAgent',
+                'version'      => THATSEOAGENT_VERSION,
+                'instructions' => self::DESCRIPTION,
+                'capability'   => 'edit_others_posts',
+                'abilities'    => self::TOOLS,
+            )
+        );
+    }
+
+    /**
+     * Create the server in MCP Adapter.
      *
      * @since 2.8.0
      * @param \WP\MCP\Core\McpAdapter $adapter The adapter.
@@ -82,7 +111,7 @@ class ThatSeoAgent_MCP {
             'mcp',
             self::SERVER_ID,
             'ThatSeoAgent',
-            'SEO of every post, page, product and term archive; the plugin\'s settings; audits, duplicates, links and the site\'s bulletin; sitemap URLs.',
+            self::DESCRIPTION,
             THATSEOAGENT_VERSION,
             array( $transport ),
             class_exists( $error_handler ) ? $error_handler : null,
@@ -103,8 +132,8 @@ class ThatSeoAgent_MCP {
      * Permission to connect over HTTP: editors and administrators. Each
      * ability also checks its own.
      *
-     * edit_others_posts rather than the adapter's default of any logged-in
-     * user: a subscriber's, author's or contributor's application password
+     * edit_others_posts, in both plugins, rather than the adapter's default
+     * of any logged-in user: a subscriber's, author's or contributor's application password
      * could otherwise reach the tools. The STDIO transport does not run
      * this check; it already requires shell access to the server.
      *
