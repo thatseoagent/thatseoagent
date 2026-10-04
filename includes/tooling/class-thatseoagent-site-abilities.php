@@ -33,7 +33,7 @@ class ThatSeoAgent_Site_Abilities {
             'thatseoagent/get-seo-settings',
             array(
                 'label'               => __( 'Get SEO Settings', 'thatseoagent' ),
-                'description'         => __( 'Returns the plugin\'s settings as the settings screen stores them — or one of them — with what each one does and its JSON schema: identity (who the site represents: name, logo, default sharing image, social profiles), homepage (its search title and description), verification (Search Console and other webmaster codes), default_author, catalog (the product markup of each post type), llms_txt, indexnow_key, ai_crawlers (robots.txt rules for AI crawlers), crawl_cleanup and tracking.', 'thatseoagent' ),
+                'description'         => __( 'Returns the plugin\'s settings as the settings screen stores them — or one of them — with what each one does and its JSON schema: identity (who the site represents: name, logo, default sharing image, social profiles), homepage (its search title and description), verification (Search Console and other webmaster codes), default_author, llms_txt, indexnow_key, ai_crawlers (robots.txt rules for AI crawlers), crawl_cleanup and tracking. With every setting it also returns catalogs: the post types the theme or plugins declared as product catalogs, and where each product detail is read from; they are declared in code and cannot be changed here.', 'thatseoagent' ),
                 'category'            => 'site',
                 'execute_callback'    => array( __CLASS__, 'get_settings' ),
                 'permission_callback' => array( 'ThatSeoAgent_Abilities', 'can_manage' ),
@@ -54,7 +54,7 @@ class ThatSeoAgent_Site_Abilities {
             'thatseoagent/update-seo-settings',
             array(
                 'label'               => __( 'Update SEO Settings', 'thatseoagent' ),
-                'description'         => __( 'Changes one of the plugin\'s settings. For the settings that are objects, only the keys you send change; a key that is itself an object (identity.social, one post type of catalog) is replaced whole. The value is checked against the setting\'s schema and goes through the same sanitizer as the settings screen. Live right away. tracking injects code into every page and also needs the unfiltered_html capability.', 'thatseoagent' ),
+                'description'         => __( 'Changes one of the plugin\'s settings. For the settings that are objects, only the keys you send change; a key that is itself an object (identity.social, ai_crawlers.bots) is replaced whole. The value is checked against the setting\'s schema and goes through the same sanitizer as the settings screen. Live right away. tracking injects code into every page and also needs the unfiltered_html capability.', 'thatseoagent' ),
                 'category'            => 'site',
                 'execute_callback'    => array( __CLASS__, 'update_settings' ),
                 'permission_callback' => array( __CLASS__, 'can_update_setting' ),
@@ -180,10 +180,6 @@ class ThatSeoAgent_Site_Abilities {
                 'option' => ThatSeoAgent_Default_Author::OPTION_KEY,
                 'about'  => __( 'Who the structured data credits for posts with no author of their own: author_name, author_url and author_type (Person or Organization).', 'thatseoagent' ),
             ),
-            'catalog'        => array(
-                'option' => ThatSeoAgent_Product::OPTION_KEY,
-                'about'  => __( 'Product markup per post type: post type => enabled, the brand and category taxonomies, and the meta keys of the properties, gallery, SKU, MPN and GTIN.', 'thatseoagent' ),
-            ),
             'llms_txt'       => array(
                 'option' => ThatSeoAgent_Llms::OPTION_KEY,
                 'about'  => __( 'Whether the site publishes /llms.txt and /llms-full.txt.', 'thatseoagent' ),
@@ -244,6 +240,15 @@ class ThatSeoAgent_Site_Abilities {
                 'about'  => $option['about'],
                 'value'  => get_option( $option['option'], $definition['default'] ),
                 'schema' => $definition['schema'],
+            );
+        }
+
+        // Declared in code by the theme or plugin that owns each content
+        // type, so shown here and changed nowhere.
+        if ( empty( $input['setting'] ) ) {
+            return array(
+                'settings' => $settings,
+                'catalogs' => (object) ThatSeoAgent_Product::describe(),
             );
         }
 

@@ -342,6 +342,7 @@ describe( 'the settings Abilities', function () {
         $settings = abilityResult( 'get-seo-settings' )['settings'];
 
         expect( array_keys( $settings ) )->toContain( 'identity', 'homepage', 'llms_txt', 'ai_crawlers', 'tracking' )
+            ->not->toContain( 'catalog' )
             ->and( $settings['homepage'] )->toHaveKeys( array( 'about', 'value', 'schema' ) );
     } );
 
@@ -394,5 +395,20 @@ describe( 'scan-seo-issues', function () {
         actingAs( 'administrator' );
 
         expect( ability( 'scan-seo-issues', array( 'post_type' => 'nonsense' ) )->get_error_code() )->toBe( 'thatseoagent_invalid_post_type' );
+    } );
+} );
+
+describe( 'the declared catalogs', function () {
+    it( 'are shown with the settings, and changed by no Ability', function () {
+        actingAs( 'administrator' );
+        register_post_type( 'machine', array( 'public' => true, 'label' => 'Machines' ) );
+        declareCatalog( 'machine', array( 'gallery' => '_gallery' ) );
+
+        $catalogs = (array) abilityResult( 'get-seo-settings' )['catalogs'];
+        $refused  = ability( 'update-seo-settings', array( 'setting' => 'catalog', 'value' => array() ) );
+        unregister_post_type( 'machine' );
+
+        expect( $catalogs['machine']['gallery'] )->toBe( '_gallery' )
+            ->and( $refused )->toBeInstanceOf( WP_Error::class );
     } );
 } );

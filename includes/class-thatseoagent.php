@@ -86,7 +86,6 @@ class ThatSeoAgent {
             ThatSeoAgent_Default_Author::register();
             ThatSeoAgent_Identity::register();
             ThatSeoAgent_Homepage::register();
-            ThatSeoAgent_Product_Settings::register();
             ThatSeoAgent_AI_Crawlers::register();
             ThatSeoAgent_Llms::register_settings();
             ThatSeoAgent_Cache_Settings::register();
@@ -134,7 +133,9 @@ class ThatSeoAgent {
         // sitemap routes), so the stored version records that too: activating
         // or deactivating that plugin must trigger a flush, or /sitemap.xml
         // stays missing after it is gone.
-        $version = THATSEOAGENT_VERSION . ( ThatSeoAgent_Compat::outputs_enabled() ? '' : '-compat' );
+        // The declared catalogs too: a theme that declares one, or changes
+        // its mapping, changes what the catalog file and llms.txt say.
+        $version = THATSEOAGENT_VERSION . ( ThatSeoAgent_Compat::outputs_enabled() ? '' : '-compat' ) . '-' . ThatSeoAgent_Product::fingerprint();
 
         if ( get_option( self::REWRITE_VERSION_OPTION ) === $version ) {
             return;
@@ -148,6 +149,11 @@ class ThatSeoAgent {
         // cache has the version in its keys.)
         ThatSeoAgent_Llms::purge();
         ThatSeoAgent_Catalog_Feed::purge();
+        ThatSeoAgent_Product_Report::purge_summary();
+
+        // Catalogs are declared in code since 3.0.0; the screen's choice is
+        // gone with the screen.
+        delete_option( ThatSeoAgent_Product::LEGACY_OPTION );
 
         // Autoloaded on purpose: this runs on every init, and a
         // non-autoloaded option costs one query per request forever to read a

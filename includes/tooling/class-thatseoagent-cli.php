@@ -324,12 +324,12 @@ class ThatSeoAgent_CLI {
         $post_types = ThatSeoAgent_Product::post_types();
 
         if ( empty( $post_types ) ) {
-            WP_CLI::error( 'No post type is configured as a product catalog. Choose one under ThatSeoAgent → Settings.' );
+            WP_CLI::error( 'No post type is declared as a product catalog. The theme or plugin that adds it declares it with thatseoagent_register_catalog().' );
         }
 
         if ( isset( $assoc_args['post-type'] ) ) {
             if ( ! in_array( $assoc_args['post-type'], $post_types, true ) ) {
-                WP_CLI::error( sprintf( '"%s" is not configured as a product catalog.', $assoc_args['post-type'] ) );
+                WP_CLI::error( sprintf( '"%s" is not declared as a product catalog.', $assoc_args['post-type'] ) );
             }
             $post_types = array( $assoc_args['post-type'] );
         }

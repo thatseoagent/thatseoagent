@@ -1,6 +1,30 @@
 # Changelog
 
-## [Unreleased]
+## [3.0.0] - 2026-10-04
+
+Catalogs are declared in code now, by the theme or plugin that registers
+their post type, and no longer chosen on the settings screen. A site that had
+one set up has none after updating until its theme declares it: see
+*Migrating a catalog* below.
+
+### Added
+- **`thatseoagent_register_catalog()` on the new `thatseoagent_init`
+  action** declares a post type as a product catalog: its brand and category
+  taxonomies, and a meta key or a callback for the specifications, the
+  gallery, the SKU, the MPN and the GTIN. Mistakes are reported with
+  `_doing_it_wrong()`. See the README's *Product catalogs* and ADR 0003.
+- **`get-seo-settings` returns `catalogs`**: the declared catalogs and where
+  each detail is read from, read-only.
+
+### Removed
+- **Settings → Product catalogs**, with the guess of which taxonomies and meta
+  keys held each detail (`ThatSeoAgent_Product_Settings`,
+  `ThatSeoAgent_Product::candidate_post_types()`, `candidate_taxonomies()`,
+  `detect_meta_keys()`, `suggest()`, `sanitize()`, `setting()`,
+  `rest_schema()`), and the `thatseoagent_products` option, deleted on
+  upgrade. The `catalog` setting of the settings Abilities is gone too.
+- **The new content type warning no longer offers to make it a catalog**;
+  it says the code that adds it can declare one, and is marked as reviewed.
 
 ### Fixed
 - **A robots.txt that starts with a byte order mark is read whole.** The
@@ -28,6 +52,23 @@
 - **Italics in the Markdown versions are written `*like this*`**, the
   converter's default, instead of `_like this_`: the option that chose
   underscores is deprecated in league/html-to-markdown.
+
+### Migrating a catalog
+The mapping the screen kept becomes the declaration's arguments:
+`brand_taxonomy` and `category_taxonomy` stay as they were, and
+`properties_meta_key`, `gallery_meta_key`, `sku_meta_key`, `mpn_meta_key` and
+`gtin_meta_key` become `properties`, `gallery`, `sku`, `mpn` and `gtin`.
+
+```php
+add_action( 'thatseoagent_init', function () {
+    thatseoagent_register_catalog( 'producto', array(
+        'brand_taxonomy'    => 'marca',
+        'category_taxonomy' => 'categoria-producto',
+        'properties'        => '_producto_specs',
+        'gallery'           => '_producto_gallery',
+    ) );
+} );
+```
 
 ## [2.10.0] - 2026-09-28
 

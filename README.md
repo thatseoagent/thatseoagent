@@ -18,7 +18,7 @@ cp -r thatseoagent /path/to/wp-content/plugins/
 wp plugin activate thatseoagent
 ```
 
-Activate and it works; the defaults need no configuration. Settings — site identity, homepage, product catalogs, llms.txt, IndexNow — live in their own **ThatSeoAgent** admin menu.
+Activate and it works; the defaults need no configuration. Settings — site identity, homepage, llms.txt, IndexNow — live in their own **ThatSeoAgent** admin menu.
 
 With WooCommerce active, WooCommerce marks up its products — the Product with its prices, and the BreadcrumbList of the shop's pages — and ThatSeoAgent keeps their title, description and sharing image. WooCommerce's products are never a product catalog.
 
@@ -32,7 +32,7 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 - **Schema/JSON-LD** — WebSite, Organization *or* Person, Article with its author as a Person (with a job title and profiles elsewhere, from two fields the plugin adds to the user profile), WebPage, CollectionPage, ProfilePage, BreadcrumbList, FAQPage (from question headings and Details blocks)
 - **Dashboard widget** — the bulletin's headline, on the colour of its level, and its three most serious warnings on the WordPress dashboard, for administrators, in the admin's own markup
 - **Admin screen** — a site bulletin: whether the site is fine in one sentence, on the color of its warning level, the warnings in force and what to do about each; plus the product report, llms.txt and settings
-- **Product catalogs** — mark a custom post type as a catalog and map its brand, category, specifications and gallery; each entry becomes a validated schema.org Product
+- **Product catalogs** — a theme or plugin declares its custom post type as a catalog, with its brand, category, specifications and gallery; each entry becomes a validated schema.org Product
 - **Breadcrumbs** — the trail the schema states, for a theme to print with `thatseoagent_breadcrumbs()`, `[thatseoagent_breadcrumbs]` or the Breadcrumbs block; accessible markup, no styles
 - **Canonical URLs** — replaces core's `rel_canonical`; each page of a paginated listing or post is its own canonical, with `rel="prev"`/`rel="next"`
 - **Per-post SEO** — title/description meta box with live search preview, and a "Keep out of search results" box (`noindex`), exposed to the REST API
@@ -95,17 +95,33 @@ See [docs/markdown](docs/markdown/) for the details.
 
 ## Product catalogs
 
-A catalog without WooCommerce — machinery, parts, a range of models — is usually a custom post type with its own taxonomies and meta. Under **ThatSeoAgent → Settings → Product catalogs**, every active public post type is listed — but WooCommerce's products, which WooCommerce marks up itself; tick the catalog and map its fields:
+A catalog without WooCommerce — machinery, parts, a range of models — is usually a custom post type with its own taxonomies and meta. The theme or plugin that registers that post type declares it as a catalog, and says where each product detail lives, on the `thatseoagent_init` action:
 
-| Field | Source | Schema |
-|-------|--------|--------|
-| Brand | taxonomy | `brand` (`Brand`) |
-| Category | taxonomy | `category`, as "Parent > Child" |
-| Specifications | meta key: JSON or array of name/value pairs, or a name => value map | `additionalProperty` (`PropertyValue`) |
-| Gallery | meta key: attachment IDs, comma-separated or array | extra `image` entries |
-| SKU, MPN, GTIN | meta keys | `sku`, `mpn`, `gtin` |
+```php
+add_action( 'thatseoagent_init', function () {
+    thatseoagent_register_catalog( 'machine', array(
+        'brand_taxonomy'    => 'machine_brand',
+        'category_taxonomy' => 'machine_type',
+        'properties'        => fn ( WP_Post $post ) => my_theme_specs( $post->ID ),
+        'gallery'           => '_machine_gallery',
+        'sku'               => '_machine_sku',
+    ) );
+} );
+```
 
-Taxonomies and meta keys are detected from the stored data and pre-selected by name. Name, description and featured image come from the post. Each entry is output as the page's `mainEntity`, instead of an Article.
+| Key | Takes | Schema |
+|-----|-------|--------|
+| `brand_taxonomy` | a taxonomy of the post type | `brand` (`Brand`) |
+| `category_taxonomy` | a taxonomy of the post type | `category`, as "Parent > Child" |
+| `properties` | a meta key, or a callback that gets the post: a list of name/value pairs, a name => value map, or JSON of either | `additionalProperty` (`PropertyValue`) |
+| `gallery` | a meta key, or a callback: attachment IDs, as a list or comma-separated | extra `image` entries |
+| `sku`, `mpn`, `gtin` | a meta key, or a callback | `sku`, `mpn`, `gtin` |
+
+Every key is optional. Name, description and featured image come from the post. Each entry is output as the page's `mainEntity`, instead of an Article.
+
+The hook fires once per request, the first time anything asks for the catalogs, after `init` has begun: register the post type and its taxonomies on `init` before priority 20. A declaration outside the hook, of a post type that does not exist, or a second one of the same type is refused with `_doing_it_wrong()`; a key it does not know, or a detail mapped wrongly, is left out with the same notice and the rest kept. While WooCommerce is active its product types cannot be declared: WooCommerce marks them up itself. When the declarations change, the catalog file, llms.txt and the Products screen are rebuilt on their next request.
+
+Without a theme or plugin that declares one, a site has no catalog: there is nothing to choose on the settings screen. See [ADR 0003](docs/adr/0003-catalogs-declared-in-code.md).
 
 `/catalog.jsonl` gives agents the whole catalog as JSON Lines: each entry's Product markup, one per line, 100 per page (`?page=2`, announced with `Link: rel="next"`). Like llms.txt, it is for agents; search engines read the markup on each page.
 
@@ -165,10 +181,9 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `ThatSeoAgent_Trust_Pages` | The about, contact and privacy pages the bulletin looks for |
 | | `ThatSeoAgent_New_Types` | Public content types the site owner has not looked at yet |
 | | `ThatSeoAgent_Verification` | The verification tags of search engine consoles, on the homepage |
-| `catalog/` | `ThatSeoAgent_Product` | Product catalogs: mapping, detection, Product node, validation |
+| `catalog/` | `ThatSeoAgent_Product` | Product catalogs: their declarations, the Product node, validation |
 | | `ThatSeoAgent_Product_Report` | How complete the catalog is: summary and per-product report |
 | | `ThatSeoAgent_Catalog_Feed` | The catalog as JSON Lines, one Product per line, for agents |
-| | `ThatSeoAgent_Product_Settings` | The catalog's settings section and field mapping |
 | `sitemap/` | `ThatSeoAgent_Sitemap` | Sitemap routes and rendering (returns XML strings) |
 | | `ThatSeoAgent_Robots` | The `Sitemap:` directive and the blocked AI crawlers in robots.txt |
 | `crawlers/` | `ThatSeoAgent_AI_Crawlers` | The known AI crawlers, the site owner's choices and the lines they add to robots.txt |
@@ -315,7 +330,7 @@ Registered on `wp_abilities_api_init`:
 | `thatseoagent/list-term-seo` | Terms of every taxonomy with SEO fields, with what their archive publishes; filter by what is missing | `manage_categories` |
 | `thatseoagent/get-term-seo` | SEO of a term's archive | `edit_term` |
 | `thatseoagent/update-term-seo` | Update a term archive's title, description and noindex | `edit_term` |
-| `thatseoagent/get-seo-settings` | The plugin's settings (identity, homepage, verification, catalog, crawlers…), what each does and its schema | `manage_options` |
+| `thatseoagent/get-seo-settings` | The plugin's settings (identity, homepage, verification, crawlers…), what each does and its schema, and the declared catalogs | `manage_options` |
 | `thatseoagent/update-seo-settings` | Change one setting, through its schema and sanitizer; `tracking` also needs `unfiltered_html` | `manage_options` |
 | `thatseoagent/get-duplicates` | Pages sharing a title or a written description | `manage_options` |
 | `thatseoagent/get-link-report` | Orphan pages, broken internal links, navigation that leads nowhere | `manage_options` |

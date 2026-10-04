@@ -35,6 +35,7 @@ function thatseoagent_uninstall_site() {
             ThatSeoAgent_Catalog_Feed::VERSION_OPTION,
             ThatSeoAgent_New_Types::OPTION_KEY,
             ThatSeoAgent_Checks::OPTION_KEY,
+            ThatSeoAgent_Product::LEGACY_OPTION,
         )
     );
 

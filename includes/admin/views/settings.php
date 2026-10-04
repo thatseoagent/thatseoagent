@@ -26,7 +26,6 @@ $order = array(
     'thatseoagent_homepage_section',
     'thatseoagent_verification_section',
     'thatseoagent_tracking_section',
-    'thatseoagent_products_section',
     'thatseoagent_schema_section',
     'thatseoagent_llms_section',
     'thatseoagent_cache_section',

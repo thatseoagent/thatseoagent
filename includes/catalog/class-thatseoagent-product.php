@@ -4,17 +4,21 @@
  *
  * Not every catalog is a shop. A site can list products — machinery, parts,
  * a range of models — as a custom post type with its own taxonomies and meta,
- * no WooCommerce, no prices. This module lets the site owner say which post
- * type is the catalog and where its data lives, and then marks each entry up
- * as a schema.org Product.
+ * no WooCommerce, no prices. The code that registers that post type declares
+ * it as a catalog and says where its data lives; this module marks each entry
+ * up as a schema.org Product.
  *
  * The mapping, per post type:
  *
  *     brand_taxonomy       → Product.brand (a Brand node)
  *     category_taxonomy    → Product.category ("Parent > Child")
- *     properties_meta_key  → Product.additionalProperty (PropertyValue list)
- *     gallery_meta_key     → more Product.image entries, after the featured one
+ *     properties           → Product.additionalProperty (PropertyValue list)
+ *     gallery              → more Product.image entries, after the featured one
  *     sku / mpn / gtin     → Product.sku, .mpn, .gtin
+ *
+ * The taxonomies are named; every other detail is a meta key or a callback
+ * that gets the post. The theme or plugin that registers the content type
+ * declares it, with thatseoagent_register_catalog() on thatseoagent_init.
  *
  * Name, URL, description and image come from the post itself.
  *
@@ -39,29 +43,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 class ThatSeoAgent_Product {
 
     /**
-     * Option holding the catalog configuration, keyed by post type.
+     * Where versions before 3.0.0 kept the catalogs chosen on the settings
+     * screen. Deleted on upgrade and on uninstall.
      */
-    const OPTION_KEY = 'thatseoagent_products';
+    const LEGACY_OPTION = 'thatseoagent_products';
 
     /**
-     * The option as ThatSeoAgent_Settings registers it: type, sanitizer,
-     * default and REST schema.
+     * The details a declaration maps, and what each one takes: a taxonomy
+     * name, or a meta key or a callback.
      *
-     * @since 1.20.0 Moved from ThatSeoAgent_Settings::definitions().
-     * @return array{type: string, sanitize: callable, default: mixed, schema: array}
+     * @since 1.16.0
+     * @since 3.0.0 The keys of a declaration, not of a settings form.
+     * @return array<string, string> Key => 'taxonomy' | 'source'.
      */
-    public static function setting() {
+    public static function fields() {
         return array(
-            'type'     => 'object',
-            'sanitize' => array( __CLASS__, 'sanitize' ),
-            'default'  => array(),
-            'schema'   => self::rest_schema(),
+            'brand_taxonomy'    => 'taxonomy',
+            'category_taxonomy' => 'taxonomy',
+            'properties'        => 'source',
+            'gallery'           => 'source',
+            'sku'               => 'source',
+            'mpn'               => 'source',
+            'gtin'              => 'source',
         );
     }
 
     /**
      * Register the hooks.
-     *
      * @since 2.7.0
      */
     public static function register() {
@@ -71,97 +79,201 @@ class ThatSeoAgent_Product {
     /**
      * A catalog's primary category comes from its mapped category
      * taxonomy, even when the type has `category` too: the mapping is what
-     * the site owner said the category is.
-     *
+     * the catalog's owner said the category is.
      * @since 2.7.0
      * @param string $main      Taxonomy name, or ''.
      * @param string $post_type Post type.
      * @return string
      */
     public static function filter_main_taxonomy( $main, $post_type ) {
-        if ( ! in_array( $post_type, self::post_types(), true ) ) {
-            return $main;
-        }
-
         $config  = self::config();
-        $catalog = isset( $config[ $post_type ]['category_taxonomy'] ) ? (string) $config[ $post_type ]['category_taxonomy'] : '';
+        $catalog = isset( $config[ $post_type ] ) ? $config[ $post_type ]['category_taxonomy'] : '';
 
-        return in_array( $catalog, ThatSeoAgent_Primary_Term::taxonomies( $post_type ), true ) ? $catalog : $main;
+        return '' !== $catalog && in_array( $catalog, ThatSeoAgent_Primary_Term::taxonomies( $post_type ), true ) ? $catalog : $main;
     }
 
     /**
-     * The mapped fields and what feeds them.
+     * Every declared catalog: post type => its mapping.
+     *
+     * The themes and plugins that own a content type declare it on
+     * `thatseoagent_init`, which fires the first time anything asks, once
+     * `init` has begun and the post types exist. Asked before that, there
+     * are none yet.
      *
      * @since 1.16.0
-     * @return array<string, string> Field => 'taxonomy' | 'meta'.
+     * @since 3.0.0 Declared in code, no longer read from an option.
+     * @return array<string, array<string, string|callable>> Every key of
+     *         fields(), '' for a detail not mapped.
      */
-    public static function fields() {
-        return array(
-            'brand_taxonomy'      => 'taxonomy',
-            'category_taxonomy'   => 'taxonomy',
-            'properties_meta_key' => 'meta',
-            'gallery_meta_key'    => 'meta',
-            'sku_meta_key'        => 'meta',
-            'mpn_meta_key'        => 'meta',
-            'gtin_meta_key'       => 'meta',
+    public static function config() {
+        if ( ! did_action( 'init' ) ) {
+            return array();
+        }
+
+        return ThatSeoAgent_Memo::remember(
+            'catalogs',
+            'site',
+            function () {
+                return self::collect();
+            }
         );
     }
 
     /**
-     * The saved configuration, limited to post types that still exist and
-     * that WooCommerce does not mark up itself.
-     *
-     * A theme switch can unregister the catalog's post type; its settings are
-     * kept, so switching back restores them, but they do nothing meanwhile.
-     * The same goes for WooCommerce's products while WooCommerce is active:
-     * it prints their Product, and a second one would compete with it.
-     *
-     * @since 1.16.0
-     * @since 2.10.0 Without WooCommerce's product types.
-     * @return array<string, array<string, string>>
+     * Fire thatseoagent_init and keep what was declared during it.
+     * @since 3.0.0
+     * @return array<string, array<string, string|callable>>
      */
-    public static function config() {
-        $saved = get_option( self::OPTION_KEY, array() );
-        if ( ! is_array( $saved ) ) {
-            return array();
-        }
+    private static function collect() {
+        self::$declaring = array();
 
-        $config   = array();
-        $excluded = ThatSeoAgent_WooCommerce::post_types();
+        /**
+         * Fires when ThatSeoAgent gathers the product catalogs: the moment
+         * to declare one with thatseoagent_register_catalog().
+         *
+         * Fires once per request, the first time a catalog is asked for,
+         * after `init` has begun: register the post type and its
+         * taxonomies on `init` before priority 20.
+         *
+         * @since 3.0.0
+         */
+        do_action( 'thatseoagent_init' );
 
-        foreach ( $saved as $post_type => $mapping ) {
-            if ( ! post_type_exists( $post_type ) || ! is_array( $mapping ) || in_array( $post_type, $excluded, true ) ) {
-                continue;
-            }
+        $catalogs        = self::$declaring;
+        self::$declaring = null;
 
-            $config[ $post_type ] = wp_parse_args(
-                $mapping,
-                array_fill_keys( array_keys( self::fields() ), '' )
-            );
-        }
-
-        return $config;
+        return $catalogs;
     }
 
     /**
-     * Post types configured as product catalogs.
+     * The catalogs being declared while thatseoagent_init runs; null the
+     * rest of the time.
      *
+     * @var array<string, array<string, string|callable>>|null
+     */
+    private static $declaring = null;
+
+    /**
+     * Declare a content type as a product catalog.
+     *
+     * Called by thatseoagent_register_catalog(). A declaration that cannot
+     * be honoured is refused with _doing_it_wrong(), whole; a detail it
+     * maps wrongly is left out, with the same notice, and the rest kept.
+     *
+     * @since 3.0.0
+     * @param string $post_type The content type that lists the products.
+     * @param array  $args      Mapping: see fields().
+     * @return bool Whether the catalog was declared.
+     */
+    public static function declare_catalog( $post_type, array $args ) {
+        $function  = 'thatseoagent_register_catalog';
+        $post_type = (string) $post_type;
+
+        if ( null === self::$declaring ) {
+            _doing_it_wrong( esc_html( $function ), esc_html__( 'Declare catalogs on the thatseoagent_init action.', 'thatseoagent' ), '3.0.0' );
+            return false;
+        }
+
+        if ( ! post_type_exists( $post_type ) ) {
+            /* translators: %s: post type. */
+            _doing_it_wrong( esc_html( $function ), esc_html( sprintf( __( 'The post type "%s" does not exist: register it on init before priority 20.', 'thatseoagent' ), $post_type ) ), '3.0.0' );
+            return false;
+        }
+
+        if ( in_array( $post_type, ThatSeoAgent_WooCommerce::post_types(), true ) ) {
+            /* translators: %s: post type. */
+            _doing_it_wrong( esc_html( $function ), esc_html( sprintf( __( 'WooCommerce marks up "%s" itself while it is active, so it cannot be a catalog.', 'thatseoagent' ), $post_type ) ), '3.0.0' );
+            return false;
+        }
+
+        if ( isset( self::$declaring[ $post_type ] ) ) {
+            /* translators: %s: post type. */
+            _doing_it_wrong( esc_html( $function ), esc_html( sprintf( __( 'The catalog "%s" is already declared; the first declaration stays.', 'thatseoagent' ), $post_type ) ), '3.0.0' );
+            return false;
+        }
+
+        $fields = self::fields();
+
+        foreach ( array_diff( array_keys( $args ), array_keys( $fields ) ) as $unknown ) {
+            /* translators: 1: argument, 2: the arguments a catalog takes. */
+            _doing_it_wrong( esc_html( $function ), esc_html( sprintf( __( 'A catalog takes no "%1$s": it takes %2$s.', 'thatseoagent' ), $unknown, implode( ', ', array_keys( $fields ) ) ) ), '3.0.0' );
+        }
+
+        $mapping = array();
+        foreach ( $fields as $field => $kind ) {
+            $value = isset( $args[ $field ] ) ? $args[ $field ] : '';
+
+            if ( 'taxonomy' === $kind && '' !== $value && ! ( is_string( $value ) && is_object_in_taxonomy( $post_type, $value ) ) ) {
+                /* translators: 1: argument, 2: post type. */
+                _doing_it_wrong( esc_html( $function ), esc_html( sprintf( __( '%1$s must name a taxonomy of "%2$s"; it is left out.', 'thatseoagent' ), $field, $post_type ) ), '3.0.0' );
+                $value = '';
+            }
+
+            if ( 'source' === $kind && ! is_string( $value ) && ! is_callable( $value ) ) {
+                /* translators: %s: argument. */
+                _doing_it_wrong( esc_html( $function ), esc_html( sprintf( __( '%s must be a meta key or a callback; it is left out.', 'thatseoagent' ), $field ) ), '3.0.0' );
+                $value = '';
+            }
+
+            $mapping[ $field ] = $value;
+        }
+
+        self::$declaring[ $post_type ] = $mapping;
+
+        return true;
+    }
+
+    /**
+     * A fingerprint of the declarations, which changes when a catalog or
+     * its mapping does: the caches built from the catalogs are dropped
+     * when it changes.
+     *
+     * @since 3.0.0
+     * @return string
+     */
+    public static function fingerprint() {
+        return md5( (string) wp_json_encode( self::describe() ) );
+    }
+
+    /**
+     * The declarations as data: callbacks named, not run.
+     *
+     * For the screen and the settings ability, which show how each
+     * catalog is read.
+     *
+     * @since 3.0.0
+     * @return array<string, array<string, string>> Post type => field =>
+     *         the taxonomy or meta key, 'callback', or ''.
+     */
+    public static function describe() {
+        $described = array();
+
+        foreach ( self::config() as $post_type => $mapping ) {
+            foreach ( $mapping as $field => $value ) {
+                $described[ $post_type ][ $field ] = is_string( $value ) ? $value : 'callback';
+            }
+        }
+
+        return $described;
+    }
+
+    /**
+     * Post types declared as product catalogs.
      * @since 1.16.0
      * @return array<int, string>
      */
     public static function post_types() {
         /**
          * Filter the post types marked up as products.
-         *
          * @since 1.16.0
-         * @param array<int, string> $post_types Post types from the settings.
+         * @since 3.0.0 Receives the declared catalogs.
+         * @param array<int, string> $post_types Declared post types.
          */
         return (array) apply_filters( 'thatseoagent_product_post_types', array_keys( self::config() ) );
     }
 
     /**
      * Whether a post is a catalog entry.
-     *
      * @since 1.16.0
      * @param WP_Post|int|null $post Post object or ID.
      * @return bool
@@ -173,232 +285,23 @@ class ThatSeoAgent_Product {
     }
 
     /**
-     * Post types that can be selected as a catalog.
+     * One mapped detail of a catalog entry: what its meta key holds, or
+     * what its callback returns.
      *
-     * Every public post type with an editing screen, whoever registered it —
-     * a theme, a plugin or code in functions.php. Attachments are not
-     * content, and WooCommerce's products are marked up by WooCommerce.
-     *
-     * @since 1.16.0
-     * @since 2.10.0 Without WooCommerce's product types.
-     * @return array<string, WP_Post_Type>
+     * @since 3.0.0
+     * @param WP_Post $post  Catalog entry.
+     * @param string  $field A 'source' field of fields().
+     * @return mixed Null when the detail is not mapped.
      */
-    public static function candidate_post_types() {
-        $post_types = get_post_types(
-            array(
-                'public'  => true,
-                'show_ui' => true,
-            ),
-            'objects'
-        );
+    private static function source( WP_Post $post, $field ) {
+        $config = self::config();
+        $source = isset( $config[ $post->post_type ][ $field ] ) ? $config[ $post->post_type ][ $field ] : '';
 
-        unset( $post_types['attachment'] );
-
-        foreach ( ThatSeoAgent_WooCommerce::post_types() as $post_type ) {
-            unset( $post_types[ $post_type ] );
+        if ( is_callable( $source ) && ! is_string( $source ) ) {
+            return call_user_func( $source, $post );
         }
 
-        return $post_types;
-    }
-
-    /**
-     * Public taxonomies attached to a post type.
-     *
-     * @since 1.16.0
-     * @param string $post_type Post type.
-     * @return array<string, WP_Taxonomy>
-     */
-    public static function candidate_taxonomies( $post_type ) {
-        return array_filter(
-            get_object_taxonomies( $post_type, 'objects' ),
-            function ( $taxonomy ) {
-                return $taxonomy->public;
-            }
-        );
-    }
-
-    /**
-     * Meta keys in use on a post type.
-     *
-     * Read from the data rather than from register_post_meta(): themes rarely
-     * register their meta, and the key the site owner needs to pick is the one
-     * actually stored. Protected keys (leading underscore) are included — a
-     * theme's own fields usually are — except the ones WordPress and SEO
-     * plugins keep for themselves.
-     *
-     * @since 1.16.0
-     * @param string $post_type Post type.
-     * @return array<int, string>
-     */
-    public static function detect_meta_keys( $post_type ) {
-        global $wpdb;
-
-        // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        // Listing distinct meta keys has no API. It runs only when the
-        // settings page is rendered, so it is not cached: a key the theme
-        // just started writing should show up on the next page load.
-        $keys = $wpdb->get_col(
-            $wpdb->prepare(
-                "SELECT DISTINCT pm.meta_key
-                 FROM {$wpdb->postmeta} pm
-                 INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-                 WHERE p.post_type = %s
-                 ORDER BY pm.meta_key
-                 LIMIT 200",
-                $post_type
-            )
-        );
-        // phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-
-        $reserved = '/^(_edit_|_wp_|_thumbnail_id$|_encloseme$|_pingme$|_menu_item_|_thatseoagent_|_yoast_|rank_math_|_aioseo_|_oembed_)/';
-
-        return array_values(
-            array_filter(
-                (array) $keys,
-                function ( $key ) use ( $reserved ) {
-                    return ! preg_match( $reserved, $key );
-                }
-            )
-        );
-    }
-
-    /**
-     * A best guess at the mapping for a post type.
-     *
-     * Used to pre-fill the settings form the first time a post type is
-     * marked as a catalog. Taxonomies are matched by name in English and
-     * Spanish; the properties key is the first one whose stored value
-     * actually parses as a property list.
-     *
-     * @since 1.16.0
-     * @param string $post_type Post type.
-     * @return array<string, string>
-     */
-    public static function suggest( $post_type ) {
-        $suggestion = array_fill_keys( array_keys( self::fields() ), '' );
-
-        foreach ( self::candidate_taxonomies( $post_type ) as $name => $taxonomy ) {
-            $haystack = strtolower( $name . ' ' . $taxonomy->label );
-
-            if ( '' === $suggestion['brand_taxonomy'] && preg_match( '/brand|marca|fabricante|manufacturer/', $haystack ) ) {
-                $suggestion['brand_taxonomy'] = $name;
-            } elseif ( '' === $suggestion['category_taxonomy'] && preg_match( '/categor/', $haystack ) ) {
-                $suggestion['category_taxonomy'] = $name;
-            }
-        }
-
-        foreach ( self::detect_meta_keys( $post_type ) as $key ) {
-            if ( '' === $suggestion['properties_meta_key'] && preg_match( '/spec|propert|caracter|atribut|attribut|feature/i', $key ) ) {
-                $sample = self::sample_meta_value( $post_type, $key );
-                if ( ! empty( self::parse_properties( $sample )['properties'] ) ) {
-                    $suggestion['properties_meta_key'] = $key;
-                }
-            } elseif ( '' === $suggestion['gallery_meta_key'] && preg_match( '/galer|gallery|fotos|photos|images/i', $key ) ) {
-                $suggestion['gallery_meta_key'] = $key;
-            } elseif ( '' === $suggestion['sku_meta_key'] && preg_match( '/(^|_)sku$/i', $key ) ) {
-                $suggestion['sku_meta_key'] = $key;
-            } elseif ( '' === $suggestion['mpn_meta_key'] && preg_match( '/(^|_)(mpn|model|modelo)$/i', $key ) ) {
-                $suggestion['mpn_meta_key'] = $key;
-            } elseif ( '' === $suggestion['gtin_meta_key'] && preg_match( '/(^|_)(gtin\d*|ean|upc|isbn)$/i', $key ) ) {
-                $suggestion['gtin_meta_key'] = $key;
-            }
-        }
-
-        return $suggestion;
-    }
-
-    /**
-     * One stored value of a meta key, from the most recent post of a type.
-     *
-     * @since 1.16.0
-     * @param string $post_type Post type.
-     * @param string $key       Meta key.
-     * @return mixed
-     */
-    private static function sample_meta_value( $post_type, $key ) {
-        $ids = get_posts(
-            array(
-                'post_type'      => $post_type,
-                'post_status'    => 'any',
-                'posts_per_page' => 1,
-                'fields'         => 'ids',
-                'no_found_rows'  => true,
-                // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- One row, settings page only.
-                'meta_key'       => $key,
-            )
-        );
-
-        return $ids ? get_post_meta( $ids[0], $key, true ) : null;
-    }
-
-    /**
-     * Sanitize the catalog settings on save.
-     *
-     * Input is keyed by post type. An entry is kept only when `enabled` is
-     * set — the settings form sends every post type's fields, checked or not.
-     * A taxonomy must exist and be attached to the post type; anything else
-     * is dropped.
-     *
-     * @since 1.16.0
-     * @param mixed $input Raw input.
-     * @return array<string, array<string, string>>
-     */
-    public static function sanitize( $input ) {
-        $clean = array();
-
-        if ( ! is_array( $input ) ) {
-            return $clean;
-        }
-
-        foreach ( $input as $post_type => $mapping ) {
-            $post_type = sanitize_key( $post_type );
-
-            if ( ! is_array( $mapping ) || empty( $mapping['enabled'] ) || ! post_type_exists( $post_type ) ) {
-                continue;
-            }
-
-            $taxonomies = get_object_taxonomies( $post_type );
-            $entry      = array( 'enabled' => true );
-
-            foreach ( self::fields() as $field => $source ) {
-                $value = isset( $mapping[ $field ] ) ? trim( sanitize_text_field( (string) $mapping[ $field ] ) ) : '';
-
-                if ( 'taxonomy' === $source && '' !== $value && ! in_array( $value, $taxonomies, true ) ) {
-                    $value = '';
-                }
-
-                $entry[ $field ] = $value;
-            }
-
-            $clean[ $post_type ] = $entry;
-        }
-
-        return $clean;
-    }
-
-    /**
-     * JSON schema of the option, for the REST API.
-     *
-     * @since 1.16.0
-     * @return array
-     */
-    public static function rest_schema() {
-        $properties = array(
-            'enabled' => array( 'type' => 'boolean' ),
-        );
-
-        foreach ( array_keys( self::fields() ) as $field ) {
-            $properties[ $field ] = array( 'type' => 'string' );
-        }
-
-        return array(
-            'type'                 => 'object',
-            'additionalProperties' => array(
-                'type'                 => 'object',
-                'additionalProperties' => false,
-                'properties'           => $properties,
-            ),
-        );
+        return '' !== $source ? get_post_meta( $post->ID, (string) $source, true ) : null;
     }
 
     /**
@@ -518,8 +421,8 @@ class ThatSeoAgent_Product {
             }
         }
 
-        if ( '' !== $map['properties_meta_key'] ) {
-            $parsed = self::parse_properties( get_post_meta( $post->ID, $map['properties_meta_key'], true ) );
+        if ( '' !== $map['properties'] ) {
+            $parsed = self::parse_properties( self::source( $post, 'properties' ) );
 
             /**
              * Filter the product's properties before they become PropertyValues.
@@ -543,7 +446,7 @@ class ThatSeoAgent_Product {
                     );
                 }
             } else {
-                $issues[] = self::issue( 'product_properties_missing', 'warning', __( 'No specifications could be read.', 'thatseoagent' ), $map['properties_meta_key'] );
+                $issues[] = self::issue( 'product_properties_missing', 'warning', __( 'No specifications could be read.', 'thatseoagent' ), is_string( $map['properties'] ) ? $map['properties'] : 'callback' );
             }
 
             if ( $parsed['dropped'] > 0 ) {
@@ -557,19 +460,18 @@ class ThatSeoAgent_Product {
         }
 
         foreach ( array( 'sku', 'mpn' ) as $identifier ) {
-            $key = $map[ $identifier . '_meta_key' ];
-            if ( '' === $key ) {
+            if ( '' === $map[ $identifier ] ) {
                 continue;
             }
 
-            $value = self::scalar_meta( $post->ID, $key );
+            $value = self::scalar( self::source( $post, $identifier ) );
             if ( '' !== $value ) {
                 $node[ $identifier ] = $value;
             }
         }
 
-        if ( '' !== $map['gtin_meta_key'] ) {
-            $gtin = self::scalar_meta( $post->ID, $map['gtin_meta_key'] );
+        if ( '' !== $map['gtin'] ) {
+            $gtin = self::scalar( self::source( $post, 'gtin' ) );
             if ( '' !== $gtin ) {
                 if ( self::is_valid_gtin( $gtin ) ) {
                     $node['gtin'] = preg_replace( '/\D/', '', $gtin );
@@ -623,10 +525,7 @@ class ThatSeoAgent_Product {
             return array();
         }
 
-        $config = self::config();
-        $key    = isset( $config[ $post->post_type ]['gallery_meta_key'] ) ? (string) $config[ $post->post_type ]['gallery_meta_key'] : '';
-
-        return '' !== $key ? self::attachment_ids( get_post_meta( $post->ID, $key, true ) ) : array();
+        return self::attachment_ids( self::source( $post, 'gallery' ) );
     }
 
     /**
@@ -756,16 +655,14 @@ class ThatSeoAgent_Product {
     }
 
     /**
-     * A meta value as plain text, or '' when it is not a scalar.
+     * A detail as plain text, or '' when it is not a scalar.
      *
      * @since 1.16.0
-     * @param int    $post_id Post ID.
-     * @param string $key     Meta key.
+     * @since 3.0.0 Of a value, read from a meta key or a callback.
+     * @param mixed $value Value.
      * @return string
      */
-    private static function scalar_meta( $post_id, $key ) {
-        $value = get_post_meta( $post_id, $key, true );
-
+    private static function scalar( $value ) {
         return is_scalar( $value ) ? self::clean_text( (string) $value ) : '';
     }
 

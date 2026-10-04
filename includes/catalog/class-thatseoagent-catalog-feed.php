@@ -16,8 +16,8 @@
  * reference to the page's other nodes (the WebPage), which are not in the
  * file. Entries kept out of search or behind a password are left out.
  *
- * Only while a catalog is set up, and cached per page until a catalog entry
- * or the catalog settings change.
+ * Only while a catalog is declared, and cached per page until a catalog
+ * entry or the declarations change.
  *
  * @package ThatSeoAgent
  * @since 2.5.0
@@ -54,7 +54,6 @@ class ThatSeoAgent_Catalog_Feed {
         add_action( 'save_post', array( __CLASS__, 'purge_for_post' ) );
         add_action( 'deleted_post', array( __CLASS__, 'purge' ) );
         add_action( 'set_object_terms', array( __CLASS__, 'purge_for_post' ) );
-        add_action( 'update_option_' . ThatSeoAgent_Product::OPTION_KEY, array( __CLASS__, 'purge' ) );
     }
 
     /**

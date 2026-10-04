@@ -60,7 +60,6 @@ class ThatSeoAgent_Product_Report {
         add_action( 'deleted_post', array( __CLASS__, 'purge_summary' ) );
         add_action( 'set_object_terms', array( __CLASS__, 'purge_summary' ) );
         add_action( 'updated_post_meta', array( __CLASS__, 'purge_summary' ) );
-        add_action( 'update_option_' . ThatSeoAgent_Product::OPTION_KEY, array( __CLASS__, 'purge_summary' ) );
     }
 
     /**

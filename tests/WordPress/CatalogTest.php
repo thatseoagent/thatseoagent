@@ -9,7 +9,7 @@
  * A catalog of machines: the post type, a brand and a type taxonomy, and
  * its mapping, unregistered after the test.
  *
- * @param array<string, string> $mapping Fields beyond the taxonomies.
+ * @param array<string, mixed> $mapping Details beyond the taxonomies.
  */
 function machineCatalog( array $mapping = array() ): void {
     register_post_type( 'machine', array( 'public' => true, 'label' => 'Machines', 'has_archive' => true, 'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt' ) ) );
@@ -21,12 +21,9 @@ function machineCatalog( array $mapping = array() ): void {
     $GLOBALS['thatseoagent_test_rewrite_rules'] = get_option( 'rewrite_rules' );
     flush_rewrite_rules( false );
 
-    update_option( ThatSeoAgent_Product::OPTION_KEY, array(
-        'machine' => $mapping + array(
-            'enabled'           => true,
-            'brand_taxonomy'    => 'machine_brand',
-            'category_taxonomy' => 'machine_type',
-        ),
+    declareCatalog( 'machine', $mapping + array(
+        'brand_taxonomy'    => 'machine_brand',
+        'category_taxonomy' => 'machine_type',
     ) );
 }
 
@@ -96,7 +93,7 @@ describe( 'a catalog entry', function () {
     } );
 
     it( 'states its specifications, whatever shape they are stored in', function ( mixed $stored ) {
-        machineCatalog( array( 'properties_meta_key' => 'specs' ) );
+        machineCatalog( array( 'properties' => 'specs' ) );
         $post = machine( array(), array( 'specs' => $stored ) );
 
         expect( ThatSeoAgent_Product::schema( $post )['additionalProperty'] )->toBe( array(
@@ -111,7 +108,7 @@ describe( 'a catalog entry', function () {
     ) );
 
     it( 'drops a specification with no name or value, and says so', function () {
-        machineCatalog( array( 'properties_meta_key' => 'specs' ) );
+        machineCatalog( array( 'properties' => 'specs' ) );
         $post = machine( array(), array( 'specs' => array( 'Speeds' => '12', 'Empty' => '', '' => 'nameless' ) ) );
 
         $types = array_column( ThatSeoAgent_Product::validate( $post ), 'type' );
@@ -121,7 +118,7 @@ describe( 'a catalog entry', function () {
     } );
 
     it( 'states its identifiers, and only a GTIN that checks out', function () {
-        machineCatalog( array( 'sku_meta_key' => 'sku', 'mpn_meta_key' => 'mpn', 'gtin_meta_key' => 'gtin' ) );
+        machineCatalog( array( 'sku' => 'sku', 'mpn' => 'mpn', 'gtin' => 'gtin' ) );
         $valid   = machine( array(), array( 'sku' => 'DP-200', 'mpn' => 'X1', 'gtin' => '4006381-333931' ) );
         $invalid = machine( array(), array( 'gtin' => '4006381333932' ) );
 
@@ -131,7 +128,7 @@ describe( 'a catalog entry', function () {
     } );
 
     it( 'shows its featured image, then its gallery', function () {
-        machineCatalog( array( 'gallery_meta_key' => 'gallery' ) );
+        machineCatalog( array( 'gallery' => 'gallery' ) );
         $featured = image();
         $first    = image();
         $second   = image();
@@ -152,7 +149,7 @@ describe( 'a catalog entry', function () {
     } );
 
     it( 'reports what Google recommends and it lacks', function () {
-        machineCatalog( array( 'properties_meta_key' => 'specs' ) );
+        machineCatalog( array( 'properties' => 'specs' ) );
         $post = machine( array( 'post_content' => '' ) );
 
         $issues = array_column( ThatSeoAgent_Product::validate( $post ), 'severity', 'type' );
@@ -174,9 +171,12 @@ describe( 'a catalog entry', function () {
             ->and( array_column( ThatSeoAgent_Product::validate( $post ), 'severity', 'type' ) )->toBe( array( 'product_name_missing' => 'error' ) );
     } );
 
-    it( 'is no Product while its post type is not a catalog', function () {
+    it( 'is no Product while its post type is declared by nobody', function () {
         machineCatalog();
-        update_option( ThatSeoAgent_Product::OPTION_KEY, array() );
+        foreach ( $GLOBALS['thatseoagent_test_declarations'] as $declaration ) {
+            remove_action( 'thatseoagent_init', $declaration );
+        }
+        ThatSeoAgent_Memo::forget( 'catalogs' );
 
         expect( ThatSeoAgent_Product::schema( machine() ) )->toBeNull();
     } );
@@ -235,5 +235,99 @@ describe( 'the catalog file', function () {
 
     it( 'is not published without a catalog', function () {
         expect( ThatSeoAgent_Catalog_Feed::is_published() )->toBeFalse();
+    } );
+} );
+
+describe( 'declaring a catalog', function () {
+    it( 'reads any detail from a callback that gets the post', function () {
+        machineCatalog( array(
+            'properties' => fn ( WP_Post $post ) => array( array( 'name' => 'Model', 'value' => strtoupper( $post->post_name ) ) ),
+            'gallery'    => fn () => array( image() ),
+            'sku'        => fn ( WP_Post $post ) => 'SKU-' . $post->ID,
+        ) );
+        $post = machine( array( 'post_name' => 'dp-200' ) );
+
+        $product = ThatSeoAgent_Product::schema( $post );
+
+        expect( $product['additionalProperty'] )->toBe( array( array( '@type' => 'PropertyValue', 'name' => 'Model', 'value' => 'DP-200' ) ) )
+            ->and( $product['sku'] )->toBe( 'SKU-' . $post->ID )
+            ->and( $product )->toHaveKey( 'image' );
+    } );
+
+    it( 'shows a callback as such, without running it', function () {
+        machineCatalog( array( 'properties' => fn () => throw new RuntimeException( 'Not to be run.' ), 'gallery' => '_gallery' ) );
+
+        expect( ThatSeoAgent_Product::describe()['machine'] )->toMatchArray( array(
+            'brand_taxonomy' => 'machine_brand',
+            'properties'     => 'callback',
+            'gallery'        => '_gallery',
+            'sku'            => '',
+        ) );
+    } );
+
+    it( 'is refused outside thatseoagent_init', function () {
+        machineCatalog();
+        $declared = null;
+
+        $notices = doingItWrong( function () use ( &$declared ) {
+            $declared = thatseoagent_register_catalog( 'machine' );
+        } );
+
+        expect( $declared )->toBeFalse()
+            ->and( $notices[0] )->toContain( 'thatseoagent_init' );
+    } );
+
+    it( 'is refused for a post type that does not exist', function () {
+        declareCatalog( 'no_such_type' );
+
+        $notices = array_map( 'htmlspecialchars_decode', doingItWrong( fn () => ThatSeoAgent_Product::post_types() ) );
+
+        expect( ThatSeoAgent_Product::post_types() )->toBe( array() )
+            ->and( $notices[0] )->toContain( '"no_such_type" does not exist' );
+    } );
+
+    it( 'keeps the first of two declarations of a type', function () {
+        machineCatalog( array( 'gallery' => '_first' ) );
+        declareCatalog( 'machine', array( 'gallery' => '_second' ) );
+
+        $notices = doingItWrong( fn () => ThatSeoAgent_Product::config() );
+
+        expect( ThatSeoAgent_Product::describe()['machine']['gallery'] )->toBe( '_first' )
+            ->and( $notices[0] )->toContain( 'already declared' );
+    } );
+
+    it( 'leaves out what it cannot honour, and keeps the rest', function () {
+        register_post_type( 'machine', array( 'public' => true, 'label' => 'Machines' ) );
+        declareCatalog( 'machine', array(
+            'brand_taxonomy' => 'category',
+            'gallery'        => 42,
+            'colour'         => '_colour',
+            'sku'            => '_sku',
+        ) );
+
+        $notices = array_map( 'htmlspecialchars_decode', doingItWrong( fn () => ThatSeoAgent_Product::config() ) );
+
+        expect( ThatSeoAgent_Product::describe()['machine'] )->toMatchArray( array( 'brand_taxonomy' => '', 'gallery' => '', 'sku' => '_sku' ) )
+            ->and( implode( "\n", $notices ) )->toContain( 'takes no "colour"', 'brand_taxonomy must name a taxonomy', 'gallery must be a meta key or a callback' );
+    } );
+
+    it( 'changes the fingerprint the caches are kept by', function () {
+        $none = ThatSeoAgent_Product::fingerprint();
+        machineCatalog();
+        $one = ThatSeoAgent_Product::fingerprint();
+
+        expect( $one )->not->toBe( $none )
+            ->and( ThatSeoAgent_Product::fingerprint() )->toBe( $one );
+    } );
+} );
+
+describe( 'upgrading to 3.0.0', function () {
+    it( 'deletes the catalogs the settings screen kept', function () {
+        update_option( ThatSeoAgent_Product::LEGACY_OPTION, array( 'producto' => array( 'enabled' => true ) ) );
+        update_option( ThatSeoAgent::REWRITE_VERSION_OPTION, '2.10.0' );
+
+        ThatSeoAgent::get_instance()->maybe_flush_rewrite_rules();
+
+        expect( get_option( ThatSeoAgent_Product::LEGACY_OPTION ) )->toBeFalse();
     } );
 } );

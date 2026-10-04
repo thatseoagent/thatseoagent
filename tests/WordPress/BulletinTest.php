@@ -242,7 +242,7 @@ describe( 'the product catalog', function () {
     it( 'is graded by its worst product', function () {
         wellKeptSite();
         register_post_type( 'machine', array( 'public' => true, 'label' => 'Machines' ) );
-        update_option( ThatSeoAgent_Product::OPTION_KEY, array( 'machine' => array( 'enabled' => true ) ) );
+        declareCatalog( 'machine' );
         post( array( 'post_type' => 'machine', 'post_title' => '' ) );
         post( array( 'post_type' => 'machine', 'post_title' => 'Complete enough' ) );
 

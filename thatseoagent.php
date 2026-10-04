@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ThatSeoAgent
  * Description: SEO for WordPress with no paid tier: meta tags, Open Graph, schema markup, XML sitemaps, per-post SEO fields and a Markdown version of every post for AI agents. Replaces Yoast SEO and imports its data.
- * Version: 2.10.0
+ * Version: 3.0.0
  * Author: Angel Cruz
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -20,7 +20,7 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants
-define( 'THATSEOAGENT_VERSION', '2.10.0' );
+define( 'THATSEOAGENT_VERSION', '3.0.0' );
 define( 'THATSEOAGENT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'THATSEOAGENT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -48,6 +48,45 @@ function thatseoagent_load_textdomain() {
     load_plugin_textdomain( 'thatseoagent', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 add_action( 'init', 'thatseoagent_load_textdomain' );
+
+/**
+ * Declare a content type as a product catalog.
+ *
+ * Call it on the `thatseoagent_init` action, from the theme or plugin that
+ * registers the post type. Each entry is then marked up as a schema.org
+ * Product, listed in /catalog.jsonl and llms.txt, and checked on the
+ * Products screen and by `wp thatseoagent validate-products`.
+ *
+ *     add_action( 'thatseoagent_init', function () {
+ *         thatseoagent_register_catalog( 'machine', array(
+ *             'brand_taxonomy'    => 'machine_brand',
+ *             'category_taxonomy' => 'machine_type',
+ *             'properties'        => fn ( WP_Post $post ) => my_specs( $post->ID ),
+ *             'gallery'           => '_machine_gallery',
+ *         ) );
+ *     } );
+ *
+ * @since 3.0.0
+ * @param string $post_type The content type that lists the products.
+ * @param array  $args {
+ *     How each detail is read. Every key is optional.
+ *
+ *     @type string          $brand_taxonomy    Taxonomy of the brand.
+ *     @type string          $category_taxonomy Taxonomy of the category, as "Parent > Child".
+ *     @type string|callable $properties        Meta key, or a callback that gets the post, of the
+ *                                              specifications: a list of name/value pairs or a
+ *                                              name => value map, or JSON of either.
+ *     @type string|callable $gallery           Meta key, or callback, of the gallery: attachment
+ *                                              IDs, as a list or comma-separated.
+ *     @type string|callable $sku               Meta key, or callback, of the SKU.
+ *     @type string|callable $mpn               Meta key, or callback, of the MPN.
+ *     @type string|callable $gtin              Meta key, or callback, of the GTIN.
+ * }
+ * @return bool Whether the catalog was declared.
+ */
+function thatseoagent_register_catalog( $post_type, array $args = array() ) {
+    return ThatSeoAgent_Product::declare_catalog( $post_type, $args );
+}
 
 if ( ! function_exists( 'thatseoagent_breadcrumbs' ) ) {
     /**

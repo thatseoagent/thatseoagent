@@ -54,7 +54,6 @@ class ThatSeoAgent_Settings {
             'ThatSeoAgent_Default_Author',
             'ThatSeoAgent_Identity',
             'ThatSeoAgent_Homepage',
-            'ThatSeoAgent_Product',
             'ThatSeoAgent_Llms',
             'ThatSeoAgent_IndexNow',
             'ThatSeoAgent_AI_Crawlers',

@@ -107,11 +107,11 @@ _Avoid_: path, navigation
 ### Product catalogs
 
 **Catalog**:
-A content type marked as listing products, with or without prices. Each of its published posts is a **catalog entry**. WooCommerce's products are never one: WooCommerce marks them up itself.
+A content type that lists products, with or without prices, declared as such by the theme or plugin that owns it; nobody marks one from ThatSeoAgent's screen. Each of its published posts is a **catalog entry**. WooCommerce's products are never one: WooCommerce marks them up itself.
 _Avoid_: shop, store, product post type
 
 **Mapping**:
-Where a catalog keeps each product detail: which taxonomy is the brand and the category, and which fields hold the specifications, the gallery and the identifiers (SKU, MPN, GTIN).
+Where a catalog keeps each product detail: which taxonomy is the brand and the category, and where the specifications, the gallery and the identifiers (SKU, MPN, GTIN) come from. Part of the catalog's declaration.
 _Avoid_: field settings, configuration
 
 **Product markup**:

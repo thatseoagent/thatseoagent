@@ -27,4 +27,10 @@ if ( get_option( 'thatseoagent_tests_machine_catalog' ) ) {
         },
         0
     );
+    add_action(
+        'thatseoagent_init',
+        static function () {
+            thatseoagent_register_catalog( 'machine' );
+        }
+    );
 }

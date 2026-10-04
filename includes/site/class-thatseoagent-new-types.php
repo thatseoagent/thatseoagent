@@ -5,13 +5,14 @@
  * A plugin or a theme can register a public content type at any time, and
  * from that moment its entries are in the sitemap, get SEO fields and are
  * indexed. If they list products — machinery, parts, a range of models —
- * they are a catalog, and only the site owner can say so. The bulletin
- * raises the question once per new type.
+ * they are a catalog, which the code that adds them declares; the site owner
+ * is the one who notices it did not. The bulletin raises the question once
+ * per new type.
  *
  * The types that existed the first time the bulletin was read are known
  * from the start: installing the plugin asks nothing about them. A type is
- * known once someone follows the warning to the catalog settings, or saves
- * those settings.
+ * known once someone marks it as reviewed from the warning, or once the code
+ * that adds it declares it as a product catalog.
  *
  * @package ThatSeoAgent
  * @since 2.5.0
@@ -40,8 +41,6 @@ class ThatSeoAgent_New_Types {
      */
     public static function register() {
         add_action( 'admin_init', array( __CLASS__, 'maybe_mark_reviewed' ) );
-        add_action( 'update_option_' . ThatSeoAgent_Product::OPTION_KEY, array( __CLASS__, 'mark_reviewed' ) );
-        add_action( 'add_option_' . ThatSeoAgent_Product::OPTION_KEY, array( __CLASS__, 'mark_reviewed' ) );
     }
 
     /**
@@ -109,8 +108,8 @@ class ThatSeoAgent_New_Types {
     }
 
     /**
-     * The address the warning leads to: the catalog settings, marking the
-     * new types as looked at on arrival.
+     * The address the warning leads to: the overview, marking the new types
+     * as looked at on arrival.
      *
      * @since 2.5.0
      * @return string
@@ -118,7 +117,7 @@ class ThatSeoAgent_New_Types {
     public static function review_url() {
         // Not wp_nonce_url(): it escapes for HTML, and the screen escapes
         // the URL again when it prints it.
-        return add_query_arg( '_wpnonce', wp_create_nonce( self::NONCE ), ThatSeoAgent_App::url( 'settings', array( 'review_types' => 1 ) ) ) . '#thatseoagent_products_section';
+        return add_query_arg( '_wpnonce', wp_create_nonce( self::NONCE ), ThatSeoAgent_App::url( 'dashboard', array( 'review_types' => 1 ) ) );
     }
 
     /**
@@ -154,8 +153,8 @@ class ThatSeoAgent_New_Types {
                 'yellow',
                 /* translators: %s: content type names, e.g. "Machines and Parts". */
                 sprintf( _n( 'A new content type is being published: %s', 'New content types are being published: %s', count( $new_types ), 'thatseoagent' ), wp_sprintf_l( '%l', $names ) ),
-                __( 'Its pages are already in the sitemap and have SEO fields. If they list products, such as machines, parts or models, mark it as a product catalog so each one is described as a product.', 'thatseoagent' ),
-                __( 'Review it', 'thatseoagent' ),
+                __( 'Its pages are already in the sitemap and have SEO fields. If they list products, such as machines, parts or models, the theme or plugin that adds it can declare it as a product catalog, so each one is described as a product.', 'thatseoagent' ),
+                __( 'Mark it as reviewed', 'thatseoagent' ),
                 'review_types'
             );
         }

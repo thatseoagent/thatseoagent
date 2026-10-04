@@ -33,6 +33,12 @@ uses()
         global $wpdb;
         $unfaked = HttpFake::stop();
 
+        // Catalogs a test declared are not in it either.
+        foreach ( $GLOBALS['thatseoagent_test_declarations'] ?? array() as $declaration ) {
+            remove_action( 'thatseoagent_init', $declaration );
+        }
+        $GLOBALS['thatseoagent_test_declarations'] = array();
+
         // Files are not in the transaction: image() leaves them to delete.
         foreach ( $GLOBALS['thatseoagent_test_attachments'] ?? array() as $attachment ) {
             wp_delete_attachment( $attachment, true );
@@ -320,4 +326,20 @@ function fakeOwnSite( array $turned_away = array() ): void {
             return array( 'body' => '<html><body>Home</body></html>', 'headers' => array( 'Content-Type' => 'text/html' ) );
         },
     ) );
+}
+
+/**
+ * Declares a catalog, as a theme does on thatseoagent_init, for one test.
+ *
+ * @param array<string, mixed> $args thatseoagent_register_catalog() arguments.
+ */
+function declareCatalog( string $post_type, array $args = array() ): void {
+    $declaration = static function () use ( $post_type, $args ) {
+        thatseoagent_register_catalog( $post_type, $args );
+    };
+    add_action( 'thatseoagent_init', $declaration );
+    $GLOBALS['thatseoagent_test_declarations'][] = $declaration;
+
+    // Gathered again on the next question.
+    ThatSeoAgent_Memo::forget( 'catalogs' );
 }

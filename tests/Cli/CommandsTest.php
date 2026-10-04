@@ -83,7 +83,6 @@ describe( 'validate-products', function () {
     it( 'lists each product with the problems in its markup', function () {
         update_option( 'thatseoagent_tests_machine_catalog', '1' );
         register_post_type( 'machine', array( 'public' => true, 'label' => 'Machines' ) );
-        update_option( ThatSeoAgent_Product::OPTION_KEY, array( 'machine' => array( 'enabled' => true ) ) );
         $untitled = post( array( 'post_type' => 'machine', 'post_title' => '' ) );
         unregister_post_type( 'machine' );
 
@@ -97,9 +96,6 @@ describe( 'validate-products', function () {
 
     it( 'answers an empty JSON list when every product is complete', function () {
         update_option( 'thatseoagent_tests_machine_catalog', '1' );
-        register_post_type( 'machine', array( 'public' => true, 'label' => 'Machines' ) );
-        update_option( ThatSeoAgent_Product::OPTION_KEY, array( 'machine' => array( 'enabled' => true ) ) );
-        unregister_post_type( 'machine' );
 
         $run = wpCli( 'validate-products --format=json' );
 

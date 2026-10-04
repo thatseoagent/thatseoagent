@@ -74,7 +74,6 @@ spl_autoload_register(
 
         'ThatSeoAgent_Catalog_Feed'      => 'catalog/class-thatseoagent-catalog-feed.php',
         'ThatSeoAgent_Product_Report'    => 'catalog/class-thatseoagent-product-report.php',
-        'ThatSeoAgent_Product_Settings'  => 'catalog/class-thatseoagent-product-settings.php',
         'ThatSeoAgent_Product'           => 'catalog/class-thatseoagent-product.php',
 
         'ThatSeoAgent_Robots'            => 'sitemap/class-thatseoagent-robots.php',

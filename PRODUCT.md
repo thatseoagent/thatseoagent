@@ -10,7 +10,7 @@ web
 
 Three audiences share the same admin screen:
 
-- **Agency team** (developers and marketers) who install the plugin on client sites, configure identity, product catalogs and integrations, and check SEO health across sites.
+- **Agency team** (developers and marketers) who install the plugin on client sites, configure identity and integrations, declare product catalogs from the site's theme, and check SEO health across sites.
 - **Non-technical clients**: business owners and editors of the sites the agency builds (for example a machinery catalog site). They open the screen occasionally, know little about SEO, and need to understand what is fine, what is not, and what to do next.
 - **Public WordPress users** who install the plugin on their own, with no agency behind them.
 

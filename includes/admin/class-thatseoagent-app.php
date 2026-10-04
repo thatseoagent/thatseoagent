@@ -118,7 +118,7 @@ class ThatSeoAgent_App {
             'settings'  => array(
                 'label'    => __( 'Settings', 'thatseoagent' ),
                 'title'    => __( 'Settings', 'thatseoagent' ),
-                'subtitle' => __( 'Who the site is, the homepage, the product catalog and integrations.', 'thatseoagent' ),
+                'subtitle' => __( 'Who the site is, the homepage and integrations.', 'thatseoagent' ),
                 'icon'     => 'settings',
             ),
         );

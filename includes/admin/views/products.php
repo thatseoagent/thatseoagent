@@ -10,20 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$config   = ThatSeoAgent_Product::config();
-$levels   = ThatSeoAgent_Bulletin::levels();
-$settings = ThatSeoAgent_App::url( 'settings' ) . '#thatseoagent_products_section';
+$config = ThatSeoAgent_Product::describe();
+$levels = ThatSeoAgent_Bulletin::levels();
 
 if ( empty( $config ) ) :
     ?>
     <section class="max-w-[40rem] py-6">
         <h2 class="text-[20px] font-bold text-ink"><?php esc_html_e( 'No product catalog yet', 'thatseoagent' ); ?></h2>
         <p class="mt-2 text-[15px] text-ink-2"><?php esc_html_e( 'If the site lists products, such as machines, parts or models, they can be described to search engines as products, with their brand, category and specifications, instead of as plain pages.', 'thatseoagent' ); ?></p>
-        <p class="mt-2 text-[15px] text-ink-2"><?php esc_html_e( 'Pick the content type that holds them; ThatSeoAgent suggests where each detail is stored.', 'thatseoagent' ); ?></p>
-        <a href="<?php echo esc_url( $settings ); ?>" class="tsa-press mt-6">
-            <?php esc_html_e( 'Set up the catalog', 'thatseoagent' ); ?>
-            <?php ThatSeoAgent_Icons::the( 'arrow', 'size-4' ); ?>
-        </a>
+        <p class="mt-2 text-[15px] text-ink-2"><?php esc_html_e( 'The theme or the plugin that adds the content type holding them declares it as a catalog, and says where each detail is stored. Ask whoever built the site.', 'thatseoagent' ); ?></p>
     </section>
     <?php
     return;
@@ -41,11 +36,11 @@ $level   = $summary['error'] ? 'orange' : ( $summary['warning'] ? 'yellow' : 'cl
 $labels  = array(
     'brand_taxonomy'      => __( 'Brand', 'thatseoagent' ),
     'category_taxonomy'   => __( 'Category', 'thatseoagent' ),
-    'properties_meta_key' => __( 'Specifications', 'thatseoagent' ),
-    'gallery_meta_key'    => __( 'Gallery', 'thatseoagent' ),
-    'sku_meta_key'        => __( 'SKU', 'thatseoagent' ),
-    'mpn_meta_key'        => __( 'MPN', 'thatseoagent' ),
-    'gtin_meta_key'       => __( 'GTIN / EAN', 'thatseoagent' ),
+    'properties'          => __( 'Specifications', 'thatseoagent' ),
+    'gallery'             => __( 'Gallery', 'thatseoagent' ),
+    'sku'                 => __( 'SKU', 'thatseoagent' ),
+    'mpn'                 => __( 'MPN', 'thatseoagent' ),
+    'gtin'                => __( 'GTIN / EAN', 'thatseoagent' ),
 );
 
 $complete  = $summary['ok'] + $summary['info'];
@@ -98,7 +93,6 @@ if ( 'clear' === $level ) {
     <aside aria-labelledby="thatseoagent-mapping">
         <div class="flex items-baseline justify-between gap-3 border-b border-rule-strong pb-2.5">
             <h2 id="thatseoagent-mapping" class="text-[17px] font-bold text-ink"><?php esc_html_e( 'How the catalog is read', 'thatseoagent' ); ?></h2>
-            <a href="<?php echo esc_url( $settings ); ?>" class="tsa-link text-[13px]"><?php esc_html_e( 'Change', 'thatseoagent' ); ?></a>
         </div>
         <?php foreach ( $config as $post_type => $mapping ) : ?>
             <?php $object = get_post_type_object( $post_type ); ?>
@@ -113,7 +107,9 @@ if ( 'clear' === $level ) {
                     <div class="flex items-center justify-between gap-3 py-2">
                         <dt class="text-ink-2"><?php echo esc_html( $label ); ?></dt>
                         <dd class="min-w-0 truncate">
-                            <?php if ( '' !== $mapping[ $field ] ) : ?>
+                            <?php if ( 'callback' === $mapping[ $field ] ) : ?>
+                                <span class="text-ink"><?php esc_html_e( 'from the code', 'thatseoagent' ); ?></span>
+                            <?php elseif ( '' !== $mapping[ $field ] ) : ?>
                                 <code><?php echo esc_html( $mapping[ $field ] ); ?></code>
                             <?php else : ?>
                                 <span class="text-ink-3"><?php esc_html_e( 'not used', 'thatseoagent' ); ?></span>
