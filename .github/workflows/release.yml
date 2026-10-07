@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    name: Attach the plugin zip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The tag (3.0.0 or v3.0.0) must be the version the plugin declares.
+      - name: Check the version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version="$(sed -n 's/^ \* Version: *//p' thatseoagent.php)"
+          if [ "$tag" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match Version: $version in thatseoagent.php"
+            exit 1
+          fi
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # vendor-prefixed, the vendored assets and the compiled translations are
+      # committed: the release script only copies them and builds the CSS.
+      - run: pnpm release
+
+      - name: Zip and attach to the release
+        run: |
+          cd dist
+          zip -rq thatseoagent.zip thatseoagent
+          gh release upload "$GITHUB_REF_NAME" thatseoagent.zip --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}

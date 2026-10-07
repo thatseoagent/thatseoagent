@@ -44,9 +44,9 @@ final class Response {
      */
     public static function fetch( string $url, array $headers = array(), string $method = 'GET', ?string $body = null ): self {
         // The site's address, localhost:8894, is the host's; inside wp-env
-        // its web server is tests-wordpress, asked for that host.
+        // its web server is wordpress, asked for that host.
         $home   = wp_parse_url( home_url() );
-        $server = getenv( 'THATSEOAGENT_HTTP_SERVER' ) ?: 'http://tests-wordpress';
+        $server = getenv( 'THATSEOAGENT_HTTP_SERVER' ) ?: 'http://wordpress';
         $parts  = wp_parse_url( $url );
         $target = $server . ( $parts['path'] ?? '/' ) . ( isset( $parts['query'] ) ? '?' . $parts['query'] : '' );
 

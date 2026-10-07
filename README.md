@@ -13,9 +13,10 @@ Essential SEO without the weight: meta tags, Open Graph, Twitter Cards, XML site
 
 ## Installation
 
+Download `thatseoagent.zip` from the [latest release](https://github.com/thatseoagent/thatseoagent/releases/latest). It is the plugin ready to install, built for each release: nothing to compile, and only the files WordPress loads, without the sources, docs and tests of this repository. Upload it under **Plugins → Add New Plugin → Upload Plugin**, or install it with WP-CLI:
+
 ```bash
-cp -r thatseoagent /path/to/wp-content/plugins/
-wp plugin activate thatseoagent
+wp plugin install https://github.com/thatseoagent/thatseoagent/releases/latest/download/thatseoagent.zip --activate
 ```
 
 Activate and it works; the defaults need no configuration. Settings — site identity, homepage, analytics and tags, llms.txt, IndexNow — live in their own **ThatSeoAgent** admin menu.
@@ -440,6 +441,10 @@ To update the library:
 composer update league/html-to-markdown   # Strauss runs on post-update-cmd
 git add vendor-prefixed/ composer.lock
 ```
+
+### Releases
+
+Publishing a release on GitHub builds `thatseoagent.zip` with `pnpm release` and attaches it to the release (`.github/workflows/release.yml`). The release's tag, `3.0.0` or `v3.0.0`, must match the `Version:` in `thatseoagent.php`; otherwise the workflow fails and attaches nothing.
 
 ### Tests and checks
 
