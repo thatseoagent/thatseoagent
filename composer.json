@@ -1,15 +1,16 @@
 {
-    "name": "angelcruz/thatseoagent",
+    "name": "abr4xas/thatseoagent",
     "description": "Lightweight SEO without the bloat.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [
         {
-            "name": "Angel Cruz"
+            "name": "Angel Cruz",
+            "email": "bullgram@gmail.com"
         }
     ],
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "league/html-to-markdown": "^5.1.2"
     },
     "require-dev": {
@@ -27,7 +28,7 @@
     },
     "config": {
         "platform": {
-            "php": "8.3.0"
+            "php": "8.4.0"
         },
         "allow-plugins": {
             "pestphp/pest-plugin": true,

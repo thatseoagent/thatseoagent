@@ -4,12 +4,12 @@ Lightweight SEO for WordPress — no bloat, no upsells, just what you need.
 
 ## Description
 
-Essential SEO without the weight: meta tags, Open Graph, Twitter Cards, XML sitemaps, Schema/JSON-LD, canonical URLs, per-post SEO fields with live preview, Product schema for custom post type catalogs, IndexNow submission, llms.txt, and a Markdown version of every post for AI agents.
+Essential SEO without the weight: meta tags, Open Graph, Twitter Cards, XML sitemaps, Schema/JSON-LD, canonical URLs, per-post SEO fields with live preview, Product schema for custom post type catalogs, IndexNow submission, Google Analytics and Google Ads tags, llms.txt, and a Markdown version of every post for AI agents.
 
 ## Requirements
 
 - WordPress 7.1+
-- PHP 8.3+
+- PHP 8.4+
 
 ## Installation
 
@@ -18,11 +18,11 @@ cp -r thatseoagent /path/to/wp-content/plugins/
 wp plugin activate thatseoagent
 ```
 
-Activate and it works; the defaults need no configuration. Settings — site identity, homepage, llms.txt, IndexNow — live in their own **ThatSeoAgent** admin menu.
+Activate and it works; the defaults need no configuration. Settings — site identity, homepage, analytics and tags, llms.txt, IndexNow — live in their own **ThatSeoAgent** admin menu.
 
 With WooCommerce active, WooCommerce marks up its products — the Product with its prices, and the BreadcrumbList of the shop's pages — and ThatSeoAgent keeps their title, description and sharing image. WooCommerce's products are never a product catalog.
 
-While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPress, The SEO Framework, Squirrly), ThatSeoAgent outputs nothing in `<head>`, serves no sitemaps or llms.txt and leaves robots.txt alone, so the two never duplicate each other's tags. Import that plugin's data with `wp thatseoagent import`, then deactivate it.
+While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPress, The SEO Framework, Squirrly), ThatSeoAgent outputs nothing in `<head>` but the analytics tags, serves no sitemaps or llms.txt and leaves robots.txt alone, so the two never duplicate each other's tags. The analytics tags stay because other SEO plugins do not print them: activating one does not cost the site its analytics. Import that plugin's data with `wp thatseoagent import`, then deactivate it.
 
 ## Features
 
@@ -40,12 +40,13 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 - **Attachment pages** — redirected to their file, as WordPress does on sites installed since 6.4
 - **Site identity** — declare whether the site represents a Person or an Organization
 - **Site verification** — Google Search Console, Bing, Yandex, Baidu and Pinterest codes, printed on the homepage
+- **Analytics and tags** — Google Analytics 4 and Google Ads IDs, alone or pasted as Google's whole snippet, loaded through one Google tag (gtag.js); any other service's code in the head, after the opening `<body>` or in the footer, editable only by users who may publish unfiltered HTML
 - **Homepage SEO** — custom title/description with `%%sitename%%`, `%%tagline%%`, `%%sep%%`
 - **IndexNow** — notify Bing/Yandex on publish (opt-in: no key, no requests)
 - **Markdown for AI agents** — any post or page at its URL plus `.md`, with YAML frontmatter, announced by a `rel="alternate"` link in the head and in a `Link` header; the page's own URL answers `Accept: text/markdown` with it too
 - **llms.txt** — a generated index of the site linking to the Markdown versions, and `llms-full.txt` with their full text in one file
 - **AI crawlers** — see which AI crawlers can read the site and why, check each one against the live server, and block them by group or one by one in robots.txt
-- **Content check** — every page of a content type, a few at a time, against the same rules as That SEO Agent's MCP server: nothing Google does not ask for is reported as a problem, each finding says whether Google, accessibility guidelines or our own judgement asks for it, and a check that cannot run says so
+- **Content check** — every page of a content type, a few at a time, against the same rules as the post audit the abilities return: nothing Google does not ask for is reported as a problem, each finding says whether Google, accessibility guidelines or our own judgement asks for it, and a check that cannot run says so
 - **WP-CLI** — generate missing meta descriptions, import from other SEO plugins, validate product schema
 - **Bulk action** — "Generate meta description" on the posts list
 
@@ -58,9 +59,10 @@ While another SEO plugin is active (Yoast SEO, Rank Math, All in One SEO, SEOPre
 | `/sitemap-pages.xml` | Pages (paginates) |
 | `/sitemap-categories.xml` | Categories |
 | `/sitemap-tags.xml` | Tags |
+| `/sitemap-tax-{taxonomy}.xml` | Each public custom taxonomy with SEO fields, listed in the index while it has terms to list |
 | `/sitemap-{cpt}.xml` | Each public custom post type (paginates) |
 
-`sitemap_index.xml` redirects to the index for Yoast compatibility, and the plugin rewrites the `Sitemap:` directive in `robots.txt`. WordPress's own `/wp-sitemap.xml` is switched off while these are served, so search engines see one set.
+`/sitemap_index.xml` serves the same index, for Yoast compatibility, and the plugin rewrites the `Sitemap:` directive in `robots.txt`. Every page also announces the index in a `Link: </sitemap.xml>; rel="sitemap"` header (filter `thatseoagent_sitemap_link_header`). WordPress's own `/wp-sitemap.xml` is switched off while these are served, so search engines see one set.
 
 A sitemap asks for its URLs to be indexed, so it lists no post marked **Keep out of search results**, no password-protected post and no attachment page. llms.txt leaves out the same posts.
 
@@ -95,7 +97,7 @@ See [docs/markdown](docs/markdown/) for the details.
 
 ## Product catalogs
 
-A catalog without WooCommerce — machinery, parts, a range of models — is usually a custom post type with its own taxonomies and meta. The theme or plugin that registers that post type declares it as a catalog, and says where each product detail lives, on the `thatseoagent_init` action:
+A catalog without WooCommerce — machinery, parts, a range of models — is usually a custom post type with its own taxonomies and meta. ThatSeoAgent does not guess which post types are catalogs: any theme or plugin that registers one declares it with `thatseoagent_register_catalog()`, and says where each product detail lives, on the `thatseoagent_init` action:
 
 ```php
 add_action( 'thatseoagent_init', function () {
@@ -125,7 +127,7 @@ Without a theme or plugin that declares one, a site has no catalog: there is not
 
 `/catalog.jsonl` gives agents the whole catalog as JSON Lines: each entry's Product markup, one per line, 100 per page (`?page=2`, announced with `Link: rel="next"`). Like llms.txt, it is for agents; search engines read the markup on each page.
 
-Values are validated and dropped rather than output half-formed. **ThatSeoAgent → Products** lists what each product is missing, and `wp thatseoagent validate-products` checks the whole catalog. Without a price no `offers` is output, so Google shows no product rich result — that needs offers, a review or a rating — but the markup still describes each product to search engines and AI assistants.
+Values are validated and dropped rather than output half-formed. **ThatSeoAgent → Products** lists what each product is missing, and `wp thatseoagent validate-products` checks the whole catalog. The markup carries no `offers`: a catalog declares no price, so there is nothing honest to put there. Google therefore shows no product rich result — that needs offers, a review or a rating — but the markup still describes each product to search engines and AI assistants.
 
 ## llms.txt
 
@@ -145,11 +147,16 @@ The bulletin warns when robots.txt keeps search crawlers out, when a physical fi
 
 ## Privacy
 
-The plugin sends no data anywhere **unless you configure an IndexNow API key**. (The AI crawler access check only requests the site's own homepage.) With a key set, publishing or updating a post queues a background request to `https://api.indexnow.org/indexnow` containing your site host, the key, and the URL of the post. Clearing the key stops all outbound requests. The plugin also serves the `{key}.txt` verification file IndexNow requires.
+The plugin calls no service of its own and has no paid tier. It sends data to a third party only through settings you fill in:
+
+- **IndexNow** — with an API key set, publishing or updating a post queues a background request to `https://api.indexnow.org/indexnow` containing your site host, the key, the key file's URL and the URL of the post. Clearing the key stops these requests. The plugin also serves the `{key}.txt` verification file IndexNow requires.
+- **Analytics and tags** — with a Google Analytics 4 or Google Ads ID set, every front-end page loads `https://www.googletagmanager.com/gtag/js`, and visitors' browsers send Google what that tag collects. Code pasted in the head, body or footer boxes is printed as written, and sends whatever it sends. Clearing the fields removes them.
+
+The checks request the site's own pages, never another site: the AI crawler access check asks for the homepage as each crawler and for robots.txt, the Markdown check asks for one post as an agent and as a browser (these two run on demand and once a week), and the link report reads the homepage and asks up to 40 internal addresses it does not recognize whether they exist.
 
 ## Architecture
 
-One class per file under `includes/`, grouped by concept and loaded by `includes/autoload.php` (an explicit class map: add a line there for a new class). `ThatSeoAgent` is the composition root: it calls each module's `register()` and nothing else. `CONTEXT.md` defines the terms used below.
+One class per file under `includes/`, grouped by concept and loaded by `includes/autoload.php` (an explicit class map: add a line there for a new class). `ThatSeoAgent` is the composition root: it calls each module's `register()`, and once after activation or a change of version, declared catalogs or stepping aside, it flushes the rewrite rules, purges the published files' caches and deletes the pre-3.0.0 catalog option. `GLOSSARY.md` defines the terms used below.
 
 | Folder | Module | Responsibility |
 |--------|--------|----------------|
@@ -212,7 +219,7 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | | `views/` | The screen's templates |
 | `rest/` | `ThatSeoAgent_REST` | Registers the screen's controllers (`thatseoagent/v1`) |
 | | `ThatSeoAgent_REST_Controller` | Shared by every controller: namespace, permission, uncached responses |
-| | `ThatSeoAgent_REST_Bulletin`, `_Preferences`, `_Audit`, `_Llms` | One controller per resource |
+| | `ThatSeoAgent_REST_Bulletin`, `_Preferences`, `_Audit`, `_Llms`, `_Crawlers`, `_Markdown` | One controller per resource |
 | `tooling/` | `ThatSeoAgent_CLI` | WP-CLI commands |
 | | `ThatSeoAgent_Abilities` | Abilities API registration: posts and terms |
 | | `ThatSeoAgent_Site_Abilities` | Abilities API registration: settings and site reports |
@@ -220,7 +227,8 @@ One class per file under `includes/`, grouped by concept and loaded by `includes
 | `integrations/` | `ThatSeoAgent_Compat` | Stepping aside while another SEO plugin is active |
 | | `ThatSeoAgent_WooCommerce` | What WooCommerce marks up itself: its products and their breadcrumbs |
 | | `ThatSeoAgent_IndexNow` | IndexNow key, verification file and submission |
-| | `ThatSeoAgent_MCP` | The plugin's own MCP server, when Lean MCP is active |
+| | `ThatSeoAgent_Tracking` | Analytics and tags: the Google tag for GA4 and Google Ads, and code for the head, body and footer |
+| | `ThatSeoAgent_MCP` | The plugin's own MCP server, when the Lean MCP plugin is active |
 
 ## Filters
 
@@ -238,7 +246,16 @@ Context is one of `home`, `single`, `archive`, `taxonomy`, `search`, `author`, `
 
 **Social**
 
-`thatseoagent_og_title` · `thatseoagent_og_site_name` · `thatseoagent_og_locale` · `thatseoagent_twitter_handle` · `thatseoagent_default_image`
+| Filter | Purpose |
+|--------|---------|
+| `thatseoagent_og_title` | og:title, over the resolved title (receives context) |
+| `thatseoagent_og_site_name` | og:site_name (default the site name) |
+| `thatseoagent_og_locale` | og:locale (default `get_locale()`) |
+| `thatseoagent_og_type` | og:type of the current view: `product`, `article`, `profile` or `website` (receives context) |
+| `thatseoagent_og_image_size` | Image size for Open Graph and Twitter; `''` (default) takes the largest size under 2 MB (receives the attachment ID) |
+| `thatseoagent_twitter_handle` | twitter:site handle (default the site identity's X handle; `''` omits the tag) |
+| `thatseoagent_twitter_repeat_open_graph` | Also print twitter:title, twitter:description and twitter:image, which X otherwise reads from Open Graph (off) |
+| `thatseoagent_default_image` | Image URL for a page with none of its own, after the site identity's default sharing image |
 
 **Schema**
 
@@ -253,6 +270,10 @@ A post's graph is `ThatSeoAgent_Schema::for_post( $post )`, the same inside its 
 | `thatseoagent_webpage_schema` | WebPage node (receives the post) |
 | `thatseoagent_breadcrumb_schema` | BreadcrumbList node (receives the post, `null` on a listing) |
 | `thatseoagent_breadcrumb_trail` | The breadcrumb trail, for the schema and the visible breadcrumbs (receives the post, `null` on a listing) |
+| `thatseoagent_breadcrumb_home` | Name of the homepage crumb (default "Home", translated) |
+| `thatseoagent_main_taxonomy` | Taxonomy a post type's primary category is taken from (receives the post type) |
+| `thatseoagent_article_post_types` | Post types that get an Article node (default `post`) |
+| `thatseoagent_schema_image_size` | Image size of the Article image and the page's primary image (default `full`) |
 | `thatseoagent_schema_graph` | The complete `@graph` before output (receives the post, `null` on any other view) |
 | `thatseoagent_faq_schema_enabled` | Disable FAQ schema per post |
 | `thatseoagent_faq_pairs` | The extracted Q&A pairs |
@@ -266,13 +287,28 @@ A post's graph is `ThatSeoAgent_Schema::for_post( $post )`, the same inside its 
 
 Both FAQ opt-ins are off by default: they synthesise questions that do not appear on the page, which conflicts with Google's requirement that marked-up content be visible.
 
+**Indexing and crawling**
+
+| Filter | Purpose |
+|--------|---------|
+| `thatseoagent_noindex` | Whether the current page gets `noindex` (receives context); the sitemaps and llms.txt still follow the SEO fields |
+| `thatseoagent_adjacent_links` | Print `rel="prev"`/`rel="next"` on paginated pages (default on) |
+| `thatseoagent_redirect_attachment_pages` | Redirect attachment pages to their file (default on) |
+| `thatseoagent_spam_search` | Whether a search is treated as spam (receives the search terms) |
+| `thatseoagent_term_seo_taxonomies` | Taxonomies whose terms get SEO fields; the custom ones among them get a sitemap |
+| `thatseoagent_trust_page_slugs` | Slugs that name the about, contact and privacy pages, by kind |
+
 **Sitemaps and admin**
 
-`thatseoagent_sitemap_entries` (the index listing) · `thatseoagent_meta_box_post_types` · action `thatseoagent_sitemap_index`
+`thatseoagent_sitemap_entries` (the index listing) · `thatseoagent_sitemap_link_header` (the `Link: rel="sitemap"` header on every page, default on) · `thatseoagent_meta_box_post_types`
 
 **Other SEO plugins and llms.txt**
 
-`thatseoagent_other_seo_plugin` (return `''` to keep ThatSeoAgent's output on) · `thatseoagent_woocommerce_states_breadcrumbs` (return `false` to keep ThatSeoAgent's BreadcrumbList on WooCommerce's pages, for a theme that prints none) · `thatseoagent_ai_crawlers` (the known crawlers and their groups) · `thatseoagent_llms_txt_post_types` · `thatseoagent_llms_txt_limit` · `thatseoagent_llms_txt`
+`thatseoagent_other_seo_plugin` (return `''` to keep ThatSeoAgent's output on) · `thatseoagent_woocommerce_states_breadcrumbs` (return `false` to keep ThatSeoAgent's BreadcrumbList on WooCommerce's pages, for a theme that prints none) · `thatseoagent_ai_crawlers` (the known crawlers and their groups) · `thatseoagent_llms_txt_post_types` · `thatseoagent_llms_txt_limit` · `thatseoagent_llms_txt_catalog_limit` (products per catalog, default 20) · `thatseoagent_llms_txt` · `thatseoagent_llms_full_txt` (the generated llms-full.txt) · `thatseoagent_llms_full_max_bytes` (default 2 MB)
+
+**Actions**
+
+`thatseoagent_init` (declare product catalogs, see [Product catalogs](#product-catalogs)) · `thatseoagent_sitemap_index` (echo extra `<sitemap>` entries into the index; prefer the `thatseoagent_sitemap_entries` filter)
 
 **Markdown**
 
@@ -285,6 +321,7 @@ Both FAQ opt-ins are off by default: they synthesise questions that do not appea
 | `thatseoagent_markdown_custom_fields` | The custom fields included |
 | `thatseoagent_markdown_cache_duration` | Cache lifetime in seconds (default one hour) |
 | `thatseoagent_markdown_alternate_link` | Print the `rel="alternate"` link to the `.md` URL (default on) |
+| `thatseoagent_markdown_negotiation` | Answer `Accept: text/markdown` at the post's own URL (default on; receives the post); the `.md` URL works either way |
 
 Custom fields are off by default: post meta not registered with `show_in_rest` is not public, and plugins routinely keep private data in it.
 
@@ -296,10 +333,9 @@ add_filter( 'thatseoagent_description', function ( $desc, $context, $post ) {
     return $post && 'special' === $post->post_name ? 'Custom description' : $desc;
 }, 10, 3 );
 
-// SEO fields on a custom post type
+// No SEO fields on a post type that is never public on its own
 add_filter( 'thatseoagent_meta_box_post_types', function ( $types ) {
-    $types[] = 'product';
-    return $types;
+    return array_diff( $types, array( 'testimonial' ) );
 } );
 
 // Site-specific intro filler to skip when generating descriptions
@@ -346,7 +382,9 @@ Every option is also registered with `show_in_rest`, so administrators can read 
 
 ## MCP server
 
-With the Lean MCP plugin active, the fourteen abilities are also the tools of a dedicated MCP server, `thatseoagent`, whatever the theme. As tools the slash becomes a hyphen: `thatseoagent-update-post-seo`.
+Optional. The fourteen abilities are registered with the WordPress Abilities API whether or not an MCP server exists. The MCP server is created only while the Lean MCP plugin is active, and Lean MCP is not publicly available yet; without it nothing below applies, and the abilities stay available to anything that calls the Abilities API.
+
+With Lean MCP active, the abilities are also the tools of a dedicated MCP server, `thatseoagent`, whatever the theme. As tools the slash becomes a hyphen: `thatseoagent-update-post-seo`.
 
 At `https://<site>/wp-json/lean-mcp/thatseoagent`, with the application password of an editor or administrator (`edit_others_posts`); anyone else gets a 401 or 403. Each tool also checks its own capability.
 
@@ -355,8 +393,6 @@ claude mcp add --transport http thatseoagent \
   https://<site>/wp-json/lean-mcp/thatseoagent \
   --header "Authorization: Basic $(printf 'USER:APPLICATION PASSWORD' | base64)"
 ```
-
-Without Lean MCP the server is not created; the abilities stay available through the Abilities API.
 
 ## WP-CLI
 
@@ -378,15 +414,15 @@ The admin screen is styled with [Tailwind CSS](https://tailwindcss.com) v4 and m
 
 ```bash
 pnpm install
-pnpm run build          # Alpine into assets/vendor, then the CSS
+pnpm run build          # Alpine into assets/vendor, the fonts into assets/fonts, then the CSS
 pnpm run watch:css      # while editing templates
 ```
 
 The screen's components live in `assets/admin/app.js` and register on `alpine:init`. Every view is server-rendered first and keeps working without scripts; the components start from the state printed into the page (`window.thatSeoAgent`), so nothing is fetched on load. Because Tailwind's utilities are `!important`, use `x-show.important` on elements that also carry a display utility.
 
-REST endpoints for the screen, all administrators-only, under `thatseoagent/v1`: `GET /bulletin`, `POST /preferences`, `GET /audit`, `POST /audit/runs`, `POST|DELETE /audit/runs/{token}`, `POST /llms`. Settings are saved through core's `/wp/v2/settings`.
+REST endpoints for the screen, all administrators-only, under `thatseoagent/v1`: `GET /bulletin`, `POST /preferences`, `GET /audit`, `POST /audit/runs`, `POST|DELETE /audit/runs/{token}`, `POST /llms`, `POST /crawlers/probe`, `POST /markdown/check`, `POST|DELETE /markdown/htaccess`. Settings are saved through core's `/wp/v2/settings`.
 
-Tailwind scans `includes/admin/`, `includes/crawlers/`, the Caches and CDN settings and `assets/admin/app.js` only, so the output holds just the classes they use. Colors are named by role (`bg-paper`, `bg-sheet`, `text-ink-2`, `border-rule`, `text-met`, `bg-level-yellow`…) and resolve to CSS variables that switch between the Day and Night editions. The screen wears the That SEO Agent brand shared with the MCP server and the website (see DESIGN.md). Space Grotesk and Space Mono are self-hosted from `assets/fonts/` (SIL Open Font License); `pnpm run vendor:fonts` copies them again from npm, should they need updating.
+Tailwind scans `includes/admin/`, `includes/crawlers/`, the Caches and CDN settings and `assets/admin/app.js` only, so the output holds just the classes they use. Colors are named by role (`bg-paper`, `bg-sheet`, `text-ink-2`, `border-rule`, `text-met`, `bg-level-yellow`…) and resolve to CSS variables that switch between the Day and Night editions. The screen wears the That SEO Agent brand (see DESIGN.md). Space Grotesk and Space Mono are self-hosted from `assets/fonts/` (SIL Open Font License); `pnpm run vendor:fonts` copies them again from npm, should they need updating.
 
 ### Dependencies
 
@@ -426,7 +462,7 @@ composer lint               # Pint, checking the code style (pint.json)
 composer format             # Pint, fixing it
 ```
 
-The MCP server's tests need Lean MCP active in the test site, and skip themselves without it. wp-env mounts it from a local `.wp-env.override.json`, not committed, that points at your copy:
+The MCP server's tests need Lean MCP active in the test site, and skip themselves without it; Lean MCP is not publicly available yet. With a copy of it, wp-env mounts it from a local `.wp-env.override.json`, not committed, that points at that copy:
 
 ```json
 {
@@ -438,15 +474,16 @@ Run `pnpm env:start` again after creating it.
 
 ## Translations
 
-Ships with Spanish (`es_ES`). To add a language, copy `languages/thatseoagent.pot` and compile:
+Ships with Spanish (`es_ES`) and Uruguayan Spanish (`es_UY`). To add a language, copy `languages/thatseoagent.pot` to `languages/thatseoagent-<locale>.po`, translate it and compile both the `.mo` and the `.json` that carries the Breadcrumbs block's editor strings (`assets/blocks/breadcrumbs.js`):
 
 ```bash
 wp i18n make-mo languages/thatseoagent-<locale>.po
+wp i18n make-json languages/thatseoagent-<locale>.po --no-purge
 ```
 
 ## Uninstalling
 
-Deleting the plugin removes its options, its post meta and any queued IndexNow events, on every site of a multisite network. Deactivating leaves your data intact.
+Deleting the plugin removes its options, post meta, term meta, user meta (the screen's edition and author profiles) and transients, unschedules the queued IndexNow submissions and the weekly checks, on every site of a multisite network, and takes its block out of `.htaccess`. Deactivating leaves your data intact.
 
 ---
 

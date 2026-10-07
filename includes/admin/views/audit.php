@@ -10,7 +10,7 @@
  * @package ThatSeoAgent
  * @since 1.17.0
  * @since 1.18.0 Runs the check.
- * @since 2.3.0 The checks follow That SEO Agent's MCP: each finding says whether
+ * @since 2.3.0 The checks follow Google Search Central: each finding says whether
  *              Google, accessibility or our own judgement asks for it.
  */
 

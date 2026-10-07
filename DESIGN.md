@@ -124,7 +124,7 @@ Scope: the plugin's wp-admin screen (Overview, Products, Content check, AI crawl
 
 The site gets a weather bulletin, not a dashboard. Each view opens with one plain condition sentence, then the warnings in force, a row of observations, then the readings. The warning levels follow the European weather-warning scale (none, yellow, orange, red), which people read without knowing anything about SEO.
 
-Since 2.6.0 the bulletin wears the That SEO Agent brand, the one the MCP server (`public/home.html` in thatseoagent/mcp) and the website (DESIGN.md in abr4xas/thatseoagent) share: warm paper, hairline rules, square corners, no shadow, Space Grotesk for sentences, Space Mono for labels and numbers, and Deep Ōtan Red as the one lamp. When this file and the brand disagree, the brand wins; the exceptions are named below.
+Since 2.6.0 the bulletin wears the That SEO Agent brand: warm paper, hairline rules, square corners, no shadow, Space Grotesk for sentences, Space Mono for labels and numbers, and Deep Ōtan Red as the one lamp. When this file and the brand disagree, the brand wins; the exceptions are named below.
 
 The screen lives inside wp-admin and must not leak into it: no global reset, a reset scoped to `#thatseoagent-app`, utilities marked important so unlayered wp-admin rules cannot override them. Two editions exist, Day (warm paper, default) and Night (the report's warm espresso, never cold black), switched from the sidebar.
 
@@ -183,7 +183,7 @@ Lists and tables are divided rows. **The last row draws no bottom rule** where a
 
 ## Elevation & Depth
 
-None. Depth comes from paper → sheet and 1px rules. A selected segment or nav item is a sheet with a 1px hairline (`ring-1`), never a shadow; input focus is a second 1px line in red, never a glow.
+None. Depth comes from paper → sheet and 1px rules. A selected segment or nav item is a sheet with a 1px hairline (`ring-1`), never a shadow; input focus is a second 1px line in ink (met), never a glow.
 
 ## Shapes
 
@@ -191,13 +191,13 @@ Square corners everywhere: cells, buttons, inputs, notices, segments, markers. C
 
 ## Components
 
-- **Press (primary):** the one filled control per surface; red with a paper label, Space Mono uppercase; hover turns Red Gravy; color-only transition, 150ms. Settings' wp-admin primary button matches.
+- **Press (primary):** the one filled control per surface; ink with a paper label, Space Mono uppercase; hover turns a lighter ink (press-hover); in Night, the night ink with an espresso label; color-only transition, 150ms. Settings' wp-admin primary button matches.
 - **Rule button (secondary):** transparent, 1px strong-rule border, Space Mono uppercase; hover darkens the border to ink.
-- **Link:** red, underlined 3px below the text, thicker on hover.
+- **Link:** ink (met), underlined 3px below the text, thicker on hover.
 - **Segmented choice:** a ruled strip on paper; the checked segment is a sheet with a hairline.
 - **Condition cell (signature):** a white cell with a hairline border; the sentence, a summary and at most one press, with the warning scale at its right marking the current level. On Products the right side carries the segmented bar with its legend.
-- **Observation row (signature):** white cells on a 1px-gap rule grid, each with a 4px top bar (ink for OK, rule when not in use, the level's tone for a warning), a mono label and the value. One light sweep crosses it on load; none under reduced motion.
-- **Inputs:** sheet, 1px strong-rule border, square; focus turns the border red with a second 1px red line.
+- **Observation row (signature):** white cells on a 1px-gap rule grid, each with a 4px top bar (clear green for OK, rule when not in use, the level's tone for a warning), a mono label and the value. One light sweep crosses it on load; none under reduced motion.
+- **Inputs:** sheet, 1px strong-rule border, square; hover darkens the border to ink 3; focus turns the border ink (met) with a second 1px ink line.
 - **Notices:** a sheet with a rule border and a square marker: ink-3 for information, the level tones for success, warning and error.
 
 ## Do's and Don'ts

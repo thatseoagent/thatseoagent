@@ -10,11 +10,9 @@
  * differ depending on who asked. One post alone is checked without reading
  * the whole site, and says what that leaves unmeasured.
  *
- * Since 2.3.0 the checks follow the rules That SEO Agent's MCP server applies
- * (docs/google-search-central-conformance.md in that repository): the plugin
- * and the MCP must not tell the same site two different things. The rule
- * they share is that nothing Google does not ask for is reported as a
- * problem. Every finding says where it comes from:
+ * Since 2.3.0 the checks follow Google Search Central: nothing Google does
+ * not ask for is reported as a problem. Every finding says where it comes
+ * from:
  *
  *     google         Google Search Central asks for it
  *     accessibility  WCAG 2.2 asks for it; Google does not rank on it
@@ -106,7 +104,7 @@ class ThatSeoAgent_Audit {
         $not_measured = array();
 
         $custom       = ThatSeoAgent_Post_Seo::all( $post );
-        // What the page publishes, as That SEO Agent's MCP reads it: the
+        // What the page publishes, as a crawler reads it: the
         // <title> with the site name, the description after the homepage's
         // and the filters.
         $title        = ThatSeoAgent_Title::for_post( $post );

@@ -7,6 +7,7 @@ namespace ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter;
 use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Configuration;
 use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\ConfigurationAwareInterface;
 use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\ElementInterface;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\RawHtml;
 
 class DivConverter implements ConverterInterface, ConfigurationAwareInterface
 {
@@ -24,7 +25,7 @@ class DivConverter implements ConverterInterface, ConfigurationAwareInterface
             return $element->getValue() . "\n\n";
         }
 
-        return \html_entity_decode($element->getChildrenAsString());
+        return RawHtml::fromElement($element);
     }
 
     /**

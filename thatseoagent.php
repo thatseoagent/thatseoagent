@@ -9,7 +9,7 @@
  * Text Domain: thatseoagent
  * Domain Path: /languages
  * Requires at least: 7.1
- * Requires PHP: 8.3
+ * Requires PHP: 8.4
  *
  * @package ThatSeoAgent
  */

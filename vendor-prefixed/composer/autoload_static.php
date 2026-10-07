@@ -22,6 +22,7 @@ class ComposerStaticInit0300bcfc6aad19f34e05505ca4d07bcd
 
     public static $classMap = array (
         'ThatSeoAgent\\Dependencies\\Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\Backticks' => __DIR__ . '/..' . '/league/html-to-markdown/src/Backticks.php',
         'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\Coerce' => __DIR__ . '/..' . '/league/html-to-markdown/src/Coerce.php',
         'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\Configuration' => __DIR__ . '/..' . '/league/html-to-markdown/src/Configuration.php',
         'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\ConfigurationAwareInterface' => __DIR__ . '/..' . '/league/html-to-markdown/src/ConfigurationAwareInterface.php',
@@ -48,7 +49,10 @@ class ComposerStaticInit0300bcfc6aad19f34e05505ca4d07bcd
         'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\Environment' => __DIR__ . '/..' . '/league/html-to-markdown/src/Environment.php',
         'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\HtmlConverter' => __DIR__ . '/..' . '/league/html-to-markdown/src/HtmlConverter.php',
         'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\HtmlConverterInterface' => __DIR__ . '/..' . '/league/html-to-markdown/src/HtmlConverterInterface.php',
+        'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\LinkSyntax' => __DIR__ . '/..' . '/league/html-to-markdown/src/LinkSyntax.php',
         'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\PreConverterInterface' => __DIR__ . '/..' . '/league/html-to-markdown/src/PreConverterInterface.php',
+        'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\PrecedingMarkdown' => __DIR__ . '/..' . '/league/html-to-markdown/src/PrecedingMarkdown.php',
+        'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\RawHtml' => __DIR__ . '/..' . '/league/html-to-markdown/src/RawHtml.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

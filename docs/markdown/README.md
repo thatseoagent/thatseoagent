@@ -46,7 +46,7 @@ The content comes from `ThatSeoAgent_Content::html()` and the description from `
 
 ## How a Request Is Answered
 
-1. The rewrite rule `(.+)\.md$` maps the request to the `lean_markdown` query var.
+1. The rewrite rule `(.+)\.md$` maps the request to the `thatseoagent_markdown` query var.
 2. On `parse_request` — before the main query and `redirect_canonical()` — the path is resolved with `url_to_postid()`. That goes through the site's own rewrite rules, so any permalink structure works: `/%postname%/`, dates, categories, hierarchical pages, custom post types.
 3. The post must be of an enabled post type, readable by the visitor (published, or `read_post` for anything else) and not password-protected.
 4. `If-Modified-Since` is answered with `304 Not Modified`.
@@ -96,11 +96,13 @@ The body is the same Markdown the `.md` URL serves, from the same cache, and `If
 
 ### Caches that answer before WordPress
 
-Whatever answers before WordPress — a page cache plugin serving from `.htaccess`, a CDN, a server cache — never lets the negotiation run. Two tools under **ThatSeoAgent → AI index → Markdown for agents**:
+Whatever answers before WordPress — a page cache plugin serving from `.htaccess`, a CDN, a server cache — never lets the negotiation run. Two tools find and fix that.
 
-**Check now** asks one of your posts from outside, first with `Accept: text/markdown` and then as a browser, and reports what each got (`POST /thatseoagent/v1/markdown/check`). The order matters: a cache that stored the agent's answer would hand it to the browser next. When the check fails, the response headers usually say which layer answered (Cloudflare, LiteSpeed, Varnish, an Nginx cache, a page cache plugin's signature), and the check says what to change there. It only runs when clicked.
+**Check now**, under **ThatSeoAgent → AI index → Markdown for agents**, asks one of your posts from outside, first with `Accept: text/markdown` and then as a browser, and reports what each got (`POST /thatseoagent/v1/markdown/check`). The order matters: a cache that stored the agent's answer would hand it to the browser next. When the check fails, the response headers usually say which layer answered (Cloudflare, LiteSpeed, Varnish, an Nginx cache, a page cache plugin's signature), and the check says what to change there.
 
-**The .htaccess rule**, on Apache, is written when you click **Add the rule to .htaccess**, never on its own:
+It also runs once a week on its own, by WP-Cron (`thatseoagent_weekly_checks`, with the crawler access check). Each run is kept with the one before it (`ThatSeoAgent_Checks`), so the screen opens on the last result and says what changed. From a result at most 8 days old the bulletin warns when a cache hands the Markdown version to browsers (red) and when agents asking for Markdown get the HTML page (yellow). A check that got no answer is no warning.
+
+**The .htaccess rule**, on Apache, lives under **ThatSeoAgent → Settings → Caches and CDN**. It is written when you click **Add the rule to .htaccess**, never on its own (`POST /thatseoagent/v1/markdown/htaccess`; `DELETE` on the same route, **Remove the rule**, takes it out). These routes and the check's need `manage_options`:
 
 ```apache
 # BEGIN ThatSeoAgent Markdown
@@ -136,7 +138,7 @@ The Markdown is a copy of the HTML page. Every response sends `X-Robots-Tag: noi
 
 ## Caching
 
-One transient per post, `thatseoagent_md_{version}_{post_id}`, stored for an hour. It uses the object cache when one is installed.
+One transient per post, `thatseoagent_md_{plugin version}_{cache version}_{post_id}`, stored for an hour. The plugin's version in the key means an update never serves a copy built by the previous one. It uses the object cache when one is installed.
 
 A cached entry is dropped when:
 

@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'ThatSeoAgent\\Dependencies\\Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\Backticks' => $vendorDir . '/league/html-to-markdown/src/Backticks.php',
     'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\Coerce' => $vendorDir . '/league/html-to-markdown/src/Coerce.php',
     'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\Configuration' => $vendorDir . '/league/html-to-markdown/src/Configuration.php',
     'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\ConfigurationAwareInterface' => $vendorDir . '/league/html-to-markdown/src/ConfigurationAwareInterface.php',
@@ -33,5 +34,8 @@ return array(
     'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\Environment' => $vendorDir . '/league/html-to-markdown/src/Environment.php',
     'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\HtmlConverter' => $vendorDir . '/league/html-to-markdown/src/HtmlConverter.php',
     'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\HtmlConverterInterface' => $vendorDir . '/league/html-to-markdown/src/HtmlConverterInterface.php',
+    'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\LinkSyntax' => $vendorDir . '/league/html-to-markdown/src/LinkSyntax.php',
     'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\PreConverterInterface' => $vendorDir . '/league/html-to-markdown/src/PreConverterInterface.php',
+    'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\PrecedingMarkdown' => $vendorDir . '/league/html-to-markdown/src/PrecedingMarkdown.php',
+    'ThatSeoAgent\\Dependencies\\League\\HTMLToMarkdown\\RawHtml' => $vendorDir . '/league/html-to-markdown/src/RawHtml.php',
 );

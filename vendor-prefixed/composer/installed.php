@@ -1,10 +1,10 @@
 <?php return array (
   'root' => 
   array (
-    'name' => 'angelcruz/thatseoagent',
+    'name' => 'abr4xas/thatseoagent',
     'pretty_version' => 'dev-master',
     'version' => 'dev-master',
-    'reference' => '14cc9a8108e33bd97582177e7f0e95db4769dde8',
+    'reference' => 'c5f8a0c9cbcab29a551f86a19b0328ab25cfabd3',
     'type' => 'wordpress-plugin',
     'install_path' => __DIR__ . '/../',
     'aliases' => 
@@ -16,9 +16,9 @@
   array (
     'league/html-to-markdown' => 
     array (
-      'pretty_version' => '5.1.2',
-      'version' => '5.1.2.0',
-      'reference' => 'db234ecdb160b9d2b422c1c130db4b01eb3e9e24',
+      'pretty_version' => '5.1.3',
+      'version' => '5.1.3.0',
+      'reference' => '5411b9650dd468be52267a6f4a2a26c31d2581be',
       'type' => 'library',
       'install_path' => __DIR__ . '/../league/html-to-markdown',
       'aliases' => 

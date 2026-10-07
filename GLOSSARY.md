@@ -30,6 +30,10 @@ _Avoid_: check, metric, test
 What ThatSeoAgent does while another SEO plugin is active: it prints nothing in the page head but the analytics tags, serves no sitemaps or AI index, and leaves robots.txt alone.
 _Avoid_: conflict mode, disabled, compatibility mode
 
+**Analytics tags**:
+What the site owner asks every page to load for measuring visitors: the Google tag for Google Analytics 4 and Google Ads, set by their IDs, and any other service's code, placed in the head, after the opening body tag or in the footer. Only users who may publish unfiltered HTML change the code. Printed while ThatSeoAgent steps aside too.
+_Avoid_: pixels, snippets
+
 ### What a post says
 
 **SEO fields**:
@@ -129,7 +133,7 @@ _Avoid_: level
 ### Checking content
 
 **Content check**:
-A check of every published post of one content type, a few at a time, giving each a score out of 100 and the reasons. It applies the same rules as That SEO Agent's MCP server, so the two never tell a site different things. The last finished check of each content type is kept.
+A check of every published post of one content type, a few at a time, giving each a score out of 100 and the reasons. It applies the same rules as the audit of a single post the abilities return, so the two never tell a site different things. The last finished check of each content type is kept.
 _Avoid_: scan, crawl, SEO audit
 
 **Finding source**:

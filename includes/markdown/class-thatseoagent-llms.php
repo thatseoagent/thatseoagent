@@ -77,7 +77,7 @@ class ThatSeoAgent_Llms {
         foreach ( array( 'added_post_meta', 'updated_post_meta', 'deleted_post_meta' ) as $hook ) {
             add_action( $hook, array( __CLASS__, 'purge_for_meta' ), 10, 3 );
         }
-        foreach ( array( 'blogname', 'blogdescription', 'thatseoagent_identity', 'thatseoagent_products', self::OPTION_KEY ) as $option ) {
+        foreach ( array( 'blogname', 'blogdescription', 'thatseoagent_identity', self::OPTION_KEY ) as $option ) {
             add_action( 'update_option_' . $option, array( __CLASS__, 'purge' ) );
         }
     }

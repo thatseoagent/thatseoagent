@@ -10,8 +10,7 @@
  * Found from inside the site, which is more reliable than guessing from a
  * page's links as an outside tool must: the privacy policy WordPress has
  * assigned, a published page whose slug names the page in any of the
- * languages That SEO Agent's MCP server reads (the same lists), or a menu
- * link to such an address — a contact form on another site counts.
+ * languages the slug lists cover, or a menu link to such an address — a contact form on another site counts.
  *
  * @package ThatSeoAgent
  * @since 2.3.0

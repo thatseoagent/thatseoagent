@@ -7,6 +7,9 @@ their post type, and no longer chosen on the settings screen. A site that had
 one set up has none after updating until its theme declares it: see
 *Migrating a catalog* below.
 
+It also requires PHP 8.4, and its MCP server is served through the Lean MCP
+plugin only, no longer through MCP Adapter.
+
 ### Added
 - **`thatseoagent_register_catalog()` on the new `thatseoagent_init`
   action** declares a post type as a product catalog: its brand and category
@@ -25,8 +28,21 @@ one set up has none after updating until its theme declares it: see
   upgrade. The `catalog` setting of the settings Abilities is gone too.
 - **The new content type warning no longer offers to make it a catalog**;
   it says the code that adds it can declare one, and is marked as reviewed.
+- **MCP Adapter support.** The plugin's MCP server is declared to the Lean
+  MCP plugin alone, on its `lean_mcp_init` action, at
+  `/wp-json/lean-mcp/thatseoagent`, for editors and administrators
+  (`edit_others_posts`) as before. With MCP Adapter active and no Lean MCP
+  there is no `/wp-json/mcp/thatseoagent` and no STDIO server
+  (`wp mcp-adapter serve --server=thatseoagent`); the abilities stay
+  available through the Abilities API. A client connected to the old
+  address has to be pointed at the new one.
 
 ### Fixed
+- **MCP tools called with no arguments work again.** `get-seo-settings`,
+  `list-term-seo`, `get-sitemap-urls`, `get-duplicates`, `get-link-report`
+  and `get-site-bulletin` received their empty default input as an object
+  where they read an array, and failed. The default is an empty array now,
+  as core declares its own; clients still see it as `{}`.
 - **A robots.txt that starts with a byte order mark is read whole.** The
   mark hid its first line, usually a `User-agent`, so the rules of that
   group were dropped and AI crawlers it blocks were reported as allowed.
@@ -48,10 +64,11 @@ one set up has none after updating until its theme declares it: see
   table, one transient each.
 
 ### Changed
-- **PHP 8.3 or later is required**, up from 7.4.
+- **PHP 8.4 or later is required**, up from 7.4.
 - **Italics in the Markdown versions are written `*like this*`**, the
   converter's default, instead of `_like this_`: the option that chose
   underscores is deprecated in league/html-to-markdown.
+- **league/html-to-markdown is 5.1.3**, up from 5.1.2.
 
 ### Migrating a catalog
 The mapping the screen kept becomes the declaration's arguments:
@@ -61,11 +78,11 @@ The mapping the screen kept becomes the declaration's arguments:
 
 ```php
 add_action( 'thatseoagent_init', function () {
-    thatseoagent_register_catalog( 'producto', array(
-        'brand_taxonomy'    => 'marca',
-        'category_taxonomy' => 'categoria-producto',
-        'properties'        => '_producto_specs',
-        'gallery'           => '_producto_gallery',
+    thatseoagent_register_catalog( 'machine', array(
+        'brand_taxonomy'    => 'machine_brand',
+        'category_taxonomy' => 'machine_type',
+        'properties'        => '_machine_specs',
+        'gallery'           => '_machine_gallery',
     ) );
 } );
 ```
@@ -150,7 +167,37 @@ add_action( 'thatseoagent_init', function () {
 - The descriptions of term archives, searches and author pages were built
   from untranslated English sentences.
 
-## [2.7.0] - Unreleased
+## [2.8.0] - 2026-09-27
+
+### Added
+- **The plugin's own MCP server** (`ThatSeoAgent_MCP`). With the MCP
+  Adapter plugin (0.6) active, the five abilities (`get-sitemap-urls`,
+  `get-post-seo`, `audit-post-seo`, `scan-seo-issues`, `update-post-seo`)
+  are the tools of a dedicated server, `thatseoagent`, whatever the theme:
+  over HTTP at `/wp-json/mcp/thatseoagent`, and over STDIO with
+  `wp mcp-adapter serve --server=thatseoagent --user=<user>`. As tools the
+  slash becomes a hyphen: `thatseoagent-update-post-seo`. Over HTTP only
+  editors and administrators (`edit_others_posts`) can connect; each tool
+  still checks its own capability. Without MCP Adapter the server is not
+  created and the abilities stay available through the Abilities API.
+
+## [2.7.1] - 2026-09-27
+
+### Added
+- **A sharing image of its own for every post, page and content type**:
+  a "Social sharing image" field in the SEO meta box, picked from the media
+  library and stored in `_thatseoagent_share_image`.
+- **Uruguayan Spanish (es_UY) translation**, with voseo.
+
+### Changed
+- **og:image is the post's sharing image, then the default sharing image,
+  then the theme logo.** The featured image and the images in the content
+  are no longer shared: a catalog's featured images are often too small
+  for a preview, and a theme's decorative images in the content won over
+  the default sharing image. The schema's primary image still looks for
+  the post's own image first.
+
+## [2.7.0] - 2026-09-23
 
 ### Added
 - **The access check and the Markdown check are kept, and warn.** Each
@@ -222,7 +269,7 @@ add_action( 'thatseoagent_init', function () {
   says so through `thatseoagent_main_taxonomy`, at priority 5.
 - **`ThatSeoAgent_Primary_Term` answers for the category everywhere it is
   named**: `named()` (the primary term, unless it is the default category),
-  `path()` and `label()` ("Grúas > Articuladas"), used by the breadcrumb
+  `path()` and `label()` ("Cranes > Articulated"), used by the breadcrumb
   trail, article:section and the Product markup.
 - **`ThatSeoAgent_Image` answers for every image a post publishes**: `own()`
   (its featured, gallery or content image), `all()` (featured and gallery,
@@ -322,7 +369,7 @@ add_action( 'thatseoagent_init', function () {
   description read the homepage settings themselves, and
   `ThatSeoAgent_Title::for_post()` is the search title.
 
-## [2.6.0] - Unreleased
+## [2.6.0] - 2026-09-23
 
 ### Added
 - **A bulletin warning when published posts have no author** — none
@@ -1131,7 +1178,7 @@ it. Three modules read it three different ways; now one module owns it.
   type can be removed:
 
       add_filter( 'lean_seo_meta_box_post_types', function ( $types ) {
-          return array_diff( $types, array( 'producto' ) );
+          return array_diff( $types, array( 'testimonial' ) );
       } );
 
 - The registered REST meta fields follow the same list, so custom post types

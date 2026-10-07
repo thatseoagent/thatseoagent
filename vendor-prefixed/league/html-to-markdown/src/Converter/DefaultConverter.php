@@ -7,6 +7,7 @@ namespace ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Converter;
 use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\Configuration;
 use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\ConfigurationAwareInterface;
 use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\ElementInterface;
+use ThatSeoAgent\Dependencies\League\HTMLToMarkdown\RawHtml;
 
 class DefaultConverter implements ConverterInterface, ConfigurationAwareInterface
 {
@@ -23,13 +24,12 @@ class DefaultConverter implements ConverterInterface, ConfigurationAwareInterfac
     public function convert(ElementInterface $element): string
     {
         // If strip_tags is false (the default), preserve tags that don't have Markdown equivalents,
-        // such as <span> nodes on their own. C14N() canonicalizes the node to a string.
-        // See: http://www.php.net/manual/en/domnode.c14n.php
+        // such as <span> nodes on their own.
         if ($this->config->getOption('strip_tags', false)) {
             return $element->getValue();
         }
 
-        $markdown = \html_entity_decode($element->getChildrenAsString());
+        $markdown = RawHtml::fromElement($element);
 
         // Tables are only handled here if TableConverter is not used
         if ($element->getTagName() === 'table') {

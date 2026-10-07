@@ -2,8 +2,7 @@
 /**
  * Abilities API registration: the site-wide abilities.
  *
- * The plugin's options — identity, homepage, verification, the catalog,
- * crawlers… — read and written through the same registry, schema and
+ * The plugin's options — identity, homepage, verification, crawlers… — read and written through the same registry, schema and
  * sanitizers as the settings screen (ThatSeoAgent_Settings), plus the
  * reports the screen shows: duplicates, links and the bulletin.
  *
